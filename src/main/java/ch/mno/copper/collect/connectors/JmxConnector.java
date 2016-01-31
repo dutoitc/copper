@@ -15,7 +15,7 @@ import java.io.IOException;
 /**
  * Created by dutoitc on 29.01.2016.
  */
-public class JmxConnector {
+public class JmxConnector extends AbstractConnector {
 
     private MBeanServerConnection mbsc;
 

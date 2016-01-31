@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * Created by dutoitc on 30.01.2016.
  */
-public class HttpConnector {
+public class HttpConnector extends AbstractConnector {
 
     private CloseableHttpClient httpclient;
     private RequestConfig config;
