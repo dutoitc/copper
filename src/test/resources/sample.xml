@@ -1,0 +1,12 @@
+<copper version="1">
+    <connector id="myOracle1" type="oracle" url="..." username="..." password="..."/>
+    <collector id="coll1" connector="myOracle1" schedule="* * * * *" sql="..." />
+
+    <trigger id="trig1" type="groovy"><![CDATA[
+        values=getValue(coll1).split();
+        if values[1]>2 produce(alert1, f(values))
+    ]]></trigger>
+
+    <reporter type="mail" id="mail1" to="..."></reporter>
+    <report to="mail1" if="alert1" frequence="once" values="alert1_title,alert1_body"/>
+</copper>
