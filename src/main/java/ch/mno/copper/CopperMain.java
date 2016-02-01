@@ -18,7 +18,7 @@ public class CopperMain {
         String url="service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi";
         List<String> res = JmxCollector.jmxQuery(url, new JmxCollector.JmxQuery("java.lang:type=Runtime", "SpecName"), new JmxCollector.JmxQuery("java.lang:type=Runtime", "SpecVersion"));
         res.forEach(s->System.out.println("Found: " + s));
-        //valuesStore.put("JAVA_VERSION", res.get(1));
+        //valuesStore.post("JAVA_VERSION", res.get(1));
 
         HttpCollector.httpQuery("http://www.shimbawa.ch", "/files/pong1", "/files/pong2", "/none").forEach(s->System.out.println("Found: " + s));
 
