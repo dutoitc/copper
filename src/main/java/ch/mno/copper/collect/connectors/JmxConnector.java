@@ -11,6 +11,8 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by dutoitc on 29.01.2016.
@@ -18,6 +20,16 @@ import java.io.IOException;
 public class JmxConnector extends AbstractConnector {
 
     private MBeanServerConnection mbsc;
+
+
+    public JmxConnector(String url, String username, String password) throws IOException {
+        JMXServiceURL jmxServiceURL = new JMXServiceURL(url);
+        Map<String, String[]> env = new HashMap<>();
+        String[] creds = {username, password};
+        env.put(JMXConnector.CREDENTIALS, creds);
+        JMXConnector jmxc = JMXConnectorFactory.connect(jmxServiceURL, env);
+        mbsc = jmxc.getMBeanServerConnection();
+    }
 
     public JmxConnector(String url) throws IOException {
         JMXServiceURL jmxServiceURL = new JMXServiceURL(url);

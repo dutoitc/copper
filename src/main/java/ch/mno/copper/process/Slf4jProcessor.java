@@ -25,8 +25,15 @@ public class Slf4jProcessor extends AbstractProcessor {
 
     @Override
     public void trig(ValuesStore valueStore, Collection<String> changedValueKeys) {
-        changedValueKeys.forEach(key->
-            logger.info("Value " + key + " has changed: " + valueStore.getValue(key))
+        StringBuffer sb = new StringBuffer();
+        sb.append("Values changed: ");
+        changedValueKeys.forEach(key -> {
+                if (sb.length() > 16) sb.append(',');
+                    sb.append(key).append('=').append(valueStore.getValue(key));
+                }
         );
+        if (sb.length() > 16) {
+            logger.info(sb.toString());
+        }
     }
 }

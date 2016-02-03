@@ -55,6 +55,19 @@ public class ValuesStore {
         return -1;
     }
 
+    /**
+     *
+     * @param desc key1,key2...
+     * @param values values for keys, ordered
+     */
+    public void putAll(String desc, List<String> values) {
+        String[] keys = desc.split(",");
+        if (keys.length!=values.size()) throw new RuntimeException("Wrong number of parameters");
+        for (int i=0; i<keys.length; i++) {
+            put(keys[i],values.get(i));
+        }
+    }
+
     public static class StoreValue {
         private String value;
         private long timestamp;
