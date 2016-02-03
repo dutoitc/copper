@@ -29,7 +29,7 @@ public class ValuesStore {
     }
 
     public void put(String key, String value) {
-        if (map.containsKey(key) && map.get(key).equals(value)) return;
+        if (map.containsKey(key) && map.get(key).value.equals(value)) return;
         map.put(key, new StoreValue(value));
         changedValues.add(key);
     }

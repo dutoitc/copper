@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 public class CopperDaemon implements Runnable {
 
     public static final int N_THREADS = 10;
-    public static final int TASK_CHEK_INTERVAL = 1000 * 5; // don't limit processors !
+    public static final int TASK_CHEK_INTERVAL = 1000 * 3; // don't limit processors !
     private final List<AbstractProcessor> processors;
     private final ValuesStore valuesStore;
     private boolean shouldRun = true;
@@ -42,7 +42,7 @@ public class CopperDaemon implements Runnable {
         System.out.println("Copper daemon has started.");
         while (shouldRun) {
             // Collectors
-            System.out.println("Daemon run");
+//            System.out.println("Daemon run");
             collectorTasks.stream().filter(t->t.shouldRun()).forEach(task-> {
                 Runnable runnable = new Runnable() {
                     @Override
@@ -72,7 +72,7 @@ public class CopperDaemon implements Runnable {
             });
 
             // Wait for some time
-            System.out.println("Daemon sleep");
+//            System.out.println("Daemon sleep");
             try {
                 Thread.sleep(TASK_CHEK_INTERVAL);
             } catch (InterruptedException e) {

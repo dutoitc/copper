@@ -1,8 +1,8 @@
 package ch.mno.copper.process;
 
 import ch.mno.copper.ValuesStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.report.Slf4jReporter;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,15 +12,15 @@ import java.util.List;
  */
 public class Slf4jProcessor extends AbstractProcessor {
 
-    public Logger logger;
+    private Slf4jReporter reporter;
 
     public Slf4jProcessor(String name, List<String> valuesTrigger) {
         super(valuesTrigger);
-        logger = LoggerFactory.getLogger(name);
+        reporter = new Slf4jReporter(name);
     }
 
-    public void trig(String key, String value) {
-    }
+//    public void trig(String key, String value) {
+//    }
 
 
     @Override
@@ -33,7 +33,11 @@ public class Slf4jProcessor extends AbstractProcessor {
                 }
         );
         if (sb.length() > 16) {
-            logger.info(sb.toString());
+            try {
+                reporter.report(sb.toString(), null);
+            } catch (ConnectorException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

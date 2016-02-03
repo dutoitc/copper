@@ -1,2 +1,8 @@
 Quartz: http://www.mkyong.com/java/quartz-2-scheduler-tutorial/
 Proxy support
+
+
+
+
+        // Trigger.when("CPU>0.9").onlyFirstTime
+        // Trigger.when("MEM>0.8 AND CPU>0.9").onlyFirstTime.then("MyReport").with("MessageBuilder1")
