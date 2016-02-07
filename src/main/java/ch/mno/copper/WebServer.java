@@ -89,7 +89,11 @@ public class WebServer implements Runnable {
                 response.setContentType("text/html");
                 response.setStatus(HttpServletResponse.SC_OK);
                 pw.println("<html><head>");
-                pw.println("<style type='text/css'>table{border: 1px solid lightblue;width:60%;margin:auto;} </style>");
+                pw.println("<style type='text/css'>");
+                pw.println("table{border: 1px solid blue;width:60%;margin:auto;text-align:center}");
+                pw.println("table th {border: 1px solid lightblue;padding: 5px;background: lightblue}");
+                pw.println("table td {border: 1px solid lightblue;padding: 5px;}");
+                pw.println("</style>");
                 pw.println("</head><body>");
                 pw.println("<h1>Copper values</h1>");
                 pw.println("<table><thead><th>Key</th><th>Value</th><th>Timestamp</th></thead><tbody>");
