@@ -25,6 +25,7 @@ public abstract class AbstractProcessor {
 //    }
 
     public Collection<String> findKnownKeys(Collection<String> coll) {
+        if (valuesTrigger.size()==1 && valuesTrigger.iterator().next().equals("*")) return coll;
         return CollectionUtils.intersection(valuesTrigger, coll);
     }
 

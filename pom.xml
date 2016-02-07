@@ -21,20 +21,21 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.2.11.v20150529</version>
-                <configuration>
-                    <scanIntervalSeconds>10</scanIntervalSeconds>
-                    <webApp>
-                        <contextPath>/copper</contextPath>
-                    </webApp>
-                    <httpConnector>
-                        <port>30400</port>
-                    </httpConnector>
-                </configuration>
-            </plugin>
+
+            <!--<plugin>-->
+                <!--<groupId>org.eclipse.jetty</groupId>-->
+                <!--<artifactId>jetty-maven-plugin</artifactId>-->
+                <!--<version>9.2.11.v20150529</version>-->
+                <!--<configuration>-->
+                    <!--<scanIntervalSeconds>10</scanIntervalSeconds>-->
+                    <!--<webApp>-->
+                        <!--<contextPath>/copper</contextPath>-->
+                    <!--</webApp>-->
+                    <!--<httpConnector>-->
+                        <!--<port>30400</port>-->
+                    <!--</httpConnector>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
@@ -63,6 +64,16 @@
             <groupId>net.sf.beaver</groupId>
             <artifactId>beaver</artifactId>
             <version>0.9.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>9.3.7.RC1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>9.3.7.RC1</version>
         </dependency>
 
 

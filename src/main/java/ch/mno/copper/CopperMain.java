@@ -19,7 +19,7 @@ import java.util.Map;
 public class CopperMain {
 
     public static void main(String[] args) throws ConnectorException, IOException, InterruptedException {
-        ValuesStore valuesStore = new ValuesStore();
+        ValuesStore valuesStore = ValuesStore.getInstance();
 
         StoryGrammar grammar = new StoryGrammar(new FileInputStream("StoryGrammar.txt"));
         Story story = new Story(grammar, new FileInputStream("samples/jmxStorySimpleCollect.txt"));
@@ -35,6 +35,10 @@ public class CopperMain {
                     }
                 }, "* * * * *")
         );
+
+
+        Thread webserver = new Thread(new WebServer());
+        webserver.start();
 
 
         CopperDaemon daemon = CopperDaemon.runWith(valuesStore, collectorTasks, processors);

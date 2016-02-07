@@ -21,7 +21,8 @@ public class ValuesStore {
     private Map<String, StoreValue> map = new HashMap<>();
     private Set<String> changedValues = new HashSet<>();
 
-    protected ValuesStore() {
+    private ValuesStore() {
+        System.out.println("Creating valueStore)");
     }
 
     public static ValuesStore getInstance() {
@@ -32,6 +33,10 @@ public class ValuesStore {
         if (map.containsKey(key) && map.get(key).value.equals(value)) return;
         map.put(key, new StoreValue(value));
         changedValues.add(key);
+    }
+
+    public Map<String, StoreValue> getValues() {
+        return map;
     }
 
     public Collection<String> getChangedValues() {
@@ -74,6 +79,22 @@ public class ValuesStore {
         public StoreValue(String value) {
             this.value = value;
             this.timestamp = System.currentTimeMillis();
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return "StoreValue{" +
+                    "value='" + value + '\'' +
+                    ", timestamp=" + timestamp +
+                    '}';
+        }
+
+        public long getTimestamp() {
+            return timestamp;
         }
     }
 
