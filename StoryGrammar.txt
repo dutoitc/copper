@@ -1,0 +1,33 @@
+# Story Grammar
+# format: KEY::=VALUE, value must be regexp, with ¦X¦ refer to previously define KEY, recursively insertable there.
+
+
+# BASE
+SPACE::=\s+
+EOL::=\r?\n
+SPACE_EOL::=[\s+\r\n]
+CRON_EL::=[a-zA-Z0-9\-\/\*]+
+CRON_STD::=¦CRON_EL¦( ¦CRON_EL¦){4}
+
+# URLS
+JDBC_URL::=jdbc[:\w@/\d]+\w
+JMX_URL::=service[:\w/\d]+\w
+
+# DEFINE
+DEFINE::=DEFINE¦SPACE¦\w+¦SPACE¦\w+¦EOL¦
+
+# COLLECTORS
+COLLECTOR_ORACLE::=ORACLE¦SPACE_EOL¦+WITH¦SPACE_EOL¦+url=¦JDBC_URL¦,¦SPACE_EOL¦*user=.*?,¦SPACE_EOL¦*password=.*?¦EOL¦
+JMX_QUERY::=QUERY .*? FOR .*?¦SPACE¦AS .*?¦SPACE_EOL¦
+COLLECTOR_JMX::=JMX¦SPACE_EOL¦+WITH¦SPACE_EOL¦+url=¦JMX_URL¦,¦SPACE_EOL¦*user=.*?,¦SPACE_EOL¦*password=\S+?¦SPACE_EOL¦\s*(¦JMX_QUERY¦)+
+COLLECTOR::=COLLECTOR¦SPACE_EOL¦+(¦COLLECTOR_ORACLE¦|¦COLLECTOR_JMX¦)
+
+# WHEN
+CRON_DAILY::=DAILY at \d{4}
+CRON::=CRON¦SPACE_EOL¦+((¦CRON_DAILY¦)|(¦CRON_STD¦))¦EOL¦
+#CRON::=CRON ¦CRON_STD¦¦EOL¦
+WHEN::=WHEN¦SPACE_EOL¦+¦CRON¦
+
+
+# MAIN
+MAIN::=GIVEN¦SPACE_EOL¦+¦COLLECTOR¦¦SPACE_EOL¦*¦WHEN¦¦SPACE_EOL¦*THEN¦SPACE_EOL¦+(STORE VALUES)(¦SPACE_EOL¦+)

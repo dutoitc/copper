@@ -2,6 +2,8 @@ package ch.mno.copper;
 
 import ch.mno.copper.collect.CollectorTask;
 import ch.mno.copper.process.AbstractProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.concurrent.Executors;
  */
 // Optimisations: sleep until next task run (compute on task addition). Log next task run.
 public class CopperDaemon implements Runnable {
+
+    private Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
 
     public static final int N_THREADS = 10;
     public static final int TASK_CHEK_INTERVAL = 1000 * 3; // don't limit processors !
@@ -39,10 +43,10 @@ public class CopperDaemon implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Copper daemon has started.");
+        LOG.info("Copper daemon has started.");
         while (shouldRun) {
             // Collectors
-//            System.out.println("Daemon run");
+            LOG.trace("Daemon run");
             collectorTasks.stream().filter(t->t.shouldRun()).forEach(task-> {
                 Runnable runnable = new Runnable() {
                     @Override
@@ -50,13 +54,14 @@ public class CopperDaemon implements Runnable {
                         // Run CopperTask with exception catch, next run computation and time logging.
                         long t0 = System.currentTimeMillis();
                         try {
-                            System.out.println("Scheduling task " + task.getTaskId());
+                            LOG.info("Scheduling task " + task.getTaskId());
                             task.getRunnable().run();
                         } catch (Exception e) {
-                            System.err.println("Task " + task.getTaskId() + " execution error: " + e.getMessage());
+                            LOG.error("Task {} execution error: {}", task.getTaskId(), e.getMessage());
+                            LOG.error("Error", e);
                         }
                         task.markAsRun();
-                        System.out.println("Task " + task.getTaskId() + " ended in " + (System.currentTimeMillis()-t0)/60 + "s.");
+                        LOG.info("Task {} ended in {}s.", task.getTaskId(), (System.currentTimeMillis()-t0)/60);
                     }
                 };
                 executorService.submit(runnable);
@@ -72,7 +77,7 @@ public class CopperDaemon implements Runnable {
             });
 
             // Wait for some time
-//            System.out.println("Daemon sleep");
+            LOG.trace("Daemon sleep");
             try {
                 Thread.sleep(TASK_CHEK_INTERVAL);
             } catch (InterruptedException e) {

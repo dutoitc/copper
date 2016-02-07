@@ -1,0 +1,9 @@
+GIVEN
+    COLLECTOR ORACLE
+        WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,
+             user=aUser,
+             password=aPass
+WHEN
+    CRON DAILY at 1713
+THEN
+    STORE VALUES

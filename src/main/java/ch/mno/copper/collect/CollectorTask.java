@@ -1,6 +1,8 @@
 package ch.mno.copper.collect;
 
 import it.sauronsoftware.cron4j.Predictor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Usage:
@@ -15,6 +17,7 @@ public class CollectorTask {
     private long nextRun;
     private static long nextId=1;
     private long taskId = nextId++;
+    private Logger LOG = LoggerFactory.getLogger(getClass());
 
     /**
      * pattern minutes(0-59) hours(0-23) day_of_month(1-31), month(1-12 or jan,feb...), days of week(0-6=sunday-saturday or sun mon tue...) e.g. 0 3 * jan-jun,sep-dec mon-fri
@@ -31,7 +34,7 @@ public class CollectorTask {
     private void computeNextRun() {
         Predictor p = new Predictor(cronExpression);
         nextRun = p.nextMatchingTime();
-        System.out.println("Task " + taskId + ": scheduled next run in " + computeTime(nextRun-System.currentTimeMillis()));
+        LOG.info("Task {}: scheduled next run in {}", taskId, computeTime(nextRun-System.currentTimeMillis()));
     }
 
     public long getTaskId() {

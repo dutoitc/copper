@@ -1,0 +1,11 @@
+GIVEN
+    COLLECTOR JMX
+        WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,
+             user=aUser,
+             password=aPass
+        QUERY java.lang:type=Runtime FOR SpecName       AS JMX_LOCAL_RUNTIME_SPECNAME
+        QUERY java.lang:type=Runtime FOR SpecVersion    AS JMX_LOCAL_RUNTIME_SPECVERSION
+WHEN
+    CRON DAILY at 0605
+THEN
+    STORE VALUES

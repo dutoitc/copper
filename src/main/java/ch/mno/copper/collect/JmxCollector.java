@@ -10,6 +10,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,8 +23,8 @@ public class JmxCollector {
     }
 
 
-    public static List<String> jmxQueryWithCreds(String serverUrl, String username, String password, JmxQuery... query) throws ConnectorException {
-        List<String> results = new ArrayList(query.length);
+    public static List<String> jmxQueryWithCreds(String serverUrl, String username, String password, List<JmxQuery> queries) throws ConnectorException {
+        List<String> results = new ArrayList(queries.size());
         try {
             JmxConnector conn;
             if (username==null) {
@@ -32,7 +33,7 @@ public class JmxCollector {
                 conn = new JmxConnector(serverUrl, username, password);
             }
 
-            for (JmxQuery aQuery: query) {
+            for (JmxQuery aQuery: queries) {
                 results.add(new JmxCollector().read(conn, aQuery.objectName, aQuery.value));
             }
         } catch (Exception e) {
@@ -41,8 +42,8 @@ public class JmxCollector {
         return results;
     }
 
-    public static List<String> jmxQuery(String serverUrl, JmxQuery... query) throws ConnectorException {
-        return jmxQueryWithCreds(serverUrl, null, null, query);
+    public static List<String> jmxQuery(String serverUrl, List<JmxQuery> queries) throws ConnectorException {
+        return jmxQueryWithCreds(serverUrl, null, null, queries);
     }
 
 
@@ -61,7 +62,8 @@ public class JmxCollector {
     public static void main(String[] args) throws IOException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException {
         try {
             String url="service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi";
-            List<String> res = JmxCollector.jmxQuery(url, new JmxQuery("java.lang:type=Runtime", "SpecName"), new JmxQuery("java.lang:type=Runtime", "SpecVersion"));
+            List<JmxQuery> queries = Arrays.asList(new JmxQuery("java.lang:type=Runtime", "SpecName"), new JmxQuery("java.lang:type=Runtime", "SpecVersion"));
+            List<String> res = JmxCollector.jmxQuery(url, queries);
             System.out.println("Found Java name: " + res.get(0));
             System.out.println("Found Java version: " + res.get(1));
         } catch (ConnectorException e) {

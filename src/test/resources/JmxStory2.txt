@@ -1,0 +1,4 @@
+GIVEN COLLECTOR JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass+)"(+*/%çä&ç/*SF"
+        QUERY java.lang:type=Runtime FOR SpecName       AS MYVAL1
+WHEN CRON */5 7-18 * * 1-5
+THEN STORE VALUES
