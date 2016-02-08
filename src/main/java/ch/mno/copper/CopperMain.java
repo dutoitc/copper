@@ -33,7 +33,7 @@ public class CopperMain {
                     } catch (ConnectorException e) {
                         e.printStackTrace();
                     }
-                }, "* * * * *")
+                }, story.getCron())
         );
 
 

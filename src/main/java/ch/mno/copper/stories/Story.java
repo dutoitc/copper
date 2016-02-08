@@ -21,6 +21,7 @@ public class Story {
 
     private String storyText;
     private AbstractCollectorWrapper collectorWrapper;
+    private String cron;
 
     public Story(StoryGrammar grammar, InputStream is) throws IOException, ConnectorException {
         String story = IOUtils.toString(is);
@@ -45,7 +46,7 @@ public class Story {
             }
             throw new RuntimeException("Cannot find \n   >>>"+patternJMX+"\nin\n   >>>" + storyText);
         }
-
+        //
         String collectorJmxData = matcher.group(0);
         String patSpaceEol = grammar.getPatternFull("SPACE_EOL");
         String patSpace = grammar.getPatternFull("SPACE");
@@ -70,6 +71,24 @@ public class Story {
             collectorWrapper = new JmxCollectorWrapper(url, username, password, jmxQueries, names);
         } else {
             throw new RuntimeException("Cannot read COLLECTOR_JMX body");
+        }
+
+        // Cron: yet only support WHEN (cron)
+        String patternCron = grammar.getPatternFull("CRON");
+        Matcher matcher3 = Pattern.compile(patternCron, Pattern.DOTALL).matcher(storyText);
+        if (!matcher3.find()) throw new RuntimeException("Only supporting WHEN cron expressions yet.");
+        String cronTxt=matcher3.group(0);
+        matcher3=Pattern.compile("DAILY at (\\d{4})").matcher(cronTxt);
+        if (matcher3.find()) {
+            String date = matcher.group(0).substring(9);
+            int hour = Integer.parseInt(date.substring(0,2),10);
+            int min = Integer.parseInt(date.substring(2,4),10);
+            this.cron = min + " " + hour + " * * *";
+        } else {
+            String patCronStd = grammar.getPatternFull("CRON_STD");
+            matcher3 = Pattern.compile("CRON"+patSpaceEol+"+("+patCronStd+")"+patEol, Pattern.DOTALL).matcher(cronTxt);
+            if (!matcher3.find()) throw new RuntimeException("Not found cron in " + cronTxt);
+            this.cron = matcher3.group(1);
         }
 
 //        List<String> res = JmxCollector.jmxQuery(url, new JmxCollector.JmxQuery("java.lang:type=Runtime", "SpecName"), new JmxCollector.JmxQuery("java.lang:type=Runtime", "SpecVersion"));
@@ -100,5 +119,9 @@ public class Story {
 
     public AbstractCollectorWrapper getCollectorWrapper() {
         return collectorWrapper;
+    }
+
+    public String getCron() {
+        return cron;
     }
 }
