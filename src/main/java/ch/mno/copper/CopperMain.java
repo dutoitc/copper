@@ -9,6 +9,7 @@ import ch.mno.copper.stories.StoryGrammar;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -20,21 +21,32 @@ public class CopperMain {
 
     public static void main(String[] args) throws ConnectorException, IOException, InterruptedException {
         ValuesStore valuesStore = ValuesStore.getInstance();
-
         StoryGrammar grammar = new StoryGrammar(new FileInputStream("StoryGrammar.txt"));
-        Story story = new Story(grammar, new FileInputStream("samples/jmxStorySimpleCollect.txt"));
-
         List<AbstractProcessor> processors = Arrays.asList(new Slf4jProcessor("MyLog1", Arrays.asList("*")));
-        List<CollectorTask> collectorTasks = Arrays.asList(
-                new CollectorTask(() -> {
-                    try {
-                        Map<String, String> values = story.getCollectorWrapper().execute();
-                        values.forEach((key,value)->valuesStore.put(key, value));
-                    } catch (ConnectorException e) {
-                        e.printStackTrace();
-                    }
-                }, story.getCron())
-        );
+        List<CollectorTask> collectorTasks = new ArrayList<>();
+
+        // Load files: yet use sample values if none is specified
+        List<String> files;
+        if (args.length==0) {
+            files =Arrays.asList("samples/jmxStorySimpleCollect.txt");
+        }  else {
+            files = Arrays.asList(args);
+        }
+
+        for (String filename : files) {
+            Story story = new Story(grammar, new FileInputStream(filename));
+
+            collectorTasks.add(
+                    new CollectorTask(() -> {
+                        try {
+                            Map<String, String> values = story.getCollectorWrapper().execute();
+                            values.forEach((key, value) -> valuesStore.put(key, value));
+                        } catch (ConnectorException e) {
+                            e.printStackTrace();
+                        }
+                    }, story.getCron())
+            );
+        }
 
 
         Thread webserver = new Thread(new WebServer());
