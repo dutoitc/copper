@@ -159,6 +159,12 @@ public class StoryGrammarTest {
 //        //Assert.assertTrue(Pattern.compile("WHEN[\\s+\\r\\n]+CRON[\\s+\\r\\n]+((DAILY at \\d{4})|(\\S \\S \\S \\S \\S))",Pattern.DOTALL).matcher("WHEN\n   CRON DAILY at 0605").matches());
 //    }
 
+//    @Test
+//    public void testX() {
+//        testPattern("JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=\\S+?[\\s+\\r\\n]\\s*(QUERY .*? FOR .*?\\s+AS .*?[\\s+\\r\\n])+", "JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass\n" +
+//                "    QUERY java.lang:type=Runtime FOR SpecName    AS JMX_LOCAL_RUNTIME_SPECNAME\n");
+//    }
+
 
     /** Test pattern, and if does not match, find a subpart off pattern which match */
     private void testPattern(String pattern, String value) {

@@ -1,19 +1,15 @@
 package ch.mno.copper.stories;
 
 import ch.mno.copper.collect.AbstractCollectorWrapper;
-import ch.mno.copper.collect.JmxCollector;
-import ch.mno.copper.collect.JmxCollectorWrapper;
+import ch.mno.copper.collect.CollectorWrapperFactory;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * Created by dutoitc on 07.02.2016.
@@ -37,18 +33,11 @@ public class Story {
 
         storyText = story;
 
-        // Extract GIVEN
+        // Extract collector using GIVEN pattern
         Matcher matchGiven = Pattern.compile(grammar.getPatternFull("GIVEN"), Pattern.DOTALL).matcher(story);
         if (!matchGiven.find()) throw new RuntimeException("Cannot find a valid GIVEN expression");
         String storyGiven = matchGiven.group();
-
-        // Find GIVEN collector
-        if (Pattern.compile(grammar.getPatternFull("COLLECTOR_JMX"), Pattern.DOTALL).matcher(story).find()) {
-            AbstractCollectorWrapper coll = JmxCollectorWrapper.buildCollectorJmx(grammar, storyGiven+'\n');
-            this.collectorWrapper = coll;
-        } else {
-            throw new RuntimeException("Cannot find a valid GIVEN expression builder");
-        }
+        this.collectorWrapper = CollectorWrapperFactory.buildCollectorWrapper(grammar, storyGiven);
 
 
         // Cron: yet only support WHEN (cron)

@@ -10,4 +10,5 @@ import java.util.Map;
  */
 public abstract class AbstractCollectorWrapper {
     public abstract Map<String, String> execute() throws ConnectorException;
+
 }

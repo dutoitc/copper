@@ -44,11 +44,11 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
     public static JmxCollectorWrapper buildCollectorJmx(StoryGrammar grammar, String storyGiven) {
         // Temp: JMX
         String patternJMX = grammar.getPatternFull("COLLECTOR_JMX");
-        Matcher matcher = Pattern.compile(patternJMX + "WHEN", Pattern.DOTALL).matcher(storyGiven);
+        Matcher matcher = Pattern.compile(patternJMX, Pattern.DOTALL).matcher(storyGiven);
         if (!matcher.find()) {
             int p = storyGiven.indexOf("COLLECTOR JMX");
             if (p > 0) {
-                SyntaxHelper.checkSyntax(storyGiven.substring(p), patternJMX);
+                SyntaxHelper.checkSyntax(storyGiven, patternJMX);
             }
             throw new RuntimeException("Cannot find \n   >>>" + patternJMX + "\nin\n   >>>" + storyGiven);
         }
@@ -57,7 +57,7 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
         String patSpaceEol = grammar.getPatternFull("SPACE_EOL");
         String patSpace = grammar.getPatternFull("SPACE");
         String patEol = grammar.getPatternFull("EOL");
-        Matcher matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patEol + "(.*)\n", Pattern.DOTALL).matcher(collectorJmxData);
+        Matcher matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patEol + "(.*)", Pattern.DOTALL).matcher(collectorJmxData);
         if (matcher2.find()) {
             String url = matcher2.group(1);
             String username = matcher2.group(2);
@@ -76,7 +76,7 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
             }
             return new JmxCollectorWrapper(url, username, password, jmxQueries, names);
         } else {
-            throw new RuntimeException("Cannot read COLLECTOR_JMX body");
+            throw new RuntimeException("Cannot read COLLECTOR_JMX body in <" + collectorJmxData + ">");
         }
     }
 
