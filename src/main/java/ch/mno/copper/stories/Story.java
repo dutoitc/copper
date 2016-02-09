@@ -4,6 +4,7 @@ import ch.mno.copper.collect.AbstractCollectorWrapper;
 import ch.mno.copper.collect.JmxCollector;
 import ch.mno.copper.collect.JmxCollectorWrapper;
 import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.helpers.SyntaxHelper;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -32,89 +33,59 @@ public class Story {
 
 
         //if (!Pattern.compile(patternMain).matcher(story).matches()) throw new RuntimeException("Invalid story, check syntax");
-        checkSyntax(patternMain, story);
+        SyntaxHelper.checkSyntax(patternMain, story);
 
         storyText = story;
 
-        // Temp: JMX
-        String patternJMX = grammar.getPatternFull("COLLECTOR_JMX");
-        Matcher matcher = Pattern.compile(patternJMX+"WHEN", Pattern.DOTALL).matcher(storyText);
-        if (!matcher.find()) {
-            int p = storyText.indexOf("COLLECTOR JMX");
-            if (p>0) {
-                checkSyntax(storyText.substring(p), patternJMX);
-            }
-            throw new RuntimeException("Cannot find \n   >>>"+patternJMX+"\nin\n   >>>" + storyText);
-        }
-        //
-        String collectorJmxData = matcher.group(0);
-        String patSpaceEol = grammar.getPatternFull("SPACE_EOL");
-        String patSpace = grammar.getPatternFull("SPACE");
-        String patEol = grammar.getPatternFull("EOL");
-        Matcher matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patEol+"(.*)\n", Pattern.DOTALL).matcher(collectorJmxData);
-        if (matcher2.find()) {
-            String url = matcher2.group(1);
-            String username = matcher2.group(2);
-            String password = matcher2.group(3);
-            String queries = matcher2.group(4);
+        // Extract GIVEN
+        Matcher matchGiven = Pattern.compile(grammar.getPatternFull("GIVEN"), Pattern.DOTALL).matcher(story);
+        if (!matchGiven.find()) throw new RuntimeException("Cannot find a valid GIVEN expression");
+        String storyGiven = matchGiven.group();
 
-            Matcher matcher3 = Pattern.compile("QUERY (.*?) FOR (.*?)"+patSpace+"AS (.*?)"+patSpaceEol).matcher(queries);
-            List<JmxCollector.JmxQuery> jmxQueries = new ArrayList<>();
-            List<String> names = new ArrayList<>();
-            while(matcher3.find()) {
-                String oName = matcher3.group(1);
-                String att = matcher3.group(2);
-                String name = matcher3.group(3);
-                jmxQueries.add(new JmxCollector.JmxQuery(oName, att));
-                names.add(name);
-            }
-            collectorWrapper = new JmxCollectorWrapper(url, username, password, jmxQueries, names);
+        // Find GIVEN collector
+        if (Pattern.compile(grammar.getPatternFull("COLLECTOR_JMX"), Pattern.DOTALL).matcher(story).find()) {
+            AbstractCollectorWrapper coll = JmxCollectorWrapper.buildCollectorJmx(grammar, storyGiven+'\n');
+            this.collectorWrapper = coll;
         } else {
-            throw new RuntimeException("Cannot read COLLECTOR_JMX body");
+            throw new RuntimeException("Cannot find a valid GIVEN expression builder");
         }
+
 
         // Cron: yet only support WHEN (cron)
-        String patternCron = grammar.getPatternFull("CRON");
-        Matcher matcher3 = Pattern.compile(patternCron, Pattern.DOTALL).matcher(storyText);
-        if (!matcher3.find()) throw new RuntimeException("Only supporting WHEN cron expressions yet.");
-        String cronTxt=matcher3.group(0);
-        matcher3=Pattern.compile("DAILY at (\\d{4})").matcher(cronTxt);
-        if (matcher3.find()) {
-            String date = matcher.group(0).substring(9);
-            int hour = Integer.parseInt(date.substring(0,2),10);
-            int min = Integer.parseInt(date.substring(2,4),10);
-            this.cron = min + " " + hour + " * * *";
+        if (Pattern.compile(grammar.getPatternFull("CRON"), Pattern.DOTALL).matcher(storyText).find()) {
+            this.cron = buildCron(grammar);
         } else {
-            String patCronStd = grammar.getPatternFull("CRON_STD");
-            matcher3 = Pattern.compile("CRON"+patSpaceEol+"+("+patCronStd+")"+patEol, Pattern.DOTALL).matcher(cronTxt);
-            if (!matcher3.find()) throw new RuntimeException("Not found cron in " + cronTxt);
-            this.cron = matcher3.group(1);
+            throw new RuntimeException("cannot find a WHEN expression");
         }
 
 //        List<String> res = JmxCollector.jmxQuery(url, new JmxCollector.JmxQuery("java.lang:type=Runtime", "SpecName"), new JmxCollector.JmxQuery("java.lang:type=Runtime", "SpecVersion"));
 //        res.forEach(s->System.out.println("Found: " + s));
     }
 
-
-    private void checkSyntax(String pattern, String value) {
-        if (Pattern.compile(pattern, Pattern.DOTALL).matcher(value).matches()) return;
-        // Test latest pattern possible
-        for (int i=pattern.length()-1; i>0; i--) {
-            String currPattern = pattern.substring(0, i);
-            try {
-                Pattern currPatternCompiled = Pattern.compile(currPattern, Pattern.DOTALL);
-
-                for (int j = value.length()-1; j>1; j--) {
-                    String valuePart = value.substring(0, j);
-                    if (currPatternCompiled.matcher(valuePart).matches()) {
-                        throw new RuntimeException("Pattern \n   >>>" + pattern + "\n does not match\n   >>>" + value + "\n but pattern start \n   >>>" + currPattern + "\nmatches\n   >>>" + valuePart);
-                    }
-                }
-            } catch (PatternSyntaxException e) {
-                // Just ignore
-            }
+    private String buildCron(StoryGrammar grammar) {
+        String patSpaceEol = grammar.getPatternFull("SPACE_EOL");
+        String patEol = grammar.getPatternFull("EOL");
+        String patternCron = grammar.getPatternFull("CRON");
+        Matcher matcher3 = Pattern.compile(patternCron, Pattern.DOTALL).matcher(storyText);
+        if (!matcher3.find()) throw new RuntimeException("Only supporting WHEN cron expressions yet.");
+        String cronTxt = matcher3.group(0);
+        matcher3 = Pattern.compile("DAILY at (\\d{4})").matcher(cronTxt);
+        if (matcher3.find()) {
+            String date = matcher3.group(0).substring(9);
+            int hour = Integer.parseInt(date.substring(0, 2), 10);
+            int min = Integer.parseInt(date.substring(2, 4), 10);
+            return min + " " + hour + " * * *";
         }
+
+        String patCronStd = grammar.getPatternFull("CRON_STD");
+        matcher3 = Pattern.compile("CRON" + patSpaceEol + "+(" + patCronStd + ")" + patEol, Pattern.DOTALL).matcher(cronTxt);
+        if (!matcher3.find()) throw new RuntimeException("Not found cron in " + cronTxt);
+        return matcher3.group(1);
     }
+
+
+
+
 
 
     public AbstractCollectorWrapper getCollectorWrapper() {
