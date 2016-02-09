@@ -34,3 +34,5 @@ THEN REPORT BY MAIL to mycustomer@something.com
     with title="Daily reporting"
     with body="Dear customer, here is your income for your sells yesterday: {{myVar3}}"
 ````
+
+Values can be accessed by web: http://aHost:30400/copper/ws/value/XXX with all values easily readable at http://aHost:30400/copper
