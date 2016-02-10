@@ -11,7 +11,9 @@ public class CollectorWrapperFactory {
 
     public static AbstractCollectorWrapper buildCollectorWrapper(StoryGrammar grammar, String storyGiven) {
         if (Pattern.compile(grammar.getPatternFull("COLLECTOR_JMX"), Pattern.DOTALL).matcher(storyGiven).find()) {
-            return JmxCollectorWrapper.buildCollectorJmx(grammar, storyGiven + '\n');
+            return JmxCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
+        } else if (Pattern.compile(grammar.getPatternFull("COLLECTOR_ORACLE"), Pattern.DOTALL).matcher(storyGiven).find()) {
+            return OracleCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
         }
         throw new RuntimeException("Cannot find a valid GIVEN expression builder");
     }

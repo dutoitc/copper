@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by dutoitc on 31.01.2016.
  */
-public class OracleConnector {
+public class OracleConnector implements AutoCloseable {
 
     private Connection connection;
 
@@ -23,13 +23,6 @@ public class OracleConnector {
         }
     }
 
-    public void stop() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * @param connParam e.g. jdbc:oracle:thin:@localhost:1521:xe
@@ -61,4 +54,12 @@ public class OracleConnector {
         return res;
     }
 
+    @Override
+    public void close() throws Exception {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

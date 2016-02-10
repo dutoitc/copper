@@ -64,9 +64,8 @@ public class StoryGrammarTest {
     @Test
     public void testCOLLECTOR_ORACLE() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_ORACLE");
-        Pattern pattern1 = Pattern.compile(pattern);
-        Assert.assertTrue(pattern1.matcher("ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass\n").matches());
-        Assert.assertTrue(pattern1.matcher("ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n   user=aUser,\n   password=aPass\n").matches());
+        testPattern(pattern, "ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass  QUERY select 1 from dual\n");
+        testPattern(pattern, "ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n   user=aUser,\n   password=aPass\n QUERY \"select something as chose\"\n");
     }
 
 
@@ -90,13 +89,16 @@ public class StoryGrammarTest {
     @Test
     public void testCOLLECTOR() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
+        //pattern="COLLECTOR[\\s+\\r\\n]+(ORACLE[\\s+\\r\\n]+WITH[\\s+\\r\\n]+//url=jdbc[:\\w@/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?[\\s+\\r\\n]QUERY ((\\\".*?\\\")|.*)\\r?\\n|JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=\\S+?[\\s+\\r\\n]\\s*(QUERY .*? FOR .*?\\s+AS .*?[\\s+\\r\\n])+)";
         Pattern pattern1 = Pattern.compile(pattern);
-        Assert.assertTrue(pattern1.matcher("COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass\n").matches());
+        //Assert.assertTrue(pattern1.matcher("COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass\n").matches());
+        testPattern(pattern, "COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass QUERY select 1 from dual\n");
         Assert.assertTrue(pattern1.matcher("COLLECTOR JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass QUERY oname FOR att AS att1\n").matches());
-        Assert.assertTrue(pattern1.matcher("COLLECTOR ORACLE\n" +
+        testPattern(pattern,"COLLECTOR ORACLE\n" +
                                 "        WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n" +
                                 "             user=aUser,\n" +
-                                "             password=aPass\n").matches());
+                                "             password=aPass\n"+
+                                "       QUERY \"Select a, b, c\"\n");
         Assert.assertFalse(pattern1.matcher("JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass\n").matches());
     }
 
@@ -126,7 +128,8 @@ public class StoryGrammarTest {
         String pattern = storyGrammar.getPatternFull("MAIN");
         Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
         String story = IOUtils.toString(getClass().getResource("/OracleStory1.txt"));
-        Assert.assertTrue(pattern1.matcher(story).matches());
+//        Assert.assertTrue(pattern1.matcher(story).matches());
+        testPattern(pattern, story);
     }
 
 

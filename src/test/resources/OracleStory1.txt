@@ -3,6 +3,8 @@ GIVEN
         WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,
              user=aUser,
              password=aPass
+        QUERY "select 1 from dual,
+                      2 from trial"
 WHEN
     CRON DAILY at 1713
 THEN

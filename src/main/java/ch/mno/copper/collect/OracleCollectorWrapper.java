@@ -3,7 +3,6 @@ package ch.mno.copper.collect;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.StoryGrammar;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,55 +14,60 @@ import java.util.regex.Pattern;
 /**
  * Created by dutoitc on 07.02.2016.
  */
-public class JmxCollectorWrapper extends AbstractCollectorWrapper {
+public class OracleCollectorWrapper extends AbstractCollectorWrapper {
 
     private String url;
     private String username;
     private String password;
-    private List<JmxCollector.JmxQuery> jmxQueries;
-    private List<String> as;
+    private String query;
 
-    public JmxCollectorWrapper(String url, String username, String password, List<JmxCollector.JmxQuery> jmxQueries, List<String> as) {
+    public OracleCollectorWrapper(String url, String username, String password, String query ) {
         this.url = url;
         this.username =username;
         this.password = password;
-        this.jmxQueries = jmxQueries;
-        this.as = as;
+        this.query = query;
     }
 
     @Override
     public Map<String, String> execute() throws ConnectorException {
-        List<String> values = JmxCollector.jmxQueryWithCreds(url, username, password, jmxQueries);
-        Map<String, String> map = new HashMap();
-        if (values.size()!=as.size()) throw new RuntimeException("Wrong values number, expected " + as.size() + ", got " + values.size());
-        for (int i=0; i<as.size(); i++) {
-            map.put(as.get(i), values.get(i));
+        List<List<String>> table = new OracleCollector().query(url, username, password, query);
+        if (table.size()==1) {
+            return new HashMap<>();// no value
+        } else if (table.size()>2) {
+            throw new RuntimeException("Too much row for execute() use execute2D()");
+        }
+
+        List<String> header = table.get(0);
+        List<String> values = table.get(1);
+        Map<String, String> map = new HashMap<>(header.size()*4/3);
+        for (int i=0; i<header.size(); i++) {
+            map.put(header.get(i), values.get(i));
         }
         return map;
     }
 
     @Override
     public List<List<String>> execute2D() throws ConnectorException {
-        throw new NotImplementedException();
+        return new OracleCollector().query(url, username, password, query);
     }
 
-    public static JmxCollectorWrapper buildCollector(StoryGrammar grammar, String storyGiven) {
-        // Temp: JMX
-        String patternJMX = grammar.getPatternFull("COLLECTOR_JMX");
-        Matcher matcher = Pattern.compile(patternJMX, Pattern.DOTALL).matcher(storyGiven);
+    public static OracleCollectorWrapper buildCollector(StoryGrammar grammar, String storyGiven) {
+        String patternOracle = grammar.getPatternFull("COLLECTOR_ORACLE");
+        Matcher matcher = Pattern.compile(patternOracle, Pattern.DOTALL).matcher(storyGiven);
         if (!matcher.find()) {
-            int p = storyGiven.indexOf("COLLECTOR JMX");
+            int p = storyGiven.indexOf("COLLECTOR_ORACLE");
             if (p > 0) {
-                SyntaxHelper.checkSyntax(storyGiven, patternJMX);
+                SyntaxHelper.checkSyntax(storyGiven, patternOracle);
             }
-            throw new RuntimeException("Cannot find \n   >>>" + patternJMX + "\nin\n   >>>" + storyGiven);
+            throw new RuntimeException("Cannot find \n   >>>" + patternOracle + "\nin\n   >>>" + storyGiven);
         }
-        //
-        String collectorJmxData = matcher.group(0);
+
+        // TODO: fix below (query)
+        String collectorOracleData = matcher.group(0);
         String patSpaceEol = grammar.getPatternFull("SPACE_EOL");
         String patSpace = grammar.getPatternFull("SPACE");
         String patEol = grammar.getPatternFull("EOL");
-        Matcher matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patEol + "(.*)", Pattern.DOTALL).matcher(collectorJmxData);
+        Matcher matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patEol + "(.*)", Pattern.DOTALL).matcher(collectorOracleData);
         if (matcher2.find()) {
             String url = matcher2.group(1);
             String username = matcher2.group(2);
@@ -80,9 +84,10 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
                 jmxQueries.add(new JmxCollector.JmxQuery(oName, att));
                 names.add(name);
             }
-            return new JmxCollectorWrapper(url, username, password, jmxQueries, names);
+            String query="";// TODO
+            return new OracleCollectorWrapper(url, username, password, query);
         } else {
-            throw new RuntimeException("Cannot read COLLECTOR_JMX body in <" + collectorJmxData + ">");
+            throw new RuntimeException("Cannot read COLLECTOR_ORACLE body in <" + collectorOracleData + ">");
         }
     }
 
