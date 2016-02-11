@@ -29,7 +29,7 @@ public class Story {
 
 
         //if (!Pattern.compile(patternMain).matcher(story).matches()) throw new RuntimeException("Invalid story, check syntax");
-        SyntaxHelper.checkSyntax(patternMain, story);
+        SyntaxHelper.checkSyntax(grammar, patternMain, story);
 
         storyText = story;
 

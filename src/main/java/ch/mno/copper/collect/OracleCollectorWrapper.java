@@ -57,7 +57,7 @@ public class OracleCollectorWrapper extends AbstractCollectorWrapper {
         if (!matcher.find()) {
             int p = storyGiven.indexOf("COLLECTOR_ORACLE");
             if (p > 0) {
-                SyntaxHelper.checkSyntax(storyGiven, patternOracle);
+                SyntaxHelper.checkSyntax(grammar, storyGiven, patternOracle);
             }
             throw new RuntimeException("Cannot find \n   >>>" + patternOracle + "\nin\n   >>>" + storyGiven);
         }

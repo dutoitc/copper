@@ -54,7 +54,7 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
         if (!matcher.find()) {
             int p = storyGiven.indexOf("COLLECTOR JMX");
             if (p > 0) {
-                SyntaxHelper.checkSyntax(storyGiven, patternJMX);
+                SyntaxHelper.checkSyntax(grammar, storyGiven, patternJMX);
             }
             throw new RuntimeException("Cannot find \n   >>>" + patternJMX + "\nin\n   >>>" + storyGiven);
         }
