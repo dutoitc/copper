@@ -1,5 +1,6 @@
 package ch.mno.copper.stories;
 
+import ch.mno.copper.helpers.SyntaxHelper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -93,7 +94,7 @@ public class StoryGrammarTest {
         Pattern pattern1 = Pattern.compile(pattern);
         //Assert.assertTrue(pattern1.matcher("COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass\n").matches());
         testPattern(pattern, "COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass QUERY select 1 from dual\n");
-        Assert.assertTrue(pattern1.matcher("COLLECTOR JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass QUERY oname FOR att AS att1\n").matches());
+        testPattern(pattern, "COLLECTOR JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass QUERY oname FOR att AS att1\n");
         testPattern(pattern,"COLLECTOR ORACLE\n" +
                                 "        WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n" +
                                 "             user=aUser,\n" +
@@ -120,6 +121,23 @@ public class StoryGrammarTest {
         Assert.assertTrue(pattern1.matcher("CRON * * * * *\n").matches());
         Assert.assertTrue(pattern1.matcher("CRON 1 1 1 1 1\n").matches());
         Assert.assertTrue(pattern1.matcher("CRON DAILY at 0600\n").matches());
+    }
+
+    @Test
+    public void testPushover() {
+        String txt="REPORT BY PUSHOVER to dest\n" +
+                "     WITH token=xxx\n" +
+                "     WITH title=\"Status RCEnt\"\n" +
+                "     WITH message=\"Status (nouveau, en cours, en erreur, traitée):\n" +
+                "                PR {{RCENT_PR_STG_NOUVEAU}}/{{RCENT_PR_STG_EN_COURS}}/{{RCENT_PR_MST_EN_ERREUR}}/{{RCENT_PR_TRAITEE}}\n" +
+                "                PP {{RCENT_PP_STG_NOUVEAU}}/{{RCENT_PP_STG_EN_COURS}}/{{RCENT_PP_MST_EN_ERREUR}}/{{RCENT_PP_TRAITEE}}\n" +
+                "                VA {{RCENT_VA_STG_NOUVEAU}}/{{RCENT_VA_STG_EN_COURS}}/{{RCENT_VA_MST_EN_ERREUR}}/{{RCENT_VA_TRAITEE}}\n" +
+                "                IN {{RCENT_IN_STG_NOUVEAU}}/{{RCENT_IN_STG_EN_COURS}}/{{RCENT_IN_MST_EN_ERREUR}}/{{RCENT_IN_TRAITEE}}\n";
+
+       /* String pattern = storyGrammar.getPatternFull("PUSHOVER");
+        Pattern pattern1 = Pattern.compile(pattern);
+        Assert.assertTrue(pattern1.matcher(txt).matches());*/
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("PUSHOVER"),txt);
     }
 
 

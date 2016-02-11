@@ -14,10 +14,16 @@ public class SyntaxHelper {
     public static void checkSyntax(StoryGrammar grammar, String pattern, String value) {
         if (Pattern.compile(pattern, Pattern.DOTALL).matcher(value).matches()) return;
 
+        StringBuffer sbM = new StringBuffer();
+        grammar.getKeys().stream().filter(p->Pattern.compile(p, Pattern.DOTALL).matcher(value).find()).forEach(v->sbM.insert(0,v + ','));
 
         StringBuffer sb = new StringBuffer();
         sb.append("Pattern \n   >>>" + pattern + "\n does not match\n   >>>" + value + "\n");
-        grammar.getKeys().stream().filter(p->Pattern.compile(p, Pattern.DOTALL).matcher(value).find()).forEach(v->sb.append("Matching " + v + '\n'));
+        if (sbM.length()>0) {
+            sb.append("But it matches the following patterns: [");
+            sb.append(sbM.toString().substring(0, sbM.length()-1));
+            sb.append("]\n\n");
+        }
 
 
         // Test latest pattern possible
