@@ -20,7 +20,7 @@ public class SyntaxHelper {
         StringBuffer sb = new StringBuffer();
         sb.append("Pattern \n   >>>" + pattern + "\n does not match\n   >>>" + value + "\n");
         if (sbM.length()>0) {
-            sb.append("But it matches the following patterns: [");
+            sb.append("But it matches the following patterns parts: [");
             sb.append(sbM.toString().substring(0, sbM.length()-1));
             sb.append("]\n\n");
         }

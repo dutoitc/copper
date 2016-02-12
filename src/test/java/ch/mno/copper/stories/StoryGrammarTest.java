@@ -132,7 +132,7 @@ public class StoryGrammarTest {
                 "                PR {{RCENT_PR_STG_NOUVEAU}}/{{RCENT_PR_STG_EN_COURS}}/{{RCENT_PR_MST_EN_ERREUR}}/{{RCENT_PR_TRAITEE}}\n" +
                 "                PP {{RCENT_PP_STG_NOUVEAU}}/{{RCENT_PP_STG_EN_COURS}}/{{RCENT_PP_MST_EN_ERREUR}}/{{RCENT_PP_TRAITEE}}\n" +
                 "                VA {{RCENT_VA_STG_NOUVEAU}}/{{RCENT_VA_STG_EN_COURS}}/{{RCENT_VA_MST_EN_ERREUR}}/{{RCENT_VA_TRAITEE}}\n" +
-                "                IN {{RCENT_IN_STG_NOUVEAU}}/{{RCENT_IN_STG_EN_COURS}}/{{RCENT_IN_MST_EN_ERREUR}}/{{RCENT_IN_TRAITEE}}\n";
+                "                IN {{RCENT_IN_STG_NOUVEAU}}/{{RCENT_IN_STG_EN_COURS}}/{{RCENT_IN_MST_EN_ERREUR}}/{{RCENT_IN_TRAITEE}}\"";
 
        /* String pattern = storyGrammar.getPatternFull("PUSHOVER");
         Pattern pattern1 = Pattern.compile(pattern);
@@ -147,7 +147,8 @@ public class StoryGrammarTest {
         Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
         String story = IOUtils.toString(getClass().getResource("/OracleStory1.txt"));
 //        Assert.assertTrue(pattern1.matcher(story).matches());
-        testPattern(pattern, story);
+//        testPattern(pattern, story);
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"),story);
     }
 
 
