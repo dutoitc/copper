@@ -1,0 +1,19 @@
+<h1>Values</h1>
+<div class="row">
+
+    <table class="table-striped" style="width: 80%; margin: auto; border: 1px outset silver">
+        <thead>
+            <th style="text-align:right;padding: 5px">Key</th>
+            <th style="text-align:left; padding-left: 10px">Value</th>
+            <th style="text-align:center">Date</th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="(k,v) in values">
+                <td style="text-align:right;padding: 5px;font-weight:bold">{{k}}</td>
+                <td style="text-align:left; padding-left: 10px">{{v.value}}</td>
+                <td style="text-align:center">{{v.timestamp | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>

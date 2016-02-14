@@ -1,0 +1,18 @@
+<h1>Stories</h1>
+
+
+
+<table class="table-striped" style="width: 90%; margin: auto; border: 1px outset silver">
+    <thead>
+    <th style="text-align:right;padding: 5px">Name</th>
+    <th style="text-align:left; padding-left: 10px">Cron</th>
+    <th style="text-align:center">Text</th>
+    </thead>
+    <tbody>
+    <tr ng-repeat="story in stories">
+        <td style="text-align:right;padding: 5px;font-weight:bold">{{story.name}}</td>
+        <td style="text-align:left; padding-left: 10px">{{story.cron}}</td>
+        <td style="text-align:left"><pre>{{story.storyText}}</pre></td>
+    </tr>
+    </tbody>
+</table>

@@ -16,7 +16,7 @@ import java.util.regex.PatternSyntaxException;
 public class StoryGrammar {
 
     public static final String SEPARATOR = "¦";
-    Map<String, String> values = new HashMap<>();
+   private Map<String, String> values = new HashMap<>();
 
     public StoryGrammar(InputStream source) {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(source))) {

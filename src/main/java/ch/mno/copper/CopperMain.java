@@ -1,12 +1,15 @@
 package ch.mno.copper;
 
+import ch.mno.copper.collect.AbstractCollectorWrapper;
 import ch.mno.copper.collect.CollectorTask;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.process.AbstractProcessor;
 import ch.mno.copper.process.Slf4jProcessor;
+import ch.mno.copper.report.AbstractReporterWrapper;
 import ch.mno.copper.stories.Story;
 import ch.mno.copper.stories.StoryGrammar;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,9 +23,17 @@ import java.util.Map;
 public class CopperMain {
 
     public static void main(String[] args) throws ConnectorException, IOException, InterruptedException {
+        // Base: ValuesStore and Grammar
         ValuesStore valuesStore = ValuesStore.getInstance();
         StoryGrammar grammar = new StoryGrammar(new FileInputStream("StoryGrammar.txt"));
+
+        // DEBUG TODO: remove this
+        valuesStore.put("aKey", "aValue");
+        valuesStore.put("aKey2", "aValue2");
+
+        // TODO: implement this
         List<AbstractProcessor> processors = Arrays.asList(new Slf4jProcessor("MyLog1", Arrays.asList("*")));
+
         List<CollectorTask> collectorTasks = new ArrayList<>();
 
         // Load files: yet use sample values if none is specified
@@ -33,20 +44,39 @@ public class CopperMain {
             files = Arrays.asList(args);
         }
 
+        List<Story> stories = new ArrayList<>();
         for (String filename : files) {
-            Story story = new Story(grammar, new FileInputStream(filename));
+            File file = new File(filename);
+            Story story = new Story(grammar, new FileInputStream(filename), file.toPath());
+            stories.add(story);
 
             collectorTasks.add(
                     new CollectorTask(() -> {
+                        // This code execute at every trigger (cron, ...) for the given story
                         try {
-                            Map<String, String> values = story.getCollectorWrapper().execute();
-                            values.forEach((key, value) -> valuesStore.put(key, value));
+                            Map<String, String> values;
+                            AbstractCollectorWrapper collectorWrapper = story.getCollectorWrapper();
+                            if (collectorWrapper==null) { // Null means to read value store
+                                values = valuesStore.getValuesMapString();
+                            } else {
+                                values = collectorWrapper.execute();
+                            }
+
+                            AbstractReporterWrapper reporter = story.getReporterWrapper();
+                            if (reporter==null) {
+                                values.forEach((key, value) -> valuesStore.put(key, value));
+                            } else {
+                                reporter.execute(values);
+                            }
                         } catch (ConnectorException e) {
                             e.printStackTrace();
                         }
                     }, story.getCron())
             );
+
+            // TODO: create reporter, and link to values
         }
+        CopperMediator.getInstance().setStories(stories);
 
 
         Thread webserver = new Thread(new WebServer());
@@ -59,27 +89,5 @@ public class CopperMain {
         }
 
 
-        // Collect
-//        String url="service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi";
-//        List<String> res = JmxCollector.jmxQuery(url, new JmxCollector.JmxQuery("java.lang:type=Runtime", "SpecName"), new JmxCollector.JmxQuery("java.lang:type=Runtime", "SpecVersion"));
-//        res.forEach(s->System.out.println("Found: " + s));
-//        //valuesStore.post("JAVA_VERSION", res.get(1));
-//
-//        HttpCollector.httpQuery("http://www.shimbawa.ch", "/files/pong1", "/files/pong2", "/none").forEach(s->System.out.println("Found: " + s));
-
-        // Collectors
-        // .stream()
-        // .filter(CollectorsFilter)
-        // .forEach(c->c.process(valuesStore));
-
-        // Processors
-        // .stream()
-        // .filter(ProcessorFilter(valuesStore)) // if changed
-        // .process(valuesStore)
-
-        // Reporters
-        // .stream()
-        // .filter(ReportersFilter(valueStore)) // if changed
-        // .process(reporter)
     }
 }

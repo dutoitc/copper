@@ -73,6 +73,13 @@ public class ValuesStore {
         }
     }
 
+    public Map<String, String> getValuesMapString() {
+        // FIXME make it Java8
+        Map<String, String> values = new HashMap<>();
+        map.forEach((k,v)->values.put(k,v.getValue()));
+        return values;
+    }
+
     public static class StoreValue {
         private String value;
         private long timestamp;
