@@ -30,7 +30,7 @@ public class OracleCollectorWrapper extends AbstractCollectorWrapper {
 
     @Override
     public Map<String, String> execute() throws ConnectorException {
-        List<List<String>> table = new OracleCollector().query(url, username, password, query);
+        List<List<String>> table = new JdbcCollector().query(url, username, password, query);
         if (table.size()==1) {
             return new HashMap<>();// no value
         } else if (table.size()>2) {
@@ -48,7 +48,7 @@ public class OracleCollectorWrapper extends AbstractCollectorWrapper {
 
     @Override
     public List<List<String>> execute2D() throws ConnectorException {
-        return new OracleCollector().query(url, username, password, query);
+        return new JdbcCollector().query(url, username, password, query);
     }
 
     public static OracleCollectorWrapper buildCollector(StoryGrammar grammar, String storyGiven) {

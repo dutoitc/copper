@@ -19,6 +19,7 @@ import java.util.Map;
  */
 public class JmxConnector extends AbstractConnector {
 
+    private JMXConnector jmxc;
     private MBeanServerConnection mbsc;
 
 
@@ -27,7 +28,7 @@ public class JmxConnector extends AbstractConnector {
         Map<String, String[]> env = new HashMap<>();
         String[] creds = {username, password};
         env.put(JMXConnector.CREDENTIALS, creds);
-        JMXConnector jmxc = JMXConnectorFactory.connect(jmxServiceURL, env);
+        jmxc = JMXConnectorFactory.connect(jmxServiceURL, env);
         mbsc = jmxc.getMBeanServerConnection();
     }
 
@@ -41,6 +42,16 @@ public class JmxConnector extends AbstractConnector {
         ObjectName objectName1 = new ObjectName(objectName);
         Object value = mbsc.getAttribute(objectName1, attribute);
         return String.valueOf(value);
+    }
+
+
+    @Override
+    public void close() {
+        try {
+            jmxc.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

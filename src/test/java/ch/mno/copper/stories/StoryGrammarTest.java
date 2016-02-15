@@ -125,8 +125,8 @@ public class StoryGrammarTest {
 
     @Test
     public void testPushover() {
-        String txt="REPORT BY PUSHOVER to dest\n" +
-                "     WITH token=xxx\n" +
+        String txt="REPORT BY PUSHOVER to \"dest\"\n" +
+                "     WITH token=\"xxx\"\n" +
                 "     WITH title=\"Status RCEnt\"\n" +
                 "     WITH message=\"Status (nouveau, en cours, en erreur, traitée):\n" +
                 "                PR {{RCENT_PR_STG_NOUVEAU}}/{{RCENT_PR_STG_EN_COURS}}/{{RCENT_PR_MST_EN_ERREUR}}/{{RCENT_PR_TRAITEE}}\n" +

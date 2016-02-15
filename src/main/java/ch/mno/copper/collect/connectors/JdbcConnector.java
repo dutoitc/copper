@@ -11,11 +11,11 @@ import java.util.List;
 /**
  * Created by dutoitc on 31.01.2016.
  */
-public class OracleConnector implements AutoCloseable {
+public class JdbcConnector implements AutoCloseable {
 
     private Connection connection;
 
-    public void OracleConnector(String connParam, String username, String password) throws ConnectorException {
+    public JdbcConnector(String connParam, String username, String password) throws ConnectorException {
         try {
             connection = getConnection(connParam, username, password);
         } catch (SQLException e) {
@@ -36,22 +36,32 @@ public class OracleConnector implements AutoCloseable {
     }
 
     public List<List<String>> query(String sql) throws ConnectorException {
-        List<List<String>> res = new ArrayList<>();
+        List<List<String>> table = new ArrayList<>();
         try (
                 Statement stmt = connection.createStatement();
                 ResultSet rs = stmt.executeQuery(sql);) {
+
+
+            // Copy columns name
+            int nbColumns = rs.getMetaData().getColumnCount();
+            List<String> row = new ArrayList<>(nbColumns);
+            for (int i=0; i<nbColumns; i++) {
+                row.add(rs.getMetaData().getColumnName(i+1));
+            }
+            table.add(row);
+
             while (rs.next()) {
-                List<String> rowResult = new ArrayList<>(rs.getMetaData().getColumnCount());
-                for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
-                    String value = rs.getString(i);
+                List<String> rowResult = new ArrayList<>(nbColumns);
+                for (int i = 0; i < nbColumns; i++) {
+                    String value = rs.getString(i+1);
                     rowResult.add(value);
                 }
-                res.add(rowResult);
+                table.add(rowResult);
             }
         } catch (SQLException e) {
             throw new ConnectorException("SQL Exception: "+ e.getMessage(), e);
         }
-        return res;
+        return table;
     }
 
     @Override
