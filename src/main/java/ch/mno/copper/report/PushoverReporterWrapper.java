@@ -30,8 +30,8 @@ public class PushoverReporterWrapper extends AbstractReporterWrapper {
         // PUSHOVER::=REPORT BY PUSHOVER to ".*?"¦SPACE_EOL¦+WITH token=".*?"¦SPACE_EOL¦+WITH title=".*?"¦SPACE_EOL¦+WITH message=".*?"
         String spaceEol =  grammar.getPatternFull("SPACE_EOL");
         String pattern="REPORT BY PUSHOVER to \"(.*?)\""+spaceEol+"+WITH token=\"(.*?)\""+spaceEol+"+WITH title=\"(.*?)\""+spaceEol+"+WITH message=\"(.*?)\"";
-        Matcher matcher = Pattern.compile(pattern).matcher(storyGiven);
-        if (!matcher.matches()) throw new RuntimeException("Cannot find a valid PUSHOVER pattern.");
+        Matcher matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(storyGiven);
+        if (!matcher.find()) throw new RuntimeException("Cannot find a valid PUSHOVER pattern in " + storyGiven + ", pattern " + pattern);
 
         String message = matcher.group(4);
         int p1 = message.indexOf("{{");

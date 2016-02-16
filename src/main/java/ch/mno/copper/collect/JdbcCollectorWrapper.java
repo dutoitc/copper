@@ -14,17 +14,41 @@ import java.util.regex.Pattern;
 /**
  * Created by dutoitc on 07.02.2016.
  */
-public class OracleCollectorWrapper extends AbstractCollectorWrapper {
+public class JdbcCollectorWrapper extends AbstractCollectorWrapper {
 
     private String url;
     private String username;
     private String password;
     private String query;
 
-    public OracleCollectorWrapper(String url, String username, String password, String query ) {
+    public JdbcCollectorWrapper(String url, String username, String password, String query ) {
         this.url = url;
         this.username =username;
         this.password = password;
+        this.query = query;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
         this.query = query;
     }
 
@@ -51,7 +75,7 @@ public class OracleCollectorWrapper extends AbstractCollectorWrapper {
         return new JdbcCollector().query(url, username, password, query);
     }
 
-    public static OracleCollectorWrapper buildCollector(StoryGrammar grammar, String storyGiven) {
+    public static JdbcCollectorWrapper buildCollector(StoryGrammar grammar, String storyGiven) {
         String patternOracle = grammar.getPatternFull("COLLECTOR_ORACLE");
         Matcher matcher = Pattern.compile(patternOracle, Pattern.DOTALL).matcher(storyGiven);
         if (!matcher.find()) {
@@ -67,25 +91,13 @@ public class OracleCollectorWrapper extends AbstractCollectorWrapper {
         String patSpaceEol = grammar.getPatternFull("SPACE_EOL");
         String patSpace = grammar.getPatternFull("SPACE");
         String patEol = grammar.getPatternFull("EOL");
-        Matcher matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patEol + "(.*)", Pattern.DOTALL).matcher(collectorOracleData);
+        Matcher matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patSpaceEol + ".*?\"(.*)\"", Pattern.DOTALL).matcher(collectorOracleData);
         if (matcher2.find()) {
             String url = matcher2.group(1);
             String username = matcher2.group(2);
             String password = matcher2.group(3);
-            String queries = matcher2.group(4);
-
-            Matcher matcher3 = Pattern.compile("QUERY (.*?) FOR (.*?)" + patSpace + "AS (.*?)" + patSpaceEol).matcher(queries);
-            List<JmxCollector.JmxQuery> jmxQueries = new ArrayList<>();
-            List<String> names = new ArrayList<>();
-            while (matcher3.find()) {
-                String oName = matcher3.group(1);
-                String att = matcher3.group(2);
-                String name = matcher3.group(3);
-                jmxQueries.add(new JmxCollector.JmxQuery(oName, att));
-                names.add(name);
-            }
-            String query="";// TODO
-            return new OracleCollectorWrapper(url, username, password, query);
+            String query = matcher2.group(4);
+            return new JdbcCollectorWrapper(url, username, password, query);
         } else {
             throw new RuntimeException("Cannot read COLLECTOR_ORACLE body in <" + collectorOracleData + ">");
         }

@@ -1,5 +1,7 @@
 package ch.mno.copper.stories;
 
+import ch.mno.copper.collect.JdbcCollectorWrapper;
+import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -9,6 +11,10 @@ import org.junit.Test;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -142,13 +148,23 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testOracleStory() throws IOException {
+    public void testOracleStory() throws IOException, ConnectorException, URISyntaxException {
         String pattern = storyGrammar.getPatternFull("MAIN");
-        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
-        String story = IOUtils.toString(getClass().getResource("/OracleStory1.txt"));
+//        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
+        URL resource = getClass().getResource("/OracleStory1.txt");
+        String storyText = IOUtils.toString(resource);
 //        Assert.assertTrue(pattern1.matcher(story).matches());
 //        testPattern(pattern, story);
-        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"),story);
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"),storyText);
+
+
+        Path path = Paths.get(resource.toURI());
+        Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), path);
+        JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper)story.getCollectorWrapper();
+        Assert.assertEquals("jdbc:oracle:thin:@//myhost:1521/orcl", wrapper.getUrl());
+        Assert.assertEquals("aUser", wrapper.getUsername());
+        Assert.assertEquals("select 1 from dual,\n" +
+                "                      2 from trial", wrapper.getQuery());
     }
 
 

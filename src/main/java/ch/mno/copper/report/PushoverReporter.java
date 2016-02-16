@@ -24,7 +24,7 @@ public class PushoverReporter implements AbstractReporter  {
 
     @Override
     public void report(String message, Map<String, String> values) throws ConnectorException {
-        HttpConnector conn = new HttpConnector("api.pushover.net", 443, "https");
+        HttpConnector conn = new HttpConnector("api.pushover.net", 443, "https", "localhost", 3128, "http"); // FIXME: temporary test, create configuration file for this
         Map<String, String> params = new HashMap<>();
         params.put("token", values.get(PARAMETERS.APPLICATION_TOKEN));
         params.put("user", values.get(PARAMETERS.DEST));
@@ -35,4 +35,14 @@ public class PushoverReporter implements AbstractReporter  {
         String ret=conn.post("/1/messages.json", params);
         System.out.println(ret); // {"status":1,"request":"ead7edb7aa67c0e4502etc..."}
     }
+
+    public static void main(String[] args) throws ConnectorException {
+        PushoverReporter reporter = new PushoverReporter();
+        HashMap<String, String> values = new HashMap<>();
+        values.put("token", "asEkV6yeh69w8fS8vxGo19eWq2bJjS");
+        values.put("to", "uPCrexdCXkyWg5EirDomUBc5erxjWG");
+        values.put("title", "aTitle");
+        reporter.report("Test 1 2 3\n4 5 6", values);
+    }
+
 }

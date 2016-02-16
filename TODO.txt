@@ -8,5 +8,11 @@ Proxy support
         // Trigger.when("MEM>0.8 AND CPU>0.9").onlyFirstTime.then("MyReport").with("MessageBuilder1")
 
 
+report by web (+websocket notifications on web site)
 
-        mvn jetty:run
+web/stories: last run, next run, "run now", values
+
+values history + web graph
+
+Mark story in 'syntax error' + deactivate + web warning if syntax error, driver not found, ...
+story: report story in syntax error by mail ?

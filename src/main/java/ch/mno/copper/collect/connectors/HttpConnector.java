@@ -36,7 +36,7 @@ public class HttpConnector extends AbstractConnector {
         target = new HttpHost(hostname, port, scheme);
         RequestConfig.Builder builder = RequestConfig.custom();
 
-        if (proxyHostname!=null && proxyPort>-1 && proxyScheme!=null) {
+        if (proxyHostname!=null && proxyPort>-1) {
             HttpHost proxy = new HttpHost(hostname, port, scheme);
             builder.setProxy(proxy);
         }

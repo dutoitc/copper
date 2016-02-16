@@ -13,7 +13,7 @@ public class ReporterWrapperFactory {
         if (Pattern.compile(grammar.getPatternFull("PUSHOVER"), Pattern.DOTALL).matcher(storyGiven).find()) {
             return PushoverReporterWrapper.buildReporter(grammar, storyGiven + '\n');
         } else if (Pattern.compile("STORE VALUES").matcher(storyGiven).find()) {
-            //return OracleCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
+            //return JdbcCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
             return null;
         }
         throw new RuntimeException("Cannot find a valid REPORT expression builder");

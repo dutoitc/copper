@@ -13,7 +13,7 @@ public class CollectorWrapperFactory {
         if (Pattern.compile(grammar.getPatternFull("COLLECTOR_JMX"), Pattern.DOTALL).matcher(storyGiven).find()) {
             return JmxCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
         } else if (Pattern.compile(grammar.getPatternFull("COLLECTOR_ORACLE"), Pattern.DOTALL).matcher(storyGiven).find()) {
-            return OracleCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
+            return JdbcCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
         } else if (Pattern.compile("GIVEN" + grammar.getPatternFull("SPACE_EOL") + "+|STORED VALUES", Pattern.DOTALL).matcher(storyGiven).find()) {
             return null;
         }
