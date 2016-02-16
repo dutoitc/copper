@@ -49,6 +49,10 @@ public class CollectorTask {
         return System.currentTimeMillis()>=nextRun;
     }
 
+    public long getNextRun() {
+        return nextRun;
+    }
+
     public void markAsRun() {
         lastRun = System.currentTimeMillis();
         computeNextRun();
