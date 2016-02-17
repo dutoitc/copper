@@ -2,6 +2,8 @@ package ch.mno.copper.report;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.collect.connectors.HttpConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +12,7 @@ import java.util.Map;
  * Created by dutoitc on 31.01.2016.
  */
 public class PushoverReporter implements AbstractReporter  {
+    private Logger LOG = LoggerFactory.getLogger(getClass());
 
     private static final String URL = "https://api.pushover.net/1/messages.json";
     public static enum PARAMETERS {APPLICATION_TOKEN, DEST, TITLE, HTML};
@@ -26,23 +29,15 @@ public class PushoverReporter implements AbstractReporter  {
     public void report(String message, Map<String, String> values) throws ConnectorException {
         HttpConnector conn = new HttpConnector("api.pushover.net", 443, "https", "localhost", 3128, "http"); // FIXME: temporary test, create configuration file for this
         Map<String, String> params = new HashMap<>();
-        params.put("token", values.get(PARAMETERS.APPLICATION_TOKEN));
-        params.put("user", values.get(PARAMETERS.DEST));
-        params.put("title", values.get(PARAMETERS.TITLE));
+        params.put("token", values.get(PARAMETERS.APPLICATION_TOKEN.toString()));
+        params.put("user", values.get(PARAMETERS.DEST.toString()));
+        params.put("title", values.get(PARAMETERS.TITLE.toString()));
         params.put("message", message);
-        if ("true".equals(values.get(PARAMETERS.HTML))) params.put("html", "1");
-
-        String ret=conn.post("/1/messages.json", params);
-        System.out.println(ret); // {"status":1,"request":"ead7edb7aa67c0e4502etc..."}
+        if ("true".equals(values.get(PARAMETERS.HTML.toString()))) params.put("html", "1");
+        String ret = conn.post(URL, params);
+        LOG.info("Pushover returned {}", ret);
+//        System.out.println(ret); // {"status":1,"request":"ead7edb7aa67c0e4502etc..."}
     }
 
-    public static void main(String[] args) throws ConnectorException {
-        PushoverReporter reporter = new PushoverReporter();
-        HashMap<String, String> values = new HashMap<>();
-        values.put("token", "asEkV6yeh69w8fS8vxGo19eWq2bJjS");
-        values.put("to", "uPCrexdCXkyWg5EirDomUBc5erxjWG");
-        values.put("title", "aTitle");
-        reporter.report("Test 1 2 3\n4 5 6", values);
-    }
 
 }

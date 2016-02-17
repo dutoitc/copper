@@ -51,7 +51,7 @@ public class CopperMain {
             stories.add(story);
 
             collectorTasks.add(
-                    new CollectorTask(() -> {
+                    new CollectorTask(story, () -> {
                         // This code execute at every trigger (cron, ...) for the given story
                         try {
                             Map<String, String> values;

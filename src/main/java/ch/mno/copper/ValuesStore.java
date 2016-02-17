@@ -21,10 +21,6 @@ public class ValuesStore {
     private Map<String, StoreValue> map = new HashMap<>();
     private Set<String> changedValues = new HashSet<>();
 
-    private ValuesStore() {
-        System.out.println("Creating valueStore)");
-    }
-
     public static ValuesStore getInstance() {
         return instance;
     }

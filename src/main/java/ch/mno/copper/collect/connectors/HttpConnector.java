@@ -2,13 +2,20 @@ package ch.mno.copper.collect.connectors;
 
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
@@ -24,7 +31,6 @@ import java.util.Map;
 public class HttpConnector extends AbstractConnector {
 
     private CloseableHttpClient httpclient;
-    private RequestConfig config;
     private HttpHost target;
 
     public HttpConnector(String hostname, int port, String scheme) {
@@ -32,19 +38,14 @@ public class HttpConnector extends AbstractConnector {
     }
 
     public HttpConnector(String hostname, int port, String scheme, String proxyHostname, int proxyPort, String proxyScheme) {
-        httpclient = HttpClients.createDefault();
-        target = new HttpHost(hostname, port, scheme);
-        RequestConfig.Builder builder = RequestConfig.custom();
-
-        if (proxyHostname!=null && proxyPort>-1) {
-            HttpHost proxy = new HttpHost(hostname, port, scheme);
-            builder.setProxy(proxy);
-        }
-
-        config = builder.build();
+        HttpHost proxy = new HttpHost(proxyHostname, proxyPort, proxyScheme);
+        httpclient = HttpClientBuilder.create().setProxy(proxy).build();
+        target = new HttpHost(scheme + "://" + hostname + ":" + port);
     }
 
     public String post(String uri, Map<String, String> values) throws ConnectorException {
+
+
         HttpPost post = new HttpPost(uri);
         final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
         for (Map.Entry<String, String> entry: values.entrySet()) {
@@ -52,7 +53,7 @@ public class HttpConnector extends AbstractConnector {
         }
 
         post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
-        post.setConfig(config);
+//        post.setConfig(config);
 
         try (CloseableHttpResponse response = httpclient.execute(target, post)){
             if (response.getStatusLine().getStatusCode()!=200) {
@@ -65,8 +66,8 @@ public class HttpConnector extends AbstractConnector {
     }
 
     public String get(String uri) throws ConnectorException {
+
         HttpGet request = new HttpGet(uri);
-        request.setConfig(config);
 
         try (CloseableHttpResponse response = httpclient.execute(target, request)){
             if (response.getStatusLine().getStatusCode()!=200) {

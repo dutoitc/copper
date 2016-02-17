@@ -53,15 +53,16 @@ public class CopperDaemon implements Runnable {
                     public void run() {
                         // Run CopperTask with exception catch, next run computation and time logging.
                         long t0 = System.currentTimeMillis();
+                        String taskName = task.getTaskId() + "[" + task.getTitle() + "]";
                         try {
                             LOG.info("Scheduling task " + task.getTaskId());
                             task.getRunnable().run();
                         } catch (Exception e) {
-                            LOG.error("Task {} execution error: {}", task.getTaskId(), e.getMessage());
+                            LOG.error("Task {} execution error: {}", taskName, e.getMessage());
                             LOG.error("Error", e);
                         }
                         task.markAsRun();
-                        LOG.info("Task {} ended in {}s.", task.getTaskId(), (System.currentTimeMillis()-t0)/60);
+                        LOG.info("Task {} ended in {}s.", taskName, (System.currentTimeMillis()-t0)/60);
                     }
                 };
                 executorService.submit(runnable);
