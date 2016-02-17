@@ -5,6 +5,8 @@ import ch.mno.copper.process.AbstractProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -19,7 +21,7 @@ public class CopperDaemon implements Runnable {
     private Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
 
     public static final int N_THREADS = 10;
-    public static final int TASK_CHEK_INTERVAL = 1000 * 3; // don't limit processors !
+    public static int TASK_CHEK_INTERVAL = 1000 * 3; // don't overload processors !
     private final List<AbstractProcessor> processors;
     private final ValuesStore valuesStore;
     private boolean shouldRun = true;
@@ -27,7 +29,7 @@ public class CopperDaemon implements Runnable {
 
     private ExecutorService executorService;
 
-    public CopperDaemon(ValuesStore valuesStore, List<CollectorTask> collectorTasks, List<AbstractProcessor> processors) {
+    private CopperDaemon(ValuesStore valuesStore, List<CollectorTask> collectorTasks, List<AbstractProcessor> processors) {
         executorService = Executors.newFixedThreadPool(N_THREADS);
         this.collectorTasks = collectorTasks;
         this.processors = processors;
@@ -77,6 +79,13 @@ public class CopperDaemon implements Runnable {
                 }
             });
 
+            // Save
+            try {
+                valuesStore.save(new FileOutputStream("valuesStore.tmp"));
+            } catch (IOException e) {
+                throw new RuntimeException("Cannot save to valuesStore.tmp");
+            }
+
             // Wait for some time
             LOG.trace("Daemon sleep");
             try {
@@ -91,24 +100,5 @@ public class CopperDaemon implements Runnable {
     public void stop() {
         shouldRun = false;
     }
-
-
-    /*
-    Scheduler s = new Scheduler();
-		// Schedule a once-a-minute task.
-		s.schedule("* * * * *", new Runnable() {
-			public void run() {
-				System.out.println("Another minute ticked away...");
-			}
-		});
-		// Starts the scheduler.
-		s.start();
-
-		String pattern = "0 3 * jan-jun,sep-dec mon-fri";
-Predictor p = new Predictor(pattern);
-for (int i = 0; i < n; i++) {
-	System.out.println(p.nextMatchingDate());
-}
-     */
 
 }

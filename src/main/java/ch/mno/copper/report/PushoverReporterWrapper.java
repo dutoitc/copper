@@ -15,10 +15,27 @@ public class PushoverReporterWrapper extends AbstractReporterWrapper {
 
     private StoryGrammar grammar;
     private String storyGiven;
+    private String applicationToken;
+    private String dest;
+    private String title;
+    private String messageTemplate;
+    private PushoverReporter reporter;
 
     public PushoverReporterWrapper(StoryGrammar grammar, String storyGiven) {
         this.grammar = grammar;
         this.storyGiven = storyGiven;
+
+        // PUSHOVER::=REPORT BY PUSHOVER to ".*?"¦SPACE_EOL¦+WITH token=".*?"¦SPACE_EOL¦+WITH title=".*?"¦SPACE_EOL¦+WITH message=".*?"
+        String spaceEol =  grammar.getPatternFull("SPACE_EOL");
+        String pattern="REPORT BY PUSHOVER to \"(.*?)\""+spaceEol+"+WITH token=\"(.*?)\""+spaceEol+"+WITH title=\"(.*?)\""+spaceEol+"+WITH message=\"(.*?)\"";
+        Matcher matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(storyGiven);
+        if (!matcher.find()) throw new RuntimeException("Cannot find a valid PUSHOVER pattern in " + storyGiven + ", pattern " + pattern);
+
+        dest = matcher.group(1);
+        applicationToken = matcher.group(2);
+        title = matcher.group(3);
+        messageTemplate = matcher.group(4);
+        PushoverReporter reporter = new PushoverReporter();
     }
 
     public static AbstractReporterWrapper buildReporter(StoryGrammar grammar, String storyGiven) {
@@ -27,13 +44,7 @@ public class PushoverReporterWrapper extends AbstractReporterWrapper {
 
     @Override
     public void execute(Map<String, String> values) {
-        // PUSHOVER::=REPORT BY PUSHOVER to ".*?"¦SPACE_EOL¦+WITH token=".*?"¦SPACE_EOL¦+WITH title=".*?"¦SPACE_EOL¦+WITH message=".*?"
-        String spaceEol =  grammar.getPatternFull("SPACE_EOL");
-        String pattern="REPORT BY PUSHOVER to \"(.*?)\""+spaceEol+"+WITH token=\"(.*?)\""+spaceEol+"+WITH title=\"(.*?)\""+spaceEol+"+WITH message=\"(.*?)\"";
-        Matcher matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(storyGiven);
-        if (!matcher.find()) throw new RuntimeException("Cannot find a valid PUSHOVER pattern in " + storyGiven + ", pattern " + pattern);
-
-        String message = matcher.group(4);
+        String message = messageTemplate;
         int p1 = message.indexOf("{{");
         while (p1>0) {
             int p2 = message.indexOf("}}");
@@ -47,12 +58,12 @@ public class PushoverReporterWrapper extends AbstractReporterWrapper {
         }
 
         Map<String, String> reporterValues = new HashMap<>();
-        reporterValues.put(PushoverReporter.PARAMETERS.TITLE.toString(), matcher.group(3));
-        reporterValues.put(PushoverReporter.PARAMETERS.APPLICATION_TOKEN.toString(), matcher.group(2));
-        reporterValues.put(PushoverReporter.PARAMETERS.DEST.toString(), matcher.group(1));
+        reporterValues.put(PushoverReporter.PARAMETERS.TITLE.toString(), title);
+        reporterValues.put(PushoverReporter.PARAMETERS.APPLICATION_TOKEN.toString(),applicationToken);
+        reporterValues.put(PushoverReporter.PARAMETERS.DEST.toString(), dest);
         reporterValues.put(PushoverReporter.PARAMETERS.HTML.toString(), "true");
 
-        PushoverReporter reporter = new PushoverReporter();
+
         try {
             reporter.report(message, reporterValues);
         } catch (ConnectorException e) {

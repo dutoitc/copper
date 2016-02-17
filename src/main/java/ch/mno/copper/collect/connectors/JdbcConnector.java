@@ -1,5 +1,7 @@
 package ch.mno.copper.collect.connectors;
 
+import oracle.jdbc.OracleDriver;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -7,7 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import oracle.jdbc.OracleDriver;
 
 /**
  * Created by dutoitc on 31.01.2016.
@@ -34,7 +35,7 @@ public class JdbcConnector implements AutoCloseable {
      */
     public Connection getConnection(String connParam, String username, String password) throws SQLException {
         if (connParam.contains("oracle")) {
-            DriverManager.registerDriver (new oracle.jdbc.OracleDriver());
+            DriverManager.registerDriver (new OracleDriver());
         }
         return DriverManager.getConnection(connParam, username, password);
     }

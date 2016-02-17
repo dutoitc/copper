@@ -2,6 +2,7 @@ package ch.mno.copper;
 
 import ch.mno.copper.collect.AbstractCollectorWrapper;
 import ch.mno.copper.collect.CollectorTask;
+import ch.mno.copper.collect.CollectorTaskImpl;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.process.AbstractProcessor;
 import ch.mno.copper.process.Slf4jProcessor;
@@ -27,10 +28,6 @@ public class CopperMain {
         ValuesStore valuesStore = ValuesStore.getInstance();
         StoryGrammar grammar = new StoryGrammar(new FileInputStream("StoryGrammar.txt"));
 
-        // DEBUG TODO: remove this
-        valuesStore.put("aKey", "aValue");
-        valuesStore.put("aKey2", "aValue2");
-
         // TODO: implement this
         List<AbstractProcessor> processors = Arrays.asList(new Slf4jProcessor("MyLog1", Arrays.asList("*")));
 
@@ -51,7 +48,7 @@ public class CopperMain {
             stories.add(story);
 
             collectorTasks.add(
-                    new CollectorTask(story, () -> {
+                    new CollectorTaskImpl(story, () -> {
                         // This code execute at every trigger (cron, ...) for the given story
                         try {
                             Map<String, String> values;

@@ -1,5 +1,12 @@
 package ch.mno.copper;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,6 +28,14 @@ public class ValuesStore {
     private Map<String, StoreValue> map = new HashMap<>();
     private Set<String> changedValues = new HashSet<>();
 
+    static {
+        try {
+            instance.load(new FileInputStream("valuesStore.tmp"));
+        } catch (IOException e) {
+            System.err.println("Cannot load valuesStore.tmp, ignoring");
+        }
+    }
+
     public static ValuesStore getInstance() {
         return instance;
     }
@@ -33,6 +48,44 @@ public class ValuesStore {
 
     public Map<String, StoreValue> getValues() {
         return map;
+    }
+
+    public void save(OutputStream os) throws IOException {
+        PrintWriter pw = new PrintWriter(os);
+        pw.write("1\n");
+        pw.write(map.size()+"\n");
+        map.forEach((k,v)->pw.write(k+"|"+v.getValue().replace("|", "£")+"|"+v.getTimestamp()+"\n"));
+        pw.write(""+changedValues.size()+'\n');
+        changedValues.forEach(k->pw.write(k+'\n'));
+        pw.flush();
+        pw.close();
+        os.flush();
+    }
+
+    public void load(InputStream is) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+        // Version
+        int version = Integer.parseInt(reader.readLine());
+        if (version!=1) throw new RuntimeException("Unsupported version: " + version);
+
+        // Size
+        int mapSize = Integer.parseInt(reader.readLine());
+        map = new HashMap<>(mapSize*4/3);
+
+        // Map
+        for (int noLine=0; noLine<mapSize; noLine++) {
+            String[] values = reader.readLine().split("\\|");
+            map.put(values[0], new StoreValue(values[1].replaceAll("£", "|"), Long.parseLong(values[2])));
+        }
+
+        // List
+        int listSize = Integer.parseInt(reader.readLine());
+        changedValues = new HashSet<String>(listSize*4/3);
+        for (int i=0; i<listSize; i++) {
+            changedValues.add(reader.readLine());
+        }
+        System.out.println("ValuesStore loaded from tmp file");
     }
 
     public Collection<String> getChangedValues() {
@@ -82,6 +135,11 @@ public class ValuesStore {
         public StoreValue(String value) {
             this.value = value;
             this.timestamp = System.currentTimeMillis();
+        }
+
+        StoreValue(String value, long timestamp) {
+            this.value = value;
+            this.timestamp = timestamp;
         }
 
         public String getValue() {
