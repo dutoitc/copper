@@ -1,6 +1,8 @@
 Quartz: http://www.mkyong.com/java/quartz-2-scheduler-tutorial/
 Proxy support
 
+Story name must be unique
+
 
 
 

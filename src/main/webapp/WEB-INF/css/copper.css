@@ -84,3 +84,10 @@ body {
   margin-top: 0;
 }
 
+
+table th {
+    padding: 7px;
+}
+table td {
+    padding: 7px;
+}

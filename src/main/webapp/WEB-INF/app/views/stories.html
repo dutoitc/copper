@@ -2,17 +2,22 @@
 
 
 
-<table class="table-striped" style="width: 90%; margin: auto; border: 1px outset silver">
+<table class="table-striped table-bordered" style="width: 100%; border: 1px outset silver">
     <thead>
-    <th style="text-align:right;padding: 5px">Name</th>
+    <th style="text-align:right;padding: 5px;">Name</th>
+    <th style="text-align:left; padding-left: 10px">Actions</th>
     <th style="text-align:left; padding-left: 10px">Cron</th>
-    <th style="text-align:center">Text</th>
     </thead>
     <tbody>
     <tr ng-repeat="story in stories">
-        <td style="text-align:right;padding: 5px;font-weight:bold">{{story.name}}</td>
+        <td style="text-align:right;padding: 5px;font-weight:bold"><a title="{{story.storyText}}">{{story.name}}</a></td>
         <td style="text-align:left; padding-left: 10px">{{story.cron}}</td>
-        <td style="text-align:left"><pre>{{story.storyText}}</pre></td>
+        <td>
+            <button class="btn btn-primary" ng-click="runStory(story.name)">Run</button>
+            <a href="#/story/{{story.name}}" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-edit"></span> Edit</a>
+
+        </td>
     </tr>
     </tbody>
+
 </table>

@@ -4,6 +4,9 @@ package ch.mno.copper.collect;
  * Created by dutoitc on 17.02.2016.
  */
 public interface CollectorTask {
+
+    String storyName();
+
     String getTitle();
 
     long getTaskId();

@@ -12,6 +12,7 @@ public class CopperMediator {
 
     private static final CopperMediator instance = new CopperMediator();
     private List<Story> stories;
+    private CopperDaemon daemon;
 
     public static CopperMediator getInstance() { return instance; }
 
@@ -22,5 +23,13 @@ public class CopperMediator {
 
     public List<Story> getStories() {
         return stories;
+    }
+
+    public void run(String storyName) {
+        daemon.runStory(storyName);
+    }
+
+    public void registerCopperDaemon(CopperDaemon daemon) {
+        this.daemon = daemon;
     }
 }

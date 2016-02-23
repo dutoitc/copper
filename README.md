@@ -1,6 +1,6 @@
 # copper
 A tool to Collect Operationg data, Process and rEpoRt them. Built as an application monitoring and alerting tool.
-It is actually under strong developement (2-20 feb 2016 approx), but the collector part and webservice is already working.
+It is actually under strong developement (24 feb 2016 approx), and already working for JMX/DB collectors and Pushover reporter.
 
 
 # How it works ?
@@ -61,8 +61,8 @@ Here is a list of actual components:
 Here is a little wishlist. Add yours (report to dutoitc@shimbawa.ch)
 * Read values from property file (like username-passwords)
 * service values security
-* More collectors (Mail)
-* More reporters (Jabber)
+* More collectors (logs)
+* More reporters (Jabber, Mail)
 * Improved triggering
 * Rework story parsing with ebnf compiler ? parsing tree ?
 * Generation of monitoring web applications

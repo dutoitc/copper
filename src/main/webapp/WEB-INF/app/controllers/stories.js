@@ -18,6 +18,13 @@ angular.module('copperApp.stories', ['ngRoute'])
                 $scope.stories=data;
         });
 
+    $scope.runStory = function(storyName) {
+        $http.get('/ws/story/' + storyName + '/run')
+                .success(function(data) {
+                    alert(data);
+            });
+    }
+
 /*
 
     $http.get('data/routes.json')

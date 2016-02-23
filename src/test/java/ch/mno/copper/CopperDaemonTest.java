@@ -53,6 +53,11 @@ public class CopperDaemonTest {
         int nbMark = 0;
 
         @Override
+        public String storyName() {
+            return "aName";
+        }
+
+        @Override
         public String getTitle() {
             return "aTitle";
         }

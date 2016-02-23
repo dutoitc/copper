@@ -12,6 +12,11 @@ angular.module('copperApp.overview', ['ngRoute'])
     var scope = $scope;
     var self=this;
 
+     $http.get('ws/overview')
+            .success(function(data) {
+                $scope.overview=data;
+            });
+
 
 /*
     $http.get('data/statistics.json')

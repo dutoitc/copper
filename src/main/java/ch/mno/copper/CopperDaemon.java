@@ -5,8 +5,16 @@ import ch.mno.copper.process.AbstractProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.MBeanServer;
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXServiceURL;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.net.MalformedURLException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -26,8 +34,10 @@ public class CopperDaemon implements Runnable {
     private final ValuesStore valuesStore;
     private boolean shouldRun = true;
     private List<CollectorTask> collectorTasks;
+    private List<String> storyToRun = new ArrayList<>();
 
     private ExecutorService executorService;
+    private JMXConnectorServer jmxConnectorServer;
 
     private CopperDaemon(ValuesStore valuesStore, List<CollectorTask> collectorTasks, List<AbstractProcessor> processors) {
         executorService = Executors.newFixedThreadPool(N_THREADS);
@@ -38,6 +48,7 @@ public class CopperDaemon implements Runnable {
 
     public static CopperDaemon runWith(ValuesStore valuesStore, List<CollectorTask> collectorTasks, List<AbstractProcessor> processors) {
         CopperDaemon daemon = new CopperDaemon(valuesStore, collectorTasks, processors);
+        CopperMediator.getInstance().registerCopperDaemon(daemon);
         Thread thread = new Thread(daemon);
         thread.start();
         return daemon;
@@ -46,29 +57,49 @@ public class CopperDaemon implements Runnable {
     @Override
     public void run() {
         LOG.info("Copper daemon has started.");
+
+        // Start JMX
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        try {
+            java.rmi.registry.LocateRegistry.createRegistry(30409);
+            JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:30409/server");
+            jmxConnectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
+            jmxConnectorServer.start();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         while (shouldRun) {
             // Collectors
             LOG.trace("Daemon run");
-            collectorTasks.stream().filter(t->t.shouldRun()).forEach(task-> {
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        // Run CopperTask with exception catch, next run computation and time logging.
-                        long t0 = System.currentTimeMillis();
-                        String taskName = task.getTaskId() + "[" + task.getTitle() + "]";
-                        try {
-                            LOG.info("Scheduling task " + task.getTaskId());
-                            task.getRunnable().run();
-                        } catch (Exception e) {
-                            LOG.error("Task {} execution error: {}", taskName, e.getMessage());
-                            LOG.error("Error", e);
+            synchronized (storyToRun) {
+                collectorTasks.stream().filter(t -> t.shouldRun() || storyToRun.contains(t.storyName())).forEach(task -> {
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            // Run CopperTask with exception catch, next run computation and time logging.
+                            long t0 = System.currentTimeMillis();
+                            String taskName = task.getTaskId() + "[" + task.getTitle() + "]";
+                            try {
+                                LOG.info("Scheduling task " + task.getTaskId());
+                                task.getRunnable().run();
+                            } catch (Exception e) {
+                                LOG.error("Task {} execution error: {}", taskName, e.getMessage());
+                                LOG.error("Error", e);
+                            }
+                            task.markAsRun();
+                            LOG.info("Task {} ended in {}s.", taskName, (System.currentTimeMillis() - t0) / 60);
                         }
-                        task.markAsRun();
-                        LOG.info("Task {} ended in {}s.", taskName, (System.currentTimeMillis()-t0)/60);
-                    }
-                };
-                executorService.submit(runnable);
-            });
+                    };
+                    executorService.submit(runnable);
+                });
+                storyToRun.clear();
+            }
 
             // Processors
             Collection<String> changedValues = valuesStore.getChangedValues();
@@ -99,6 +130,15 @@ public class CopperDaemon implements Runnable {
 
     public void stop() {
         shouldRun = false;
+        try {
+            jmxConnectorServer.stop();
+        } catch (IOException e) {
+        }
     }
 
+    public void runStory(String storyName) {
+        synchronized (storyToRun) {
+            storyToRun.add(storyName);
+        }
+    }
 }

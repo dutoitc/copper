@@ -5,6 +5,7 @@ var copperApp = angular.module('copperApp', [
   'ngRoute',
   'copperApp.overview',
   'copperApp.stories',
+  'copperApp.story',
   'copperApp.values',
   'ui.bootstrap'
 ])

@@ -35,6 +35,11 @@ public class CollectorTaskImpl implements CollectorTask {
     }
 
     @Override
+    public String storyName() {
+        return story.getName();
+    }
+
+    @Override
     public String getTitle() {
         return story.getName().replace(".txt", "");
     }

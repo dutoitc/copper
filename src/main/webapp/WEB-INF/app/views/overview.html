@@ -1,2 +1,16 @@
 <h1>Overview</h1>
 
+<table class="table-striped table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Story name</th>
+            <th>Next run</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="o in overview.overviewStories">
+            <td>{{o.storyId}}</td>
+            <td>{{o.nextRun | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
+        </tr>
+    </tbody>
+</table>
