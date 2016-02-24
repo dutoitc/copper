@@ -35,7 +35,7 @@ public class HttpConnectorTest {
             conn.get("/something");
             Assert.fail("Should raise an exception");
         } catch (ConnectorException e) {
-            Assert.assertTrue(e.getMessage().contains("Connection refused"));
+            Assert.assertTrue(e.getMessage(), e.getMessage().contains("Connection refused"));
         }
     }
 

@@ -8,9 +8,11 @@ import ch.mno.copper.report.AbstractReporterWrapper;
 import ch.mno.copper.report.ReporterWrapperFactory;
 import org.apache.commons.io.IOUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +26,12 @@ public class Story {
     private Path source;
     private transient AbstractCollectorWrapper collectorWrapper;
     private transient AbstractReporterWrapper reporterWrapper;
+
+
+    public Story(StoryGrammar grammar, String storyName, String storyText) throws IOException, ConnectorException {
+        this(grammar, new ByteArrayInputStream(storyText.getBytes()), Paths.get("stories/" + storyName));
+    }
+
 
     public Story(StoryGrammar grammar, InputStream is, Path source) throws IOException, ConnectorException {
         this.source = source;
@@ -117,5 +125,9 @@ public class Story {
 
     public String getStoryText() {
         return storyText;
+    }
+
+    public Path getSource() {
+        return source;
     }
 }

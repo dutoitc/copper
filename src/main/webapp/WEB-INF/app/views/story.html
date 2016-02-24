@@ -1,22 +1,23 @@
-<h1>Story {{story.name}}</h1>
+<h1>Story {{originalStoryName}}</h1>
 
+{{errors}}<br/>{{message}}<br/>
 
+<div ng-show="redirectToStories">
+    <a href="#/stories" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span>Go back to Stories list</a>
+</div>
 
-<form role="form" name="storyForm" ng-submit="submit()">
+<form role="form" name="storyForm" ng-submit="submit()" ng-hide="redirectToStories">
     <input type="hidden" name="originalStoryName" value="{{story.name}}"/>
-    {{errors}}<br/>{{message}}<br/>
+
+
     <div class="form-group">
         <label for="storyName">Name</label>
         <input type="text" class="form-control" ng-model="story.name" id="storyName" name="storyName"/>
-    </div>
-    <div class="form-group">
-        <label for="storyCron">Cron</label>
-        <input type="text" class="form-control" ng-model="story.cron" id="storyCron" name="storyCron"/>
     </div>
     <div class="form-group">
         <label for="storyText">Text</label>
         <textarea class="form-control" rows="10" ng-model="story.storyText" id="storyText" name="storyText"></textarea>
     </div>
     <button type="button" class="btn btn-primary glyphicon glyphicon-ok" ng-click="submit()" ng-show="storyForm.$dirty">Save changes</button>
-    <a href="#/storyies" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span> Cancel</a>
+    <a href="#/stories" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span> Cancel</a>
 </form>

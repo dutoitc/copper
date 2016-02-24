@@ -2,20 +2,12 @@ package ch.mno.copper.collect.connectors;
 
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
@@ -38,8 +30,12 @@ public class HttpConnector extends AbstractConnector {
     }
 
     public HttpConnector(String hostname, int port, String scheme, String proxyHostname, int proxyPort, String proxyScheme) {
-        HttpHost proxy = new HttpHost(proxyHostname, proxyPort, proxyScheme);
-        httpclient = HttpClientBuilder.create().setProxy(proxy).build();
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        if (proxyHostname!=null) {
+            HttpHost proxy = new HttpHost(proxyHostname, proxyPort, proxyScheme);
+            httpClientBuilder.setProxy(proxy);
+        }
+        httpclient = httpClientBuilder.build();
         target = new HttpHost(scheme + "://" + hostname + ":" + port);
     }
 

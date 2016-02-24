@@ -17,6 +17,7 @@ public class ValuesStoreTest {
     @Test
     public void testX() {
         ValuesStore st = ValuesStore.getInstance();
+        st.clear();
         st.put("key1", "value1");
         Assert.assertEquals(1, st.getChangedValues().size());
         Assert.assertEquals(0, st.getChangedValues().size());

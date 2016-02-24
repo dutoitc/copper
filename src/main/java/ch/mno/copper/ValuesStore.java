@@ -129,6 +129,11 @@ public class ValuesStore {
         return values;
     }
 
+    public void clear() {
+        map.clear();
+        changedValues.clear();
+    }
+
     public static class StoreValue {
         private String value;
         private long timestamp;

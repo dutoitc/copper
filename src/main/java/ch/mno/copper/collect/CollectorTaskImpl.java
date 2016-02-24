@@ -47,7 +47,7 @@ public class CollectorTaskImpl implements CollectorTask {
     private void computeNextRun() {
         Predictor p = new Predictor(cronExpression);
         nextRun = p.nextMatchingTime();
-        LOG.info("Task {}: scheduled next run in {}", taskId + "[" + story.getName() + "]", computeTime(nextRun-System.currentTimeMillis()));
+        LOG.info("Task {}: scheduled next run in {}", taskId + (story==null?"":("[" + story.getName() + "]")), computeTime(nextRun-System.currentTimeMillis()));
     }
 
     @Override

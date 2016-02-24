@@ -1,5 +1,6 @@
 package ch.mno.copper;
 
+import ch.mno.copper.web.WebServer;
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;

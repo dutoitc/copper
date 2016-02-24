@@ -11,31 +11,29 @@ angular.module('copperApp.story', ['ngRoute'])
 .controller('StoryCtrl', ['$http', '$scope', '$routeParams', function($http, $scope, $routeParams) {
     var scope = $scope;
     var self=this;
-    var originalStoryName = $routeParams.pStoryName;
+    $scope.originalStoryName = $routeParams.pStoryName;
+    $scope.redirectToStories=false;
 
 
-    $http.get('ws/story/'+originalStoryName)
+    $http.get('ws/story/'+$scope.originalStoryName)
         .success(function(data) {
-            console.log(data);
-            $scope.story=data[0];
-            $scope.dirty=false;
+            $scope.story=data;
     });
 
     $scope.submit = function() {
         var data = JSON.stringify({
                         //json: JSON.stringify($scope.story)
-                        originalStoryName: originalStoryName,
+                        originalStoryName: $scope.originalStoryName,
                         storyName: $scope.story.name,
-                        cron: $scope.story.cron,
                         storyText: $scope.story.storyText
                     });
 
-        $http.post('ws/story/'+originalStoryName, data)
+        $http.post('ws/story/'+$scope.originalStoryName, data)
             .then(
                 function(data, status) {
                     if (data.data=="Ok") {
                         $scope.message = "The story has been saved.";
-                        $scope.dirty=false;
+                        $scope.redirectToStories=true;
                     } else {
                         $scope.message = "Unknown return: " + data;
                     }

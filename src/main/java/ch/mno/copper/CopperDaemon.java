@@ -34,7 +34,7 @@ public class CopperDaemon implements Runnable {
     private final ValuesStore valuesStore;
     private boolean shouldRun = true;
     private List<CollectorTask> collectorTasks;
-    private List<String> storyToRun = new ArrayList<>();
+    private List<String> storiesToRun = new ArrayList<>(); /** Manual run by the web */
 
     private ExecutorService executorService;
     private JMXConnectorServer jmxConnectorServer;
@@ -77,8 +77,8 @@ public class CopperDaemon implements Runnable {
         while (shouldRun) {
             // Collectors
             LOG.trace("Daemon run");
-            synchronized (storyToRun) {
-                collectorTasks.stream().filter(t -> t.shouldRun() || storyToRun.contains(t.storyName())).forEach(task -> {
+            synchronized (storiesToRun) {
+                collectorTasks.stream().filter(t -> t.shouldRun() || storiesToRun.contains(t.storyName())).forEach(task -> {
                     Runnable runnable = new Runnable() {
                         @Override
                         public void run() {
@@ -98,7 +98,7 @@ public class CopperDaemon implements Runnable {
                     };
                     executorService.submit(runnable);
                 });
-                storyToRun.clear();
+                storiesToRun.clear();
             }
 
             // Processors
@@ -137,8 +137,8 @@ public class CopperDaemon implements Runnable {
     }
 
     public void runStory(String storyName) {
-        synchronized (storyToRun) {
-            storyToRun.add(storyName);
+        synchronized (storiesToRun) {
+            storiesToRun.add(storyName);
         }
     }
 }

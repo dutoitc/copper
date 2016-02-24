@@ -48,7 +48,9 @@ public class JmxConnector extends AbstractConnector {
     @Override
     public void close() {
         try {
-            jmxc.close();
+            if (jmxc!=null) {
+                jmxc.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

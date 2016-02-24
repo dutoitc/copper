@@ -27,7 +27,7 @@ public class StoryGrammarTest {
 
     @Before
     public void init() throws FileNotFoundException {
-        storyGrammar = new StoryGrammar(new FileInputStream("StoryGrammar.txt"));
+        storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
     @Test
@@ -163,8 +163,9 @@ public class StoryGrammarTest {
         JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper)story.getCollectorWrapper();
         Assert.assertEquals("jdbc:oracle:thin:@//myhost:1521/orcl", wrapper.getUrl());
         Assert.assertEquals("aUser", wrapper.getUsername());
+        String query = wrapper.getQuery().replaceAll("\r", "");
         Assert.assertEquals("select 1 from dual,\n" +
-                "                      2 from trial", wrapper.getQuery());
+                "                      2 from trial", query);
     }
 
 
