@@ -4,8 +4,8 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 /**
  * Created by dutoitc on 07.02.2016.
@@ -18,31 +18,38 @@ public class WebServer implements Runnable {
     // http://www.eclipse.org/jetty/documentation/current/embedded-examples.html
     @Override
     public void run() {
-        server = new Server(PORT);
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
 
+        server = new Server(PORT);
+//        server.setHandler(context);
+
+        // Resources
         ResourceHandler resource_handler = new ResourceHandler();
         resource_handler.setDirectoriesListed(true);
         resource_handler.setWelcomeFiles(new String[]{"index.html"});
         resource_handler.setResourceBase("src/main/webapp/WEB-INF/");
 
-
-//        ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-//        contextHandler.setResourceBase("src/main/webapp/WEB-INF/");
-//        contextHandler.setContextPath("/copper/web");
-
-
         // Webservices
-        ServletHandler servletHandler = new ServletHandler();
-        servletHandler.addServletWithMapping(CopperServiceServlet.class, "/ws");
-        servletHandler.addServletWithMapping(CopperServiceServlet.class, "/ws/*");
+//        ServletHandler servletHandler = new ServletHandler();
+//        servletHandler.addServletWithMapping(CopperServiceServlet.class, "/ws");
+//        servletHandler.addServletWithMapping(CopperServiceServlet.class, "/ws/*");
 
+        // Handlers
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{resource_handler, servletHandler});
+        handlers.setHandlers(new Handler[]{resource_handler, context});//servletHandler});
+        server.setHandler(handlers);
+
+
+        // ...
+        ServletHolder jerseyServlet = context.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
+        jerseyServlet.setInitOrder(0);
+        jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", CopperServices.class.getCanonicalName());
 
         // GZip
-        GzipHandler gzip = new GzipHandler();
-        server.setHandler(gzip);
-        gzip.setHandler(handlers);
+//        GzipHandler gzip = new GzipHandler();
+//        server.setHandler(gzip);
+//        gzip.setHandler(handlers);
 
 
         // Start things up! By using the server.join() the server thread will join with the current thread.
