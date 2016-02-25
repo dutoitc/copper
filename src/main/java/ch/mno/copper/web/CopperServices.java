@@ -3,6 +3,7 @@ package ch.mno.copper.web;
 import ch.mno.copper.CopperMediator;
 import ch.mno.copper.ValuesStore;
 import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.Story;
 import com.google.gson.Gson;
@@ -47,19 +48,26 @@ public class CopperServices {
     public String postStory(@PathParam("storyName") String storyName, StoryPost post) throws IOException, ConnectorException {
         StoriesFacade sf = StoriesFacade.getInstance();
 
-        Story story = sf.getStoryByName(storyName);
-
-        if (story==null) {
-            throw new RuntimeException("Story " + storyName + " was not found");
-        } else {
-            if (post.originalStoryName==null) {
+        // Create
+        if (post.originalStoryName.equals("new")) {
+            try {
                 String msg = sf.saveNewStory(post.storyName, post.storyText);
-                if (msg=="Ok") {
+                if (msg == "Ok") {
                     return "Ok";
                 } else {
                     throw new RuntimeException("Cannot save story: " + msg);
                 }
-            } else {
+            } catch (SyntaxException e) {
+                return e.getMessage();
+            }
+        }
+
+
+        // Update
+        Story story = sf.getStoryByName(storyName);
+        if (story==null) {
+            throw new RuntimeException("Story " + storyName + " was not found");
+        } else {
                 String msg = sf.updateStory(post.originalStoryName, post.storyName, post.storyText);
                 if (msg=="Ok") {
                     return "Ok";
@@ -67,7 +75,6 @@ public class CopperServices {
                     throw new RuntimeException("Cannot save story: " + msg);
                 }
             }
-        }
     }
 
     @GET
@@ -96,6 +103,14 @@ public class CopperServices {
     public String getStoryRun(@PathParam("storyName") String storyName) {
         CopperMediator.getInstance().run(storyName);
         return "Story " + storyName + " marked for execution";
+    }
+
+    @GET
+    @Path("story/{storyName}/delete")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getStoryDelete(@PathParam("storyName") String storyName) {
+        StoriesFacade.getInstance().deleteStory(storyName);
+        return "Story " + storyName + " deleted.";
     }
 
     @GET

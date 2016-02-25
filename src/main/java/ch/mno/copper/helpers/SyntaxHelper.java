@@ -36,7 +36,7 @@ public class SyntaxHelper {
                     String valuePart = value.substring(0, j);
                     if (currPatternCompiled.matcher(valuePart).matches()) {
                         sb.append("Pattern start \n   >>>" + currPattern + "\nmatches\n   >>>" + valuePart+"\n\n");
-                        throw new RuntimeException(sb.toString());
+                        throw new SyntaxException(sb.toString());
                     }
                 }
             } catch (PatternSyntaxException e) {

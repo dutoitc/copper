@@ -34,7 +34,7 @@ public class CopperMain {
         List<String> files;
         if (args.length==0) {
             files = new ArrayList<String>();
-            for (File file: new File("stories").listFiles(f->f.getName().endsWith(".txt"))) {
+            for (File file: new File("stories").listFiles(f->f.isFile())) {
                 files.add("stories/" + file.getName());
             }
         }  else {

@@ -5,8 +5,8 @@
 <table class="table-striped table-bordered" style="width: 100%; border: 1px outset silver">
     <thead>
     <th style="text-align:right;padding: 5px;">Name</th>
-    <th style="text-align:left; padding-left: 10px">Actions</th>
     <th style="text-align:left; padding-left: 10px">Cron</th>
+    <th style="text-align:left; padding-left: 10px">Actions</th>
     </thead>
     <tbody>
     <tr ng-repeat="story in stories">
@@ -15,9 +15,11 @@
         <td>
             <button class="btn btn-primary" ng-click="runStory(story.name)">Run</button>
             <a href="#/story/{{story.name}}" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-edit"></span> Edit</a>
-
+            <button class="btn btn-warning" ng-click="deleteStory(story.name)"><span class="glyphicon glyphicon-remove"></span> Delete</button>
         </td>
     </tr>
     </tbody>
 
 </table>
+<br/>
+<a href="#/story/new" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-add"></span> Create a story</a>

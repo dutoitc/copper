@@ -8,17 +8,25 @@ angular.module('copperApp.story', ['ngRoute'])
   });
 }])
 
-.controller('StoryCtrl', ['$http', '$scope', '$routeParams', function($http, $scope, $routeParams) {
+.controller('StoryCtrl', ['$http', '$scope', '$routeParams', '$sce', function($http, $scope, $routeParams, $sce) {
     var scope = $scope;
     var self=this;
     $scope.originalStoryName = $routeParams.pStoryName;
     $scope.redirectToStories=false;
 
 
-    $http.get('ws/story/'+$scope.originalStoryName)
-        .success(function(data) {
-            $scope.story=data;
-    });
+
+    if ($scope.originalStoryName=='new') {
+        $scope.story = {
+            name:'new',
+            storyText:'GIVEN ...\nWHEN ...\nTHEN ...\n'
+        }
+    } else {
+        $http.get('ws/story/'+$scope.originalStoryName)
+                .success(function(data) {
+                    $scope.story=data;
+            });
+    }
 
     $scope.submit = function() {
         var data = JSON.stringify({
@@ -32,10 +40,10 @@ angular.module('copperApp.story', ['ngRoute'])
             .then(
                 function(data, status) {
                     if (data.data=="Ok") {
-                        $scope.message = "The story has been saved.";
+                        $scope.message = $sce.trustAsHtml("The story has been saved.");
                         $scope.redirectToStories=true;
                     } else {
-                        $scope.message = "Unknown return: " + data;
+                        $scope.message = $sce.trustAsHtml("Unknown return: <pre>" + data.data + "</pre>");
                     }
                 },
                 function(data, status) {

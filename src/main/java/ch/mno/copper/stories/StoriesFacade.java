@@ -127,4 +127,11 @@ public class StoriesFacade {
         }
         return storyList.get(0);
     }
+
+    public void deleteStory(String storyName) {
+        Story story = getStoryByName(storyName);
+        stories.remove(story);
+        File file = new File("stories/" + storyName);
+        file.delete();
+    }
 }
