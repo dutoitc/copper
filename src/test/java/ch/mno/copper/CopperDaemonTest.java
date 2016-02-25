@@ -24,7 +24,8 @@ public class CopperDaemonTest {
         ValuesStore valueStore = ValuesStore.getInstance();
         List<CollectorTask> lstCollectors = Arrays.asList(coll1);
         List<AbstractProcessor> lstProcessors = Arrays.asList(proc1, proc2);
-        CopperDaemon daemon = CopperDaemon.runWith(valueStore, lstCollectors, lstProcessors);
+        DataProvider dataProvider = ()->lstCollectors;
+        CopperDaemon daemon = CopperDaemon.runWith(valueStore, dataProvider, lstProcessors);
         int nb=0;
         while (coll1.nbRuns==0 && nb++<20) {
             Thread.sleep(CopperDaemon.TASK_CHEK_INTERVAL / 4);
