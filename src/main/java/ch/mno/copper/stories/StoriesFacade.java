@@ -108,13 +108,14 @@ public class StoriesFacade {
         Story story = new Story(grammar,storyName, storyText);
         File file = story.getSource().toFile();
 
+
         FileWriter fw = new FileWriter(file);
         fw.write(story.getStoryText());
         fw.flush();
         fw.close();
         stories.add(story); // TODO: update listeneres
         stories.remove(originalStory);
-        oldFile.delete();
+        if (!oldFile.getName().equals(file.getName())) oldFile.delete();
         return "Ok";
     }
 

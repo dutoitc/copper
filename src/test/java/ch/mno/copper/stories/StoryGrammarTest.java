@@ -92,6 +92,17 @@ public class StoryGrammarTest {
     }
 
 
+    @Test
+    public void testCOLLECTOR_JMX2() {
+        String pattern = storyGrammar.getPatternFull("COLLECTOR_JMX");
+        String jmx = "GIVEN COLLECTOR JMX WITH url=service:jmx:rmi://slv2737v.etat-de-vaud.ch:44444/jndi/rmi://slv2737v.etat-de-vaud.ch:1099/karaf-trun,user=tadmin,password=tadmin\n" +
+                "    QUERY java.lang:type=Runtime FOR SpecName    AS JMX_LOCAL_RUNTIME_SPECNAME\n" +
+                "    QUERY java.lang:type=Runtime FOR SpecVersion AS JMX_LOCAL_RUNTIME_SPECVERSION\n" +
+                "WHEN CRON */5 7-18 * * 1-5\n" +
+                "THEN STORE VALUES\n";
+        // TODO: vérifier qu'il y a bien les deux queries
+    }
+
 
     @Test
     public void testCOLLECTOR() {

@@ -35,7 +35,7 @@ public class PushoverReporterWrapper extends AbstractReporterWrapper {
         applicationToken = matcher.group(2);
         title = matcher.group(3);
         messageTemplate = matcher.group(4);
-        PushoverReporter reporter = new PushoverReporter();
+        reporter = new PushoverReporter();
     }
 
     public static AbstractReporterWrapper buildReporter(StoryGrammar grammar, String storyGiven) {
