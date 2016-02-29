@@ -1,6 +1,7 @@
 <h1>Story {{originalStoryName}}</h1>
 
-{{errors}}<br/>{{message}}<br/>
+{{errors}}<br/>
+<div ng-bind-html="message"></div><br/>
 
 <div ng-show="redirectToStories">
     <a href="#/stories" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span>Go back to Stories list</a>

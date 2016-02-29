@@ -13,10 +13,12 @@ angular.module('copperApp.stories', ['ngRoute'])
     var self=this;
 
 
-      $http.get('ws/stories')
+    $scope.refreshStories = function() {
+        $http.get('ws/stories')
             .success(function(data) {
                 $scope.stories=data;
         });
+    }
 
     $scope.runStory = function(storyName) {
         $http.get('/ws/story/' + storyName + '/run')
@@ -24,6 +26,19 @@ angular.module('copperApp.stories', ['ngRoute'])
                     alert(data);
             });
     }
+
+    $scope.deleteStory = function(storyName) {
+        if ( window.confirm("Delete story " + storyName + " ?") ) {
+            $http.get('/ws/story/' + storyName + '/delete')
+                    .success(function(data) {
+                        alert(data);
+                });
+            $scope.refreshStories();
+        }
+    }
+
+    $scope.refreshStories();
+
 
 /*
 

@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 // Optimisations: sleep until next task run (compute on task addition). Log next task run.
 public class CopperDaemon implements Runnable {
 
+    private final DataProvider dataProvider;
     private Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
 
     public static final int N_THREADS = 10;
@@ -39,15 +40,16 @@ public class CopperDaemon implements Runnable {
     private ExecutorService executorService;
     private JMXConnectorServer jmxConnectorServer;
 
-    private CopperDaemon(ValuesStore valuesStore, List<CollectorTask> collectorTasks, List<AbstractProcessor> processors) {
+    private CopperDaemon(ValuesStore valuesStore, DataProvider dataProvider, List<AbstractProcessor> processors) {
         executorService = Executors.newFixedThreadPool(N_THREADS);
-        this.collectorTasks = collectorTasks;
         this.processors = processors;
         this.valuesStore = valuesStore;
+        this.dataProvider = dataProvider;
+        collectorTasks = dataProvider.getCollectorTasks();
     }
 
-    public static CopperDaemon runWith(ValuesStore valuesStore, List<CollectorTask> collectorTasks, List<AbstractProcessor> processors) {
-        CopperDaemon daemon = new CopperDaemon(valuesStore, collectorTasks, processors);
+    public static CopperDaemon runWith(ValuesStore valuesStore, DataProvider dataProvider, List<AbstractProcessor> processors) {
+        CopperDaemon daemon = new CopperDaemon(valuesStore, dataProvider, processors);
         CopperMediator.getInstance().registerCopperDaemon(daemon);
         Thread thread = new Thread(daemon);
         thread.start();
@@ -116,6 +118,9 @@ public class CopperDaemon implements Runnable {
             } catch (IOException e) {
                 throw new RuntimeException("Cannot save to valuesStore.tmp");
             }
+
+            // Refresh stories from disk
+            collectorTasks = dataProvider.getCollectorTasks();
 
             // Wait for some time
             LOG.trace("Daemon sleep");
