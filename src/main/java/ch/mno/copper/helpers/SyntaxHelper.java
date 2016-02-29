@@ -2,6 +2,7 @@ package ch.mno.copper.helpers;
 
 import ch.mno.copper.stories.StoryGrammar;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -11,8 +12,15 @@ import java.util.regex.PatternSyntaxException;
 public class SyntaxHelper {
 
 
-    public static void checkSyntax(StoryGrammar grammar, String pattern, String value) {
-        if (Pattern.compile(pattern, Pattern.DOTALL).matcher(value).matches()) return;
+    public static String checkSyntax(StoryGrammar grammar, String pattern, String value) {
+        Matcher matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(value);
+        if (matcher.matches()) {
+            matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(value);
+            if (!matcher.find()) {
+                System.err.println("Match error for " + value);
+            }
+            return matcher.group(0);
+        }
 
         StringBuffer sbM = new StringBuffer();
         grammar.getKeys().stream().filter(p->Pattern.compile(p, Pattern.DOTALL).matcher(value).find()).forEach(v->sbM.insert(0,v + ','));

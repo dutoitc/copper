@@ -49,8 +49,8 @@ public class JmxCollector {
 
     public static class JmxQuery {
 
-        private String objectName;
-        private String value;
+        protected String objectName;
+        protected String value;
 
         public JmxQuery(String objectName, String value) {
             this.objectName = objectName;

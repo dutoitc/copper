@@ -20,8 +20,8 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
     private String url;
     private String username;
     private String password;
-    private List<JmxCollector.JmxQuery> jmxQueries;
-    private List<String> as;
+    protected List<JmxCollector.JmxQuery> jmxQueries;
+    protected List<String> as;
 
     public JmxCollectorWrapper(String url, String username, String password, List<JmxCollector.JmxQuery> jmxQueries, List<String> as) {
         this.url = url;

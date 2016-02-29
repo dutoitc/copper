@@ -11,7 +11,7 @@
             <tr ng-repeat="(k,v) in values">
                 <td style="text-align:right;padding: 5px;font-weight:bold">{{k}}</td>
                 <td style="text-align:left; padding-left: 10px">{{v.value}}</td>
-                <td style="text-align:center">{{v.timestamp | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td style="text-align:center;width: 150px">{{v.timestamp | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
             </tr>
         </tbody>
     </table>
