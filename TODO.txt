@@ -3,6 +3,10 @@ Proxy support
 
 Story name must be unique
 
+if story change on disk, reload it
+
+if story change in web/edit, reload it
+
 
 
 

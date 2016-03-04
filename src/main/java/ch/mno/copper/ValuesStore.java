@@ -54,7 +54,7 @@ public class ValuesStore {
         PrintWriter pw = new PrintWriter(os);
         pw.write("1\n");
         pw.write(map.size()+"\n");
-        map.forEach((k,v)->pw.write(k+"|"+v.getValue().replace("|", "£")+"|"+v.getTimestamp()+"\n"));
+        map.forEach((k,v)->pw.write(k+"|"+v.getValue().replace("|", "£").replace("\n","¢")+"|"+v.getTimestamp()+"\n"));
         pw.write(""+changedValues.size()+'\n');
         changedValues.forEach(k->pw.write(k+'\n'));
         pw.flush();
@@ -75,8 +75,12 @@ public class ValuesStore {
 
         // Map
         for (int noLine=0; noLine<mapSize; noLine++) {
-            String[] values = reader.readLine().split("\\|");
-            map.put(values[0], new StoreValue(values[1].replaceAll("£", "|"), Long.parseLong(values[2])));
+            try {
+                String[] values = reader.readLine().split("\\|");
+                map.put(values[0], new StoreValue(values[1].replaceAll("£", "|").replace("¢", "\n"), Long.parseLong(values[2])));
+            } catch (Exception e) {
+                throw new RuntimeException("Error at line #" + noLine + ": " + e.getMessage(), e);
+            }
         }
 
         // List

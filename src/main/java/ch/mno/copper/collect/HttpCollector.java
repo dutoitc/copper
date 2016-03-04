@@ -31,14 +31,17 @@ public class HttpCollector {
      */
     public static List<String> httpQuery(String serverUrl, String... uris) throws ConnectorException {
         List<String> results = new ArrayList(uris.length);
+        HttpConnector conn = null;
         try {
             URL uri = new URL(serverUrl);
-            HttpConnector conn = new HttpConnector(uri.getHost(), uri.getPort(), uri.getProtocol());
+            conn = new HttpConnector(uri.getHost(), uri.getPort(), uri.getProtocol());
             for (String itUri: uris) {
                 results.add(new HttpCollector().read(conn, itUri));
             }
         } catch (Exception e) {
             throw new ConnectorException("Connector exception: " + e.getMessage(), e);
+        } finally {
+            conn.close();
         }
         return results;
     }

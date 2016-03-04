@@ -25,8 +25,8 @@ public class JmxCollector {
 
     public static List<String> jmxQueryWithCreds(String serverUrl, String username, String password, List<JmxQuery> queries) throws ConnectorException {
         List<String> results = new ArrayList(queries.size());
+        JmxConnector conn = null;
         try {
-            JmxConnector conn;
             if (username==null) {
                 conn = new JmxConnector(serverUrl);
             } else {
@@ -37,7 +37,11 @@ public class JmxCollector {
                 results.add(new JmxCollector().read(conn, aQuery.objectName, aQuery.value));
             }
         } catch (Exception e) {
-            throw new ConnectorException("Connector exception: " + e.getMessage(), e);
+            throw new ConnectorException("Connector exception (server " + serverUrl + "): " + e.getMessage(), e);
+        } finally {
+            if (conn!=null) {
+                conn.close();
+            }
         }
         return results;
     }
@@ -45,7 +49,6 @@ public class JmxCollector {
     public static List<String> jmxQuery(String serverUrl, List<JmxQuery> queries) throws ConnectorException {
         return jmxQueryWithCreds(serverUrl, null, null, queries);
     }
-
 
     public static class JmxQuery {
 

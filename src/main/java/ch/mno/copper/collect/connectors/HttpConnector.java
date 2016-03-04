@@ -36,7 +36,7 @@ public class HttpConnector extends AbstractConnector {
             httpClientBuilder.setProxy(proxy);
         }
         httpclient = httpClientBuilder.build();
-        target = new HttpHost(scheme + "://" + hostname + ":" + port);
+        target = new HttpHost(hostname, port, scheme);
     }
 
     public String post(String uri, Map<String, String> values) throws ConnectorException {
