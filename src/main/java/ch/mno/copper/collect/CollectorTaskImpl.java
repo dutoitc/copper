@@ -20,6 +20,7 @@ public class CollectorTaskImpl implements CollectorTask {
     private static long nextId=1;
     private long taskId = nextId++;
     private Story story;
+    private boolean running = false;
 
     /**
      * pattern minutes(0-59) hours(0-23) day_of_month(1-31), month(1-12 or jan,feb...), days of week(0-6=sunday-saturday or sun mon tue...) e.g. 0 3 * jan-jun,sep-dec mon-fri
@@ -62,7 +63,7 @@ public class CollectorTaskImpl implements CollectorTask {
 
     @Override
     public boolean shouldRun() {
-        return System.currentTimeMillis()>=nextRun;
+        return System.currentTimeMillis()>=nextRun && !running; // Running flag avoid double execution for tasks scheduled every minute, if task run take more than one minute.
     }
 
     @Override
@@ -71,9 +72,15 @@ public class CollectorTaskImpl implements CollectorTask {
     }
 
     @Override
+    public void markAsRunning() {
+        running = true;
+    }
+
+    @Override
     public void markAsRun() {
         lastRun = System.currentTimeMillis();
         computeNextRun();
+        running = false;
     }
 
     private String computeTime(long millis) {

@@ -104,6 +104,11 @@ public class CopperDaemonTest {
         public void markAsRun() {
             nbMark++;
         }
+
+        @Override
+        public void markAsRunning() {
+
+        }
     }
 
     private static class SimpleProcessor extends AbstractProcessor {

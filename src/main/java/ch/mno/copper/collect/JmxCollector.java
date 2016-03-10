@@ -37,7 +37,8 @@ public class JmxCollector {
                 results.add(new JmxCollector().read(conn, aQuery.objectName, aQuery.value));
             }
         } catch (Exception e) {
-            throw new ConnectorException("Connector exception (server " + serverUrl + "): " + e.getMessage(), e);
+            System.err.println("Connector exception (server " + serverUrl + "): " + e.getMessage());
+            queries.forEach(v->results.add(""));
         } finally {
             if (conn!=null) {
                 conn.close();

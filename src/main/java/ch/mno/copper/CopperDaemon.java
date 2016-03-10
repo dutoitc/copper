@@ -87,6 +87,7 @@ public class CopperDaemon implements Runnable {
                             // Run CopperTask with exception catch, next run computation and time logging.
                             long t0 = System.currentTimeMillis();
                             String taskName = task.getTaskId() + "[" + task.getTitle() + "]";
+                            task.markAsRunning();
                             try {
                                 LOG.info("Scheduling task " + task.getTaskId());
                                 task.getRunnable().run();

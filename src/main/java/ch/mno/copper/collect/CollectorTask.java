@@ -18,4 +18,7 @@ public interface CollectorTask {
     long getNextRun();
 
     void markAsRun();
+
+    void markAsRunning();
+
 }
