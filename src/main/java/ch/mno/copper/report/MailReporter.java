@@ -16,7 +16,7 @@ import java.util.Map;
 public class MailReporter implements AbstractReporter {
     private Logger LOG = LoggerFactory.getLogger(getClass());
 
-    public enum PARAMETERS {TO, TITLE, HTML}
+    public enum PARAMETERS {TO, TITLE, BODY}
 
     private static long nbMessageInHour=0;
     private static long hour = -1;
@@ -81,7 +81,7 @@ public class MailReporter implements AbstractReporter {
         Map<String, String> values = new HashMap<>();
         values.put(PARAMETERS.TO.toString(), args[5]);
         values.put(PARAMETERS.TITLE.toString(), "aTitle a b c");
-        values.put(PARAMETERS.HTML.toString(), "html");
+        values.put(PARAMETERS.BODY.toString(), "html");
         mr.report("aMessage", values);
     }
 
