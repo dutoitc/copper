@@ -1,6 +1,7 @@
 package ch.mno.copper.report;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.StoryGrammar;
 
 import java.util.HashMap;
@@ -28,7 +29,10 @@ public class MailReporterWrapper extends AbstractReporterWrapper {
         String spaceEol =  grammar.getPatternFull("SPACE_EOL");
         String pattern="REPORT BY Mail to \"(.*?)\""+spaceEol+"+WITH title=\"(.*?)\""+spaceEol+"+WITH message=\"(.*?)\"";
         Matcher matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(storyGiven);
-        if (!matcher.find()) throw new RuntimeException("Cannot find a valid Mail pattern in " + storyGiven + ", pattern " + pattern);
+        if (!matcher.find()) {
+            SyntaxHelper.checkSyntax(grammar, pattern, storyGiven);
+            throw new RuntimeException("Cannot find a valid Mail pattern in " + storyGiven + ", pattern " + pattern);
+        }
 
         dest = matcher.group(1);
         title = matcher.group(3);

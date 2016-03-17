@@ -1,0 +1,6 @@
+REPORT BY MAIL to "a@b.c"
+     WITH title="Mail test"
+     WITH message="Test:
+                a:{{JMX_LOCAL_RUNTIME_SPECNAME}}
+                b:{{JMX_LOCAL_RUNTIME_SPECVERSION}}
+                "

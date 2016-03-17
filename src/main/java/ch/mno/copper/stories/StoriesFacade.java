@@ -6,7 +6,9 @@ import ch.mno.copper.collect.CollectorTask;
 import ch.mno.copper.collect.CollectorTaskImpl;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxException;
+import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.report.AbstractReporterWrapper;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +18,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +34,7 @@ public class StoriesFacade {
     private static final StoriesFacade instance = new StoriesFacade();
 
     private List<Story> stories = new ArrayList<>();
+    private Set<String> storiesInError = new HashSet<>();
     private StoryGrammar grammar;
 
     private StoriesFacade() {
@@ -154,9 +159,22 @@ public class StoriesFacade {
             try {
                 if (getStoryByName(filename) == null) {
                     buildStory(new FileInputStream(filename), new File(filename).toPath());
+                    if (storiesInError.contains(filename)) {
+                        storiesInError.remove(filename);
+                        System.out.println("No longer in error: " + filename);
+                    }
                 }
             } catch (SyntaxException e) {
-                System.err.println("Wrong syntax for " + filename);
+                if (!storiesInError.contains(filename)) {
+                    storiesInError.add(filename);
+                    System.err.println("Wrong syntax for " + filename+", ignoring until error fixed on disk."); // FIXME: put story as dirty
+                    try {
+                        String data = IOUtils.toString(new FileInputStream(filename));
+                        SyntaxHelper.checkSyntax(grammar, "MAIN", data);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ConnectorException e) {

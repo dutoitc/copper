@@ -194,6 +194,14 @@ public class StoryGrammarTest {
         testPattern(pattern, story);
     }
 
+    @Test
+    public void testMailStory() throws IOException {
+        String pattern = storyGrammar.getPatternFull("MAIL");
+        String story = IOUtils.toString(getClass().getResource("/MailStory.txt"));
+        testPattern(pattern, story);
+    }
+
+
 //    @Test
 //    public void testTemp() {
 //        String pat="GIVEN[\\s+\\r\\n]+COLLECTOR[\\s+\\r\\n]+(ORACLE[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=jdbc[:\\w@/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?\\r?\\n|JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?\\r?\\n)[\\s+\\r\\n]*WHEN[\\s+\\r\\n]+CRON[\\s+\\r\\n]+(DAILY at \\d{4})\\r?\\n";
