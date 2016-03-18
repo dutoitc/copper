@@ -6,9 +6,7 @@ import ch.mno.copper.collect.CollectorTask;
 import ch.mno.copper.collect.CollectorTaskImpl;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxException;
-import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.report.AbstractReporterWrapper;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,12 +166,7 @@ public class StoriesFacade {
                 if (!storiesInError.contains(filename)) {
                     storiesInError.add(filename);
                     System.err.println("Wrong syntax for " + filename+", ignoring until error fixed on disk."); // FIXME: put story as dirty
-                    try {
-                        String data = IOUtils.toString(new FileInputStream(filename));
-                        SyntaxHelper.checkSyntax(grammar, "MAIN", data);
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
+                    e.printStackTrace();
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -59,13 +59,13 @@ public class MailReporter implements AbstractReporter {
             email.addTo(to);
             email.setFrom(from);
             if (replyTo!=null) email.addReplyTo(replyTo);
-            email.setSubject("[Copper] Test");
+            email.setSubject(values.get(PARAMETERS.TITLE.toString()));
 
             // set the html message
-            email.setHtmlMsg("<html><h1>Test line 1</h1><br>line 2<br><font color='red'>line 3</font><br><i>line 4</i></html>");
+            email.setHtmlMsg(values.get(PARAMETERS.BODY.toString()));
 
             // set the alternative message
-            email.setTextMsg("Your email client does not support HTML messages");
+            email.setTextMsg(values.get(PARAMETERS.BODY.toString())); // Fixme: convert to text
 
             // send the email
             email.send();

@@ -27,7 +27,7 @@ public class MailReporterWrapper extends AbstractReporterWrapper {
 
         // Mail::=REPORT BY Mail to ".*?"¦SPACE_EOL¦+WITH token=".*?"¦SPACE_EOL¦+WITH title=".*?"¦SPACE_EOL¦+WITH message=".*?"
         String spaceEol =  grammar.getPatternFull("SPACE_EOL");
-        String pattern="REPORT BY Mail to \"(.*?)\""+spaceEol+"+WITH title=\"(.*?)\""+spaceEol+"+WITH message=\"(.*?)\"";
+        String pattern="REPORT BY MAIL to \"(.*?)\""+spaceEol+"+WITH title=\"(.*?)\""+spaceEol+"+WITH message=\"(.*?)\"";
         Matcher matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(storyGiven);
         if (!matcher.find()) {
             SyntaxHelper.checkSyntax(grammar, pattern, storyGiven);
@@ -35,8 +35,8 @@ public class MailReporterWrapper extends AbstractReporterWrapper {
         }
 
         dest = matcher.group(1);
-        title = matcher.group(3);
-        messageTemplate = matcher.group(4);
+        title = matcher.group(2);
+        messageTemplate = matcher.group(3);
         reporter = new MailReporter(server, serverUsername, serverPassword, from, replyTo);
     }
 
