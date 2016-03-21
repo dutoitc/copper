@@ -21,7 +21,7 @@ public class MailReporterWrapper extends AbstractReporterWrapper {
     private String messageTemplate;
     private MailReporter reporter;
 
-    public MailReporterWrapper(StoryGrammar grammar, String storyGiven, String server, String serverUsername, String serverPassword, String from, String replyTo) {
+    public MailReporterWrapper(StoryGrammar grammar, String storyGiven, String server, String serverUsername, String serverPassword, int serverPort, String from, String replyTo) {
         this.grammar = grammar;
         this.storyGiven = storyGiven;
 
@@ -37,11 +37,11 @@ public class MailReporterWrapper extends AbstractReporterWrapper {
         dest = matcher.group(1);
         title = matcher.group(2);
         messageTemplate = matcher.group(3);
-        reporter = new MailReporter(server, serverUsername, serverPassword, from, replyTo);
+        reporter = new MailReporter(server, serverUsername, serverPassword, serverPort, from, replyTo);
     }
 
-    public static AbstractReporterWrapper buildReporter(StoryGrammar grammar, String storyGiven, String server, String serverUsername, String serverPassword, String from, String replyTo) {
-        return new MailReporterWrapper(grammar, storyGiven, server,  serverUsername,  serverPassword,  from,  replyTo);
+    public static AbstractReporterWrapper buildReporter(StoryGrammar grammar, String storyGiven, String server, String serverUsername, String serverPassword, int serverPort, String from, String replyTo) {
+        return new MailReporterWrapper(grammar, storyGiven, server,  serverUsername,  serverPassword,  serverPort, from,  replyTo);
     }
 
     @Override

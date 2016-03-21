@@ -24,13 +24,15 @@ public class MailReporter implements AbstractReporter {
     private String server;
     private String serverUsername;
     private String serverPassword;
+    private int serverPort;
     private String from;
     private String replyTo;
 
-    public MailReporter(String server, String serverUsername, String serverPassword, String from, String replyTo) {
+    public MailReporter(String server, String serverUsername, String serverPassword, int serverPort, String from, String replyTo) {
         this.server = server;
         this.serverUsername = serverUsername;
         this.serverPassword = serverPassword;
+        this.serverPort = serverPort;
         this.from = from;
         this.replyTo = replyTo;
     }
@@ -51,13 +53,26 @@ public class MailReporter implements AbstractReporter {
 
         try {
             HtmlEmail email = new HtmlEmail();
-            email.setSmtpPort(587);
-            email.setAuthenticator(new DefaultAuthenticator(serverUsername, serverPassword));
+            email.setSmtpPort(serverPort);
+            if (serverUsername!=null) {
+                email.setAuthenticator(new DefaultAuthenticator(serverUsername, serverPassword));
+            }
 //            email.setSSLOnConnect(true);
             email.setHostName(server);
+            email.setCharset(org.apache.commons.mail.EmailConstants.UTF_8);
             String to = values.get(PARAMETERS.TO.toString());
-            email.addTo(to);
-            email.setFrom(from);
+            String[]tos = to.split("[,;]");
+            for (String to2: tos) {
+                email.addTo(to2);
+            }
+
+            int p1=from.indexOf('<');
+            int p2=from.indexOf('>', p1+1);
+            if (p1>0 && p2>p1) {
+                email.setFrom(from.substring(0, p1), from.substring(p1+1, p2));
+            } else {
+                email.setFrom(from);
+            }
             if (replyTo!=null) email.addReplyTo(replyTo);
             email.setSubject(values.get(PARAMETERS.TITLE.toString()));
 
@@ -68,16 +83,15 @@ public class MailReporter implements AbstractReporter {
             email.setTextMsg(values.get(PARAMETERS.BODY.toString())); // Fixme: convert to text
 
             // send the email
-            email.send();
-            LOG.info("Mail sent to " + to + ": " + email.getSubject());
+            String d = email.send();
+            LOG.info("Mail sent to " + to + ": " + email.getSubject() + ", response=" + d);
         }catch (Exception e) {
             LOG.error("Cannot send mail: " + e.getMessage(), e);
         }
     }
 
     public static void main(String[] args) throws ConnectorException {
-
-        MailReporter mr = new MailReporter(args[0], args[1], args[2], args[3], args[4]);
+        MailReporter mr = new MailReporter(args[0], args[1], args[2], Integer.parseInt(args[3]), args[4], args[4]);
         Map<String, String> values = new HashMap<>();
         values.put(PARAMETERS.TO.toString(), args[5]);
         values.put(PARAMETERS.TITLE.toString(), "aTitle a b c");

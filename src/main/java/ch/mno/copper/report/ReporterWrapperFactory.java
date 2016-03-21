@@ -15,7 +15,12 @@ public class ReporterWrapperFactory {
             return PushoverReporterWrapper.buildReporter(grammar, storyGiven + '\n');
         } else if (Pattern.compile(grammar.getPatternFull("MAIL"), Pattern.DOTALL).matcher(storyGiven).find()) {
             CopperMediator mediator = CopperMediator.getInstance();
-            return MailReporterWrapper.buildReporter(grammar, storyGiven + '\n', mediator.getProperty("mailServer"), mediator.getProperty("mailUsername"), mediator.getProperty("mailPassword"), mediator.getProperty("mailFrom"), mediator.getProperty("mailReplyTo"));
+            String sport = mediator.getProperty("mailPort");
+            int port=25; // or 587
+            if (sport!=null) {
+                port = Integer.parseInt(sport);
+            }
+            return MailReporterWrapper.buildReporter(grammar, storyGiven + '\n', mediator.getProperty("mailServer"), mediator.getProperty("mailUsername"), mediator.getProperty("mailPassword"), port, mediator.getProperty("mailFrom"), mediator.getProperty("mailReplyTo"));
         } else if (Pattern.compile("STORE VALUES").matcher(storyGiven).find()) {
             //return JdbcCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
             return null;
