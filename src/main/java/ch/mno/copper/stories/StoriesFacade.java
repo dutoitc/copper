@@ -147,9 +147,13 @@ public class StoriesFacade {
     }
 
     public void refreshFromDisk() {
+        File storiesFolder = new File("stories");
+        if (storiesFolder.isFile()) throw new RuntimeException("stories should be a folder, not a file");
+        if (!storiesFolder.exists()) storiesFolder.mkdir();
+
         // Load files: yet use sample values if none is specified
         List<String> files = new ArrayList<String>();
-        for (File file : new File("stories").listFiles(f -> f.isFile())) {
+        for (File file : storiesFolder.listFiles(f -> f.isFile())) {
             files.add("stories/" + file.getName());
         }
 

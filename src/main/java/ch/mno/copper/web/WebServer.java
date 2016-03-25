@@ -6,12 +6,15 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by dutoitc on 07.02.2016.
  */
 public class WebServer implements Runnable {
 
+    private static final Logger LOG = LoggerFactory.getLogger(WebServer.class);
     public static final int PORT = 30400;
     private Server server;
 
@@ -28,7 +31,16 @@ public class WebServer implements Runnable {
         ResourceHandler resource_handler = new ResourceHandler();
         resource_handler.setDirectoriesListed(true);
         resource_handler.setWelcomeFiles(new String[]{"index.html"});
-        resource_handler.setResourceBase("src/main/webapp/WEB-INF/");
+
+        String webDir = WebServer.class.getClassLoader().getResource("WEB-INF").toExternalForm();
+        LOG.info("Serving files from " + webDir);
+        resource_handler.setResourceBase(webDir);
+
+//        if (new File("src").exists()) {
+//            resource_handler.setResourceBase("src/main/webapp/WEB-INF/");
+//        } else {
+//            resource_handler.setResourceBase(".");
+//        }
 
         // Webservices
 //        ServletHandler servletHandler = new ServletHandler();

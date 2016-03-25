@@ -19,7 +19,7 @@ public class StoryGrammar {
    private Map<String, String> values = new HashMap<>();
 
     public StoryGrammar(InputStream source) {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(source))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(source, "UTF-8"))) {
             String line;
             int noLine = 0;
             while ((line = br.readLine()) != null) {
@@ -49,7 +49,9 @@ public class StoryGrammar {
     /** Get pattern with @xx@ values replaced */
     public String getPatternFull(String key) {
         String pat = values.get(key);
-        if (pat==null) throw new RuntimeException("Cannot find pattern for " + key);
+        if (pat==null) {
+            throw new RuntimeException("Cannot find pattern for " + key);
+        }
         while (true) {
             int p1 = pat.indexOf(SEPARATOR);
             if (p1==-1) break;

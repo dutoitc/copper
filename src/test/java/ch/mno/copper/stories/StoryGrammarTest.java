@@ -80,7 +80,20 @@ public class StoryGrammarTest {
     public void testCOLLECTOR_JMX() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_JMX");
         testPattern(pattern, "JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass QUERY name FOR attribute AS something\n");
+    }
+
+    @Test
+    public void testCOLLECTOR_JMX1() {
+        String pattern = storyGrammar.getPatternFull("COLLECTOR_JMX");
+        //String pattern="JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d\\.\\-]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=\\S+?[\\s+\\r\\n]\\s*QUERY.*? FOR .*?\\s+AS .*";
         testPattern(pattern, "JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,\n   user=aUser,\n   password=aPass QUERY name FOR attribute AS something\n");
+
+    }
+
+
+    @Test
+    public void testCOLLECTOR_JMX2() {
+        String pattern = storyGrammar.getPatternFull("COLLECTOR_JMX");
         testPattern(pattern, "JMX\n" +
                 "        WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,\n" +
                 "             user=aUser,\n" +
@@ -93,7 +106,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testCOLLECTOR_JMX2() {
+    public void testCOLLECTOR_JMX3() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_JMX");
         String jmx = "JMX WITH url=service:jmx:rmi://slv2737v.etat-de-vaud.ch:44444/jndi/rmi://slv2737v.etat-de-vaud.ch:1099/karaf-trun,user=tadmin,password=tadmin\n" +
                 "    QUERY java.lang:type=Runtime FOR SpecName    AS JMX_LOCAL_RUNTIME_SPECNAME\n" +
@@ -105,18 +118,35 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testCOLLECTOR() {
+    public void testCOLLECTOR1() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
         //pattern="COLLECTOR[\\s+\\r\\n]+(ORACLE[\\s+\\r\\n]+WITH[\\s+\\r\\n]+//url=jdbc[:\\w@/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?[\\s+\\r\\n]QUERY ((\\\".*?\\\")|.*)\\r?\\n|JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=\\S+?[\\s+\\r\\n]\\s*(QUERY .*? FOR .*?\\s+AS .*?[\\s+\\r\\n])+)";
         Pattern pattern1 = Pattern.compile(pattern);
         //Assert.assertTrue(pattern1.matcher("COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass\n").matches());
         testPattern(pattern, "COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass QUERY select 1 from dual\n");
+    }
+
+    @Test
+    public void testCOLLECTOR2() {
+        String pattern = storyGrammar.getPatternFull("COLLECTOR");
+        Pattern pattern1 = Pattern.compile(pattern);
         testPattern(pattern, "COLLECTOR JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass QUERY oname FOR att AS att1\n");
+    }
+
+    @Test
+    public void testCOLLECTOR3() {
+        String pattern = storyGrammar.getPatternFull("COLLECTOR");
+        Pattern pattern1 = Pattern.compile(pattern);
         testPattern(pattern,"COLLECTOR ORACLE\n" +
-                                "        WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n" +
-                                "             user=aUser,\n" +
-                                "             password=aPass\n"+
-                                "       QUERY \"Select a, b, c\"\n");
+                "        WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n" +
+                "             user=aUser,\n" +
+                "             password=aPass\n"+
+                "       QUERY \"Select a, b, c\"\n");
+   }
+    @Test
+    public void testCOLLECTOR4() {
+        String pattern = storyGrammar.getPatternFull("COLLECTOR");
+        Pattern pattern1 = Pattern.compile(pattern);
         Assert.assertFalse(pattern1.matcher("JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass\n").matches());
     }
 

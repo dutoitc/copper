@@ -1,0 +1,1 @@
+java -jar copper-1.0-SNAPSHOT-shaded.jar
