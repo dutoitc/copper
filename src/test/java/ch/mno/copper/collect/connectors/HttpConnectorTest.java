@@ -1,14 +1,13 @@
 package ch.mno.copper.collect.connectors;
 
+import ch.mno.copper.test.WebServer4Tests;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by dutoitc on 31.01.2016.
@@ -16,14 +15,24 @@ import java.net.Socket;
 public class HttpConnectorTest {
 
     final static int PORT = 35742;
+    private static WebServer4Tests ws;
+
+    @BeforeClass
+    public static void init() {
+        ws = new WebServer4Tests(PORT);
+        ws.start();
+    }
+
+    @AfterClass
+    public static void done() throws Exception {
+        ws.close();
+    }
 
     @Test
     public void test1() throws Exception {
         try (
                 HttpConnector conn = new HttpConnector("localhost", PORT, "http");
-                WebServer ws = new WebServer();
         ) {
-            ws.start();
             String value = conn.get("/ping1");
             Assert.assertEquals("pong1", value);
         }
@@ -40,82 +49,39 @@ public class HttpConnectorTest {
     }
 
 
-    // Miniserver from http://www.java2s.com/Code/Java/Network-Protocol/ASimpleWebServer.htm
-    private static class WebServer implements Runnable, AutoCloseable {
-        ServerSocket s;
-        Thread thread;
-        boolean stopAsked = false;
-
-        public void start() {
-            thread = new Thread(this);
-            thread.start();
-        }
-
-        @Override
-        public void run() {
-//            System.out.println("Webserver starting up on port " + PORT);
-            try {
-                // create the main server socket
-                s = new ServerSocket(PORT);
-            } catch (Exception e) {
-                System.out.println("Error: " + e);
-                return;
-            }
-
-//            System.out.println("Waiting for connection");
-            while (!stopAsked) {
-                try {
-                    // wait for a connection
-                    Socket remote = s.accept();
-
-                    BufferedReader in = new BufferedReader(new InputStreamReader(remote.getInputStream()));
-                    PrintWriter out = new PrintWriter(remote.getOutputStream());
-
-                    // Read until blank line (end of HTTP Header)
-                    String str = ".";
-                    String sent = "";
-                    while (!str.equals("")) {
-                        str = in.readLine();
-                        sent += str + "\r\n";
-                    }
-
-                    // Send the response
-                    out.println("HTTP/1.0 200 OK");
-                    out.println("Content-Type: text/html");
-                    out.println("Server: Bot");
-                    out.println(""); // End of headers
-
-                    // Send the HTML page
-                    if (sent.contains("ping1")) {
-                        out.println("pong1");
-                    } else if (sent.contains("ping2")) {
-                        out.println("pong2");
-                    } else {
-                        out.println("Unknown query: " + sent);
-                    }
-                    out.flush();
-                    remote.close();
-                } catch (Exception e) {
-                    System.out.println("Error: " + e);
-                }
-            }
-
-            System.out.println("Stopping...");
-            try {
-                s.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println("Stopped");
-        }
-
-
-        @Override
-        public void close() throws Exception {
-            stopAsked = true;
-            Thread.sleep(10);
-            thread.interrupt();
+    @Test
+    public void test3() throws ConnectorException {
+        try (HttpConnector conn = new HttpConnector("localhost", PORT, "http")) {
+            Map<String, String> nvs = new HashMap<>();
+            nvs.put("key1", "value1");
+            nvs.put("key2", "value2");
+            String res = conn.post("/repeat", nvs);
+            Assert.assertTrue(res.startsWith("POST"));
         }
     }
+
+
+    @Test
+    public void testErr() throws ConnectorException {
+        try (HttpConnector conn = new HttpConnector("localhost", PORT, "http")) {
+            String res = conn.get("/err404");
+            Assert.assertEquals("Error 404:Not Found", res);
+        }
+    }
+
+
+    @Test
+    public void testErrPost() throws ConnectorException {
+        try (HttpConnector conn = new HttpConnector("localhost", PORT, "http")) {
+            Map<String, String> nvs = new HashMap<>();
+            nvs.put("key1", "value1");
+            nvs.put("key2", "value2");
+            String res = conn.post("/err404", nvs);
+            Assert.assertEquals("Error 404:Not Found", res);
+        }
+    }
+
+
+
 
 }

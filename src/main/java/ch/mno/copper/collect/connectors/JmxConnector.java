@@ -34,7 +34,7 @@ public class JmxConnector extends AbstractConnector {
 
     public JmxConnector(String url) throws IOException {
         JMXServiceURL jmxServiceURL = new JMXServiceURL(url);
-        JMXConnector jmxc = JMXConnectorFactory.connect(jmxServiceURL, null);
+        jmxc = JMXConnectorFactory.connect(jmxServiceURL, null);
         mbsc = jmxc.getMBeanServerConnection();
     }
 

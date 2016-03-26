@@ -14,7 +14,7 @@ import java.net.URISyntaxException;
 /**
  * Created by dutoitc on 20.02.2016.
  */
-public class WebServerTest {
+public class WebServer4TestsTest {
 
     private static WebServer srv;
     private static Thread thread;

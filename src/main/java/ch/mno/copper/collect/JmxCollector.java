@@ -10,7 +10,6 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -63,16 +62,16 @@ public class JmxCollector {
     }
 
 
-    public static void main(String[] args) throws IOException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException {
-        try {
-            String url="service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi";
-            List<JmxQuery> queries = Arrays.asList(new JmxQuery("java.lang:type=Runtime", "SpecName"), new JmxQuery("java.lang:type=Runtime", "SpecVersion"));
-            List<String> res = JmxCollector.jmxQuery(url, queries);
-            System.out.println("Found Java name: " + res.get(0));
-            System.out.println("Found Java version: " + res.get(1));
-        } catch (ConnectorException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args) throws IOException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException {
+//        try {
+//            String url="service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi";
+//            List<JmxQuery> queries = Arrays.asList(new JmxQuery("java.lang:type=Runtime", "SpecName"), new JmxQuery("java.lang:type=Runtime", "SpecVersion"));
+//            List<String> res = JmxCollector.jmxQuery(url, queries);
+//            System.out.println("Found Java name: " + res.get(0));
+//            System.out.println("Found Java version: " + res.get(1));
+//        } catch (ConnectorException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }
