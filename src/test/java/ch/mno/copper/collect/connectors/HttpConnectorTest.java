@@ -40,9 +40,9 @@ public class HttpConnectorTest {
 
     @Test
     public void test2() throws ConnectorException {
-        try (HttpConnector conn = new HttpConnector("localhost", PORT + 1, "http")) {
-            conn.get("/something");
-            Assert.fail("Should raise an exception");
+        try (HttpConnector conn = new HttpConnector("localhost", PORT + 10, "http")) {
+            String res = conn.get("/something");
+            Assert.fail("Should raise an exception, but got " + res);
         } catch (ConnectorException e) {
             Assert.assertTrue(e.getMessage(), e.getMessage().contains("Connection refused"));
         }

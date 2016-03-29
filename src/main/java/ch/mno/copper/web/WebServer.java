@@ -15,8 +15,17 @@ import org.slf4j.LoggerFactory;
 public class WebServer implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebServer.class);
-    public static final int PORT = 30400;
+    public static int PORT;
+
     private Server server;
+
+    public WebServer() {
+        this(30400);
+    }
+
+    public WebServer(int port) {
+        PORT = port;
+    }
 
     // http://www.eclipse.org/jetty/documentation/current/embedded-examples.html
     @Override

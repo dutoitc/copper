@@ -3,6 +3,7 @@ package ch.mno.copper.stories;
 import ch.mno.copper.collect.AbstractCollectorWrapper;
 import ch.mno.copper.collect.CollectorWrapperFactory;
 import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.report.AbstractReporterWrapper;
 import ch.mno.copper.report.ReporterWrapperFactory;
@@ -21,9 +22,10 @@ import java.util.regex.Pattern;
  */
 public class Story {
 
-    private String storyText;
-    private String cron;
     private Path source;
+    private String storyText;
+    private String error;
+    private String cron;
     private transient AbstractCollectorWrapper collectorWrapper;
     private transient AbstractReporterWrapper reporterWrapper;
 
@@ -36,14 +38,26 @@ public class Story {
     public Story(StoryGrammar grammar, InputStream is, Path source) throws IOException, ConnectorException {
         this.source = source;
         storyText = IOUtils.toString(is);
-        storyText = Pattern.compile("#.*?\n", Pattern.DOTALL).matcher(storyText).replaceAll("");
+        storyText = Pattern.compile("#.*?\n", Pattern.DOTALL).matcher(storyText).replaceAll(""); // Remove comments lines
         if (!storyText.endsWith("\n")) storyText = storyText+"\n"; // Little help for parsing
 
         String patternMain = grammar.getPatternFull("MAIN");
 
         // Check Story Syntax
         // TODO: mark storyText as invalid, and permit WEB update
-        SyntaxHelper.checkSyntax(grammar, patternMain, storyText);
+        try {
+            SyntaxHelper.checkSyntax(grammar, patternMain, storyText);
+        } catch (SyntaxException e) {
+            error = e.getMessage();
+            return;
+        }
+
+        // Extract triggers
+        if (Pattern.compile(grammar.getPatternFull("RUN_ON"), Pattern.DOTALL).matcher(storyText).find()) {
+            this.cron = buildRunOn(grammar);
+        } else {
+            throw new RuntimeException("cannot find a RUN_ON expression");
+        }
 
 
         // Extract collector using GIVEN pattern
@@ -53,40 +67,19 @@ public class Story {
         this.collectorWrapper = CollectorWrapperFactory.buildCollectorWrapper(grammar, storyGiven);
 
 
-        // Extract triggers using WHEN pattern
-        // TODO support more than WHEN [CRON]
-        if (Pattern.compile(grammar.getPatternFull("CRON"), Pattern.DOTALL).matcher(storyText).find()) {
-            this.cron = buildCron(grammar);
-        } else {
-            throw new RuntimeException("cannot find a WHEN expression");
-        }
-
         // Extract repporter using THEN pattern
         Matcher matchREPORTER = Pattern.compile(grammar.getPatternFull("REPORTER"), Pattern.DOTALL).matcher(storyText);
         if (!matchREPORTER.find()) throw new RuntimeException("Cannot find a valid REPORTER expression");
         String storyReporter = matchREPORTER.group();
         this.reporterWrapper = ReporterWrapperFactory.buildReporterWrapper(grammar, storyReporter);
-
-//        THEN REPORT BY PUSHOVER to dest
-//        WITH token=xxx
-//        WITH title="Status RCEnt"
-//        WITH message="Status (nouveau, en cours, en erreur, traitée):
-//        PR {{RCENT_PR_STG_NOUVEAU}}/{{RCENT_PR_STG_EN_COURS}}/{{RCENT_PR_MST_EN_ERREUR}}/{{RCENT_PR_TRAITEE}}
-//        PP {{RCENT_PP_STG_NOUVEAU}}/{{RCENT_PP_STG_EN_COURS}}/{{RCENT_PP_MST_EN_ERREUR}}/{{RCENT_PP_TRAITEE}}
-//        VA {{RCENT_VA_STG_NOUVEAU}}/{{RCENT_VA_STG_EN_COURS}}/{{RCENT_VA_MST_EN_ERREUR}}/{{RCENT_VA_TRAITEE}}
-//        IN {{RCENT_IN_STG_NOUVEAU}}/{{RCENT_IN_STG_EN_COURS}}/{{RCENT_IN_MST_EN_ERREUR}}/{{RCENT_IN_TRAITEE}}
-//        "
-
-//        List<String> res = JmxCollector.jmxQuery(url, new JmxCollector.JmxQuery("java.lang:type=Runtime", "SpecName"), new JmxCollector.JmxQuery("java.lang:type=Runtime", "SpecVersion"));
-//        res.forEach(s->System.out.println("Found: " + s));
     }
 
-    private String buildCron(StoryGrammar grammar) {
+    private String buildRunOn(StoryGrammar grammar) {
         String patSpaceEol = grammar.getPatternFull("SPACE_EOL");
         String patEol = grammar.getPatternFull("EOL");
-        String patternCron = grammar.getPatternFull("CRON");
-        Matcher matcher3 = Pattern.compile(patternCron, Pattern.DOTALL).matcher(storyText);
-        if (!matcher3.find()) throw new RuntimeException("Only supporting WHEN cron expressions yet.");
+        String patternRunOn = grammar.getPatternFull("RUN_ON");
+        Matcher matcher3 = Pattern.compile(patternRunOn, Pattern.DOTALL).matcher(storyText);
+        if (!matcher3.find()) throw new RuntimeException("Only supporting RUN_ON expressions yet.");
         String cronTxt = matcher3.group(0);
         matcher3 = Pattern.compile("DAILY at (\\d{4})").matcher(cronTxt);
         if (matcher3.find()) {

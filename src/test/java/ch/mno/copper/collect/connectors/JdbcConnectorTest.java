@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
@@ -20,6 +21,11 @@ public class JdbcConnectorTest {
         String url = "jdbc:derby:memory:sampleDB;create=true";
         Connection conn = DriverManager.getConnection(url);
         Statement stmnt = conn.createStatement();
+        try {
+            stmnt.executeUpdate("drop table test_table");
+        } catch (SQLException e) {
+            // Pass
+        }
         stmnt.executeUpdate("create table test_table(value int)");
         stmnt.executeUpdate("insert into test_table(value) values (42)");
 

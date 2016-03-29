@@ -92,7 +92,7 @@ public class CopperServices {
     public String getStories() {
         Gson gson = new GsonBuilder().registerTypeAdapter(Story.class, new MyStoryAdapter<Story>()).create();
 
-        List<Story> stories = StoriesFacade.getInstance().getStories();
+        List<Story> stories = StoriesFacade.getInstance().getStories(true);
         return gson.toJson(stories);
     }
 
@@ -149,7 +149,7 @@ public class CopperServices {
 
     private Overview buildOverview() {
         Overview overview = new Overview();
-        List<Story> stories = StoriesFacade.getInstance().getStories();
+        List<Story> stories = StoriesFacade.getInstance().getStories(true);
         overview.overviewStories = new ArrayList<>(stories.size());
         stories.stream().forEach(s -> overview.overviewStories.add(new OverviewStory(s)));
         return overview;

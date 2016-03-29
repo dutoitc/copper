@@ -1,7 +1,16 @@
+v1.1.0 Refactoring:
+[ ] Connectors, ... properties should be loaded from copper.properties
+[ ] Properties should be accessed only when creating connectors
+[ ]
+
+
+
 Quartz: http://www.mkyong.com/java/quartz-2-scheduler-tutorial/
 Proxy support
 
 Story name must be unique
+
+Switched from Jetty to Undertow for smaller uber jar (18 to 13GB?): http://stackoverflow.com/questions/22472845/lightweight-alternative-to-jetty
 
 if story change on disk, reload it
 

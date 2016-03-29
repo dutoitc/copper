@@ -9,19 +9,19 @@ import java.util.List;
 /**
  * Created by dutoitc on 16.02.2016.
  */
-public class CollectorTaskTest {
+public class StoryTaskTest {
 
     @Test
     public void testCronMinute() {
         List<String> values = new ArrayList<String>();
-        CollectorTask ct = new CollectorTaskImpl(null, ()->values.add("1"), "* * * * *");
+        StoryTask ct = new StoryTaskImpl(null, ()->values.add("1"), "* * * * *");
         Assert.assertTrue(Math.abs(ct.getNextRun()-System.currentTimeMillis())<=60000);
     }
 
     @Test
     public void testCronMinute2() {
         List<String> values = new ArrayList<String>();
-        CollectorTask ct = new CollectorTaskImpl(null, ()->values.add("1"), "0 * * * *");
+        StoryTask ct = new StoryTaskImpl(null, ()->values.add("1"), "0 * * * *");
         Assert.assertTrue(Math.abs(ct.getNextRun()-System.currentTimeMillis())<=60*60*1000);
     }
 

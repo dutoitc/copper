@@ -10,17 +10,36 @@ import org.slf4j.LoggerFactory;
  * call shouldRun, then getRunnable, then markAsRun.
  * Created by dutoitc on 02.02.2016.
  */
-public class CollectorTaskImpl implements CollectorTask {
+public class StoryTaskImpl implements StoryTask {
     private Logger LOG = LoggerFactory.getLogger(getClass());
 
     private Runnable runnable;
-    private String cronExpression;
     private long lastRun=-1;
-    private long nextRun;
     private static long nextId=1;
     private long taskId = nextId++;
     private Story story;
     private boolean running = false;
+    private CronData cronData = null;
+
+    private class CronData {
+        private long nextRun;
+        private String cronExpression;
+
+        public CronData(String cronExpression) {
+            this.cronExpression = cronExpression;
+            computeNextRun();
+        }
+
+        private void computeNextRun() {
+            Predictor p = new Predictor(cronExpression);
+            nextRun = p.nextMatchingTime();
+            LOG.info("Task {}: scheduled next run in {}", taskId + (story==null?"":("[" + story.getName() + "]")), computeTime(nextRun-System.currentTimeMillis()));
+        }
+
+        public boolean shouldRun() {
+            return System.currentTimeMillis()>=nextRun;
+        }
+    }
 
     /**
      * pattern minutes(0-59) hours(0-23) day_of_month(1-31), month(1-12 or jan,feb...), days of week(0-6=sunday-saturday or sun mon tue...) e.g. 0 3 * jan-jun,sep-dec mon-fri
@@ -28,11 +47,10 @@ public class CollectorTaskImpl implements CollectorTask {
      * @param runnable
      * @param cronExpression
      */
-    public CollectorTaskImpl(Story story, Runnable runnable, String cronExpression) {
+    public StoryTaskImpl(Story story, Runnable runnable, String cronExpression) {
         this.runnable = runnable;
-        this.cronExpression = cronExpression;
         this.story = story;
-        computeNextRun();
+        this.cronData = new CronData(cronExpression);
     }
 
     @Override
@@ -45,11 +63,7 @@ public class CollectorTaskImpl implements CollectorTask {
         return story.getName().replace(".txt", "");
     }
 
-    private void computeNextRun() {
-        Predictor p = new Predictor(cronExpression);
-        nextRun = p.nextMatchingTime();
-        LOG.info("Task {}: scheduled next run in {}", taskId + (story==null?"":("[" + story.getName() + "]")), computeTime(nextRun-System.currentTimeMillis()));
-    }
+
 
     @Override
     public long getTaskId() {
@@ -63,12 +77,21 @@ public class CollectorTaskImpl implements CollectorTask {
 
     @Override
     public boolean shouldRun() {
-        return System.currentTimeMillis()>=nextRun && !running; // Running flag avoid double execution for tasks scheduled every minute, if task run take more than one minute.
+        if (running) return false;    // Running flag avoid double execution for tasks scheduled every minute, if task run take more than one minute.
+
+        if (cronData!=null) {
+            return cronData.shouldRun();
+        }
+
+        return false;
     }
 
     @Override
     public long getNextRun() {
-        return nextRun;
+        if (cronData!=null) {
+            return cronData.nextRun;
+        }
+        return -1;
     }
 
     @Override
@@ -79,7 +102,7 @@ public class CollectorTaskImpl implements CollectorTask {
     @Override
     public void markAsRun() {
         lastRun = System.currentTimeMillis();
-        computeNextRun();
+        if (cronData!=null) cronData.computeNextRun();
         running = false;
     }
 

@@ -39,4 +39,9 @@ public class CopperMediator {
         return value;
     }
 
+    public String getProperty(String name, String defaultValue) {
+        String value = properties.getProperty(name);
+        if (value==null) return defaultValue;
+        return value;
+    }
 }

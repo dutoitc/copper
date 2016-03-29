@@ -2,8 +2,8 @@ package ch.mno.copper.stories;
 
 import ch.mno.copper.ValuesStore;
 import ch.mno.copper.collect.AbstractCollectorWrapper;
-import ch.mno.copper.collect.CollectorTask;
-import ch.mno.copper.collect.CollectorTaskImpl;
+import ch.mno.copper.collect.StoryTask;
+import ch.mno.copper.collect.StoryTaskImpl;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.report.AbstractReporterWrapper;
@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -47,7 +48,8 @@ public class StoriesFacade {
         return grammar;
     }
 
-    public List<Story> getStories() {
+    public List<Story> getStories(boolean shouldRefreshFromDisk) {
+        if (shouldRefreshFromDisk) refreshFromDisk();
         return stories;
     }
 
@@ -59,8 +61,8 @@ public class StoriesFacade {
         return story;
     }
 
-    public CollectorTask buildCollector(Story story, ValuesStore valuesStore) {
-        return new CollectorTaskImpl(story, () -> {
+    public StoryTask buildStoryTask(Story story, ValuesStore valuesStore) {
+        return new StoryTaskImpl(story, () -> {
             // This code execute at every trigger (cron, ...) for the given story
             try {
                 Map<String, String> values;
@@ -84,9 +86,9 @@ public class StoriesFacade {
         }, story.getCron());
     }
 
-    public List<CollectorTask> buildCollectors(ValuesStore valuesStore) {
-        List<CollectorTask> collectorTasks = new ArrayList<>(stories.size());
-        stories.forEach(s->collectorTasks.add(buildCollector(s, valuesStore)));
+    public Map<String, StoryTask> buildStoryTasks(ValuesStore valuesStore) {
+        Map<String, StoryTask> collectorTasks = new HashMap<>(stories.size());
+        stories.forEach(s->collectorTasks.put(s.getName(), buildStoryTask(s, valuesStore)));
         return collectorTasks;
     }
 

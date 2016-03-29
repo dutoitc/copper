@@ -1,4 +1,5 @@
 <copper version="1">
+    <!-- no longer used -->
     <connector id="myOracle1" type="oracle" url="..." username="..." password="..."/>
     <collector id="coll1" connector="myOracle1" schedule="* * * * *" sql="..." />
 

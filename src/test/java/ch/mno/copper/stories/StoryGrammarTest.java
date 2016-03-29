@@ -52,13 +52,13 @@ public class StoryGrammarTest {
         Assert.assertFalse(pattern1.matcher("\t").matches());
     }
 
-    @Test
-    public void testDEFINE() {
-        String pattern = storyGrammar.getPatternFull("DEFINE");
-        Pattern pattern1 = Pattern.compile(pattern);
-        Assert.assertTrue(pattern1.matcher("DEFINE key1 value1\n").matches());
-        Assert.assertFalse(pattern1.matcher("DEFINE key1").matches());
-    }
+//    @Test
+//    public void testDEFINE() {
+//        String pattern = storyGrammar.getPatternFull("DEFINE");
+//        Pattern pattern1 = Pattern.compile(pattern);
+//        Assert.assertTrue(pattern1.matcher("DEFINE key1 value1\n").matches());
+//        Assert.assertFalse(pattern1.matcher("DEFINE key1").matches());
+//    }
 
     @Test
     public void testJDBC_URL() {
@@ -69,10 +69,10 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testCOLLECTOR_ORACLE() {
-        String pattern = storyGrammar.getPatternFull("COLLECTOR_ORACLE");
-        testPattern(pattern, "ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass  QUERY select 1 from dual\n");
-        testPattern(pattern, "ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n   user=aUser,\n   password=aPass\n QUERY \"select something as chose\"\n");
+    public void testCOLLECTOR_JDBC() {
+        String pattern = storyGrammar.getPatternFull("COLLECTOR_JDBC");
+        testPattern(pattern, "JDBC WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass  QUERY select 1 from dual\n");
+        testPattern(pattern, "JDBC WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n   user=aUser,\n   password=aPass\n QUERY \"select something as chose\"\n");
     }
 
 
@@ -123,7 +123,7 @@ public class StoryGrammarTest {
         //pattern="COLLECTOR[\\s+\\r\\n]+(ORACLE[\\s+\\r\\n]+WITH[\\s+\\r\\n]+//url=jdbc[:\\w@/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?[\\s+\\r\\n]QUERY ((\\\".*?\\\")|.*)\\r?\\n|JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=\\S+?[\\s+\\r\\n]\\s*(QUERY .*? FOR .*?\\s+AS .*?[\\s+\\r\\n])+)";
         Pattern pattern1 = Pattern.compile(pattern);
         //Assert.assertTrue(pattern1.matcher("COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass\n").matches());
-        testPattern(pattern, "COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass QUERY select 1 from dual\n");
+        testPattern(pattern, "COLLECTOR JDBC WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass QUERY select 1 from dual\n");
     }
 
     @Test
@@ -137,7 +137,7 @@ public class StoryGrammarTest {
     public void testCOLLECTOR3() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
         Pattern pattern1 = Pattern.compile(pattern);
-        testPattern(pattern,"COLLECTOR ORACLE\n" +
+        testPattern(pattern,"COLLECTOR JDBC\n" +
                 "        WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n" +
                 "             user=aUser,\n" +
                 "             password=aPass\n"+
@@ -162,12 +162,12 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testCRON() {
-        String pattern = storyGrammar.getPatternFull("CRON");
+    public void testRUN_ON() {
+        String pattern = storyGrammar.getPatternFull("RUN_ON");
         Pattern pattern1 = Pattern.compile(pattern);
-        Assert.assertTrue(pattern1.matcher("CRON * * * * *\n").matches());
-        Assert.assertTrue(pattern1.matcher("CRON 1 1 1 1 1\n").matches());
-        Assert.assertTrue(pattern1.matcher("CRON DAILY at 0600\n").matches());
+        Assert.assertTrue(pattern1.matcher("RUN ON CRON * * * * *\n").matches());
+        Assert.assertTrue(pattern1.matcher("RUN ON CRON 1 1 1 1 1\n").matches());
+        Assert.assertTrue(pattern1.matcher("RUN DAILY at 0600\n").matches());
     }
 
     @Test
@@ -189,7 +189,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testOracleStory() throws IOException, ConnectorException, URISyntaxException {
+    public void testJdbcStory() throws IOException, ConnectorException, URISyntaxException {
         String pattern = storyGrammar.getPatternFull("MAIN");
 //        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
         URL resource = getClass().getResource("/OracleStory1.txt");

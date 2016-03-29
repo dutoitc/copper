@@ -4,7 +4,6 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.StoryGrammar;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,22 +75,22 @@ public class JdbcCollectorWrapper extends AbstractCollectorWrapper {
     }
 
     public static JdbcCollectorWrapper buildCollector(StoryGrammar grammar, String storyGiven) {
-        String patternOracle = grammar.getPatternFull("COLLECTOR_ORACLE");
-        Matcher matcher = Pattern.compile(patternOracle, Pattern.DOTALL).matcher(storyGiven);
+        String patternJdbc = grammar.getPatternFull("COLLECTOR_JDBC");
+        Matcher matcher = Pattern.compile(patternJdbc, Pattern.DOTALL).matcher(storyGiven);
         if (!matcher.find()) {
-            int p = storyGiven.indexOf("COLLECTOR_ORACLE");
+            int p = storyGiven.indexOf("COLLECTOR_JDBC");
             if (p > 0) {
-                SyntaxHelper.checkSyntax(grammar, storyGiven, patternOracle);
+                SyntaxHelper.checkSyntax(grammar, storyGiven, patternJdbc);
             }
-            throw new RuntimeException("Cannot find \n   >>>" + patternOracle + "\nin\n   >>>" + storyGiven);
+            throw new RuntimeException("Cannot find \n   >>>" + patternJdbc + "\nin\n   >>>" + storyGiven);
         }
 
         // TODO: fix below (query)
-        String collectorOracleData = matcher.group(0);
+        String collectorJdbcData = matcher.group(0);
         String patSpaceEol = grammar.getPatternFull("SPACE_EOL");
         String patSpace = grammar.getPatternFull("SPACE");
         String patEol = grammar.getPatternFull("EOL");
-        Matcher matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patSpaceEol + ".*?\"(.*)\"", Pattern.DOTALL).matcher(collectorOracleData);
+        Matcher matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patSpaceEol + ".*?\"(.*)\"", Pattern.DOTALL).matcher(collectorJdbcData);
         if (matcher2.find()) {
             String url = matcher2.group(1);
             String username = matcher2.group(2);
@@ -99,7 +98,7 @@ public class JdbcCollectorWrapper extends AbstractCollectorWrapper {
             String query = matcher2.group(4);
             return new JdbcCollectorWrapper(url, username, password, query);
         } else {
-            throw new RuntimeException("Cannot read COLLECTOR_ORACLE body in <" + collectorOracleData + ">");
+            throw new RuntimeException("Cannot read COLLECTOR_JDBC body in <" + collectorJdbcData + ">");
         }
     }
 

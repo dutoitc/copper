@@ -20,10 +20,11 @@ public class WebServer4TestsTest {
     private static Thread thread;
 
     @BeforeClass
-    public static void init() {
+    public static void init() throws InterruptedException {
         srv = new WebServer();
         thread = new Thread(srv);
         thread.start();
+        Thread.sleep(2000);
         ValuesStore.getInstance().put("aKey", "aValue");
     }
 

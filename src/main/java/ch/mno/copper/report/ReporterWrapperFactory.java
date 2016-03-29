@@ -22,7 +22,7 @@ public class ReporterWrapperFactory {
             }
             return MailReporterWrapper.buildReporter(grammar, storyGiven + '\n', mediator.getProperty("mailServer"), mediator.getProperty("mailUsername"), mediator.getProperty("mailPassword"), port, mediator.getProperty("mailFrom"), mediator.getProperty("mailReplyTo"));
         } else if (Pattern.compile("STORE VALUES").matcher(storyGiven).find()) {
-            //return JdbcCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
+            //return JdbcCollectorWrapper.buildStoryTask(grammar, storyGiven + '\n');
             return null;
         }
         throw new RuntimeException("Cannot find a valid REPORT expression builder");

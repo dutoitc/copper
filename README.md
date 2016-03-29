@@ -11,16 +11,17 @@ The system is based on user stories, in nearly human language.
 
 First, the collect part:
 ````
+RUN ON CRON */5 7-18 * * 1-5
 GIVEN COLLECTOR JMX WITH url=service:jmx:rmi://blah-blah,user=xxx,password=yyy
     QUERY objectName1 FOR att1    AS myVar1
     QUERY objectName2 FOR att2 AS myVar2
-WHEN CRON */5 7-18 * * 1-5
 THEN STORE VALUES
 ````
 
 
 Then, the report part
 ````
+RUN ON CRON * * * * *
 GIVEN STORED VALUES
 WHEN myVar1>0.5
 THEN REPORT BY MAIL to aUser@host.com,anotherUser@host.com
@@ -30,7 +31,8 @@ THEN REPORT BY MAIL to aUser@host.com,anotherUser@host.com
 
 Or a simple report
 ````
-GIVEN COLLECTOR DB ORACLE
+RUN ON CRON * * * * *
+GIVEN COLLECTOR JDBC
     with url=jdbc://something
     with username=xxx
     with password=yyy
@@ -48,10 +50,10 @@ Values can be accessed by web: <http://aHost:30400/copper/ws/value/XXX> with all
 Here is a list of actual components:
 
 ## Collectors
-* Http collector: get a web page, then grep page for values production
+* Http collector: get a web page, then grep page for values production (todo)
 * Jmx collector: get values from JMX MBean server
-* Oracle collector: get values from Oracle database (in progress)
-* Log collector: get values from a log file (in progress; should support scp
+* Jdbc collector: get values from Jdbc database
+* Log collector: get values from a log file (todo; should support scp)
 
 ## Reporters
 * Mail reporter: report values, messages by mail
