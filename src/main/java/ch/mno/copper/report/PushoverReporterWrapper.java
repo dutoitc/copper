@@ -44,18 +44,7 @@ public class PushoverReporterWrapper extends AbstractReporterWrapper {
 
     @Override
     public void execute(Map<String, String> values) {
-        String message = messageTemplate;
-        int p1 = message.indexOf("{{");
-        while (p1>0) {
-            int p2 = message.indexOf("}}");
-            if (p2==-1) throw new RuntimeException("Wrong message format: " + message);
-
-            String key = message.substring(p1+2, p2);
-            String value = values.get(key);
-            if (value==null) value="?";
-            message = message.substring(0, p1) + value + message.substring(p2+2);
-            p1 = message.indexOf("{{");
-        }
+        String message = ReportHelper.expandMessage(values, messageTemplate);
 
         Map<String, String> reporterValues = new HashMap<>();
         reporterValues.put(PushoverReporter.PARAMETERS.TITLE.toString(), title);
@@ -70,5 +59,6 @@ public class PushoverReporterWrapper extends AbstractReporterWrapper {
             e.printStackTrace();
         }
     }
+
 
 }

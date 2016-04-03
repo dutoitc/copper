@@ -168,6 +168,7 @@ public class StoryGrammarTest {
         Assert.assertTrue(pattern1.matcher("RUN ON CRON * * * * *\n").matches());
         Assert.assertTrue(pattern1.matcher("RUN ON CRON 1 1 1 1 1\n").matches());
         Assert.assertTrue(pattern1.matcher("RUN DAILY at 0600\n").matches());
+        Assert.assertTrue(pattern1.matcher("RUN ON CRON 24,56 * * * *\n").matches());
     }
 
     @Test
@@ -185,6 +186,14 @@ public class StoryGrammarTest {
         Pattern pattern1 = Pattern.compile(pattern);
         Assert.assertTrue(pattern1.matcher(txt).matches());*/
         SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("PUSHOVER"),txt);
+    }
+
+    @Test
+    public void testCSV() {
+        String txt="REPORT BY CSV to \"filename.csv\" WITH headers=\"my header1;my header2;my header3\"\n"+
+                "    WITH line=\"{{value1}};{{value2}};{{value3}}\"";
+
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("CSV"),txt);
     }
 
 

@@ -56,7 +56,7 @@ public class SyntaxHelper {
         //grammar.getKeys().stream().filter(k->k.length()>5).filter(p->Pattern.compile(p, Pattern.DOTALL).matcher(value).find()).forEach(v->sb.append("Matching " + v + '\n'));
 
 
-        throw new RuntimeException(sb.toString());
+        throw new SyntaxException(sb.toString());
     }
 
 }

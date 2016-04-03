@@ -1,0 +1,23 @@
+Version v1.1.0
+==============
+- copper.properties support "serverPort" properties, default 30400
+
+Language refactorisation: (OLD / New)
+Old: GIVEN (collector) WHEN (trigger) THEN REPORT (...)
+New: ON (trigger expression) [COLLECT ...] [PROCESS ...] [REPORT ...] [THEN RUN STORY ...]
+
+New:
+Added appender CSV: REPORT BY CSV to "filename" WITH headers="h1;h2;h3" WITH line="{{d1}};{{d2}};{{d3}}"
+Added special value: {{NOW_DD.MM.YY_HH:MM}} , e.g. "03.04.2016 22:28" (Java date pattern)
+
+
+To migrate stories from v1.0.0 to v1.1.0:
+- Move WHEN expression on top of the story
+- rename COLLECTOR ORACLE by COLLECTOR JDBC
+
+Version v1.0.0 (20160326)
+==============
+Initial release.
+- Collectors: DB and JMX
+- Processors: (builtin based on cron)
+- Reporters: Pushover and EMail
