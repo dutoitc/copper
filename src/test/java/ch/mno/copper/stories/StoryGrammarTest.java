@@ -194,6 +194,18 @@ public class StoryGrammarTest {
                 "    WITH line=\"{{value1}};{{value2}};{{value3}}\"";
 
         SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("CSV"),txt);
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("REPORTER"),txt);
+    }
+
+    @Test
+    public void testCSV2() {
+        String txt="RUN ON CRON 0 * * * *\n" +
+                "GIVEN STORED VALUES\n" +
+                "THEN REPORT BY CSV to \"data.csv\"\n" +
+                "     WITH header=\"h1\"\n" +
+                "     WITH line=\"v1\"\n";
+
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"),txt);
     }
 
 

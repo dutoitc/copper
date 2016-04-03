@@ -24,6 +24,10 @@ public class SyntaxHelper {
 
         StringBuffer sbM = new StringBuffer();
         grammar.getKeys().stream().filter(p->Pattern.compile(p, Pattern.DOTALL).matcher(value).find()).forEach(v->sbM.insert(0,v + ','));
+        //System.out.println("DBG1>>" + Pattern.compile(grammar.getPattern("GIVEN"), Pattern.DOTALL).matcher(value).find());
+        for (String key: grammar.getKeys()) {
+            System.out.println("DBG1>> " + key + ": " + Pattern.compile(grammar.getPattern(key), Pattern.DOTALL).matcher(value).find());
+        }
 
         StringBuffer sb = new StringBuffer();
         sb.append("Pattern \n   >>>" + pattern + "\n does not match\n   >>>" + value + "\n");
