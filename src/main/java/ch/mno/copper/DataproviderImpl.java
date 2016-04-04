@@ -20,8 +20,9 @@ public class DataproviderImpl implements DataProvider {
 
     public DataproviderImpl() {
         valuesStore = ValuesStore.getInstance();
-        storiesFacade.refreshFromDisk();
-        cachedStoryTasks = StoriesFacade.getInstance().buildStoryTasks(valuesStore);
+        //storiesFacade.refreshFromDisk();
+        //cachedStoryTasks = StoriesFacade.getInstance().buildStoryTasks(valuesStore);
+        refreshStoryTasks();
     }
 
     @Override
@@ -31,15 +32,21 @@ public class DataproviderImpl implements DataProvider {
 
     @Override
     public List<Story> getStories() {
+        List<Story> stories = refreshStoryTasks();
+        return stories;
+    }
+
+    private List<Story> refreshStoryTasks() {
         List<Story> stories = storiesFacade.getStories(true);
         Map<String, StoryTask> newStoryTasks = new HashMap<>(cachedStoryTasks.size());
+        newStoryTasks.putAll(cachedStoryTasks);
 
         // Add newer
         stories.stream()
                 .filter(s -> !cachedStoryTasks.containsKey(s.getName()))
+                .filter(s->!s.hasError())
                 .forEach(s -> newStoryTasks.put(s.getName(), storiesFacade.buildStoryTask(s, valuesStore)));
         cachedStoryTasks = newStoryTasks;
-
         return stories;
     }
 

@@ -202,10 +202,16 @@ public class StoryGrammarTest {
         String txt="RUN ON CRON 0 * * * *\n" +
                 "GIVEN STORED VALUES\n" +
                 "THEN REPORT BY CSV to \"data.csv\"\n" +
-                "     WITH header=\"h1\"\n" +
+                "     WITH headers=\"h1\"\n" +
                 "     WITH line=\"v1\"\n";
 
-        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"),txt);
+        //SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"),txt);
+        String pattern1 = storyGrammar.getPatternFull("CSV");
+        String pattern2 = storyGrammar.getPatternFull("CSV2");
+        System.out.println(pattern1);
+        System.out.println(pattern2);
+        System.out.println(Pattern.compile(pattern1, Pattern.DOTALL).matcher(txt).find());
+        System.out.println(Pattern.compile(pattern2, Pattern.DOTALL).matcher(txt).find());
     }
 
 

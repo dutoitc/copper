@@ -1,5 +1,8 @@
 package ch.mno.copper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,13 +10,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * A Store for values. Timestamp is set as data insertion.
@@ -24,6 +22,7 @@ public class ValuesStore {
 
     // TODO: dependency graph, with temporized triggers and quiet time
 
+    private static final Logger LOG = LoggerFactory.getLogger(ValuesStore.class);
     private static final ValuesStore instance = new ValuesStore();
     private Map<String, StoreValue> map = new HashMap<>();
     private Set<String> changedValues = new HashSet<>();
@@ -103,6 +102,16 @@ public class ValuesStore {
         if (map.containsKey(key)) {
             return map.get(key).value;
         }
+        if (key.startsWith("NOW_")) {
+            // NOW_DD.MM.YY_HH:MM
+            String pattern = key.substring(4).replace("_", " ");
+            try {
+                return new SimpleDateFormat(pattern).format(new Date());
+            } catch (IllegalArgumentException e) {
+                LOG.error("Unparseable pattern: " + pattern + "; " + e.getMessage());
+            }
+        }
+
         return null;
     }
 

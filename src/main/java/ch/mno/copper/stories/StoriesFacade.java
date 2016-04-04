@@ -88,7 +88,13 @@ public class StoriesFacade {
 
     public Map<String, StoryTask> buildStoryTasks(ValuesStore valuesStore) {
         Map<String, StoryTask> collectorTasks = new HashMap<>(stories.size());
-        stories.forEach(s->collectorTasks.put(s.getName(), buildStoryTask(s, valuesStore)));
+        stories.forEach(s->{
+            if (s.hasError()) {
+                LOG.warn("Ignoring task build for story in error: " + s.getName());
+            } else {
+                collectorTasks.put(s.getName(), buildStoryTask(s, valuesStore));
+            }
+        });
         return collectorTasks;
     }
 
@@ -155,7 +161,12 @@ public class StoriesFacade {
 
         // Load files: yet use sample values if none is specified
         List<String> files = new ArrayList<String>();
-        for (File file : storiesFolder.listFiles(f -> f.isFile())) {
+        File stories = new File("stories");
+        if (!stories.exists()) {
+            LOG.error("Folder not found: 'stories', cannot refresh stories from disk.");
+            return;
+        }
+        for (File file : stories.listFiles(f -> f.isFile())) {
             files.add("stories/" + file.getName());
         }
 
@@ -181,7 +192,7 @@ public class StoriesFacade {
             }
         }
 
-        Iterator<Story> it = stories.iterator();
+        Iterator<Story> it = this.stories.iterator();
         while (it.hasNext()) {
             Story s = it.next();
             if (!new File("stories/" + s.getName()).exists()) {

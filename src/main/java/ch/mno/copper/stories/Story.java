@@ -8,6 +8,8 @@ import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.report.AbstractReporterWrapper;
 import ch.mno.copper.report.ReporterWrapperFactory;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -22,6 +24,7 @@ import java.util.regex.Pattern;
  */
 public class Story {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Story.class);
     private Path source;
     private String storyText;
     private String error;
@@ -49,6 +52,7 @@ public class Story {
             SyntaxHelper.checkSyntax(grammar, patternMain, storyText);
         } catch (SyntaxException e) {
             error = e.getMessage();
+            LOG.error("Wrong story: " + error);
             return;
         }
 
@@ -122,5 +126,9 @@ public class Story {
 
     public Path getSource() {
         return source;
+    }
+
+    public boolean hasError() {
+        return error!=null;
     }
 }

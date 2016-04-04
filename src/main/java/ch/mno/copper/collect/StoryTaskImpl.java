@@ -31,6 +31,9 @@ public class StoryTaskImpl implements StoryTask {
         }
 
         private void computeNextRun() {
+            if (cronExpression==null) {
+                LOG.error("Null Cron Expression for story " + story.getName());
+            }
             Predictor p = new Predictor(cronExpression);
             nextRun = p.nextMatchingTime();
             LOG.info("Task {}: scheduled next run in {}", taskId + (story==null?"":("[" + story.getName() + "]")), computeTime(nextRun-System.currentTimeMillis()));
