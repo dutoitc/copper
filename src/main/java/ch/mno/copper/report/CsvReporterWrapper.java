@@ -1,5 +1,6 @@
 package ch.mno.copper.report;
 
+import ch.mno.copper.ValuesStore;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.stories.StoryGrammar;
 
@@ -25,7 +26,7 @@ public class CsvReporterWrapper extends AbstractReporterWrapper {
         this.storyGiven = storyGiven;
 
         String spaceEol =  grammar.getPatternFull("SPACE_EOL");
-        String pattern= "REPORT BY CSV to (\".*?\")" + spaceEol + "+WITH headers=(\".*?\")" + spaceEol + "+WITH line=(\".*?\")";
+        String pattern= "REPORT BY CSV to \"(.*?)\"" + spaceEol + "+WITH headers=\"(.*?)\"" + spaceEol + "+WITH line=\"(.*?)\"";
         Matcher matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(storyGiven);
         if (!matcher.find()) throw new RuntimeException("Cannot find a valid CSV pattern in " + storyGiven + ", pattern " + pattern);
 
@@ -41,7 +42,7 @@ public class CsvReporterWrapper extends AbstractReporterWrapper {
 
     @Override
     public void execute(Map<String, String> values) {
-        String message = ReportHelper.expandMessage(values, line);
+        String message = ReportHelper.expandMessage(values, line, ValuesStore.getInstance());
 
         Map<String, String> reporterValues = new HashMap<>();
         reporterValues.put(CsvReporter.PARAMETERS.FILENAME.toString(), filename);

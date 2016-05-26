@@ -199,19 +199,24 @@ public class StoryGrammarTest {
 
     @Test
     public void testCSV2() {
+//        String txt="RUN ON CRON 0 * * * *\n" +
+//                "GIVEN STORED VALUES\n" +
+//                "THEN REPORT BY CSV to \"data.csv\"\n" +
+//                "     WITH headers=\"h1\"\n" +
+//                "     WITH line=\"v1\"\n";
+
         String txt="RUN ON CRON 0 * * * *\n" +
                 "GIVEN STORED VALUES\n" +
-                "THEN REPORT BY CSV to \"data.csv\"\n" +
-                "     WITH headers=\"h1\"\n" +
+                "THEN REPORT BY CSV to \"rcent-data.csv\"\n" +
+                "     WITH header=\"DATETIME;RCENT_PR_DB_CH_AK;RCENT_PR_DB_UID_NOT_FOUND;RCENT_PR_DB_NOINFO;RCENT_PR_DB_DOC;RCENT_PR_DB_IDERR019;RCENT_PR_DB_ERRORS;RCENT_IN_STG_NOUVEAU;RCENT_IN_STG_EN_COURS;RCENT_IN_MST_EN_ERREUR;RCENT_IN_MST_TRAITEE;RCENT_IN_PUBLISHED_1;RCENT_IN_PUBLISHED_2;RCENT_VA_STG_NOUVEAU;RCENT_VA_STG_EN_COURS;RCENT_VA_MST_EN_ERREUR;RCENT_VA_MST_TRAITEE;RCENT_VA_PUBLISHED_1;RCENT_VA_PUBLISHED_2;RCENT_PP_STG_NOUVEAU;RCENT_PP_STG_EN_COURS;RCENT_PP_MST_EN_ERREUR;RCENT_PP_MST_TRAITEE;RCENT_PP_PUBLISHED_1;RCENT_PP_PUBLISHED_2;RCENT_PR_STG_NOUVEAU;RCENT_PR_STG_EN_COURS;RCENT_PR_MST_EN_ERREUR;RCENT_PR_MST_TRAITEE;RCENT_PR_PUBLISHED_1;RCENT_PR_PUBLISHED_2\"\n" +
+//                "     WITH line=\"{{NOW_dd.MM.yyyy_HH:mm}},{{RCENT_PR_DB_CH_AK}};{{RCENT_PR_DB_UID_NOT_FOUND}};{{RCENT_PR_DB_NOINFO}};{{RCENT_PR_DB_DOC}};{{RCENT_PR_DB_IDERR019}};{{RCENT_PR_DB_ERRORS}};{{RCENT_IN_STG_NOUVEAU}};{{RCENT_IN_STG_EN_COURS}};{{RCENT_IN_MST_EN_ERREUR}};{{RCENT_IN_MST_TRAITEE}};{{RCENT_IN_PUBLISHED_1}};{{RCENT_IN_PUBLISHED_2}};{{RCENT_VA_STG_NOUVEAU}};{{RCENT_VA_STG_EN_COURS}};{{RCENT_VA_MST_EN_ERREUR}};{{RCENT_VA_MST_TRAITEE}};{{RCENT_VA_PUBLISHED_1}};{{RCENT_VA_PUBLISHED_2}};{{RCENT_PP_STG_NOUVEAU}};{{RCENT_PP_STG_EN_COURS}};{{RCENT_PP_MST_EN_ERREUR}};{{RCENT_PP_MST_TRAITEE}};{{RCENT_PP_PUBLISHED_1}};{{RCENT_PP_PUBLISHED_2}};{{RCENT_PR_STG_NOUVEAU}};{{RCENT_PR_STG_EN_COURS}};{{RCENT_PR_MST_EN_ERREUR}};{{RCENT_PR_MST_TRAITEE}};{{RCENT_PR_PUBLISHED_1}};{{RCENT_PR_PUBLISHED_2}}\"\n";
+//                        "     WITH headers=\"h1\"\n" +
                 "     WITH line=\"v1\"\n";
 
         //SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"),txt);
         String pattern1 = storyGrammar.getPatternFull("CSV");
-        String pattern2 = storyGrammar.getPatternFull("CSV2");
         System.out.println(pattern1);
-        System.out.println(pattern2);
         System.out.println(Pattern.compile(pattern1, Pattern.DOTALL).matcher(txt).find());
-        System.out.println(Pattern.compile(pattern2, Pattern.DOTALL).matcher(txt).find());
     }
 
 

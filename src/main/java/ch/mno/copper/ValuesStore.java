@@ -99,9 +99,6 @@ public class ValuesStore {
     }
 
     public String getValue(String key) {
-        if (map.containsKey(key)) {
-            return map.get(key).value;
-        }
         if (key.startsWith("NOW_")) {
             // NOW_DD.MM.YY_HH:MM
             String pattern = key.substring(4).replace("_", " ");
@@ -110,6 +107,9 @@ public class ValuesStore {
             } catch (IllegalArgumentException e) {
                 LOG.error("Unparseable pattern: " + pattern + "; " + e.getMessage());
             }
+        }
+        if (map.containsKey(key)) {
+            return map.get(key).value;
         }
 
         return null;

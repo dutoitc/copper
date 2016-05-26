@@ -62,6 +62,7 @@ public class CopperDaemon implements Runnable {
         // Refresh stories from disk
         List<Story> stories = dataProvider.getStories(); // With refresh
 
+
         for (Story story : stories) {
             // Run story ?
             StoryTask task = dataProvider.getStoryTask(story);

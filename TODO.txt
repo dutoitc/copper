@@ -4,6 +4,10 @@ v1.1.0 Refactoring:
 [ ]
 
 
+Add database, keep history + retention time ?
+
+Add report based on database: graph by day ? + send by mail
+
 
 Quartz: http://www.mkyong.com/java/quartz-2-scheduler-tutorial/
 Proxy support

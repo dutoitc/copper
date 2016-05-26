@@ -162,7 +162,9 @@ public class CopperServices {
 
         public OverviewStory(Story story) {
             storyId = story.getName();
-            nextRun = new Predictor(story.getCron()).nextMatchingTime();
+            if (story.getCron()!=null) {
+                nextRun = new Predictor(story.getCron()).nextMatchingTime();
+            }
         }
     }
 
