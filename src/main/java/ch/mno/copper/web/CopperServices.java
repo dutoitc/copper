@@ -13,14 +13,14 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import it.sauronsoftware.cron4j.Predictor;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,6 +85,43 @@ public class CopperServices {
         return gson.toJson(valueStore.getValues());
     }
 
+    @GET
+    @Path("values/query")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns) {
+        Gson gson = new Gson();
+        LocalDateTime from = toDate(dateFrom, true);
+        LocalDateTime to = toDate(dateTo, false);
+        return gson.toJson(valueStore.queryValues(from, to, columns));
+    }
+
+    private LocalDateTime toDate(String date, boolean am) {
+        if (date==null) return null;
+
+        String[] formats = new String[] {"dd.MM.yyyy", "yyyy-MM-dd"};
+        for (String format: formats) {
+            try {
+//                System.out.println("Parsing '"+date+"' with '"+format+"'");
+                LocalDate ld = LocalDate.parse(date, DateTimeFormatter.ofPattern(format));
+                if (am) return LocalDateTime.of(ld, LocalTime.of(0, 0));
+                return LocalDateTime.of(ld, LocalTime.of(23, 59, 59));
+            } catch (DateTimeParseException e) {
+            }
+        }
+
+        formats = new String[] {"yyyy-MM-dd HH:mm", "yyyy-MM-dd'T'HH:mm", "dd.MM.yyyy'T'HH:mm"};
+        for (String format: formats) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+            try {
+                //return (LocalDateTime)formatter.parse(date);
+                return LocalDateTime.parse(date, formatter);
+            } catch (DateTimeParseException e) {
+
+            }
+        }
+        throw new RuntimeException("Cannot parse '" + date+"'");
+    }
+
 
     @GET
     @Path("stories")
@@ -145,6 +182,8 @@ public class CopperServices {
         Gson gson = new Gson();
         return gson.toJson(buildOverview());
     }
+
+
 
 
     private Overview buildOverview() {

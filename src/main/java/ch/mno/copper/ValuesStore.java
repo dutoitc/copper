@@ -1,16 +1,16 @@
 package ch.mno.copper;
 
+import com.google.gson.JsonElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -145,6 +145,49 @@ public class ValuesStore {
     public void clear() {
         map.clear();
         changedValues.clear();
+    }
+
+    public List<List<String>> queryValues(LocalDateTime from, LocalDateTime to, String columns) {
+        // Note: this code is temporary, waiting for an internal DB to be queried. Yet, it match my project only,
+        // with a csv file of format (DATETIME;KEY1;KEY2;...;KEYN\ndd.MM.yyyy HH:mm:ss;value1;value2;...;valueN\n...
+        List<List<String>> data = new ArrayList<List<String>>();
+        try (BufferedReader br = Files.newBufferedReader(Paths.get("rcent-data.csv"))) {
+            String header = br.readLine();
+
+            // Find wanted columns
+            List<String> userColumns = Arrays.asList(columns.split(","));
+            List<Integer> wantedColumns = new ArrayList<>();
+            int noCol=0;
+            for (String column: header.split(";")) {
+                if (userColumns.contains(column)) {
+                    wantedColumns.add(noCol);
+                }
+                noCol++;
+            }
+
+            // Check if all columns have been found
+            if (userColumns.size()!=wantedColumns.size()) {
+                throw new RuntimeException("Not found all columns !");
+            }
+
+            // Extract data
+            String line;
+            while ((line=br.readLine())!=null) {
+                String[] csvColumns = line.split(";");
+                LocalDateTime csvDT = LocalDateTime.parse(csvColumns[0], DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
+                if (from!=null && from.isAfter(csvDT)) continue;
+                if (to!=null && to.isBefore(csvDT)) continue;
+
+                List<String> row = new ArrayList<>();
+                for (int idx: wantedColumns) {
+                    row.add(csvColumns[idx]);
+                }
+                data.add(row);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return data;
     }
 
     public static class StoreValue {
