@@ -1,6 +1,8 @@
 package ch.mno.copper;
 
 import com.google.gson.JsonElement;
+import com.sun.deploy.util.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A Store for values. Timestamp is set as data insertion.
@@ -167,7 +170,7 @@ public class ValuesStore {
 
             // Check if all columns have been found
             if (userColumns.size()!=wantedColumns.size()) {
-                throw new RuntimeException("Not found all columns !");
+                throw new RuntimeException("Not found all columns: found [" + StringUtils.join(wantedColumns, ",") + "] but wanted [" + StringUtils.join(userColumns, ",")+"]");
             }
 
             // Extract data
@@ -179,6 +182,7 @@ public class ValuesStore {
                 if (to!=null && to.isBefore(csvDT)) continue;
 
                 List<String> row = new ArrayList<>();
+                row.add(csvColumns[0]);
                 for (int idx: wantedColumns) {
                     row.add(csvColumns[idx]);
                 }

@@ -15,6 +15,7 @@ import it.sauronsoftware.cron4j.Predictor;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -88,11 +89,20 @@ public class CopperServices {
     @GET
     @Path("values/query")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns) {
+    public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns) {
         Gson gson = new Gson();
         LocalDateTime from = toDate(dateFrom, true);
-        LocalDateTime to = toDate(dateTo, false);
-        return gson.toJson(valueStore.queryValues(from, to, columns));
+        LocalDateTime to;
+        if (dateTo==null) {
+            to = LocalDateTime.now();
+        }  else {
+            to =toDate(dateTo, false);
+        }
+        try {
+            return Response.ok(gson.toJson(valueStore.queryValues(from, to, columns)), MediaType.APPLICATION_JSON).build();
+        } catch (RuntimeException e) {
+            return Response.serverError().entity("SERVER ERROR\n" + e.getMessage()).build();
+        }
     }
 
     private LocalDateTime toDate(String date, boolean am) {
