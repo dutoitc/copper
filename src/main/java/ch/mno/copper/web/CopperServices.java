@@ -106,7 +106,7 @@ public class CopperServices {
     }
 
     private LocalDateTime toDate(String date, boolean am) {
-        if (date==null) return null;
+        if (date==null || "null".equals(date)) return null;
 
         String[] formats = new String[] {"dd.MM.yyyy", "yyyy-MM-dd"};
         for (String format: formats) {
