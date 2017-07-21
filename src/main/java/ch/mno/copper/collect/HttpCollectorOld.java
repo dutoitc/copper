@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by dutoitc on 30.01.2016.
  */
-public class HttpCollector {
+public class HttpCollectorOld {
 
     public String read(HttpConnector conn, String uri) throws ConnectorException {
         return conn.get(uri);
@@ -35,7 +35,7 @@ public class HttpCollector {
         }
         try (HttpConnector conn =  new HttpConnector(uri.getHost(), uri.getPort(), uri.getProtocol())){
             for (String itUri: uris) {
-                results.add(new HttpCollector().read(conn, itUri));
+                results.add(new HttpCollectorOld().read(conn, itUri));
             }
         } catch (Exception e) {
             throw new ConnectorException("Connector exception: " + e.getMessage(), e);
@@ -45,7 +45,7 @@ public class HttpCollector {
 
 //    public static void main(String[] args) throws IOException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException {
 //        try {
-//            HttpCollector.httpQuery("http://www.shimbawa.ch", "/files/pong1", "/files/pong2", "/none").forEach(s->System.out.println("Found: " + s));
+//            HttpCollectorOld.httpQuery("http://www.shimbawa.ch", "/files/pong1", "/files/pong2", "/none").forEach(s->System.out.println("Found: " + s));
 //        } catch (ConnectorException e) {
 //            e.printStackTrace();
 //        }

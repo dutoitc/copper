@@ -12,6 +12,8 @@ public class CollectorWrapperFactory {
     public static AbstractCollectorWrapper buildCollectorWrapper(StoryGrammar grammar, String storyGiven) {
         if (Pattern.compile(grammar.getPatternFull("COLLECTOR_JMX"), Pattern.DOTALL).matcher(storyGiven).find()) {
             return JmxCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
+        } else if (Pattern.compile(grammar.getPatternFull("COLLECTOR_WEB"), Pattern.DOTALL).matcher(storyGiven).find()) {
+                return WebCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
         } else if (Pattern.compile(grammar.getPatternFull("COLLECTOR_JDBC"), Pattern.DOTALL).matcher(storyGiven).find()) {
             return JdbcCollectorWrapper.buildCollector(grammar, storyGiven + '\n');
         } else if (Pattern.compile("GIVEN" + grammar.getPatternFull("SPACE_EOL") + "+|STORED VALUES", Pattern.DOTALL).matcher(storyGiven).find()) {

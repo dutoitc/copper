@@ -118,6 +118,27 @@ public class StoryGrammarTest {
 
 
     @Test
+    public void testCOLLECTOR_WEB() {
+        String pattern = storyGrammar.getPatternFull("COLLECTOR_WEB");
+        testPattern(pattern, "WEB\n" +
+                "        WITH url=http://int-atev.etat-de-vaud.ch/ws/ping,\n" +
+                "             user=aUser,\n" +
+                "             password=aPass\n" +
+                "        KEEP a AS varA\n" +
+                "        KEEP b AS varB\n");
+    }
+
+    @Test
+    public void testCOLLECTOR_WEB2() {
+        String pattern = storyGrammar.getPatternFull("COLLECTOR_WEB");
+        testPattern(pattern, "WEB\n" +
+                "        WITH url=http://int-atev.etat-de-vaud.ch/ws/ping\n" +
+                "        KEEP a AS varA\n" +
+                "        KEEP b AS varB\n");
+    }
+
+
+    @Test
     public void testCOLLECTOR1() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
         //pattern="COLLECTOR[\\s+\\r\\n]+(ORACLE[\\s+\\r\\n]+WITH[\\s+\\r\\n]+//url=jdbc[:\\w@/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?[\\s+\\r\\n]QUERY ((\\\".*?\\\")|.*)\\r?\\n|JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=\\S+?[\\s+\\r\\n]\\s*(QUERY .*? FOR .*?\\s+AS .*?[\\s+\\r\\n])+)";

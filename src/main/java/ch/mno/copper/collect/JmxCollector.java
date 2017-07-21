@@ -33,11 +33,18 @@ public class JmxCollector {
             }
 
             for (JmxQuery aQuery: queries) {
-                results.add(new JmxCollector().read(conn, aQuery.objectName, aQuery.value));
+                try {
+                    results.add(new JmxCollector().read(conn, aQuery.objectName, aQuery.value));
+                } catch (Exception e) {
+                    System.err.println("Connector exception (server " + serverUrl + "): " + e.getMessage());
+                    results.add("ERR");
+                }
             }
         } catch (Exception e) {
             System.err.println("Connector exception (server " + serverUrl + "): " + e.getMessage());
-            queries.forEach(v->results.add(""));
+            for (int i=results.size(); i<queries.size(); i++) {
+                results.add("");
+            }
         } finally {
             if (conn!=null) {
                 conn.close();

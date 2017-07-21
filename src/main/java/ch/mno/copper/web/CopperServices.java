@@ -185,6 +185,22 @@ public class CopperServices {
         return storeValue.getValue();
     }
 
+
+    @POST
+    @Path("value/{valueName}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String posttValue(@PathParam("valueName") String valueName, String message) {
+        valueStore.put(valueName,message);
+        ValuesStore.StoreValue storeValue = valueStore.getValues().get(valueName);
+
+        if (storeValue == null) {
+            throw new RuntimeException("Value not found: " + valueName);
+        }
+        return storeValue.getValue();
+    }
+
+
     @GET
     @Path("overview")
     @Produces(MediaType.APPLICATION_JSON)

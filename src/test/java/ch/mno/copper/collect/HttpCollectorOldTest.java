@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by dutoitc on 26.03.2016.
  */
-public class HttpCollectorTest {
+public class HttpCollectorOldTest {
 
 
     final static int PORT = 35743;
@@ -32,25 +32,25 @@ public class HttpCollectorTest {
 
     @Test
     public void test1() throws Exception {
-        List<String> values = HttpCollector.httpQuery("http://localhost:" + PORT, "?ping1", "?ping2");
+        List<String> values = HttpCollectorOld.httpQuery("http://localhost:" + PORT, "?ping1", "?ping2");
         Assert.assertEquals("pong1", values.get(0));
         Assert.assertEquals("pong2", values.get(1));
     }
 
     @Test(expected = ConnectorException.class)
     public void testWrongUrl() throws ConnectorException {
-        HttpCollector.httpQuery("httpd://dummy", "");
+        HttpCollectorOld.httpQuery("httpd://dummy", "");
     }
 
 
     @Test(expected = ConnectorException.class)
     public void testWrongUrl2() throws ConnectorException {
-        HttpCollector.httpQuery("http://257.1.1.1", "");
+        HttpCollectorOld.httpQuery("http://257.1.1.1", "");
     }
 
     @Test
     public void testWrongErr404() throws Exception {
-        List<String> res = HttpCollector.httpQuery("http://localhost:" + PORT, "err404");
+        List<String> res = HttpCollectorOld.httpQuery("http://localhost:" + PORT, "err404");
         Assert.assertEquals("Error 404:Not Found", res.get(0));
     }
 
