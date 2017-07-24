@@ -63,7 +63,7 @@ public class ValuesStore {
             StringBuilder sb = new StringBuilder();
             sb.append(k);
             sb.append('|');
-            sb.append(v==null?null:v.getValue().replace("|", "£").replace("\n","¢"));
+            sb.append(v==null||v.getValue()==null?null:v.getValue().replace("|", "£").replace("\n","¢"));
             sb.append('|');
             sb.append(v==null?null:v.getTimestamp());
             sb.append('\n');
