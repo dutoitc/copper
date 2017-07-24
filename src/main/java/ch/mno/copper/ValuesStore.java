@@ -56,7 +56,16 @@ public class ValuesStore {
         PrintWriter pw = new PrintWriter(os);
         pw.write("1\n");
         pw.write(map.size()+"\n");
-        map.forEach((k,v)->pw.write(k+"|"+v.getValue().replace("|", "£").replace("\n","¢")+"|"+v.getTimestamp()+"\n"));
+        map.forEach((k,v)->{
+            StringBuilder sb = new StringBuilder();
+            sb.append(k);
+            sb.append('|');
+            sb.append(v==null?null:v.getValue().replace("|", "£").replace("\n","¢"));
+            sb.append('|');
+            sb.append(v==null?null:v.getTimestamp());
+            sb.append('\n');
+            pw.write(sb.toString());
+        });
         pw.write(""+changedValues.size()+'\n');
         changedValues.forEach(k->pw.write(k+'\n'));
         pw.flush();
