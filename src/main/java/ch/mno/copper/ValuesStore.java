@@ -43,10 +43,10 @@ public class ValuesStore {
     }
 
     public void put(String key, String value) {
-        if (map.containsKey(key) &&
-                (
-                        (value==null && map.get(key)==null) ||
-                                (map.get(key).value.equals(value)))) return;
+        if (map.containsKey(key)) {
+            if (value==null && map.get(key)==null) return;
+            if (map.get(key)!=null && map.get(key).equals(value)) return;
+        }
         map.put(key, new StoreValue(value));
         changedValues.add(key);
     }
