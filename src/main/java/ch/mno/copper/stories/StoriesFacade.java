@@ -66,6 +66,8 @@ public class StoriesFacade {
             // This code execute at every trigger (cron, ...) for the given story
             try {
                 Map<String, String> values;
+
+                // Collect
                 AbstractCollectorWrapper collectorWrapper = story.getCollectorWrapper();
                 if (collectorWrapper == null) { // Null means to read value store
                     values = valuesStore.getValuesMapString();
@@ -73,7 +75,12 @@ public class StoriesFacade {
                     values = collectorWrapper.execute();
                 }
 
-                // TODO: trigg reporter based on values checked
+                if (!story.matchWhen(values, valuesStore)) {
+                    // Not matching WHEN->ignore report
+                    return;
+                }
+
+                // Report
                 AbstractReporterWrapper reporter = story.getReporterWrapper();
                 if (reporter == null) {
                     values.forEach((key, value) -> valuesStore.put(key, value));

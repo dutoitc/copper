@@ -25,8 +25,8 @@ RUN ON CRON * * * * *
 GIVEN STORED VALUES
 WHEN myVar1>0.5
 THEN REPORT BY MAIL to aUser@host.com,anotherUser@host.com
-    with title="Purple alert!"
-    with body="Holà capt'ain, the application tadah has a load of {{myVar1}} and a memory of {{myVar2}}"
+    WITH title="Purple alert!"
+    WITH message="Holà capt'ain, the application tadah has a load of {{myVar1}} and a memory of {{myVar2}}"
 ````
 
 Or a simple report
@@ -39,8 +39,8 @@ GIVEN COLLECTOR JDBC
     EXECUTE SQL "select something from somewhere as myVar3"
 WHEN CRON 0 6 * * 1-5
 THEN REPORT BY MAIL to mycustomer@something.com
-    with title="Daily reporting"
-    with body="Dear customer, here is your income for your sells yesterday: {{myVar3}}"
+    WITH title="Daily reporting"
+    WITH message="Dear customer, here is your income for your sells yesterday: {{myVar3}}"
 ````
 
 Values can be accessed by web: <http://aHost:30400/copper/ws/value/XXX> with all values easily readable at <http://aHost:30400/copper>
@@ -55,11 +55,13 @@ Here is a list of actual components:
 * Jdbc collector: get values from Jdbc database
 * Log collector: get values from a log file (todo; should support scp)
 
+## Triggers
+* When trigger: WHEN a>1, WHEN a<22, WHEN a=33, WHEN a>17.22, ... (float are equals if delta<1/25)
+
 ## Reporters
 * Mail reporter: report values, messages by mail
 * Slf4j reporter: report values in a log file
 * Pushover reporter: report values on mobile phone via Pushover
-
 
 # Future
 Here is a little wishlist. Add yours (report to dutoitc@shimbawa.ch)

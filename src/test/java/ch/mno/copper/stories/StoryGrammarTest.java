@@ -158,17 +158,30 @@ public class StoryGrammarTest {
     public void testCOLLECTOR3() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
         Pattern pattern1 = Pattern.compile(pattern);
-        testPattern(pattern,"COLLECTOR JDBC\n" +
+        testPattern(pattern, "COLLECTOR JDBC\n" +
                 "        WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n" +
                 "             user=aUser,\n" +
-                "             password=aPass\n"+
+                "             password=aPass\n" +
                 "       QUERY \"Select a, b, c\"\n");
-   }
+    }
+
     @Test
     public void testCOLLECTOR4() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
         Pattern pattern1 = Pattern.compile(pattern);
         Assert.assertFalse(pattern1.matcher("JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass\n").matches());
+    }
+
+    @Test
+    public void testWHEN() {
+        String pattern = storyGrammar.getPatternFull("WHEN");
+        testPattern(pattern, "WHEN aaa>1711");
+        testPattern(pattern, "WHEN aaa<172");
+        testPattern(pattern, "WHEN aaa=17");
+        testPattern(pattern, "WHEN aaa>17.1");
+        testPattern(pattern, "WHEN aaa<137.2");
+        testPattern(pattern, "WHEN aaa=17.3");
+        testPattern(pattern, "WHEN aaa_bBb_ccc=17.3");
     }
 
 
@@ -194,7 +207,7 @@ public class StoryGrammarTest {
 
     @Test
     public void testPushover() {
-        String txt="REPORT BY PUSHOVER to \"dest\"\n" +
+        String txt = "REPORT BY PUSHOVER to \"dest\"\n" +
                 "     WITH token=\"xxx\"\n" +
                 "     WITH title=\"Status RCEnt\"\n" +
                 "     WITH message=\"Status (nouveau, en cours, en erreur, traitée):\n" +
@@ -206,16 +219,16 @@ public class StoryGrammarTest {
        /* String pattern = storyGrammar.getPatternFull("PUSHOVER");
         Pattern pattern1 = Pattern.compile(pattern);
         Assert.assertTrue(pattern1.matcher(txt).matches());*/
-        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("PUSHOVER"),txt);
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("PUSHOVER"), txt);
     }
 
     @Test
     public void testCSV() {
-        String txt="REPORT BY CSV to \"filename.csv\" WITH headers=\"my header1;my header2;my header3\"\n"+
+        String txt = "REPORT BY CSV to \"filename.csv\" WITH headers=\"my header1;my header2;my header3\"\n" +
                 "    WITH line=\"{{value1}};{{value2}};{{value3}}\"";
 
-        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("CSV"),txt);
-        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("REPORTER"),txt);
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("CSV"), txt);
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("REPORTER"), txt);
     }
 
     @Test
@@ -226,7 +239,7 @@ public class StoryGrammarTest {
 //                "     WITH headers=\"h1\"\n" +
 //                "     WITH line=\"v1\"\n";
 
-        String txt="RUN ON CRON 0 * * * *\n" +
+        String txt = "RUN ON CRON 0 * * * *\n" +
                 "GIVEN STORED VALUES\n" +
                 "THEN REPORT BY CSV to \"rcent-data.csv\"\n" +
                 "     WITH header=\"DATETIME;RCENT_PR_DB_CH_AK;RCENT_PR_DB_UID_NOT_FOUND;RCENT_PR_DB_NOINFO;RCENT_PR_DB_DOC;RCENT_PR_DB_IDERR019;RCENT_PR_DB_ERRORS;RCENT_IN_STG_NOUVEAU;RCENT_IN_STG_EN_COURS;RCENT_IN_MST_EN_ERREUR;RCENT_IN_MST_TRAITEE;RCENT_IN_PUBLISHED_1;RCENT_IN_PUBLISHED_2;RCENT_VA_STG_NOUVEAU;RCENT_VA_STG_EN_COURS;RCENT_VA_MST_EN_ERREUR;RCENT_VA_MST_TRAITEE;RCENT_VA_PUBLISHED_1;RCENT_VA_PUBLISHED_2;RCENT_PP_STG_NOUVEAU;RCENT_PP_STG_EN_COURS;RCENT_PP_MST_EN_ERREUR;RCENT_PP_MST_TRAITEE;RCENT_PP_PUBLISHED_1;RCENT_PP_PUBLISHED_2;RCENT_PR_STG_NOUVEAU;RCENT_PR_STG_EN_COURS;RCENT_PR_MST_EN_ERREUR;RCENT_PR_MST_TRAITEE;RCENT_PR_PUBLISHED_1;RCENT_PR_PUBLISHED_2\"\n" +
@@ -249,12 +262,12 @@ public class StoryGrammarTest {
         String storyText = IOUtils.toString(resource);
 //        Assert.assertTrue(pattern1.matcher(story).matches());
 //        testPattern(pattern, story);
-        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"),storyText);
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"), storyText);
 
 
         Path path = Paths.get(resource.toURI());
         Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), path);
-        JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper)story.getCollectorWrapper();
+        JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) story.getCollectorWrapper();
         Assert.assertEquals("jdbc:oracle:thin:@//myhost:1521/orcl", wrapper.getUrl());
         Assert.assertEquals("aUser", wrapper.getUsername());
         String query = wrapper.getQuery().replaceAll("\r", "");
@@ -307,16 +320,18 @@ public class StoryGrammarTest {
 //    }
 
 
-    /** Test pattern, and if does not match, find a subpart off pattern which match */
+    /**
+     * Test pattern, and if does not match, find a subpart off pattern which match
+     */
     private void testPattern(String pattern, String value) {
         if (Pattern.compile(pattern, Pattern.DOTALL).matcher(value).matches()) return;
         // Test latest pattern possible
-        for (int i=pattern.length()-1; i>0; i--) {
+        for (int i = pattern.length() - 1; i > 0; i--) {
             String currPattern = pattern.substring(0, i);
             try {
                 Pattern currPatternCompiled = Pattern.compile(currPattern, Pattern.DOTALL);
 
-                for (int j = value.length()-1; j>1; j--) {
+                for (int j = value.length() - 1; j > 1; j--) {
                     String valuePart = value.substring(0, j);
                     if (currPatternCompiled.matcher(valuePart).matches()) {
                         Assert.fail("Pattern \n   >>>" + pattern + "\n does not match\n   >>>" + value + "\n but pattern start \n   >>>" + currPattern + "\nmatches\n   >>>" + valuePart);
