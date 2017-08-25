@@ -63,6 +63,9 @@ Here is a list of actual components:
 * Slf4j reporter: report values in a log file
 * Pushover reporter: report values on mobile phone via Pushover
 
+# WEB
+Everything placed under a special folder 'externalweb' will be served as /web. This could be used to host a monitoring WEB application.
+
 # Future
 Here is a little wishlist. Add yours (report to dutoitc@shimbawa.ch)
 * Read values from property file (like username-passwords)
