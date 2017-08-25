@@ -2,12 +2,16 @@ package ch.mno.copper.web;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
  * Created by dutoitc on 07.02.2016.
@@ -56,9 +60,21 @@ public class WebServer implements Runnable {
 //        servletHandler.addServletWithMapping(CopperServiceServlet.class, "/ws");
 //        servletHandler.addServletWithMapping(CopperServiceServlet.class, "/ws/*");
 
+
+        // externalweb/* mapped on /ext
+        String webDirExt = new File("externalweb").getAbsolutePath();
+        LOG.info("Serving ext files from " + webDirExt);
+        ResourceHandler resource_handlerExt = new ResourceHandler();
+        resource_handlerExt.setDirectoriesListed(true);
+        resource_handlerExt.setWelcomeFiles(new String[]{"index.html"});
+        resource_handlerExt.setResourceBase("externalweb");
+        ContextHandler ctx = new ContextHandler("/ext"); /* the server uri path */
+        ctx.setHandler(resource_handlerExt);
+
+
         // Handlers
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{resource_handler, context});//servletHandler});
+        handlers.setHandlers(new Handler[]{resource_handler, ctx, context});//servletHandler});
         server.setHandler(handlers);
 
 
