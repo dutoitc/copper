@@ -108,7 +108,7 @@ public class StoryGrammarTest {
     @Test
     public void testCOLLECTOR_JMX3() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_JMX");
-        String jmx = "JMX WITH url=service:jmx:rmi://slv2737v.etat-de-vaud.ch:44444/jndi/rmi://slv2737v.etat-de-vaud.ch:1099/karaf-trun,user=tadmin,password=tadmin\n" +
+        String jmx = "JMX WITH url=service:jmx:rmi://src2737v.myhost:44444/jndi/rmi://src2737v.myhost:1099/karaf-trun,user=tadmin,password=tadmin\n" +
                 "    QUERY java.lang:type=Runtime FOR SpecName    AS JMX_LOCAL_RUNTIME_SPECNAME\n" +
                 "    QUERY java.lang:type=Runtime FOR SpecVersion AS JMX_LOCAL_RUNTIME_SPECVERSION\n";
         String s = SyntaxHelper.checkSyntax(storyGrammar, pattern, jmx);
@@ -121,7 +121,7 @@ public class StoryGrammarTest {
     public void testCOLLECTOR_WEB() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_WEB");
         testPattern(pattern, "WEB\n" +
-                "        WITH url=http://int-atev.etat-de-vaud.ch/ws/ping,\n" +
+                "        WITH url=http://int-block.myhost/ws/ping,\n" +
                 "             user=aUser,\n" +
                 "             password=aPass\n" +
                 "        KEEP a AS varA\n" +
@@ -132,7 +132,7 @@ public class StoryGrammarTest {
     public void testCOLLECTOR_WEB2() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_WEB");
         testPattern(pattern, "WEB\n" +
-                "        WITH url=http://int-atev.etat-de-vaud.ch/ws/ping\n" +
+                "        WITH url=http://int-block.myhost/ws/ping\n" +
                 "        KEEP a AS varA\n" +
                 "        KEEP b AS varB\n");
     }
@@ -209,12 +209,12 @@ public class StoryGrammarTest {
     public void testPushover() {
         String txt = "REPORT BY PUSHOVER to \"dest\"\n" +
                 "     WITH token=\"xxx\"\n" +
-                "     WITH title=\"Status RCEnt\"\n" +
+                "     WITH title=\"Status RCFACE\"\n" +
                 "     WITH message=\"Status (nouveau, en cours, en erreur, traitée):\n" +
-                "                PR {{RCENT_PR_STG_NOUVEAU}}/{{RCENT_PR_STG_EN_COURS}}/{{RCENT_PR_MST_EN_ERREUR}}/{{RCENT_PR_TRAITEE}}\n" +
-                "                PP {{RCENT_PP_STG_NOUVEAU}}/{{RCENT_PP_STG_EN_COURS}}/{{RCENT_PP_MST_EN_ERREUR}}/{{RCENT_PP_TRAITEE}}\n" +
-                "                VA {{RCENT_VA_STG_NOUVEAU}}/{{RCENT_VA_STG_EN_COURS}}/{{RCENT_VA_MST_EN_ERREUR}}/{{RCENT_VA_TRAITEE}}\n" +
-                "                IN {{RCENT_IN_STG_NOUVEAU}}/{{RCENT_IN_STG_EN_COURS}}/{{RCENT_IN_MST_EN_ERREUR}}/{{RCENT_IN_TRAITEE}}\"";
+                "                PR {{RCFACE_PR_STG_NOUVEAU}}/{{RCFACE_PR_STG_EN_COURS}}/{{RCFACE_PR_MST_EN_ERREUR}}/{{RCFACE_PR_TRAITEE}}\n" +
+                "                PP {{RCFACE_PP_STG_NOUVEAU}}/{{RCFACE_PP_STG_EN_COURS}}/{{RCFACE_PP_MST_EN_ERREUR}}/{{RCFACE_PP_TRAITEE}}\n" +
+                "                VA {{RCFACE_VA_STG_NOUVEAU}}/{{RCFACE_VA_STG_EN_COURS}}/{{RCFACE_VA_MST_EN_ERREUR}}/{{RCFACE_VA_TRAITEE}}\n" +
+                "                IN {{RCFACE_IN_STG_NOUVEAU}}/{{RCFACE_IN_STG_EN_COURS}}/{{RCFACE_IN_MST_EN_ERREUR}}/{{RCFACE_IN_TRAITEE}}\"";
 
        /* String pattern = storyGrammar.getPatternFull("PUSHOVER");
         Pattern pattern1 = Pattern.compile(pattern);
@@ -241,9 +241,9 @@ public class StoryGrammarTest {
 
         String txt = "RUN ON CRON 0 * * * *\n" +
                 "GIVEN STORED VALUES\n" +
-                "THEN REPORT BY CSV to \"rcent-data.csv\"\n" +
-                "     WITH header=\"DATETIME;RCENT_PR_DB_CH_AK;RCENT_PR_DB_UID_NOT_FOUND;RCENT_PR_DB_NOINFO;RCENT_PR_DB_DOC;RCENT_PR_DB_IDERR019;RCENT_PR_DB_ERRORS;RCENT_IN_STG_NOUVEAU;RCENT_IN_STG_EN_COURS;RCENT_IN_MST_EN_ERREUR;RCENT_IN_MST_TRAITEE;RCENT_IN_PUBLISHED_1;RCENT_IN_PUBLISHED_2;RCENT_VA_STG_NOUVEAU;RCENT_VA_STG_EN_COURS;RCENT_VA_MST_EN_ERREUR;RCENT_VA_MST_TRAITEE;RCENT_VA_PUBLISHED_1;RCENT_VA_PUBLISHED_2;RCENT_PP_STG_NOUVEAU;RCENT_PP_STG_EN_COURS;RCENT_PP_MST_EN_ERREUR;RCENT_PP_MST_TRAITEE;RCENT_PP_PUBLISHED_1;RCENT_PP_PUBLISHED_2;RCENT_PR_STG_NOUVEAU;RCENT_PR_STG_EN_COURS;RCENT_PR_MST_EN_ERREUR;RCENT_PR_MST_TRAITEE;RCENT_PR_PUBLISHED_1;RCENT_PR_PUBLISHED_2\"\n" +
-//                "     WITH line=\"{{NOW_dd.MM.yyyy_HH:mm}},{{RCENT_PR_DB_CH_AK}};{{RCENT_PR_DB_UID_NOT_FOUND}};{{RCENT_PR_DB_NOINFO}};{{RCENT_PR_DB_DOC}};{{RCENT_PR_DB_IDERR019}};{{RCENT_PR_DB_ERRORS}};{{RCENT_IN_STG_NOUVEAU}};{{RCENT_IN_STG_EN_COURS}};{{RCENT_IN_MST_EN_ERREUR}};{{RCENT_IN_MST_TRAITEE}};{{RCENT_IN_PUBLISHED_1}};{{RCENT_IN_PUBLISHED_2}};{{RCENT_VA_STG_NOUVEAU}};{{RCENT_VA_STG_EN_COURS}};{{RCENT_VA_MST_EN_ERREUR}};{{RCENT_VA_MST_TRAITEE}};{{RCENT_VA_PUBLISHED_1}};{{RCENT_VA_PUBLISHED_2}};{{RCENT_PP_STG_NOUVEAU}};{{RCENT_PP_STG_EN_COURS}};{{RCENT_PP_MST_EN_ERREUR}};{{RCENT_PP_MST_TRAITEE}};{{RCENT_PP_PUBLISHED_1}};{{RCENT_PP_PUBLISHED_2}};{{RCENT_PR_STG_NOUVEAU}};{{RCENT_PR_STG_EN_COURS}};{{RCENT_PR_MST_EN_ERREUR}};{{RCENT_PR_MST_TRAITEE}};{{RCENT_PR_PUBLISHED_1}};{{RCENT_PR_PUBLISHED_2}}\"\n";
+                "THEN REPORT BY CSV to \"RCFACE-data.csv\"\n" +
+                "     WITH header=\"DATETIME;RCFACE_PR_DB_CH_AK;RCFACE_PR_DB_UID_NOT_FOUND;RCFACE_PR_DB_NOINFO;RCFACE_PR_DB_DOC;RCFACE_PR_DB_IDERR019;RCFACE_PR_DB_ERRORS;RCFACE_IN_STG_NOUVEAU;RCFACE_IN_STG_EN_COURS;RCFACE_IN_MST_EN_ERREUR;RCFACE_IN_MST_TRAITEE;RCFACE_IN_PUBLISHED_1;RCFACE_IN_PUBLISHED_2;RCFACE_VA_STG_NOUVEAU;RCFACE_VA_STG_EN_COURS;RCFACE_VA_MST_EN_ERREUR;RCFACE_VA_MST_TRAITEE;RCFACE_VA_PUBLISHED_1;RCFACE_VA_PUBLISHED_2;RCFACE_PP_STG_NOUVEAU;RCFACE_PP_STG_EN_COURS;RCFACE_PP_MST_EN_ERREUR;RCFACE_PP_MST_TRAITEE;RCFACE_PP_PUBLISHED_1;RCFACE_PP_PUBLISHED_2;RCFACE_PR_STG_NOUVEAU;RCFACE_PR_STG_EN_COURS;RCFACE_PR_MST_EN_ERREUR;RCFACE_PR_MST_TRAITEE;RCFACE_PR_PUBLISHED_1;RCFACE_PR_PUBLISHED_2\"\n" +
+//                "     WITH line=\"{{NOW_dd.MM.yyyy_HH:mm}},{{RCFACE_PR_DB_CH_AK}};{{RCFACE_PR_DB_UID_NOT_FOUND}};{{RCFACE_PR_DB_NOINFO}};{{RCFACE_PR_DB_DOC}};{{RCFACE_PR_DB_IDERR019}};{{RCFACE_PR_DB_ERRORS}};{{RCFACE_IN_STG_NOUVEAU}};{{RCFACE_IN_STG_EN_COURS}};{{RCFACE_IN_MST_EN_ERREUR}};{{RCFACE_IN_MST_TRAITEE}};{{RCFACE_IN_PUBLISHED_1}};{{RCFACE_IN_PUBLISHED_2}};{{RCFACE_VA_STG_NOUVEAU}};{{RCFACE_VA_STG_EN_COURS}};{{RCFACE_VA_MST_EN_ERREUR}};{{RCFACE_VA_MST_TRAITEE}};{{RCFACE_VA_PUBLISHED_1}};{{RCFACE_VA_PUBLISHED_2}};{{RCFACE_PP_STG_NOUVEAU}};{{RCFACE_PP_STG_EN_COURS}};{{RCFACE_PP_MST_EN_ERREUR}};{{RCFACE_PP_MST_TRAITEE}};{{RCFACE_PP_PUBLISHED_1}};{{RCFACE_PP_PUBLISHED_2}};{{RCFACE_PR_STG_NOUVEAU}};{{RCFACE_PR_STG_EN_COURS}};{{RCFACE_PR_MST_EN_ERREUR}};{{RCFACE_PR_MST_TRAITEE}};{{RCFACE_PR_PUBLISHED_1}};{{RCFACE_PR_PUBLISHED_2}}\"\n";
 //                        "     WITH headers=\"h1\"\n" +
                 "     WITH line=\"v1\"\n";
 

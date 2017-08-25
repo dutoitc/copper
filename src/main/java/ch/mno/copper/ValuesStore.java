@@ -166,7 +166,7 @@ public class ValuesStore {
         // Note: this code is temporary, waiting for an internal DB to be queried. Yet, it match my project only,
         // with a csv file of format (DATETIME;KEY1;KEY2;...;KEYN\ndd.MM.yyyy HH:mm:ss;value1;value2;...;valueN\n...
         List<List<String>> data = new ArrayList<List<String>>();
-        try (BufferedReader br = Files.newBufferedReader(Paths.get("rcent-data.csv"))) {
+        try (BufferedReader br = Files.newBufferedReader(Paths.get("RCFACE-data.csv"))) {
             String header = br.readLine();
 
             // Find wanted columns

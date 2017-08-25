@@ -10,6 +10,7 @@ New:
 Added appender CSV: REPORT BY CSV to "filename" WITH headers="h1;h2;h3" WITH line="{{d1}};{{d2}};{{d3}}"
 Added special value: {{NOW_DD.MM.YY_HH:MM}} , e.g. "03.04.2016 22:28" (Java date pattern)
 Added 'WHEN' support
+Added JSONPath
 
 
 To migrate stories from v1.0.0 to v1.1.0:

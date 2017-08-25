@@ -22,7 +22,7 @@ public class JmxCollectorWrapperTest {
 
     @Test
     public void test() {
-            String jmx = "GIVEN COLLECTOR JMX WITH url=service:jmx:rmi://slv2737v.etat-de-vaud.ch:44444/jndi/rmi://slv2737v.etat-de-vaud.ch:1099/karaf-trun,user=tadmin,password=tadmin\n" +
+            String jmx = "GIVEN COLLECTOR JMX WITH url=service:jmx:rmi://src2737v.myhost:44444/jndi/rmi://src2737v.myhost:1099/karaf-trun,user=tadmin,password=tadmin\n" +
                     "    QUERY java.lang:type=Runtime FOR SpecName    AS JMX_LOCAL_RUNTIME_SPECNAME\n" +
                     "    QUERY java.lang:type=Runtime FOR SpecVersion AS JMX_LOCAL_RUNTIME_SPECVERSION\n" +
                     "WHEN CRON */5 7-18 * * 1-5\n" +
