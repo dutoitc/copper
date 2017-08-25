@@ -186,7 +186,7 @@ public class ValuesStoreImpl implements ValuesStore {
         long tsTo = Timestamp.valueOf(to).getTime();
         for (Map.Entry<String, StoreValue> entry: map.entrySet()) {
             long entryTS = entry.getValue().getTimestamp();
-            if ((entryTS >= tsFrom) && (entryTS <= tsTo)) {
+            if ((entryTS >= tsFrom) && (entryTS <= tsTo || to.equals(LocalDateTime.MAX))) {
                 keys.add(entry.getKey());
             }
         }

@@ -18,11 +18,12 @@ import java.util.Map;
 public class ValuesStoreImplTest {
 
     @Test
-    public void testX() {
+    public void testX() throws InterruptedException {
         ValuesStoreImpl st = ValuesStoreImpl.getInstance();
         st.clear();
         LocalDateTime t = LocalDateTime.now();
         st.put("key1", "value1");
+        Thread.sleep(1);
         Assert.assertEquals(1, st.queryValues(t, LocalDateTime.MAX).size());
         t = LocalDateTime.now();
         Collection<String> strings = st.queryValues(t, LocalDateTime.MAX);
