@@ -1,6 +1,6 @@
 package ch.mno.copper.stories;
 
-import ch.mno.copper.ValuesStore;
+import ch.mno.copper.data.ValuesStoreImpl;
 import ch.mno.copper.collect.AbstractCollectorWrapper;
 import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.collect.StoryTaskImpl;
@@ -61,7 +61,7 @@ public class StoriesFacade {
         return story;
     }
 
-    public StoryTask buildStoryTask(Story story, ValuesStore valuesStore) {
+    public StoryTask buildStoryTask(Story story, ValuesStoreImpl valuesStore) {
         return new StoryTaskImpl(story, () -> {
             // This code execute at every trigger (cron, ...) for the given story
             try {
@@ -93,7 +93,7 @@ public class StoriesFacade {
         }, story.getCron());
     }
 
-    public Map<String, StoryTask> buildStoryTasks(ValuesStore valuesStore) {
+    public Map<String, StoryTask> buildStoryTasks(ValuesStoreImpl valuesStore) {
         Map<String, StoryTask> collectorTasks = new HashMap<>(stories.size());
         stories.forEach(s->{
             if (s.hasError()) {

@@ -1,6 +1,8 @@
 package ch.mno.copper;
 
 import ch.mno.copper.collect.StoryTask;
+import ch.mno.copper.data.ValuesStore;
+import ch.mno.copper.data.ValuesStoreImpl;
 import ch.mno.copper.process.AbstractProcessor;
 import ch.mno.copper.stories.Story;
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +39,8 @@ public class CopperDaemon implements Runnable {
     private final ValuesStore valuesStore;
     private boolean shouldRun = true;
     private List<String> storiesToRun = new ArrayList<>();
+    private LocalDateTime lastQueryTime = LocalDateTime.MIN;
+
     /**
      * Manual run by the web
      */
@@ -45,7 +50,7 @@ public class CopperDaemon implements Runnable {
 
     private CopperDaemon(DataProvider dataProvider) {
         executorService = Executors.newFixedThreadPool(N_THREADS);
-        this.valuesStore = ValuesStore.getInstance();
+        this.valuesStore = ValuesStoreImpl.getInstance();
         this.dataProvider = dataProvider;
     }
 
@@ -89,7 +94,9 @@ public class CopperDaemon implements Runnable {
 
 
         // Processors
-        Collection<String> changedValues = valuesStore.getChangedValues();
+        LocalDateTime queryTime = LocalDateTime.now(); // Keep time, so that next run will have data between query time assignation and valueStore read time
+        Collection<String> changedValues = valuesStore.queryValues(lastQueryTime, LocalDateTime.MAX);
+        lastQueryTime = queryTime;
         processors.forEach(p -> {
             Collection<String> keys = p.findKnownKeys(changedValues);
             if (!keys.isEmpty()) {
@@ -115,7 +122,7 @@ public class CopperDaemon implements Runnable {
 
             // Save
             try {
-                valuesStore.save(new FileOutputStream("valuesStore.tmp"));
+                valuesStore.save();
             } catch (IOException e) {
                 throw new RuntimeException("Cannot save to valuesStore.tmp");
             }

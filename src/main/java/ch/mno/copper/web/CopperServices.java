@@ -1,7 +1,9 @@
 package ch.mno.copper.web;
 
 import ch.mno.copper.CopperMediator;
-import ch.mno.copper.ValuesStore;
+import ch.mno.copper.data.StoreValue;
+import ch.mno.copper.data.ValuesStore;
+import ch.mno.copper.data.ValuesStoreImpl;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.stories.StoriesFacade;
@@ -31,7 +33,7 @@ public class CopperServices {
     private final ValuesStore valueStore;
 
     public CopperServices() {
-        this.valueStore = ValuesStore.getInstance();
+        this.valueStore = ValuesStoreImpl.getInstance();
     }
  
     @GET
@@ -178,7 +180,7 @@ public class CopperServices {
     @Path("value/{valueName}")
     @Produces(MediaType.TEXT_PLAIN)
     public String getValue(@PathParam("valueName") String valueName) {
-        ValuesStore.StoreValue storeValue = valueStore.getValues().get(valueName);
+        StoreValue storeValue = valueStore.getValues().get(valueName);
         if (storeValue == null) {
             throw new RuntimeException("Value not found: " + valueName);
         }
@@ -192,7 +194,7 @@ public class CopperServices {
     @Produces(MediaType.TEXT_PLAIN)
     public String posttValue(@PathParam("valueName") String valueName, String message) {
         valueStore.put(valueName,message);
-        ValuesStore.StoreValue storeValue = valueStore.getValues().get(valueName);
+        StoreValue storeValue = valueStore.getValues().get(valueName);
 
         if (storeValue == null) {
             throw new RuntimeException("Value not found: " + valueName);

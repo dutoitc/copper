@@ -1,6 +1,6 @@
 package ch.mno.copper.stories;
 
-import ch.mno.copper.ValuesStore;
+import ch.mno.copper.data.ValuesStore;
 import ch.mno.copper.collect.AbstractCollectorWrapper;
 import ch.mno.copper.collect.CollectorWrapperFactory;
 import ch.mno.copper.collect.connectors.ConnectorException;
@@ -8,7 +8,6 @@ import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.report.AbstractReporterWrapper;
 import ch.mno.copper.report.ReporterWrapperFactory;
-import javafx.beans.binding.When;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

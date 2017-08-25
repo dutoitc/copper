@@ -1,6 +1,6 @@
 package ch.mno.copper.process;
 
-import ch.mno.copper.ValuesStore;
+import ch.mno.copper.data.ValuesStore;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.report.Slf4jReporter;
 

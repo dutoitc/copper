@@ -1,6 +1,7 @@
 package ch.mno.copper;
 
 import ch.mno.copper.collect.StoryTask;
+import ch.mno.copper.data.ValuesStore;
 import ch.mno.copper.process.AbstractProcessor;
 
 import java.util.Collection;

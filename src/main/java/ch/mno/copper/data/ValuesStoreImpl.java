@@ -1,59 +1,61 @@
-package ch.mno.copper;
+package ch.mno.copper.data;
 
-import com.google.gson.JsonElement;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * A Store for values. Timestamp is set as data insertion.
  * Put will erase data. get will return null or -1 if not found.
  * Created by dutoitc on 29.01.2016.
  */
-public class ValuesStore {
+public class ValuesStoreImpl implements ValuesStore {
 
     // TODO: dependency graph, with temporized triggers and quiet time
 
-    private static final Logger LOG = LoggerFactory.getLogger(ValuesStore.class);
-    private static final ValuesStore instance = new ValuesStore();
+    private static final Logger LOG = LoggerFactory.getLogger(ValuesStoreImpl.class);
+    private static final ValuesStoreImpl instance = new ValuesStoreImpl();
+    public static final String DATA_FILENAME = "valuesStore.tmp";
     private Map<String, StoreValue> map = new HashMap<>();
-    private Set<String> changedValues = new HashSet<>();
+//    private Set<String> changedValues = new HashSet<>();
 
     static {
         try {
-            instance.load(new FileInputStream("valuesStore.tmp"));
+            instance.load();
         } catch (IOException e) {
             System.err.println("Cannot load valuesStore.tmp, ignoring");
         }
     }
 
-    public static ValuesStore getInstance() {
+    public static ValuesStoreImpl getInstance() {
         return instance;
     }
 
+    @Override
     public void put(String key, String value) {
         if (map.containsKey(key)) {
             if (value==null && map.get(key)==null) return;
             if (map.get(key)!=null && map.get(key).getValue().equals(value)) return;
         }
         map.put(key, new StoreValue(value));
-        changedValues.add(key);
+//        changedValues.add(key);
     }
 
+    @Override
     public Map<String, StoreValue> getValues() {
         return map;
     }
+
+
 
     public void save(OutputStream os) throws IOException {
         PrintWriter pw = new PrintWriter(os);
@@ -69,12 +71,24 @@ public class ValuesStore {
             sb.append('\n');
             pw.write(sb.toString());
         });
-        pw.write(""+changedValues.size()+'\n');
-        changedValues.forEach(k->pw.write(k+'\n'));
+//        pw.write(""+changedValues.size()+'\n');
+//        changedValues.forEach(k->pw.write(k+'\n'));
         pw.flush();
         pw.close();
         os.flush();
     }
+
+    @Override
+    public void save() throws IOException {
+        save(new FileOutputStream(DATA_FILENAME));
+    }
+
+
+    @Override
+    public void load() throws IOException {
+        load(new FileInputStream(DATA_FILENAME));
+    }
+
 
     public void load(InputStream is) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -98,21 +112,24 @@ public class ValuesStore {
         }
 
         // List
-        int listSize = Integer.parseInt(reader.readLine());
-        changedValues = new HashSet<String>(listSize*4/3);
-        for (int i=0; i<listSize; i++) {
-            changedValues.add(reader.readLine());
-        }
+        String s = reader.readLine();
+        int listSize = Integer.parseInt(s);
+//        changedValues = new HashSet<String>(listSize*4/3);
+//        for (int i=0; i<listSize; i++) {
+//            changedValues.add(reader.readLine());
+//        }
         System.out.println("ValuesStore loaded from tmp file");
     }
 
-    public Collection<String> getChangedValues() {
-        // TODO: Improve this with a quiet time for stable values ?
-        List<String> values = new ArrayList<>(changedValues);
-        changedValues.clear();
-        return values;
-    }
+//    @Override
+//    public Collection<String> getChangedValues() {
+//        // TODO: Improve this with a quiet time for stable values ?
+//        List<String> values = new ArrayList<>(changedValues);
+//        changedValues.clear();
+//        return values;
+//    }
 
+    @Override
     public String getValue(String key) {
         if (key.startsWith("NOW_")) {
             // NOW_DD.MM.YY_HH:MM
@@ -159,13 +176,28 @@ public class ValuesStore {
 
     public void clear() {
         map.clear();
-        changedValues.clear();
+//        changedValues.clear();
     }
 
+    @Override
+    public Collection<String> queryValues(LocalDateTime from, LocalDateTime to) {
+        List<String> keys = new ArrayList<>();
+        long tsFrom = Timestamp.valueOf(from).getTime();
+        long tsTo = Timestamp.valueOf(to).getTime();
+        for (Map.Entry<String, StoreValue> entry: map.entrySet()) {
+            long entryTS = entry.getValue().getTimestamp();
+            if ((entryTS >= tsFrom) && (entryTS <= tsTo)) {
+                keys.add(entry.getKey());
+            }
+        }
+        return keys;
+    }
+
+    @Override
     public List<List<String>> queryValues(LocalDateTime from, LocalDateTime to, String columns) {
         // Note: this code is temporary, waiting for an internal DB to be queried. Yet, it match my project only,
         // with a csv file of format (DATETIME;KEY1;KEY2;...;KEYN\ndd.MM.yyyy HH:mm:ss;value1;value2;...;valueN\n...
-        List<List<String>> data = new ArrayList<List<String>>();
+        /*List<List<String>> data = new ArrayList<List<String>>();
         try (BufferedReader br = Files.newBufferedReader(Paths.get("RCFACE-data.csv"))) {
             String header = br.readLine();
 
@@ -203,37 +235,9 @@ public class ValuesStore {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return data;
+        return data;*/
+        throw new RuntimeException("Not implemented for file valuesStore");
     }
 
-    public static class StoreValue {
-        private String value;
-        private long timestamp;
-        public StoreValue(String value) {
-            this.value = value;
-            this.timestamp = System.currentTimeMillis();
-        }
-
-        StoreValue(String value, long timestamp) {
-            this.value = value;
-            this.timestamp = timestamp;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return "StoreValue{" +
-                    "value='" + value + '\'' +
-                    ", timestamp=" + timestamp +
-                    '}';
-        }
-
-        public long getTimestamp() {
-            return timestamp;
-        }
-    }
 
 }

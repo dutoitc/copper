@@ -1,7 +1,7 @@
 package ch.mno.copper.process;
 
 
-import ch.mno.copper.ValuesStore;
+import ch.mno.copper.data.ValuesStore;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Collection;
