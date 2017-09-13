@@ -118,8 +118,8 @@ public class ValuesStoreImpl implements ValuesStore {
         }
 
         // List
-        String s = reader.readLine();
-        int listSize = Integer.parseInt(s);
+        //String s = reader.readLine();
+        //int listSize = Integer.parseInt(s);
 //        changedValues = new HashSet<String>(listSize*4/3);
 //        for (int i=0; i<listSize; i++) {
 //            changedValues.add(reader.readLine());
@@ -243,6 +243,10 @@ public class ValuesStoreImpl implements ValuesStore {
         }
         return data;*/
         throw new RuntimeException("Not implemented for file valuesStore");
+    }
+
+    public static void main(String[] args) throws IOException {
+        new ValuesStoreImpl().load(new FileInputStream("/tmp/valuesStore.tmp"));
     }
 
 
