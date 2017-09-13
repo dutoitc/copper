@@ -44,7 +44,8 @@ public class ValuesStoreImpl implements ValuesStore {
     public void put(String key, String value) {
         if (map.containsKey(key)) {
             if (value==null && map.get(key)==null) return;
-            if (map.get(key)!=null && map.get(key).getValue().equals(value)) return;
+            // commented: always store, as store date = last check date. TODO: implement from... to dates
+            //if (map.get(key)!=null && map.get(key).getValue().equals(value)) return;
         }
         map.put(key, new StoreValue(value));
 //        changedValues.add(key);
@@ -104,8 +105,13 @@ public class ValuesStoreImpl implements ValuesStore {
         // Map
         for (int noLine=0; noLine<mapSize; noLine++) {
             try {
-                String[] values = reader.readLine().split("\\|");
-                map.put(values[0], new StoreValue(values[1].replaceAll("£", "|").replace("¢", "\n"), Long.parseLong(values[2])));
+                String line = reader.readLine();
+                int p = line.indexOf('|');
+                int p2 = line.lastIndexOf('|');
+                String key = line.substring(0,p);
+                String content = line.substring(p+1, p2);
+                String timestamp = line.substring(p2+1);
+                map.put(key, new StoreValue(content.replaceAll("£", "|").replace("¢", "\n"), Long.parseLong(timestamp)));
             } catch (Exception e) {
                 throw new RuntimeException("Error at line #" + noLine + ": " + e.getMessage(), e);
             }
