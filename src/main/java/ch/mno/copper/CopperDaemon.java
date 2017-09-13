@@ -5,6 +5,7 @@ import ch.mno.copper.data.ValuesStore;
 import ch.mno.copper.data.ValuesStoreImpl;
 import ch.mno.copper.process.AbstractProcessor;
 import ch.mno.copper.stories.Story;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,7 @@ import javax.management.MBeanServer;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
+import javax.validation.constraints.Null;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -80,13 +82,21 @@ public class CopperDaemon implements Runnable {
                 String taskName = task.getTaskId() + "[" + task.getTitle() + "]";
                 task.markAsRunning();
                 try {
-                    LOG.info("Scheduling task " + task.getTaskId());
+                    LOG.info("Running task " + task.getTaskId());
                     task.getRunnable().run();
+                } catch (NullPointerException e) {
+                    LOG.error("Task {} execution error: {}", taskName, e.getMessage());
+                    LOG.error("Error NPE ", e.getMessage());
+                    LOG.error("Error NPE ", e.getCause().getMessage());
+                    for (StackTraceElement s: e.getStackTrace()) {
+                        LOG.error("  " + s.getClass() + "."+s.getMethodName()+":"+s.getLineNumber());
+                    }
                 } catch (Exception e) {
                     LOG.error("Task {} execution error: {}", taskName, e.getMessage());
                     LOG.error("Error", e);
+                } finally {
+                    task.markAsRun();
                 }
-                task.markAsRun();
                 LOG.info("Task {} ended in {}s.", taskName, (System.currentTimeMillis() - t0) / 60);
             });
 
