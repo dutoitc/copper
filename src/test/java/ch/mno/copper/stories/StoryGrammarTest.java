@@ -277,6 +277,24 @@ public class StoryGrammarTest {
 
 
     @Test
+    public void testJdbcStory2() throws IOException, ConnectorException, URISyntaxException {
+        String pattern = storyGrammar.getPatternFull("MAIN");
+//        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
+        URL resource = getClass().getResource("/OracleStory2.txt");
+        String storyText = IOUtils.toString(resource);
+//        Assert.assertTrue(pattern1.matcher(story).matches());
+//        testPattern(pattern, story);
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"), storyText);
+
+
+        Path path = Paths.get(resource.toURI());
+        Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), path);
+        JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) story.getCollectorWrapper();
+        Assert.assertEquals("jdbc:oracle:thin:@host:port/instance", wrapper.getUrl());
+        Assert.assertEquals("myuser", wrapper.getUsername());
+    }
+
+    @Test
     public void testJmxStory1() throws IOException {
         String pattern = storyGrammar.getPatternFull("MAIN");
         String story = IOUtils.toString(getClass().getResource("/JmxStory1.txt"));
@@ -295,6 +313,15 @@ public class StoryGrammarTest {
         String pattern = storyGrammar.getPatternFull("MAIL");
         String story = IOUtils.toString(getClass().getResource("/MailStory.txt"));
         testPattern(pattern, story);
+    }
+
+
+    @Test
+    public void testWEBCollector() {
+        String txt = "WEB WITH url=http://server:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list " +
+                " KEEP a AS b ";
+
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("COLLECTOR_WEB"), txt);
     }
 
 

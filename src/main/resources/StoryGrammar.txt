@@ -12,7 +12,7 @@ CRON_STD::=¦CRON_EL¦( ¦CRON_EL¦){4}
 # URLS
 JDBC_URL::=jdbc[:\w@/\d\.\-]+\w
 JMX_URL::=service[:\w/\d\.\-]+\w
-HTTP_URL::=https?[:\w/\d\.\-]+\w
+HTTP_URL::=https?[:\w/\d\.\-=\/,]+\w
 
 # DEFINE
 # DEFINE::=DEFINE¦SPACE¦\w+¦SPACE¦\w+¦EOL¦

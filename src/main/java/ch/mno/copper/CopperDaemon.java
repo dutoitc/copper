@@ -99,9 +99,7 @@ public class CopperDaemon implements Runnable {
                 }
                 LOG.info("Task {} ended in {}s.", taskName, (System.currentTimeMillis() - t0) / 60);
             });
-
         }
-
 
         // Processors
         LocalDateTime queryTime = LocalDateTime.now(); // Keep time, so that next run will have data between query time assignation and valueStore read time
@@ -114,7 +112,6 @@ public class CopperDaemon implements Runnable {
             }
         });
 
-
     }
 
 
@@ -124,7 +121,6 @@ public class CopperDaemon implements Runnable {
 
         // Start JMX
         startJMX();
-
 
         while (shouldRun) {
             LOG.trace("Daemon run");
@@ -149,50 +145,6 @@ public class CopperDaemon implements Runnable {
         executorService.shutdown();
     }
 
-//    private void runIterationOld() {
-//        // Refresh stories from disk
-//        collectorTasks = dataProvider.getStoryTasks();
-//
-//
-//        // Collectors
-//        LOG.trace("Daemon run");
-//        synchronized (storiesToRun) {
-//            collectorTasks.stream()
-//                    .filter(t -> t.shouldRun() || storiesToRun.contains(t.storyName()))
-//                    .forEach(task -> {
-//                Runnable runnable = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        // Run CopperTask with exception catch, next run computation and time logging.
-//                        long t0 = System.currentTimeMillis();
-//                        String taskName = task.getTaskId() + "[" + task.getTitle() + "]";
-//                        task.markAsRunning();
-//                        try {
-//                            LOG.info("Scheduling task " + task.getTaskId());
-//                            task.getRunnable().run();
-//                        } catch (Exception e) {
-//                            LOG.error("Task {} execution error: {}", taskName, e.getMessage());
-//                            LOG.error("Error", e);
-//                        }
-//                        task.markAsRun();
-//                        LOG.info("Task {} ended in {}s.", taskName, (System.currentTimeMillis() - t0) / 60);
-//                    }
-//                };
-//                executorService.submit(runnable);
-//            });
-//            storiesToRun.clear();
-//        }
-//
-//        // Processors
-//        Collection<String> changedValues = valuesStore.getChangedValues();
-//        processors.forEach(p->{
-//            Collection<String> keys = p.findKnownKeys(changedValues);
-//            if (!keys.isEmpty()) {
-//                p.trig(valuesStore, keys);
-//            }
-//        });
-//
-//    }
 
     private void startJMX() {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
