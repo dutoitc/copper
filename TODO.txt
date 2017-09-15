@@ -2,6 +2,7 @@ v1.1.0 Refactoring:
 [ ] Connectors, ... properties should be loaded from copper.properties
 [ ] Properties should be accessed only when creating connectors
 [ ]
+[ ] http: store statusCode, store executeTime, store responseLength ?
 
 
 Add database, keep history + retention time ?
