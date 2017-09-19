@@ -20,7 +20,7 @@ public class DataproviderImpl implements DataProvider {
     private Map<String, StoryTask> cachedStoryTasks = new HashMap<>();
 
     public DataproviderImpl() {
-        valuesStore = ValuesStoreImpl.getInstance();
+        this.valuesStore = CopperMediator.getInstance().getValuesStore();
         //storiesFacade.refreshFromDisk();
         //cachedStoryTasks = StoriesFacade.getInstance().buildStoryTasks(valuesStore);
         refreshStoryTasks();

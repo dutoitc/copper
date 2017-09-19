@@ -3,7 +3,6 @@ package ch.mno.copper.web;
 import ch.mno.copper.CopperMediator;
 import ch.mno.copper.data.StoreValue;
 import ch.mno.copper.data.ValuesStore;
-import ch.mno.copper.data.ValuesStoreImpl;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.stories.StoriesFacade;
@@ -30,10 +29,10 @@ import java.util.List;
 @Path("/ws")
 public class CopperServices {
 
-    private final ValuesStore valueStore;
+    private final ValuesStore valuesStore;
 
     public CopperServices() {
-        this.valueStore = ValuesStoreImpl.getInstance();
+        this.valuesStore = CopperMediator.getInstance().getValuesStore();
     }
  
     @GET
@@ -85,7 +84,7 @@ public class CopperServices {
     @Produces(MediaType.TEXT_PLAIN)
     public String getValues() {
         Gson gson = new Gson();
-        return gson.toJson(valueStore.getValues());
+        return gson.toJson(valuesStore.getValues());
     }
 
     @GET
@@ -101,7 +100,7 @@ public class CopperServices {
             to =toDate(dateTo, false);
         }
         try {
-            return Response.ok(gson.toJson(valueStore.queryValues(from, to, columns)), MediaType.APPLICATION_JSON).build();
+            return Response.ok(gson.toJson(valuesStore.queryValues(from, to, columns)), MediaType.APPLICATION_JSON).build();
         } catch (RuntimeException e) {
             return Response.serverError().entity("SERVER ERROR\n" + e.getMessage()).build();
         }
@@ -180,7 +179,7 @@ public class CopperServices {
     @Path("value/{valueName}")
     @Produces(MediaType.TEXT_PLAIN)
     public String getValue(@PathParam("valueName") String valueName) {
-        StoreValue storeValue = valueStore.getValues().get(valueName);
+        StoreValue storeValue = valuesStore.getValues().get(valueName);
         if (storeValue == null) {
             throw new RuntimeException("Value not found: " + valueName);
         }
@@ -193,8 +192,8 @@ public class CopperServices {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
     public String posttValue(@PathParam("valueName") String valueName, String message) {
-        valueStore.put(valueName,message);
-        StoreValue storeValue = valueStore.getValues().get(valueName);
+        valuesStore.put(valueName,message);
+        StoreValue storeValue = valuesStore.getValues().get(valueName);
 
         if (storeValue == null) {
             throw new RuntimeException("Value not found: " + valueName);

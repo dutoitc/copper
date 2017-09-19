@@ -32,6 +32,7 @@ public class ValuesStoreImplTest {
         st.put("key1", "value2");
         Assert.assertEquals(1, st.queryValues(t, LocalDateTime.MAX).size());
         Assert.assertEquals("value2", st.getValue("key1"));
+        Thread.sleep(1);
         t = LocalDateTime.now();
         st.put("key1", "value2");
         Assert.assertEquals(0, st.queryValues(t, LocalDateTime.MAX).size()); // Same values
@@ -44,7 +45,7 @@ public class ValuesStoreImplTest {
 
         st.put("key1", "value2");
         long s1 = st.getTimestamp("key1");
-        Thread.sleep(1);
+        Thread.sleep(10);
         st.put("key1", "value2");
         long s2 = st.getTimestamp("key1");
         Assert.assertEquals(s1, s2);

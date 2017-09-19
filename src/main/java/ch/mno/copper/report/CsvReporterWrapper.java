@@ -1,7 +1,8 @@
 package ch.mno.copper.report;
 
-import ch.mno.copper.data.ValuesStoreImpl;
+import ch.mno.copper.CopperMediator;
 import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.data.ValuesStore;
 import ch.mno.copper.stories.StoryGrammar;
 
 import java.util.HashMap;
@@ -42,7 +43,8 @@ public class CsvReporterWrapper extends AbstractReporterWrapper {
 
     @Override
     public void execute(Map<String, String> values) {
-        String message = ReportHelper.expandMessage(values, line, ValuesStoreImpl.getInstance());
+        ValuesStore valuesStore = CopperMediator.getInstance().getValuesStore();
+        String message = ReportHelper.expandMessage(values, line, valuesStore);
 
         Map<String, String> reporterValues = new HashMap<>();
         reporterValues.put(CsvReporter.PARAMETERS.FILENAME.toString(), filename);

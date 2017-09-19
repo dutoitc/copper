@@ -54,6 +54,10 @@ public class ValuesStoreImpl implements ValuesStore {
             if (value==null && map.get(key)==null) return;
             // commented: always store, as store date = last check date. TODO: implement from... to dates
             //if (map.get(key)!=null && map.get(key).getValue().equals(value)) return;
+            if (map.get(key)!=null && !map.get(key).getValue().equals(value)) {
+                map.put(key, new StoreValue(value));
+            }
+            return; // Otehrwise same value
         }
         map.put(key, new StoreValue(value));
 //        changedValues.add(key);

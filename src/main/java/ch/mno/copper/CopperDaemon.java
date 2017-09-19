@@ -2,10 +2,8 @@ package ch.mno.copper;
 
 import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.data.ValuesStore;
-import ch.mno.copper.data.ValuesStoreImpl;
 import ch.mno.copper.process.AbstractProcessor;
 import ch.mno.copper.stories.Story;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +11,6 @@ import javax.management.MBeanServer;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
-import javax.validation.constraints.Null;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
@@ -52,7 +48,7 @@ public class CopperDaemon implements Runnable {
 
     private CopperDaemon(DataProvider dataProvider) {
         executorService = Executors.newFixedThreadPool(N_THREADS);
-        this.valuesStore = ValuesStoreImpl.getInstance();
+        this.valuesStore = CopperMediator.getInstance().getValuesStore();
         this.dataProvider = dataProvider;
     }
 
