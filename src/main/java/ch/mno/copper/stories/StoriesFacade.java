@@ -1,10 +1,11 @@
 package ch.mno.copper.stories;
 
-import ch.mno.copper.data.ValuesStoreImpl;
 import ch.mno.copper.collect.AbstractCollectorWrapper;
 import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.collect.StoryTaskImpl;
 import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.data.MemoryValuesStore;
+import ch.mno.copper.data.ValuesStore;
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.report.AbstractReporterWrapper;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ public class StoriesFacade {
         return story;
     }
 
-    public StoryTask buildStoryTask(Story story, ValuesStoreImpl valuesStore) {
+    public StoryTask buildStoryTask(Story story, ValuesStore valuesStore) {
         return new StoryTaskImpl(story, () -> {
             // This code execute at every trigger (cron, ...) for the given story
             try {
@@ -93,7 +94,7 @@ public class StoriesFacade {
         }, story.getCron());
     }
 
-    public Map<String, StoryTask> buildStoryTasks(ValuesStoreImpl valuesStore) {
+    public Map<String, StoryTask> buildStoryTasks(MemoryValuesStore valuesStore) {
         Map<String, StoryTask> collectorTasks = new HashMap<>(stories.size());
         stories.forEach(s->{
             if (s.hasError()) {

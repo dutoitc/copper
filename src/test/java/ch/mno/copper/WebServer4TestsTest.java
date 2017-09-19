@@ -1,6 +1,6 @@
 package ch.mno.copper;
 
-import ch.mno.copper.data.ValuesStoreImpl;
+import ch.mno.copper.data.MemoryValuesStore;
 import ch.mno.copper.web.WebServer;
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
@@ -26,7 +26,7 @@ public class WebServer4TestsTest {
         thread = new Thread(srv);
         thread.start();
         Thread.sleep(2000);
-        ValuesStoreImpl.getInstance().put("aKey", "aValue");
+        MemoryValuesStore.getInstance().put("aKey", "aValue");
     }
 
     @AfterClass

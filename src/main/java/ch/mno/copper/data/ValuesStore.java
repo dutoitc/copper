@@ -25,4 +25,5 @@ public interface ValuesStore {
 
     void save() throws IOException;
 
+    Map<String,String> getValuesMapString();
 }

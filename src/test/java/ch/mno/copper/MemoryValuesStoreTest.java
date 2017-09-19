@@ -1,6 +1,6 @@
 package ch.mno.copper;
 
-import ch.mno.copper.data.ValuesStoreImpl;
+import ch.mno.copper.data.MemoryValuesStore;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,11 +15,11 @@ import java.util.Map;
 /**
  * Created by dutoitc on 16.02.2016.
  */
-public class ValuesStoreImplTest {
+public class MemoryValuesStoreTest {
 
     @Test
     public void testX() throws InterruptedException {
-        ValuesStoreImpl st = ValuesStoreImpl.getInstance();
+        MemoryValuesStore st = MemoryValuesStore.getInstance();
         st.clear();
         LocalDateTime t = LocalDateTime.now();
         st.put("key1", "value1");
@@ -40,7 +40,7 @@ public class ValuesStoreImplTest {
 
     @Test
     public void testTwice() throws InterruptedException {
-        ValuesStoreImpl st = ValuesStoreImpl.getInstance();
+        MemoryValuesStore st = MemoryValuesStore.getInstance();
         st.clear();
 
         st.put("key1", "value2");
@@ -53,13 +53,13 @@ public class ValuesStoreImplTest {
 
     @Test
     public void testEmpty() {
-        Assert.assertNull(ValuesStoreImpl.getInstance().getValue("none"));
-        Assert.assertEquals(-1, ValuesStoreImpl.getInstance().getTimestamp("none"));
+        Assert.assertNull(MemoryValuesStore.getInstance().getValue("none"));
+        Assert.assertEquals(-1, MemoryValuesStore.getInstance().getTimestamp("none"));
     }
 
     @Test
     public void testPutAll() {
-        ValuesStoreImpl st = ValuesStoreImpl.getInstance();
+        MemoryValuesStore st = MemoryValuesStore.getInstance();
         LocalDateTime t = LocalDateTime.now();
         st.putAll("key1,key2,key3", Arrays.asList("v1", "v2", "v3"));
         Assert.assertEquals(3, st.queryValues(t, LocalDateTime.MAX).size());
@@ -75,13 +75,13 @@ public class ValuesStoreImplTest {
     @Test
     public void testSerialization() throws IOException {
         LocalDateTime t = LocalDateTime.now();
-        ValuesStoreImpl st = new ValuesStoreImpl();
+        MemoryValuesStore st = new MemoryValuesStore();
         st.putAll("key1,key2,key3", Arrays.asList("v1", "value|222", "v;3"));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         st.save(baos);
         String out = new String(baos.toByteArray());
 
-        ValuesStoreImpl st2 = new ValuesStoreImpl();
+        MemoryValuesStore st2 = new MemoryValuesStore();
         st2.load(new ByteArrayInputStream(out.getBytes()));
         Assert.assertEquals(3, st2.getValues().size());
         Assert.assertEquals("v1", st2.getValue("key1"));

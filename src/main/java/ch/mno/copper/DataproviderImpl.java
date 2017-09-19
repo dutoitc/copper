@@ -1,7 +1,7 @@
 package ch.mno.copper;
 
 import ch.mno.copper.collect.StoryTask;
-import ch.mno.copper.data.ValuesStoreImpl;
+import ch.mno.copper.data.ValuesStore;
 import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.Story;
 
@@ -16,7 +16,7 @@ import java.util.Set;
 public class DataproviderImpl implements DataProvider {
 
     StoriesFacade storiesFacade = StoriesFacade.getInstance();
-    private ValuesStoreImpl valuesStore;
+    private ValuesStore valuesStore;
     private Map<String, StoryTask> cachedStoryTasks = new HashMap<>();
 
     public DataproviderImpl() {

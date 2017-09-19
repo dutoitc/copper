@@ -26,12 +26,12 @@ import java.util.Map;
  * Put will erase data. get will return null or -1 if not found.
  * Created by dutoitc on 29.01.2016.
  */
-public class ValuesStoreImpl implements ValuesStore {
+public class MemoryValuesStore implements ValuesStore {
 
     // TODO: dependency graph, with temporized triggers and quiet time
 
-    private static final Logger LOG = LoggerFactory.getLogger(ValuesStoreImpl.class);
-    private static final ValuesStoreImpl instance = new ValuesStoreImpl();
+    private static final Logger LOG = LoggerFactory.getLogger(MemoryValuesStore.class);
+    private static final MemoryValuesStore instance = new MemoryValuesStore();
     public static final String DATA_FILENAME = "valuesStore.tmp";
     private Map<String, StoreValue> map = new HashMap<>();
 //    private Set<String> changedValues = new HashSet<>();
@@ -44,7 +44,7 @@ public class ValuesStoreImpl implements ValuesStore {
         }
     }
 
-    public static ValuesStoreImpl getInstance() {
+    public static MemoryValuesStore getInstance() {
         return instance;
     }
 
@@ -185,6 +185,7 @@ public class ValuesStoreImpl implements ValuesStore {
         }
     }
 
+    @Override
     public Map<String, String> getValuesMapString() {
         // FIXME make it Java8
         Map<String, String> values = new HashMap<>();
@@ -258,7 +259,7 @@ public class ValuesStoreImpl implements ValuesStore {
     }
 
     public static void main(String[] args) throws IOException {
-        new ValuesStoreImpl().load(new FileInputStream("/tmp/valuesStore.tmp"));
+        new MemoryValuesStore().load(new FileInputStream("/tmp/valuesStore.tmp"));
     }
 
 

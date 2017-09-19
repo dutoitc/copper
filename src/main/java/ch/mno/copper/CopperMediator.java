@@ -1,6 +1,6 @@
 package ch.mno.copper;
 
-import ch.mno.copper.data.ValuesStoreImpl;
+import ch.mno.copper.data.MemoryValuesStore;
 
 import java.io.FileInputStream;
 import java.util.Properties;
@@ -12,7 +12,7 @@ public class CopperMediator {
 
 
     private static final CopperMediator instance = new CopperMediator();
-    private final ValuesStoreImpl valuesStore;
+    private final MemoryValuesStore valuesStore;
     private CopperDaemon daemon;
     private Properties properties;
 
@@ -20,7 +20,7 @@ public class CopperMediator {
         try {
             properties = new Properties();
             properties.load(new FileInputStream("copper.properties"));
-            this.valuesStore = ValuesStoreImpl.getInstance();
+            this.valuesStore = MemoryValuesStore.getInstance();
         }catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -28,7 +28,7 @@ public class CopperMediator {
 
     public static CopperMediator getInstance() { return instance; }
 
-    public ValuesStoreImpl getValuesStore() {
+    public MemoryValuesStore getValuesStore() {
         return valuesStore;
     }
 
