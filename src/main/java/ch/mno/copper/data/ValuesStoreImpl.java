@@ -2,16 +2,24 @@ package ch.mno.copper.data;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A Store for values. Timestamp is set as data insertion.
@@ -147,7 +155,7 @@ public class ValuesStoreImpl implements ValuesStore {
             }
         }
         if (map.containsKey(key)) {
-            return map.get(key).value;
+            return map.get(key).getValue();
         }
 
         return null;
@@ -155,7 +163,7 @@ public class ValuesStoreImpl implements ValuesStore {
 
     public long getTimestamp(String key) {
         if (map.containsKey(key)) {
-            return map.get(key).timestamp;
+            return map.get(key).getTimestamp();
         }
         return -1;
     }
