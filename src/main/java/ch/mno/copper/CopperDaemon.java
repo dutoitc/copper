@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -99,7 +101,7 @@ public class CopperDaemon implements Runnable {
 
         // Processors
         LocalDateTime queryTime = LocalDateTime.now(); // Keep time, so that next run will have data between query time assignation and valueStore read time
-        Collection<String> changedValues = valuesStore.queryValues(lastQueryTime, LocalDateTime.MAX);
+        Collection<String> changedValues = valuesStore.queryValues(lastQueryTime.toInstant(ZoneOffset.UTC), Instant.MAX);
         lastQueryTime = queryTime;
         processors.forEach(p -> {
             Collection<String> keys = p.findKnownKeys(changedValues);

@@ -1,35 +1,53 @@
 package ch.mno.copper.data;
 
+import java.time.Instant;
+
 /**
  * Created by xsicdt on 25/08/17.
  */
 public class StoreValue {
+
+    protected long id;
+    protected String key;
     protected String value;
-    protected long timestamp;
+    protected Instant timestampFrom;
+    protected Instant timestampTo;
 
     public String getValue() {
         return value;
     }
 
-    public StoreValue(String value) {
-        this.value = value;
-        this.timestamp = System.currentTimeMillis();
+    public long getId() {
+        return id;
     }
 
-    StoreValue(String value, long timestamp) {
+    public String getKey() {
+        return key;
+    }
+
+    public Instant getTimestampFrom() {
+        return timestampFrom;
+    }
+
+    public Instant getTimestampTo() {
+        return timestampTo;
+    }
+
+    public StoreValue(long id, String key, String value, Instant timestampFrom, Instant timestampTo) {
+        this.id = id;
+        this.key = key;
         this.value = value;
-        this.timestamp = timestamp;
+        this.timestampFrom = timestampFrom;
+        this.timestampTo = timestampTo;
     }
 
     @Override
     public String toString() {
         return "StoreValue{" +
-                "value='" + value + '\'' +
-                ", timestamp=" + timestamp +
+                "key='" + key + '\'' +
+                ", value='" + value + '\'' +
+                ", timestampFrom=" + timestampFrom +
+                ", timestampTo=" + timestampTo +
                 '}';
-    }
-
-    public long getTimestamp() {
-        return timestamp;
     }
 }

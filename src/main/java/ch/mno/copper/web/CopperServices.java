@@ -1,9 +1,9 @@
 package ch.mno.copper.web;
 
 import ch.mno.copper.CopperMediator;
+import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.data.StoreValue;
 import ch.mno.copper.data.ValuesStore;
-import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.Story;
@@ -14,13 +14,21 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import it.sauronsoftware.cron4j.Predictor;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -92,12 +100,12 @@ public class CopperServices {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns) {
         Gson gson = new Gson();
-        LocalDateTime from = toDate(dateFrom, true);
-        LocalDateTime to;
+        Instant from = toInstant(dateFrom, true);
+        Instant to;
         if (dateTo==null) {
-            to = LocalDateTime.now();
+            to = Instant.now();
         }  else {
-            to =toDate(dateTo, false);
+            to =toInstant(dateTo, false);
         }
         try {
             return Response.ok(gson.toJson(valuesStore.queryValues(from, to, columns)), MediaType.APPLICATION_JSON).build();
@@ -106,7 +114,7 @@ public class CopperServices {
         }
     }
 
-    private LocalDateTime toDate(String date, boolean am) {
+    private Instant toInstant(String date, boolean am) {
         if (date==null || "null".equals(date)) return null;
 
         String[] formats = new String[] {"dd.MM.yyyy", "yyyy-MM-dd"};
@@ -114,8 +122,8 @@ public class CopperServices {
             try {
 //                System.out.println("Parsing '"+date+"' with '"+format+"'");
                 LocalDate ld = LocalDate.parse(date, DateTimeFormatter.ofPattern(format));
-                if (am) return LocalDateTime.of(ld, LocalTime.of(0, 0));
-                return LocalDateTime.of(ld, LocalTime.of(23, 59, 59));
+                if (am) return LocalDateTime.of(ld, LocalTime.of(0, 0)).toInstant(ZoneOffset.UTC);
+                return LocalDateTime.of(ld, LocalTime.of(23, 59, 59)).toInstant(ZoneOffset.UTC);
             } catch (DateTimeParseException e) {
             }
         }
@@ -125,7 +133,7 @@ public class CopperServices {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
             try {
                 //return (LocalDateTime)formatter.parse(date);
-                return LocalDateTime.parse(date, formatter);
+                return LocalDateTime.parse(date, formatter).toInstant(ZoneOffset.UTC);
             } catch (DateTimeParseException e) {
 
             }

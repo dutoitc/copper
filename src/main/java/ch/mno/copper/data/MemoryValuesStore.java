@@ -11,9 +11,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -55,11 +54,11 @@ public class MemoryValuesStore implements ValuesStore {
             // commented: always store, as store date = last check date. TODO: implement from... to dates
             //if (map.get(key)!=null && map.get(key).getValue().equals(value)) return;
             if (map.get(key)!=null && !map.get(key).getValue().equals(value)) {
-                map.put(key, new StoreValue(value));
+                map.put(key, new StoreValue(-1, key, value, Instant.now(), null));
             }
             return; // Otehrwise same value
         }
-        map.put(key, new StoreValue(value));
+        map.put(key, new StoreValue(-1, key, value, Instant.now(), null));
 //        changedValues.add(key);
     }
 
@@ -77,10 +76,13 @@ public class MemoryValuesStore implements ValuesStore {
         map.forEach((k,v)->{
             StringBuilder sb = new StringBuilder();
             sb.append(k);
+            // TODO: read/write à revoir (stocker toutes les valeurs)
             sb.append('|');
             sb.append(v==null||v.getValue()==null?null:v.getValue().replace("|", "£").replace("\n","¢"));
             sb.append('|');
-            sb.append(v==null?null:v.getTimestamp());
+            sb.append(v==null?null:v.getTimestampFrom().getEpochSecond());
+            sb.append('|');
+            sb.append(v==null?null:v.getTimestampTo().getEpochSecond());
             sb.append('\n');
             pw.write(sb.toString());
         });
@@ -119,11 +121,20 @@ public class MemoryValuesStore implements ValuesStore {
             try {
                 String line = reader.readLine();
                 int p = line.indexOf('|');
-                int p2 = line.lastIndexOf('|');
                 String key = line.substring(0,p);
-                String content = line.substring(p+1, p2);
-                String timestamp = line.substring(p2+1);
-                map.put(key, new StoreValue(content.replaceAll("£", "|").replace("¢", "\n"), Long.parseLong(timestamp)));
+                line = line.substring(p+1);
+
+                int p2 = line.lastIndexOf('|');
+                String timestampTo = line.substring(p2+1);
+                line = line.substring(0, p2);
+                p2 = line.lastIndexOf('|');
+                String timestampFrom = line.substring(p2+1);
+                line = line.substring(0, p2);
+
+                String content = line.replaceAll("£", "|").replace("¢", "\n");
+                StoreValue sv = new StoreValue(-1, key, content, Instant.ofEpochSecond(Long.parseLong(timestampFrom)), Instant.ofEpochSecond(Long.parseLong(timestampTo)));
+
+                map.put(key, sv);
             } catch (Exception e) {
                 throw new RuntimeException("Error at line #" + noLine + ": " + e.getMessage(), e);
             }
@@ -165,11 +176,18 @@ public class MemoryValuesStore implements ValuesStore {
         return null;
     }
 
-    public long getTimestamp(String key) {
+    public Instant getTimestampFrom(String key) {
         if (map.containsKey(key)) {
-            return map.get(key).getTimestamp();
+            return map.get(key).getTimestampFrom();
         }
-        return -1;
+        return null;
+    }
+
+    public Instant getTimestampTo(String key) {
+        if (map.containsKey(key)) {
+            return map.get(key).getTimestampTo();
+        }
+        return null;
     }
 
     /**
@@ -199,13 +217,12 @@ public class MemoryValuesStore implements ValuesStore {
     }
 
     @Override
-    public Collection<String> queryValues(LocalDateTime from, LocalDateTime to) {
+    public Collection<String> queryValues(Instant from, Instant to) {
         List<String> keys = new ArrayList<>();
-        long tsFrom = Timestamp.valueOf(from).getTime();
-        long tsTo = Timestamp.valueOf(to).getTime();
         for (Map.Entry<String, StoreValue> entry: map.entrySet()) {
-            long entryTS = entry.getValue().getTimestamp();
-            if ((entryTS >= tsFrom) && (entryTS <= tsTo || to.equals(LocalDateTime.MAX))) {
+            if ((from==null || !entry.getValue().getTimestampFrom().isBefore(from)) &&
+                    (to==null || !entry.getValue().getTimestampTo().isAfter(to)))
+            {
                 keys.add(entry.getKey());
             }
         }
@@ -213,49 +230,17 @@ public class MemoryValuesStore implements ValuesStore {
     }
 
     @Override
-    public List<List<String>> queryValues(LocalDateTime from, LocalDateTime to, String columns) {
-        // Note: this code is temporary, waiting for an internal DB to be queried. Yet, it match my project only,
-        // with a csv file of format (DATETIME;KEY1;KEY2;...;KEYN\ndd.MM.yyyy HH:mm:ss;value1;value2;...;valueN\n...
-        /*List<List<String>> data = new ArrayList<List<String>>();
-        try (BufferedReader br = Files.newBufferedReader(Paths.get("RCFACE-data.csv"))) {
-            String header = br.readLine();
-
-            // Find wanted columns
-            List<String> userColumns = Arrays.asList(columns.split(","));
-            List<Integer> wantedColumns = new ArrayList<>();
-            int noCol=0;
-            for (String column: header.split(";")) {
-                if (userColumns.contains(column)) {
-                    wantedColumns.add(noCol);
-                }
-                noCol++;
-            }
-
-            // Check if all columns have been found
-            if (userColumns.size()!=wantedColumns.size()) {
-                throw new RuntimeException("Not found all columns: found [" + StringUtils.join(wantedColumns, ",") + "] but wanted [" + StringUtils.join(userColumns, ",")+"]");
-            }
-
-            // Extract data
-            String line;
-            while ((line=br.readLine())!=null) {
-                String[] csvColumns = line.split(";");
-                LocalDateTime csvDT = LocalDateTime.parse(csvColumns[0], DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
-                if (from!=null && from.isAfter(csvDT)) continue;
-                if (to!=null && to.isBefore(csvDT)) continue;
-
-                List<String> row = new ArrayList<>();
-                row.add(csvColumns[0]);
-                for (int idx: wantedColumns) {
-                    row.add(csvColumns[idx]);
-                }
-                data.add(row);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public List<List<String>> queryValues(Instant from, Instant to, String columns) {
+        Collection<String> keys = queryValues(from, to);
+        List<List<String>> values = new ArrayList<>();
+        for (String key: keys) {
+            List<String> line = new ArrayList<>();
+            StoreValue sv = map.get(key);
+            line.add(sv.getKey());
+            line.add(sv.getValue());
         }
-        return data;*/
-        throw new RuntimeException("Not implemented for file valuesStore");
+
+        return values;
     }
 
     public static void main(String[] args) throws IOException {

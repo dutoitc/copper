@@ -1,7 +1,7 @@
 package ch.mno.copper.data;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +17,15 @@ public interface ValuesStore {
 
     Map<String, StoreValue> getValues();
 
-    Collection<String> queryValues(LocalDateTime from, LocalDateTime to);
+    /**
+     *
+     * @param from
+     * @param to null means no boundaries
+     * @return
+     */
+    Collection<String> queryValues(Instant from, Instant to);
 
-    List<List<String>> queryValues(LocalDateTime from, LocalDateTime to, String columns);
+    List<List<String>> queryValues(Instant from, Instant to, String columns);
 
     void load() throws IOException;
 
