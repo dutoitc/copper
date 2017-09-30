@@ -1,0 +1,34 @@
+<h1>History</h1>
+<div class="row">
+
+    <canvas id="line" class="chart chart-line" chart-data="data"
+            chart-labels="labels" chart-series="series" chart-options="options"
+            chart-dataset-override="datasetOverride" chart-click="onClick">
+    </canvas>
+    (Access from 'values' menu)
+
+
+    <br/>
+    <br/>
+
+    <div ng-show="history.length>0">
+        values
+
+        <label>Search: <input ng-model="searchText"></label>
+        <table class="table-striped" style="width: 80%; margin: auto; border: 1px outset silver">
+            <thead>
+                <th style="text-align:right;padding: 5px">Timestamp</th>
+                <th style="text-align:right;padding: 5px">Key</th>
+                <th style="text-align:left; padding-left: 10px">Value</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="v in history | filter:searchText | orderBy:'-timestamp.seconds'">
+                    <td style="text-align:center;width: 150px">{{v.timestamp.seconds*1000 | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
+                    <td style="text-align:right;padding: 5px;font-weight:bold">{{v.key}}</td>
+                    <td style="text-align:left; padding-left: 10px">{{v.value}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
