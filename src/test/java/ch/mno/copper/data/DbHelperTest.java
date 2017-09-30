@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,8 +16,8 @@ import java.util.List;
  */
 public class DbHelperTest {
 
-    Instant i3 = Instant.parse("2015-10-21T07:27:48.00Z");
-    Instant i4 = Instant.parse("2015-10-21T07:27:49.00Z");
+    Instant i3 = Instant.parse("2015-10-21T07:27:58.00Z");
+    Instant i4 = Instant.parse("2015-10-21T07:27:59.00Z");
     Instant i5 = Instant.parse("2015-10-21T07:28:00.00Z");
     Instant i6 = Instant.parse("2015-10-21T07:28:01.00Z");
     Instant i7 = Instant.parse("2015-10-21T07:28:02.00Z");
@@ -113,6 +114,13 @@ public class DbHelperTest {
     }
 
     @Test
+    public void testReadInstantValues() throws SQLException {
+        List<InstantValues> iv = DbHelper.readInstant(Arrays.asList("key4"), i3, i8, 2);
+        Assert.assertEquals(4, iv.size());
+        // TODO: continue
+    }
+
+    @Test
     public void testReadUpdatedKeys() throws SQLException {
         Assert.assertEquals("", StringUtils.join(DbHelper.readUpdatedKeys(i3, i4), ','));
         Assert.assertEquals("key3,key4", StringUtils.join(DbHelper.readUpdatedKeys(i4, i5), ','));
@@ -192,15 +200,15 @@ public class DbHelperTest {
 //        DbHelper.dumpForTests();
 
         // Read in the past
-        readSV = DbHelper.read("key1", Instant.ofEpochSecond(i0.getEpochSecond()-1));
+        readSV = DbHelper.readInstant("key1", Instant.ofEpochSecond(i0.getEpochSecond()-1));
         Assert.assertNull(readSV);
 
         // Read in the present
-        readSV = DbHelper.read("key1", i0);
+        readSV = DbHelper.readInstant("key1", i0);
         Assert.assertEquals("value10", readSV.getValue());
 
         // Read in the future
-        readSV = DbHelper.read("key1", Instant.ofEpochSecond(i0.getEpochSecond()+1));
+        readSV = DbHelper.readInstant("key1", Instant.ofEpochSecond(i0.getEpochSecond()+1));
         Assert.assertEquals("value10", readSV.getValue());
 
         // Insert
@@ -213,7 +221,7 @@ public class DbHelperTest {
         Assert.assertEquals("value11", readSV.getValue());
 
         // Read all
-        List<StoreValue> list = DbHelper.read("key1", Instant.MIN, Instant.MAX);
+        List<StoreValue> list = DbHelper.readInstant("key1", Instant.MIN, Instant.MAX);
         Assert.assertEquals(2, list.size());
         Assert.assertEquals(i0, list.get(0).getTimestampFrom());
         Assert.assertEquals(i2, list.get(0).getTimestampTo());
@@ -222,13 +230,13 @@ public class DbHelperTest {
         Assert.assertEquals(3, DbHelper.readLatest().size());
 
         // Read by time interval
-        Assert.assertEquals(0, DbHelper.read("key1", Instant.ofEpochSecond(i0.getEpochSecond()-1), i0).size());
-        Assert.assertEquals(1, DbHelper.read("key1", i0, Instant.ofEpochSecond(i0.getEpochSecond()+1)).size());
-        Assert.assertEquals(1, DbHelper.read("key1", i0, Instant.ofEpochSecond(i0.getEpochSecond()+2)).size());
-        Assert.assertEquals(2, DbHelper.read("key1", i0, Instant.ofEpochSecond(i0.getEpochSecond()+3)).size());
-        Assert.assertEquals(2, DbHelper.read("key1", i0, Instant.ofEpochSecond(i0.getEpochSecond()+3)).size());
-        Assert.assertEquals(2, DbHelper.read("key1", Instant.ofEpochSecond(i0.getEpochSecond()+1), Instant.ofEpochSecond(i0.getEpochSecond()+3)).size());
-        Assert.assertEquals(1, DbHelper.read("key1", Instant.ofEpochSecond(i0.getEpochSecond()+2), Instant.ofEpochSecond(i0.getEpochSecond()+3)).size());
+        Assert.assertEquals(0, DbHelper.readInstant("key1", Instant.ofEpochSecond(i0.getEpochSecond()-1), i0).size());
+        Assert.assertEquals(1, DbHelper.readInstant("key1", i0, Instant.ofEpochSecond(i0.getEpochSecond()+1)).size());
+        Assert.assertEquals(1, DbHelper.readInstant("key1", i0, Instant.ofEpochSecond(i0.getEpochSecond()+2)).size());
+        Assert.assertEquals(2, DbHelper.readInstant("key1", i0, Instant.ofEpochSecond(i0.getEpochSecond()+3)).size());
+        Assert.assertEquals(2, DbHelper.readInstant("key1", i0, Instant.ofEpochSecond(i0.getEpochSecond()+3)).size());
+        Assert.assertEquals(2, DbHelper.readInstant("key1", Instant.ofEpochSecond(i0.getEpochSecond()+1), Instant.ofEpochSecond(i0.getEpochSecond()+3)).size());
+        Assert.assertEquals(1, DbHelper.readInstant("key1", Instant.ofEpochSecond(i0.getEpochSecond()+2), Instant.ofEpochSecond(i0.getEpochSecond()+3)).size());
 
         // Read changed keys
         DbHelper.dumpForTests();
@@ -236,10 +244,10 @@ public class DbHelperTest {
         Assert.assertEquals(1, DbHelper.readUpdatedKeys(i2,i9).size());
 
         // Read at some time
-        Assert.assertNull(DbHelper.read("key1", Instant.ofEpochSecond(i0.getEpochSecond()-1)));
-        Assert.assertEquals("value10", DbHelper.read("key1", Instant.ofEpochSecond(i0.getEpochSecond())).getValue());
-        Assert.assertEquals("value10", DbHelper.read("key1", Instant.ofEpochSecond(i0.getEpochSecond()+1)).getValue());
-        Assert.assertEquals("value11", DbHelper.read("key1", Instant.ofEpochSecond(i0.getEpochSecond()+2)).getValue());
+        Assert.assertNull(DbHelper.readInstant("key1", Instant.ofEpochSecond(i0.getEpochSecond()-1)));
+        Assert.assertEquals("value10", DbHelper.readInstant("key1", Instant.ofEpochSecond(i0.getEpochSecond())).getValue());
+        Assert.assertEquals("value10", DbHelper.readInstant("key1", Instant.ofEpochSecond(i0.getEpochSecond()+1)).getValue());
+        Assert.assertEquals("value11", DbHelper.readInstant("key1", Instant.ofEpochSecond(i0.getEpochSecond()+2)).getValue());
 
         // Insert impossible (in the past)
         try {

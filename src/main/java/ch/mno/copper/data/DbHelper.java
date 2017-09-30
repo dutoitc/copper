@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Helper to read-write data to a local H2 Database. The DB is automatically created if not existent.
+ * Helper to readInstant-write data to a local H2 Database. The DB is automatically created if not existent.
  * Time is from-inclusive, to-exclusive like String.substring.
  * Values once stored will never end but could change over time.
  * Only one value is allowed at a given instant.
@@ -52,7 +52,7 @@ public class DbHelper {
                 LOG.info("Database not found. Creating table VALUESTORE...");
                 stmt.execute("CREATE TABLE valuestore (" +
                         "  idvaluestore int(11) NOT NULL," +
-                        "  key text NOT NULL," +
+                        "  key varchar(50) NOT NULL," +
                         "  value text NOT NULL," +
                         "  datefrom timestamp NOT NULL," +
                         "  dateto timestamp NOT NULL," +
@@ -91,7 +91,7 @@ public class DbHelper {
         }
     }
 
-    /** Insert a value at given instant. Actuve value will be finished at the same instant */
+    /** Insert a value at given instant. Actuve value will be finished at the same instant. no data is inserted if current value is the same value */
     public static void insert(String key, String value, Instant instant) throws SQLException {
         String sqlInsert = "INSERT INTO valuestore ( idvaluestore, key, value, datefrom, dateto) VALUES (?,?,?,?,?)";
         String sqlUpdatePrevious = "update valuestore set dateto=? where idvaluestore=?";
@@ -99,7 +99,19 @@ public class DbHelper {
         try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
              PreparedStatement stmt = con.prepareStatement(sqlInsert))
         {
+            // no data is inserted if current value is the same value
             StoreValue previousValue = readLatest(key);
+            if (previousValue!=null) {
+                if (previousValue.getValue() == null) {
+                    if (value == null) {
+                        return; // No update
+                    }
+                } else {
+                    if (previousValue.getValue().equals(value)) {
+                        return; // No update
+                    }
+                }
+            }
 
             long id = nextSequence();
             stmt.setLong(1, id);
@@ -162,8 +174,57 @@ public class DbHelper {
         throw new RuntimeException("Too much value for key="+key+", instant="+timestamp.getEpochSecond());
     }
 
+    public static List<InstantValues> readInstant(List<String> keys, Instant timestampFrom, Instant timestampTo, long intervalSeconds) throws SQLException {
+        String sql = "select ts,c1, value, idValueStore from ( " +
+                "select ts, c1 from ( " +
+                "WITH RECURSIVE T(ts) AS ( " +
+                "    SELECT ? " +
+                "    UNION ALL " +
+                "    SELECT dateadd('second', ?, ts) FROM T WHERE ts<? " +
+                ") " +
+                "SELECT * FROM T) t,  (values (XXX)) " +
+                ") left outer join valuestore vs on ts>=vs.datefrom and ts<vs.dateto and key =c1 " +
+                "order by ts,key";
+        String s = "?";
+        for (int i=1; i<keys.size(); i++) {
+            s+="),(?";
+        }
+        sql = sql.replace("XXX", s);
+        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+             PreparedStatement stmt = con.prepareStatement(sql))
+        {
+            stmt.setTimestamp(1, Timestamp.from(timestampFrom));
+            stmt.setLong(2, intervalSeconds);
+            stmt.setTimestamp(3, Timestamp.from(timestampTo));
+            for (int i=0; i<keys.size(); i++) {
+                stmt.setString(4+i, keys.get(i));
+            }
+            ResultSet rs = stmt.executeQuery();
+
+            List<InstantValues> values = new ArrayList<>();
+            InstantValues last = null;
+            while(rs.next()) {
+                InstantValue instantValue = mapInstantValue(rs);
+                if (last==null || !instantValue.getTimestamp().equals(last.timestamp)) {
+                    last = new InstantValues();
+                    last.setTimestamp(instantValue.getTimestamp());
+                    values.add(last);
+                }
+                last.put(instantValue.getKey(), instantValue);
+            }
+            return values;
+        } catch (SQLException e) {
+            throw new RuntimeException("An error occured while saving values", e);
+        }
+    }
+
+
+
     /** Read all values for a given key active between from, to. (could have been inserted before and finish after) */
     public static List<StoreValue> read(String key, Instant timestampFrom, Instant timestampTo) throws SQLException {
+        if (timestampTo.isAfter(Instant.now())) {
+            timestampTo = Instant.now();
+        }
         String sql = "SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where key=? and ((datefrom<? and dateto>?) or (datefrom>=? and datefrom<?) or (dateto>? and dateto<=?)) order by datefrom";
         try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
              PreparedStatement stmt = con.prepareStatement(sql))
@@ -244,6 +305,16 @@ public class DbHelper {
         Instant from = rs.getTimestamp("datefrom").toInstant();
         Instant to = rs.getTimestamp("dateto").toInstant();
         return new StoreValue(idValueStore, dbKey, value, from, to);
+    }
+
+    private static InstantValue mapInstantValue(ResultSet rs) throws SQLException {
+        long idValueStore = rs.getLong("idValueStore");
+        if (idValueStore==0) idValueStore=-1; // TODO: check if id is null, not zero
+        String dbKey = rs.getString("c1");
+        String value = rs.getString("value");
+        if (value==null) value="";
+        Instant ts = rs.getTimestamp("ts").toInstant();
+        return new InstantValue(idValueStore, dbKey, value, ts);
     }
 
 

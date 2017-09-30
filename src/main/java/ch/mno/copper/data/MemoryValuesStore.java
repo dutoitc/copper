@@ -76,7 +76,7 @@ public class MemoryValuesStore implements ValuesStore {
         map.forEach((k, v) -> {
             StringBuilder sb = new StringBuilder();
             sb.append(k);
-            // TODO: read/write à revoir (stocker toutes les valeurs)
+            // TODO: readInstant/write à revoir (stocker toutes les valeurs)
             sb.append('|');
             sb.append(v == null || v.getValue() == null ? null : v.getValue().replace("|", "£").replace("\n", "¢"));
             sb.append('|');
@@ -244,17 +244,20 @@ public class MemoryValuesStore implements ValuesStore {
     }
 
     @Override
-    public List<List<String>> queryValues(Instant from, Instant to, String columns) {
+    public List<StoreValue> queryValues(Instant from, Instant to, List<String> columns) {
         Collection<String> keys = queryValues(from, to);
-        List<List<String>> values = new ArrayList<>();
+        List<StoreValue> values = new ArrayList<>();
         for (String key : keys) {
-            List<String> line = new ArrayList<>();
             StoreValue sv = map.get(key);
-            line.add(sv.getKey());
-            line.add(sv.getValue());
+            values.add(sv);
         }
 
         return values;
+    }
+
+    @Override
+    public List<InstantValues> queryValues(Instant from, Instant to, long intervalSecond, List<String> columns) {
+        return null;
     }
 
     public static void main(String[] args) throws IOException {

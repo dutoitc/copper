@@ -15,23 +15,23 @@ angular.module('copperApp.stories', ['ngRoute'])
 
     $scope.refreshStories = function() {
         $http.get('ws/stories')
-            .success(function(data) {
-                $scope.stories=data;
+            .then(function(response) {
+                $scope.stories=response.data;
         });
     }
 
     $scope.runStory = function(storyName) {
         $http.get('/ws/story/' + storyName + '/run')
-                .success(function(data) {
-                    alert(data);
+                .then(function(response) {
+                    alert(response.data);
             });
     }
 
     $scope.deleteStory = function(storyName) {
         if ( window.confirm("Delete story " + storyName + " ?") ) {
             $http.get('/ws/story/' + storyName + '/delete')
-                    .success(function(data) {
-                        alert(data);
+                    .then(function(response) {
+                        alert(response.data);
                 });
             $scope.refreshStories();
         }

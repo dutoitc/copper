@@ -3,6 +3,7 @@ package ch.mno.copper.data;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -16,11 +17,13 @@ public class DbValuesStore implements ValuesStore {
     private static DbValuesStore instance;
 
 
-    /** Singleton factory */
+    /**
+     * Singleton factory
+     */
     public static DbValuesStore getInstance() {
-        if (instance==null) {
+        if (instance == null) {
             synchronized (DbValuesStore.class) {
-                if (instance==null) {
+                if (instance == null) {
                     instance = new DbValuesStore();
                 }
             }
@@ -44,9 +47,9 @@ public class DbValuesStore implements ValuesStore {
         try {
             storeValue = DbHelper.readLatest(key);
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot read value " + key + ": " + e.getMessage());
+            throw new RuntimeException("Cannot readInstant value " + key + ": " + e.getMessage());
         }
-        if (storeValue==null) {
+        if (storeValue == null) {
             return ""; // no data
         }
         return storeValue.getValue();
@@ -56,11 +59,11 @@ public class DbValuesStore implements ValuesStore {
     public Map<String, StoreValue> getValues() {
         try {
             List<StoreValue> values = DbHelper.readLatest();
-            Map<String, StoreValue> map = new HashMap<>(values.size()*4/3+1);
-            values.forEach(v->map.put(v.getKey(), v));
+            Map<String, StoreValue> map = new HashMap<>(values.size() * 4 / 3 + 1);
+            values.forEach(v -> map.put(v.getKey(), v));
             return map;
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot read values: " + e.getMessage(), e);
+            throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
         }
     }
 
@@ -70,8 +73,25 @@ public class DbValuesStore implements ValuesStore {
     }
 
     @Override
-    public List<List<String>> queryValues(Instant from, Instant to, String columns) {
-        return null;
+    public List<StoreValue> queryValues(Instant from, Instant to, List<String> columns) {
+        List<StoreValue> values = new ArrayList<>();
+        for (String key : columns) {
+            try {
+                values.addAll(DbHelper.read(key, from, to));
+            } catch (SQLException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+        return values;
+    }
+
+    @Override
+    public List<InstantValues> queryValues(Instant from, Instant to, long intervalSecond, List<String> columns) {
+        try {
+            return DbHelper.readInstant(columns, from, to, intervalSecond);
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     @Override

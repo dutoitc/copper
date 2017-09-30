@@ -2,6 +2,7 @@ package ch.mno.copper.web;
 
 import ch.mno.copper.CopperMediator;
 import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.data.InstantValues;
 import ch.mno.copper.data.StoreValue;
 import ch.mno.copper.data.ValuesStore;
 import ch.mno.copper.helpers.SyntaxException;
@@ -32,6 +33,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Path("/ws")
@@ -100,7 +102,12 @@ public class CopperServices {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns) {
         Gson gson = new Gson();
-        Instant from = toInstant(dateFrom, true);
+        Instant from;
+        if (dateFrom==null) {
+            from = Instant.parse("2000-01-01T00:00:00.00Z");
+        } else {
+            from = toInstant(dateFrom, true);
+        }
         Instant to;
         if (dateTo==null) {
             to = Instant.now();
@@ -108,8 +115,36 @@ public class CopperServices {
             to =toInstant(dateTo, false);
         }
         try {
-            return Response.ok(gson.toJson(valuesStore.queryValues(from, to, columns)), MediaType.APPLICATION_JSON).build();
+            List<String> cols = Arrays.asList(columns.split(","));
+            return Response.ok(gson.toJson(valuesStore.queryValues(from, to, cols)), MediaType.APPLICATION_JSON).build();
         } catch (RuntimeException e) {
+            return Response.serverError().entity("SERVER ERROR\n" + e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("instants/query")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns, @QueryParam("intervalSeconds") long intervalSeconds) {
+        Gson gson = new Gson();
+        Instant from;
+        if (dateFrom==null) {
+            from = Instant.parse("2000-01-01T00:00:00.00Z");
+        } else {
+            from = toInstant(dateFrom, true);
+        }
+        Instant to;
+        if (dateTo==null) {
+            to = Instant.now();
+        }  else {
+            to =toInstant(dateTo, false);
+        }
+        try {
+            List<String> cols = Arrays.asList(columns.split(","));
+            List<InstantValues> values = valuesStore.queryValues(from, to, intervalSeconds, cols);
+            return Response.ok(gson.toJson(values), MediaType.APPLICATION_JSON).build();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
             return Response.serverError().entity("SERVER ERROR\n" + e.getMessage()).build();
         }
     }

@@ -23,8 +23,8 @@ angular.module('copperApp.story', ['ngRoute'])
         }
     } else {
         $http.get('ws/story/'+$scope.originalStoryName)
-                .success(function(data) {
-                    $scope.story=data;
+                .then(function(response) {
+                    $scope.story=response.data;
             });
     }
 

@@ -84,7 +84,7 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
             }
             return new JmxCollectorWrapper(url, username, password, jmxQueries, names);
         } else {
-            throw new RuntimeException("Cannot read COLLECTOR_JMX body in <" + collectorJmxData + ">");
+            throw new RuntimeException("Cannot readInstant COLLECTOR_JMX body in <" + collectorJmxData + ">");
         }
     }
 

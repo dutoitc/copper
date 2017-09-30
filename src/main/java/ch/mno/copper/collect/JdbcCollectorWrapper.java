@@ -98,7 +98,7 @@ public class JdbcCollectorWrapper extends AbstractCollectorWrapper {
             String query = matcher2.group(4);
             return new JdbcCollectorWrapper(url, username, password, query);
         } else {
-            throw new RuntimeException("Cannot read COLLECTOR_JDBC body in <" + collectorJdbcData + ">");
+            throw new RuntimeException("Cannot readInstant COLLECTOR_JDBC body in <" + collectorJdbcData + ">");
         }
     }
 

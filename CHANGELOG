@@ -2,6 +2,9 @@ Version v1.2.0
 ==============
 New:
 - Added database store in replacement of memory datastore, with data historization and querying
+- Added story error on web story page
+- Added values filtering on web values page
+- Added an history screen with table and graph for values, multicolumns
 
 Version v1.1.0
 ==============

@@ -100,7 +100,7 @@ public class CopperDaemon implements Runnable {
         }
 
         // Processors
-        LocalDateTime queryTime = LocalDateTime.now(); // Keep time, so that next run will have data between query time assignation and valueStore read time
+        LocalDateTime queryTime = LocalDateTime.now(); // Keep time, so that next run will have data between query time assignation and valueStore readInstant time
         Collection<String> changedValues = valuesStore.queryValues(lastQueryTime.toInstant(ZoneOffset.UTC), Instant.MAX);
         lastQueryTime = queryTime;
         processors.forEach(p -> {

@@ -13,8 +13,8 @@ angular.module('copperApp.overview', ['ngRoute'])
     var self=this;
 
      $http.get('ws/overview')
-            .success(function(data) {
-                $scope.overview=data;
+            .then(function(response) {
+                $scope.overview=response.data;
             });
 
 

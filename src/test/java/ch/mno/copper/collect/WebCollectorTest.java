@@ -71,8 +71,8 @@ public class WebCollectorTest {
                 "  \"url\": \"http://sisyphe:1234/view/BLOCK1/\"\n" +
                 "}";
 
-//        net.minidev.json.JSONArray res2 = JsonPath.read(json, "$['jobs'][?(@['name']=='ATEV-compile')]");
-//        net.minidev.json.JSONArray res2 = JsonPath.read(json, "");
+//        net.minidev.json.JSONArray res2 = JsonPath.readInstant(json, "$['jobs'][?(@['name']=='ATEV-compile')]");
+//        net.minidev.json.JSONArray res2 = JsonPath.readInstant(json, "");
 
         // TODO: json ko here, but ok in http://jsonpath.com/
         List<Pair<String, String>> valuesKept = new ArrayList<>();

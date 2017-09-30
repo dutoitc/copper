@@ -81,7 +81,7 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
                 url = matcher2.group(1);
                 queries = matcher2.group(2);
             } else {
-                throw new RuntimeException("Cannot read COLLECTOR_WEB body in <" + collectorWebData + ">");
+                throw new RuntimeException("Cannot readInstant COLLECTOR_WEB body in <" + collectorWebData + ">");
             }
         }
 

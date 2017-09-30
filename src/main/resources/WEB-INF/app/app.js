@@ -7,18 +7,20 @@ var copperApp = angular.module('copperApp', [
   'copperApp.stories',
   'copperApp.story',
   'copperApp.values',
-  'ui.bootstrap'
+  'copperApp.history',
+  'ui.bootstrap',
+  'chart.js'
 ])
-.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
+.config(['$routeProvider', '$httpProvider', '$locationProvider', function($routeProvider, $httpProvider, $locationProvider) {
     $routeProvider
     .when('/help', {
         templateUrl: 'app/views/help.html'
     })
     .otherwise({redirectTo: '/overview'});
+    $locationProvider.hashPrefix('');
 }])
     .filter('trusted', ['$sce', function($sce){
         return function(text) {
             return $sce.trustAsHtml(text);
         };
 }]);
-

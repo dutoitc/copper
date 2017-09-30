@@ -70,7 +70,7 @@ public class StoriesFacade {
 
                 // Collect
                 AbstractCollectorWrapper collectorWrapper = story.getCollectorWrapper();
-                if (collectorWrapper == null) { // Null means to read value store
+                if (collectorWrapper == null) { // Null means to readInstant value store
                     values = valuesStore.getValuesMapString();
                 } else {
                     values = collectorWrapper.execute();
