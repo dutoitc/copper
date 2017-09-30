@@ -27,7 +27,7 @@ public class MemoryValuesStoreTest {
         Assert.assertEquals(1, st.queryValues(t, Instant.MAX).size());
         t = Instant.now();
         Collection<String> strings = st.queryValues(t, Instant.MAX);
-        Assert.assertEquals(0, strings.size());
+        Assert.assertEquals(1, strings.size());
         Assert.assertTrue(System.currentTimeMillis()-st.getTimestampFrom("key1").toEpochMilli()<1000);
         st.put("key1", "value2");
         Assert.assertEquals(1, st.queryValues(t, Instant.MAX).size());
@@ -35,7 +35,7 @@ public class MemoryValuesStoreTest {
         Thread.sleep(1);
         t = Instant.now();
         st.put("key1", "value2");
-        Assert.assertEquals(0, st.queryValues(t, Instant.MAX).size()); // Same values
+        Assert.assertEquals(1, st.queryValues(t, Instant.MAX).size()); // Same values
     }
 
     @Test
@@ -69,7 +69,8 @@ public class MemoryValuesStoreTest {
         Map<String, String> map = st.getValuesMapString();
         Assert.assertEquals("v1", map.get("key1"));
         Assert.assertEquals("v3", map.get("key3"));
-        Assert.assertTrue(st.getValues().get("key1").toString().startsWith("StoreValue{value='v1', timestamp="));
+        String str = st.getValues().get("key1").toString();
+        Assert.assertTrue(str, str.startsWith("StoreValue{key='key1', value='v1', timestampFrom="));
     }
 
     @Test

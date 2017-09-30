@@ -25,6 +25,7 @@ import java.util.Map;
  * Put will erase data. get will return null or -1 if not found.
  * Created by dutoitc on 29.01.2016.
  */
+@Deprecated
 public class MemoryValuesStore implements ValuesStore {
 
     // TODO: dependency graph, with temporized triggers and quiet time
@@ -50,10 +51,10 @@ public class MemoryValuesStore implements ValuesStore {
     @Override
     public void put(String key, String value) {
         if (map.containsKey(key)) {
-            if (value==null && map.get(key)==null) return;
+            if (value == null && map.get(key) == null) return;
             // commented: always store, as store date = last check date. TODO: implement from... to dates
             //if (map.get(key)!=null && map.get(key).getValue().equals(value)) return;
-            if (map.get(key)!=null && !map.get(key).getValue().equals(value)) {
+            if (map.get(key) != null && !map.get(key).getValue().equals(value)) {
                 map.put(key, new StoreValue(-1, key, value, Instant.now(), null));
             }
             return; // Otehrwise same value
@@ -68,21 +69,21 @@ public class MemoryValuesStore implements ValuesStore {
     }
 
 
-
     public void save(OutputStream os) throws IOException {
         PrintWriter pw = new PrintWriter(os);
         pw.write("1\n");
-        pw.write(map.size()+"\n");
-        map.forEach((k,v)->{
+        pw.write(map.size() + "\n");
+        map.forEach((k, v) -> {
             StringBuilder sb = new StringBuilder();
             sb.append(k);
             // TODO: read/write à revoir (stocker toutes les valeurs)
             sb.append('|');
-            sb.append(v==null||v.getValue()==null?null:v.getValue().replace("|", "£").replace("\n","¢"));
+            sb.append(v == null || v.getValue() == null ? null : v.getValue().replace("|", "£").replace("\n", "¢"));
             sb.append('|');
-            sb.append(v==null?null:v.getTimestampFrom().getEpochSecond());
+            sb.append(v == null ? null : v.getTimestampFrom().getEpochSecond());
             sb.append('|');
-            sb.append(v==null?null:v.getTimestampTo().getEpochSecond());
+            Instant timestampTo = v.getTimestampTo();
+            sb.append(v == null || timestampTo == null ? null : timestampTo.getEpochSecond());
             sb.append('\n');
             pw.write(sb.toString());
         });
@@ -110,29 +111,30 @@ public class MemoryValuesStore implements ValuesStore {
 
         // Version
         int version = Integer.parseInt(reader.readLine());
-        if (version!=1) throw new RuntimeException("Unsupported version: " + version);
+        if (version != 1) throw new RuntimeException("Unsupported version: " + version);
 
         // Size
         int mapSize = Integer.parseInt(reader.readLine());
-        map = new HashMap<>(mapSize*4/3);
+        map = new HashMap<>(mapSize * 4 / 3);
 
         // Map
-        for (int noLine=0; noLine<mapSize; noLine++) {
+        for (int noLine = 0; noLine < mapSize; noLine++) {
             try {
                 String line = reader.readLine();
                 int p = line.indexOf('|');
-                String key = line.substring(0,p);
-                line = line.substring(p+1);
+                String key = line.substring(0, p);
+                line = line.substring(p + 1);
 
                 int p2 = line.lastIndexOf('|');
-                String timestampTo = line.substring(p2+1);
+                String timestampTo = line.substring(p2 + 1);
                 line = line.substring(0, p2);
                 p2 = line.lastIndexOf('|');
-                String timestampFrom = line.substring(p2+1);
+                String timestampFrom = line.substring(p2 + 1);
                 line = line.substring(0, p2);
 
                 String content = line.replaceAll("£", "|").replace("¢", "\n");
-                StoreValue sv = new StoreValue(-1, key, content, Instant.ofEpochSecond(Long.parseLong(timestampFrom)), Instant.ofEpochSecond(Long.parseLong(timestampTo)));
+                Instant timestampTo1 = timestampTo == null || "null".equals(timestampTo) ? null : Instant.ofEpochSecond(Long.parseLong(timestampTo));
+                StoreValue sv = new StoreValue(-1, key, content, Instant.ofEpochSecond(Long.parseLong(timestampFrom)), timestampTo1);
 
                 map.put(key, sv);
             } catch (Exception e) {
@@ -191,15 +193,14 @@ public class MemoryValuesStore implements ValuesStore {
     }
 
     /**
-     *
-     * @param desc key1,key2...
+     * @param desc   key1,key2...
      * @param values values for keys, ordered
      */
     public void putAll(String desc, List<String> values) {
         String[] keys = desc.split(",");
-        if (keys.length!=values.size()) throw new RuntimeException("Wrong number of parameters");
-        for (int i=0; i<keys.length; i++) {
-            put(keys[i],values.get(i));
+        if (keys.length != values.size()) throw new RuntimeException("Wrong number of parameters");
+        for (int i = 0; i < keys.length; i++) {
+            put(keys[i], values.get(i));
         }
     }
 
@@ -207,7 +208,7 @@ public class MemoryValuesStore implements ValuesStore {
     public Map<String, String> getValuesMapString() {
         // FIXME make it Java8
         Map<String, String> values = new HashMap<>();
-        map.forEach((k,v)->values.put(k,v.getValue()));
+        map.forEach((k, v) -> values.put(k, v.getValue()));
         return values;
     }
 
@@ -219,10 +220,23 @@ public class MemoryValuesStore implements ValuesStore {
     @Override
     public Collection<String> queryValues(Instant from, Instant to) {
         List<String> keys = new ArrayList<>();
-        for (Map.Entry<String, StoreValue> entry: map.entrySet()) {
-            if ((from==null || !entry.getValue().getTimestampFrom().isBefore(from)) &&
-                    (to==null || !entry.getValue().getTimestampTo().isAfter(to)))
+        for (Map.Entry<String, StoreValue> entry : map.entrySet()) {
+            /*if ((from==null || entry.getValue().getTimestampFrom().isBefore(from)) &&
+                    (to==null || entry.getValue().getTimestampTo()==null || entry.getValue().getTimestampTo().equals(Instant.MAX) || !entry.getValue().getTimestampTo().isAfter(to)))
             {
+                keys.add(entry.getKey());
+            }*/
+
+            Instant tsFrom = entry.getValue().getTimestampFrom();
+            Instant tsTo = entry.getValue().getTimestampTo();
+            if (tsTo==null) tsTo = Instant.MAX;
+            if (
+                    (tsFrom.isBefore(from) && (tsTo.isAfter(to)))
+                            ||
+                            (!tsFrom.isBefore(from) && tsFrom.isBefore(to))
+                            ||
+                            (tsTo.isAfter(from) && !tsTo.isAfter(to))
+                    ) {
                 keys.add(entry.getKey());
             }
         }
@@ -233,7 +247,7 @@ public class MemoryValuesStore implements ValuesStore {
     public List<List<String>> queryValues(Instant from, Instant to, String columns) {
         Collection<String> keys = queryValues(from, to);
         List<List<String>> values = new ArrayList<>();
-        for (String key: keys) {
+        for (String key : keys) {
             List<String> line = new ArrayList<>();
             StoreValue sv = map.get(key);
             line.add(sv.getKey());

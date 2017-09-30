@@ -19,6 +19,11 @@
         <label for="storyText">Text</label>
         <textarea class="form-control" rows="10" ng-model="story.storyText" id="storyText" name="storyText"></textarea>
     </div>
+    <div class="form-group">
+        <label for="storyText">Errors</label>
+        <textarea class="form-control" readonly="true" rows="10" ng-model="story.error" id="storyError" name="storyError"></textarea>
+    </div>
+
     <button type="button" class="btn btn-primary glyphicon glyphicon-ok" ng-click="submit()" ng-show="storyForm.$dirty">Save changes</button>
     <a href="#/stories" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span> Cancel</a>
 </form>

@@ -37,6 +37,8 @@ angular.module('copperApp.stories', ['ngRoute'])
         }
     }
 
+
+
     $scope.refreshStories();
 
 

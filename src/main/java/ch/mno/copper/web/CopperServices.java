@@ -269,6 +269,10 @@ public class CopperServices {
             writer.value(story.getCron());
             writer.name("storyText");
             writer.value(story.getStoryText());
+            writer.name("hasError");
+            writer.value(story.hasError());
+            writer.name("error");
+            writer.value(story.getError());
 //            writer.endArray();
 
             writer.endObject();

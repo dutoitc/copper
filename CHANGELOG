@@ -1,3 +1,8 @@
+Version v1.2.0
+==============
+New:
+- Added database store in replacement of memory datastore, with data historization and querying
+
 Version v1.1.0
 ==============
 - copper.properties support "serverPort" properties, default 30400

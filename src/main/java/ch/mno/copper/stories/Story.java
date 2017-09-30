@@ -179,6 +179,10 @@ public class Story {
         }
     }
 
+    public String getError() {
+        return error;
+    }
+
 
     private class When {
         private final String variable;

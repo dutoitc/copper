@@ -17,6 +17,20 @@ angular.module('copperApp.values', ['ngRoute'])
                 $scope.values=data;
         });
 
+        $scope.filter = function(object, field, filter) {
+           if (!object) return {};
+           if (!filter) return object;
+
+           var filteredObject = {};
+           Object.keys(object).forEach(function(key) {
+             if (object[key][field].includes(filter)) {
+               filteredObject[key] = object[key];
+             }
+           });
+
+           return filteredObject;
+         };
+
 /*
 
     $http.get('data/routes.json')

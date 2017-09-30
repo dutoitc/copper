@@ -2,17 +2,20 @@
 <div class="row">
 
 
+    <label>Search: <input ng-model="searchText"></label>
     <table class="table-striped" style="width: 80%; margin: auto; border: 1px outset silver">
         <thead>
             <th style="text-align:right;padding: 5px">Key</th>
             <th style="text-align:left; padding-left: 10px">Value</th>
-            <th style="text-align:center">Date</th>
+            <th style="text-align:center">Date from</th>
+            <th style="text-align:center">Date to</th>
         </thead>
         <tbody>
-            <tr ng-repeat="(k,v) in values">
-                <td style="text-align:right;padding: 5px;font-weight:bold">{{k}}</td>
+            <tr ng-repeat="(k,v) in filter(values, 'key', searchText)">
+                <td style="text-align:right;padding: 5px;font-weight:bold"><a href="history?key={{k}}">{{k}}</a></td>
                 <td style="text-align:left; padding-left: 10px">{{v.value}}</td>
-                <td style="text-align:center;width: 150px">{{v.timestamp | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td style="text-align:center;width: 150px">{{v.timestampFrom.seconds*1000 | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td style="text-align:center;width: 150px">{{v.timestampTo.seconds*1000 | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
             </tr>
         </tbody>
     </table>
