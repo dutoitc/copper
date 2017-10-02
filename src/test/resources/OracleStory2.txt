@@ -1,0 +1,18 @@
+RUN ON CRON 0,30 * * * *
+GIVEN COLLECTOR JDBC WITH url=jdbc:oracle:thin:@host:port/instance,user=myuser,password=mypass
+    QUERY "
+select (
+select count(*) from myschema.mytable table1
+left outer join myschema.field1 pub on pub.myid = pub.myfk
+where field2=2 and field3=1
+and pub.x_timestamp>trunc(sysdate)
+group by field1
+) as MYVAL1,(
+select count(*) from myschema.mytable table1
+left outer join myschema.field1 pub on pub.myid = pub.myfk
+where field2=2 and field3=3
+and pub.x_timestamp>trunc(sysdate)
+group by field1
+) as MYVAL2 from dual
+"
+THEN STORE VALUES
