@@ -1,5 +1,6 @@
 package ch.mno.copper.collect.connectors;
 
+import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -88,8 +89,17 @@ public class HttpConnector extends AbstractConnector {
                 data.setData(EntityUtils.toString(response.getEntity()).trim());
             }
             data.setResponseCode(response.getStatusLine().getStatusCode());
-            data.setContentLength(response.getLastHeader("Content-Length").getValue());
-            data.setContentType(response.getLastHeader("Content-Type").getValue());
+
+            Header lastHeader = response.getLastHeader("Content-Length");
+            if (lastHeader!=null) {
+                data.setContentLength(lastHeader.getValue());
+            }
+
+
+            Header lastHeader1 = response.getLastHeader("Content-Type");
+            if (lastHeader1!=null) {
+                data.setContentType(lastHeader1.getValue());
+            }
 
             return data;
         } catch (IOException e) {

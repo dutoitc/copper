@@ -5,6 +5,8 @@ import ch.mno.copper.collect.connectors.HttpResponseData;
 import ch.mno.copper.collect.connectors.JmxConnector;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import net.minidev.json.JSONArray;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,14 +88,21 @@ public class WebCollector {
                 results.add(data.getData());
             } else {
                 try {
-                    net.minidev.json.JSONArray res = JsonPath.read(data.getData(), key);
-                    if (res == null || res.size() == 0) {
-                        LOG.info("Warning: jsonpath " + key + " not found in " + data);
-                        results.add("ERR_NOT_FOUND");
-                    } else if (res.size() > 1) {
-                        results.add("TOO_MUCH_VALUES_FOUND");
+                    Object o = JsonPath.read(data.getData(), key);
+                    if (o instanceof JSONArray) {
+                        net.minidev.json.JSONArray res = (JSONArray) o;
+                        if (res == null || res.size() == 0) {
+                            LOG.info("Warning: jsonpath " + key + " not found in " + data);
+                            results.add("ERR_NOT_FOUND");
+                        } else if (res.size() > 1) {
+                            results.add("TOO_MUCH_VALUES_FOUND");
+                        } else {
+                            results.add(res.get(0).toString());
+                        }
+                    } else if (o instanceof String) {
+                        results.add((String)o);
                     } else {
-                        results.add(res.get(0).toString());
+                        results.add(o.toString());
                     }
                 } catch (PathNotFoundException e) {
                     LOG.error("Path not  found: " + key);
@@ -103,4 +112,13 @@ public class WebCollector {
         }
         return results;
     }
+
+    public static void main(String[] args) {
+        List<Pair<String, String>> values = new ArrayList<>();
+        values.add(new ImmutablePair<>("responseCode", "rs"));
+        values.add(new ImmutablePair<>("status", "s"));
+        WebCollector.query("http://tom.etat-de-vaud.ch:1530/ws/infra/status", null, null, values);
+    }
+
 }
+
