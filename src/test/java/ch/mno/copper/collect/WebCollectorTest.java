@@ -1,5 +1,6 @@
 package ch.mno.copper.collect;
 
+import ch.mno.copper.collect.connectors.HttpResponseData;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -77,9 +78,25 @@ public class WebCollectorTest {
         // TODO: json ko here, but ok in http://jsonpath.com/
         List<Pair<String, String>> valuesKept = new ArrayList<>();
         valuesKept.add(new ImmutablePair(".jobs[?(@.name=='BLOCK1-compile')].color", "ATEV_compile"));
-        List<String> res = WebCollector.extractValues(json, valuesKept);
-        Assert.assertEquals(1, res.size());
+        valuesKept.add(new ImmutablePair<>("responseCode", "code"));
+        valuesKept.add(new ImmutablePair<>("contentType", "contentType"));
+        valuesKept.add(new ImmutablePair<>("contentLength", "contentLength"));
+
+
+        HttpResponseData<String> d = new HttpResponseData<>();
+        d.setData(json);
+        d.setResponseCode(200);
+        d.setContentType("text/plain");
+        d.setContentLength("123");
+
+        List<String> res = WebCollector.extractValues(d, valuesKept);
+        Assert.assertEquals(4, res.size());
         Assert.assertEquals("blue", res.get(0));
+        Assert.assertEquals("200", res.get(1));
+        Assert.assertEquals("text/plain", res.get(2));
+        Assert.assertEquals("123", res.get(3));
     }
+
+
 
 }

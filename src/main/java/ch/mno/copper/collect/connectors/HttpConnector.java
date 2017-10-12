@@ -75,6 +75,28 @@ public class HttpConnector extends AbstractConnector {
         }
     }
 
+    public HttpResponseData<String> get2(String uri) throws ConnectorException {
+
+        HttpGet request = new HttpGet(uri);
+
+        try (CloseableHttpResponse response = httpclient.execute(target, request)){
+
+            HttpResponseData<String> data = new HttpResponseData<>();
+            if (response.getStatusLine().getStatusCode()!=200) {
+                data.setData("Error " + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase());
+            } else {
+                data.setData(EntityUtils.toString(response.getEntity()).trim());
+            }
+            data.setResponseCode(response.getStatusLine().getStatusCode());
+            data.setContentLength(response.getLastHeader("Content-Length").getValue());
+            data.setContentType(response.getLastHeader("Content-Type").getValue());
+
+            return data;
+        } catch (IOException e) {
+            throw new ConnectorException("Exception: " + e.getMessage(), e);
+        }
+    }
+
     public void close() {
         try {
             httpclient.close();

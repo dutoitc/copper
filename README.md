@@ -84,8 +84,12 @@ RUN ON CRON */5 7-18 * * 1-5
 GIVEN COLLECTOR WEB WITH url=http://localhost:1530/ws/infra/status
     KEEP status AS WEB_STATUS
     KEEP lastReload AS WEB_LAST_RELOAD
+    KEEP body AS WEB_BODY
+    KEEP responseCode as WEB_RETURN_CODE
 THEN STORE VALUES
 ````
+Syntax: KEEP (* | body | contentLength | contentType | responseCode | json expression) AS variable
+
 
 ## JMX collector
 ````

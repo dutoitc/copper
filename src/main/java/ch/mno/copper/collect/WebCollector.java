@@ -1,10 +1,11 @@
 package ch.mno.copper.collect;
 
 import ch.mno.copper.collect.connectors.HttpConnector;
+import ch.mno.copper.collect.connectors.HttpResponseData;
 import ch.mno.copper.collect.connectors.JmxConnector;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import org.apache.commons.lang3.tuple.Pair;
-import org.json.simple.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +52,10 @@ public class WebCollector {
                 throw new RuntimeException("Username-Password is not yet supported");
             }
 
-            String json = conn.get(path);
-            //JSONParser jsonParser = new JSONParser();
-            //JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
 
-            results = extractValues(json, valuesKept);
+            HttpResponseData<String> data = conn.get2(path);
+
+            results = extractValues(data, valuesKept);
         } catch (Exception e) {
             System.err.println("Connector exception (server " + url+ "): " + e.getMessage());
             if (results==null) {
@@ -72,20 +72,32 @@ public class WebCollector {
         return results;
     }
 
-    static List<String> extractValues(String json, List<Pair<String, String>> valuesKept) {
+    static List<String> extractValues(HttpResponseData<String> data, List<Pair<String, String>> valuesKept) {
         List<String> results = new ArrayList(valuesKept.size());
         for (Pair<String, String> value: valuesKept) {
-            if ("*".equals(value.getKey())) {
-                results.add(json);
+            String key = value.getKey();
+            if ("responseCode".equals(key)) {
+                results.add(String.valueOf(data.getResponseCode()));
+            } else if ("contentLength".equals(key)) {
+                results.add(String.valueOf(data.getContentLength()));}
+            else if ("contentType".equals(key)) {
+                results.add(String.valueOf(data.getContentType()));
+            } else if ("*".equals(key) || "body".equals(key)) {
+                results.add(data.getData());
             } else {
-                net.minidev.json.JSONArray res = JsonPath.read(json, value.getKey());
-                if (res == null || res.size() == 0) {
-                    LOG.info("Warning: jsonpath " + value.getKey() + " not found in " + json);
-                    results.add("ERR_NOT_FOUND");
-                } else if (res.size() > 1) {
-                    results.add("TOO_MUCH_VALUES_FOUND");
-                } else {
-                    results.add(res.get(0).toString());
+                try {
+                    net.minidev.json.JSONArray res = JsonPath.read(data.getData(), key);
+                    if (res == null || res.size() == 0) {
+                        LOG.info("Warning: jsonpath " + key + " not found in " + data);
+                        results.add("ERR_NOT_FOUND");
+                    } else if (res.size() > 1) {
+                        results.add("TOO_MUCH_VALUES_FOUND");
+                    } else {
+                        results.add(res.get(0).toString());
+                    }
+                } catch (PathNotFoundException e) {
+                    LOG.error("Path not  found: " + key);
+                    results.add("?");
                 }
             }
         }

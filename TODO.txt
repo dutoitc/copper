@@ -3,6 +3,7 @@ v1.1.0 Refactoring:
 [ ] Properties should be accessed only when creating connectors
 [ ]
 [ ] http: store statusCode, store executeTime, store responseLength ?
+[ ] WebCollector: keep header.x, json.path, body, ...
 
 
 Add database, keep history + retention time ?
