@@ -60,6 +60,7 @@ public class WebCollector {
             results = extractValues(data, valuesKept);
         } catch (Exception e) {
             System.err.println("Connector exception (server " + url+ "): " + e.getMessage());
+            e.printStackTrace();
             if (results==null) {
                 results = new ArrayList<>(valuesKept.size());
             }
@@ -100,7 +101,9 @@ public class WebCollector {
                             results.add(res.get(0).toString());
                         }
                     } else if (o instanceof String) {
-                        results.add((String)o);
+                        results.add((String) o);
+                    } else if (o==null) {
+                        results.add("null");
                     } else {
                         results.add(o.toString());
                     }
@@ -111,13 +114,6 @@ public class WebCollector {
             }
         }
         return results;
-    }
-
-    public static void main(String[] args) {
-        List<Pair<String, String>> values = new ArrayList<>();
-        values.add(new ImmutablePair<>("responseCode", "rs"));
-        values.add(new ImmutablePair<>("status", "s"));
-        WebCollector.query("http://tom.etat-de-vaud.ch:1530/ws/infra/status", null, null, values);
     }
 
 }
