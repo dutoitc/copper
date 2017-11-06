@@ -11,13 +11,14 @@ var copperApp = angular.module('copperApp', [
   'ui.bootstrap',
   'chart.js'
 ])
-.config(['$routeProvider', '$httpProvider', '$locationProvider', function($routeProvider, $httpProvider, $locationProvider) {
+.config(['$routeProvider', '$httpProvider', '$locationProvider', '$qProvider', function($routeProvider, $httpProvider, $locationProvider, $qProvider) {
     $routeProvider
     .when('/help', {
         templateUrl: 'app/views/help.html'
     })
     .otherwise({redirectTo: '/overview'});
     $locationProvider.hashPrefix('');
+    $qProvider.errorOnUnhandledRejections(false); // https://github.com/angular-ui/ui-router/issues/2889
 }])
     .filter('trusted', ['$sce', function($sce){
         return function(text) {
