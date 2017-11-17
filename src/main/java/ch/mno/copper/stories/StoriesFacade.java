@@ -84,6 +84,7 @@ public class StoriesFacade {
                 // Report
                 AbstractReporterWrapper reporter = story.getReporterWrapper();
                 if (reporter == null) {
+                    values.forEach((key, value) -> LOG.info("   storing " + key+"->"+value));
                     values.forEach((key, value) -> valuesStore.put(key, value));
                 } else {
                     reporter.execute(values);

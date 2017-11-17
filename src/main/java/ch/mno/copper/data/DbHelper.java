@@ -36,8 +36,10 @@ public class DbHelper {
     }
 
     private static void createDatabaseIfNeeded() {
+        LOG.info("Checking Database...");
         try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
              Statement stmt = con.createStatement()) {
+
             // Create table ?
             ResultSet rs = stmt.executeQuery("select count(*) as nb from information_schema.tables where table_name = 'VALUESTORE'");
             rs.next();
@@ -54,11 +56,38 @@ public class DbHelper {
                 stmt.execute("create sequence SEQ_VALUESTORE_ID start with 1");
             }
 
+            // Indexes
             stmt.execute("create index if not exists IDX_VS_KEY on valuestore(key)");
             stmt.execute(" create index if not exists IDX_VS_FROM on valuestore(datefrom)");
             stmt.execute("create index if not exists IDX_VS_TO on valuestore(dateto)");
 
+            // Snapshot fixes
+            List<String> keys = new ArrayList<>();
+            rs = stmt.executeQuery("select key, count(*) from valuestore where dateto='3000-12-31 01:00:00.0'\n" +
+                    "group by key having count(*)>1");
+            while (rs.next()) {
+                keys.add(rs.getString(1));
+            }
+            for (String key: keys) {
+                LOG.info("Fixing DB snapshots for " + key);
+
+                rs = stmt.executeQuery("select idvaluestore, datefrom, dateto from valuestore where key='" + key + "' order by IDVALUESTORE desc");
+                String lastDateFrom=null;
+                while (rs.next()) {
+                    String dateFrom = rs.getString("datefrom");
+                    String dateTo = rs.getString("dateto");
+                    if (lastDateFrom!=null && dateTo.compareTo(lastDateFrom)==1) {
+                        try (Statement stmt2 = con.createStatement()) {
+                            String sql = "update valuestore set dateto='" + lastDateFrom + "' where idvaluestore=" + rs.getInt(1);
+                            stmt2.execute(sql);
+                        }
+                    }
+                    lastDateFrom = dateFrom;
+                }
+
+            }
         } catch (SQLException e2) {
+            e2.printStackTrace();
             throw new RuntimeException("An error occured while initializing DB: " + e2.getMessage(), e2);
         }
     }
@@ -111,6 +140,7 @@ public class DbHelper {
                     }
                 }
             }
+            if (value==null ) value="";
 
             long id = nextSequence();
             stmt.setLong(1, id);
@@ -318,6 +348,9 @@ public class DbHelper {
         return new InstantValue(idValueStore, dbKey, value, ts);
     }
 
+    public static void main(String[] args) {
+        new DbHelper();
+    }
 
 //    public static void dumpForTests() {
 //        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
