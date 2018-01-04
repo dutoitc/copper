@@ -103,35 +103,35 @@ public class WebCollectorTest {
                 "      \"485\": {\n" +
                 "        \"Version\": \"18.11.0\",\n" +
                 "        \"State\": \"Active\",\n" +
-                "        \"Symbolic Name\": \"rcent.RelanceTraitementOperation\",\n" +
+                "        \"Symbolic Name\": \"RelanceTraitementOperation\",\n" +
                 "        \"ID\": 485,\n" +
                 "        \"Start Level\": 80,\n" +
                 "        \"Name\": \"RelanceTraitementOperation\",\n" +
-                "        \"Update Location\": \"mvn:ch.vd.rcent.service.G_Technique/RelanceTraitementOperation/18.11.0\"\n" +
+                "        \"Update Location\": \"mvn:ch.sisyphe.service.G_Technique/RelanceTraitementOperation/18.11.0\"\n" +
                 "      },\n" +
                 "      \"486\": {\n" +
                 "        \"Version\": \"18.11.5\",\n" +
                 "        \"State\": \"Active\",\n" +
-                "        \"Symbolic Name\": \"rcent.WS_Infrastructure_V3\",\n" +
+                "        \"Symbolic Name\": \"WS_Chose_V3\",\n" +
                 "        \"ID\": 486,\n" +
                 "        \"Start Level\": 80,\n" +
-                "        \"Name\": \"WS_Infrastructure_V3\",\n" +
-                "        \"Update Location\": \"mvn:ch.vd.rcent.service.G_Technique/WS_Infrastructure_V3/18.11.5\"\n" +
+                "        \"Name\": \"WS_Chose_V3\",\n" +
+                "        \"Update Location\": \"mvn:ch.sisyphe.service.G_Technique/WS_Chose_V3/18.11.5\"\n" +
                 "      },\n" +
                 "      \"487\": {\n" +
                 "        \"Version\": \"18.11.0\",\n" +
                 "        \"State\": \"Active\",\n" +
-                "        \"Symbolic Name\": \"rcent.WS_NoticeRequestREEValidate\",\n" +
+                "        \"Symbolic Name\": \"WS_Truc\",\n" +
                 "        \"ID\": 487,\n" +
                 "        \"Start Level\": 80,\n" +
                 "        \"Name\": \"WS_NoticeRequestREEValidate\",\n" +
-                "        \"Update Location\": \"mvn:ch.vd.rcent.service.F_Publication.B_WebService/WS_NoticeRequestREEValidate/18.11.0\"\n" +
+                "        \"Update Location\": \"mvn:ch.sisyphe.service.F_Publication.B_WebService/WS_Truc/18.11.0\"\n" +
                 "      }\n" +
                 "}}}";
 
         List<Pair<String, String>> valuesKept = new ArrayList<>();
-        valuesKept.add(new ImmutablePair("regexp:WS_Infrastructure_V3.(?<capture>\\d+\\.\\d+\\.\\d+)", "value"));
-        valuesKept.add(new ImmutablePair("$..*[?(@.Name=='WS_Infrastructure_V3')].Version", "value2"));
+        valuesKept.add(new ImmutablePair("regexp:WS_Chose_V3.(?<capture>\\d+\\.\\d+\\.\\d+)", "value"));
+        valuesKept.add(new ImmutablePair("$..*[?(@.Name=='WS_Chose_V3')].Version", "value2"));
 
 
         HttpResponseData<String> d = new HttpResponseData<>();
