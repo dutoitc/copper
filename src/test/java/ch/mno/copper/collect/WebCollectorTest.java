@@ -97,6 +97,56 @@ public class WebCollectorTest {
         Assert.assertEquals("123", res.get(3));
     }
 
+    @Test
+    public void testRegexp() {
+        String json="{\"a\":{\"b\":{\n" +
+                "      \"485\": {\n" +
+                "        \"Version\": \"18.11.0\",\n" +
+                "        \"State\": \"Active\",\n" +
+                "        \"Symbolic Name\": \"rcent.RelanceTraitementOperation\",\n" +
+                "        \"ID\": 485,\n" +
+                "        \"Start Level\": 80,\n" +
+                "        \"Name\": \"RelanceTraitementOperation\",\n" +
+                "        \"Update Location\": \"mvn:ch.vd.rcent.service.G_Technique/RelanceTraitementOperation/18.11.0\"\n" +
+                "      },\n" +
+                "      \"486\": {\n" +
+                "        \"Version\": \"18.11.5\",\n" +
+                "        \"State\": \"Active\",\n" +
+                "        \"Symbolic Name\": \"rcent.WS_Infrastructure_V3\",\n" +
+                "        \"ID\": 486,\n" +
+                "        \"Start Level\": 80,\n" +
+                "        \"Name\": \"WS_Infrastructure_V3\",\n" +
+                "        \"Update Location\": \"mvn:ch.vd.rcent.service.G_Technique/WS_Infrastructure_V3/18.11.5\"\n" +
+                "      },\n" +
+                "      \"487\": {\n" +
+                "        \"Version\": \"18.11.0\",\n" +
+                "        \"State\": \"Active\",\n" +
+                "        \"Symbolic Name\": \"rcent.WS_NoticeRequestREEValidate\",\n" +
+                "        \"ID\": 487,\n" +
+                "        \"Start Level\": 80,\n" +
+                "        \"Name\": \"WS_NoticeRequestREEValidate\",\n" +
+                "        \"Update Location\": \"mvn:ch.vd.rcent.service.F_Publication.B_WebService/WS_NoticeRequestREEValidate/18.11.0\"\n" +
+                "      }\n" +
+                "}}}";
+
+        List<Pair<String, String>> valuesKept = new ArrayList<>();
+        valuesKept.add(new ImmutablePair("regexp:WS_Infrastructure_V3.(?<capture>\\d+\\.\\d+\\.\\d+)", "value"));
+        valuesKept.add(new ImmutablePair("$..*[?(@.Name=='WS_Infrastructure_V3')].Version", "value2"));
+
+
+        HttpResponseData<String> d = new HttpResponseData<>();
+        d.setData(json);
+        d.setResponseCode(200);
+        d.setContentType("text/plain");
+        d.setContentLength("123");
+
+        List<String> res = WebCollector.extractValues(d, valuesKept);
+        Assert.assertEquals(2, res.size());
+        Assert.assertEquals("18.11.5", res.get(0));
+        Assert.assertEquals("18.11.5", res.get(1));
+
+    }
+
 
 
 }

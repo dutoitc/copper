@@ -17,6 +17,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by dutoitc on 29.01.2016.
@@ -87,6 +89,11 @@ public class WebCollector {
                 results.add(String.valueOf(data.getContentType()));
             } else if ("*".equals(key) || "body".equals(key)) {
                 results.add(data.getData());
+            } else if (key.startsWith("regexp:")) {
+                Matcher matcher = Pattern.compile(key.substring(7)).matcher(data.getData());
+                if (matcher.find()) {
+                    results.add(matcher.group("capture"));
+                }
             } else {
                 try {
                     Object o = JsonPath.read(data.getData(), key);
