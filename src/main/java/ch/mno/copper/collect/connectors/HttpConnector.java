@@ -3,10 +3,14 @@ package ch.mno.copper.collect.connectors;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -27,15 +31,27 @@ public class HttpConnector extends AbstractConnector {
     private HttpHost target;
 
     public HttpConnector(String hostname, int port, String scheme) {
-        this(hostname, port, scheme, null, -1, null);
+        this(hostname, port, scheme, null, -1, null, null, null);
     }
 
-    public HttpConnector(String hostname, int port, String scheme, String proxyHostname, int proxyPort, String proxyScheme) {
+    public HttpConnector(String hostname, int port, String username, String password) {
+        this(hostname, port, null, null, -1, null, username, password);
+    }
+
+    public HttpConnector(String hostname, int port, String scheme, String proxyHostname, int proxyPort, String proxyScheme, String username, String password) {
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         if (proxyHostname!=null) {
             HttpHost proxy = new HttpHost(proxyHostname, proxyPort, proxyScheme);
             httpClientBuilder.setProxy(proxy);
         }
+        if (username!=null) {
+            CredentialsProvider provider = new BasicCredentialsProvider();
+            UsernamePasswordCredentials credentials
+                    = new UsernamePasswordCredentials(username, password);
+            provider.setCredentials(AuthScope.ANY, credentials);
+            httpClientBuilder.setDefaultCredentialsProvider(provider);
+        }
+
         httpclient = httpClientBuilder.build();
         target = new HttpHost(hostname, port, scheme);
     }

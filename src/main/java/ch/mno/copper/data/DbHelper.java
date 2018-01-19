@@ -90,6 +90,7 @@ public class DbHelper {
             e2.printStackTrace();
             throw new RuntimeException("An error occured while initializing DB: " + e2.getMessage(), e2);
         }
+        LOG.info("Database checked");
     }
 
 

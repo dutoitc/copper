@@ -10,6 +10,10 @@ import java.util.Map;
 public class ReportHelper {
 
     public static String expandMessage(Map<String, String> values, String message, ValuesStore instance) {
+        if (values==null) {
+            throw new RuntimeException("Null Values detected");
+        }
+
         int p1 = message.indexOf("{{");
         while (p1>=0) {
             int p2 = message.indexOf("}}");

@@ -33,5 +33,6 @@ public interface ValuesStore {
 
     void save() throws IOException;
 
+    @Deprecated // Use getValues()
     Map<String,String> getValuesMapString();
 }

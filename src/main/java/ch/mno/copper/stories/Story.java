@@ -76,7 +76,7 @@ public class Story {
         // Extract WHEN
         //WHEN::=WHEN [a-zA-Z0-9_]+[<>=]\d(\.\d)
         Matcher matchWhen = Pattern.compile(grammar.getPatternFull("WHEN"), Pattern.DOTALL).matcher(storyText);
-        if (matchGiven.find()) {
+        if (matchWhen.find()) {
             this.when = new When(matchWhen.group());
         }
 
@@ -149,7 +149,7 @@ public class Story {
         return false;
     }
 
-    private boolean matchWhen(String storedValue, String operator, String expectedValue) {
+    static boolean matchWhen(String storedValue, String operator, String expectedValue) {
         if (expectedValue.contains(".")) {
             Float a = Float.parseFloat(storedValue);
             Float b = Float.parseFloat(expectedValue);
@@ -191,8 +191,8 @@ public class Story {
 
         public When(String expression) {
             //WHEN::=WHEN [a-zA-Z0-9_]+[<>=]\d(\.\d)
-            Matcher matcher = Pattern.compile("WHEN ([a-zA-Z0-9_]+)([<>=])(\\d(\\.\\d))").matcher(expression);
-            if (!matcher.find()) throw new RuntimeException("Wrong pattern WHEN: " + expression);
+            Matcher matcher = Pattern.compile("WHEN ([a-zA-Z0-9_]+)([<>=])(\\d(\\.\\d)?)").matcher(expression);
+            if (!matcher.find()) throw new RuntimeException("Wrong pattern WHEN: '" + expression+"'");
             this.variable = matcher.group(1);
             this.operator = matcher.group(2);
             this.value = matcher.group(3);

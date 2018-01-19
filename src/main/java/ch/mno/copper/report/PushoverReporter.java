@@ -38,7 +38,7 @@ public class PushoverReporter implements AbstractReporter  {
         nbMessageInHour++;
 
 
-        HttpConnector conn = new HttpConnector("api.pushover.net", 443, "https", "localhost", 3128, "http"); // FIXME: temporary test, create configuration file for this
+        HttpConnector conn = new HttpConnector("api.pushover.net", 443, "https", "localhost", 3128, "http", null, null); // FIXME: temporary test, create configuration file for this
         Map<String, String> params = new HashMap<>();
         params.put("token", values.get(PARAMETERS.APPLICATION_TOKEN.toString()));
         params.put("user", values.get(PARAMETERS.DEST.toString()));

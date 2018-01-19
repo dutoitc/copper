@@ -106,6 +106,13 @@ public class DbValuesStore implements ValuesStore {
 
     @Override
     public Map<String, String> getValuesMapString() {
-        return null;
+        try {
+            List<StoreValue> values = DbHelper.readLatest();
+            Map<String, String> map = new HashMap<>(values.size() * 4 / 3 + 1);
+            values.forEach(v -> map.put(v.getKey(), v.getValue()));
+            return map;
+        } catch (SQLException e) {
+            throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
+        }
     }
 }

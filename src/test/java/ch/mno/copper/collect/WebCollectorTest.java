@@ -118,6 +118,15 @@ public class WebCollectorTest {
                 "        \"Name\": \"WS_Chose_V3\",\n" +
                 "        \"Update Location\": \"mvn:ch.sisyphe.service.G_Technique/WS_Chose_V3/18.11.5\"\n" +
                 "      },\n" +
+                "      \"486\": {\n" +
+                "        \"Version\": \"18.11.5\",\n" +
+                "        \"State\": \"Active\",\n" +
+                "        \"Symbolic Name\": \"WS_Bidule_V3\",\n" +
+                "        \"ID\": 486,\n" +
+                "        \"Start Level\": 80,\n" +
+                "        \"Name\": \"WS_Bidule_V3\",\n" +
+                "        \"Update Location\": \"mvn:ch.sisyphe.service.G_Technique\\/WS_Bidule_V3\\/18.11.5\"\n" +
+                "      },\n" +
                 "      \"487\": {\n" +
                 "        \"Version\": \"18.11.0\",\n" +
                 "        \"State\": \"Active\",\n" +
@@ -131,7 +140,9 @@ public class WebCollectorTest {
 
         List<Pair<String, String>> valuesKept = new ArrayList<>();
         valuesKept.add(new ImmutablePair("regexp:WS_Chose_V3.(?<capture>\\d+\\.\\d+\\.\\d+)", "value"));
-        valuesKept.add(new ImmutablePair("$..*[?(@.Name=='WS_Chose_V3')].Version", "value2"));
+        //valuesKept.add(new ImmutablePair("$..*[?(@.Name=='WS_Chose_V3')].Version", "value2"));
+        valuesKept.add(new ImmutablePair("regexp:WS_Bidule_V3..?(?<capture>\\[123]d\\.\\d+\\.\\d+)", "value3"));
+
 
 
         HttpResponseData<String> d = new HttpResponseData<>();
@@ -143,6 +154,7 @@ public class WebCollectorTest {
         List<String> res = WebCollector.extractValues(d, valuesKept);
         Assert.assertEquals(2, res.size());
         Assert.assertEquals("18.11.5", res.get(0));
+       // Assert.assertEquals("18.11.5", res.get(1));
         Assert.assertEquals("18.11.5", res.get(1));
 
     }

@@ -75,11 +75,16 @@ public class StoriesFacade {
                 } else {
                     values = collectorWrapper.execute();
                 }
-
                 if (!story.matchWhen(values, valuesStore)) {
                     // Not matching WHEN->ignore report
                     return;
                 }
+
+                if (values==null) {
+                    LOG.warn("Story " + story.getName() + " returned null values; trying to continue with valuesStore...");
+                    values = valuesStore.getValuesMapString();
+                }
+
 
                 // Report
                 AbstractReporterWrapper reporter = story.getReporterWrapper();

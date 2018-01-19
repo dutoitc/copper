@@ -47,6 +47,23 @@ public class MailReporterWrapper extends AbstractReporterWrapper {
     @Override
     public void execute(Map<String, String> values) {
         String message = messageTemplate;
+        String message2 = replaceValues(values, message);
+        String title2 = replaceValues(values, title);
+
+        Map<String, String> reporterValues = new HashMap<>();
+        reporterValues.put(MailReporter.PARAMETERS.TITLE.toString(), title2);
+        reporterValues.put(MailReporter.PARAMETERS.TO.toString(),dest);
+        reporterValues.put(MailReporter.PARAMETERS.BODY.toString(),message2);
+
+
+        try {
+            reporter.report(message2, reporterValues);
+        } catch (ConnectorException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String replaceValues(Map<String, String> values, String message) {
         int p1 = message.indexOf("{{");
         while (p1>0) {
             int p2 = message.indexOf("}}");
@@ -58,18 +75,7 @@ public class MailReporterWrapper extends AbstractReporterWrapper {
             message = message.substring(0, p1) + value + message.substring(p2+2);
             p1 = message.indexOf("{{");
         }
-
-        Map<String, String> reporterValues = new HashMap<>();
-        reporterValues.put(MailReporter.PARAMETERS.TITLE.toString(), title);
-        reporterValues.put(MailReporter.PARAMETERS.TO.toString(),dest);
-        reporterValues.put(MailReporter.PARAMETERS.BODY.toString(),message);
-
-
-        try {
-            reporter.report(message, reporterValues);
-        } catch (ConnectorException e) {
-            e.printStackTrace();
-        }
+        return message;
     }
 
 }

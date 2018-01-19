@@ -42,7 +42,7 @@ public class WebCollector {
             URL urlObj = new URL(url);
             host = urlObj.getHost();
             port = urlObj.getPort();
-            path = urlObj.getPath();
+            path = url.substring(url.indexOf(urlObj.getPath())); // Hack to have path, query and hash
         } catch (MalformedURLException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -52,8 +52,7 @@ public class WebCollector {
             if (username==null) {
                 conn = new HttpConnector(host, port, null);
             } else {
-                //conn = new HttpConnector(url, username, password);
-                throw new RuntimeException("Username-Password is not yet supported");
+                conn = new HttpConnector(host, port, username, password);
             }
 
 
@@ -93,6 +92,9 @@ public class WebCollector {
                 Matcher matcher = Pattern.compile(key.substring(7)).matcher(data.getData());
                 if (matcher.find()) {
                     results.add(matcher.group("capture"));
+                } else {
+                    //System.out.println("Not found " + key.substring((7)) + " in " + data.getData());
+                    results.add("?");
                 }
             } else {
                 try {
