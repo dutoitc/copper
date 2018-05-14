@@ -1,9 +1,16 @@
 package ch.mno.copper.data;
 
+import org.h2.jdbcx.JdbcConnectionPool;
+import org.h2.tools.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,14 +25,53 @@ import java.util.List;
  * <p>
  * Created by dutoitc on 25.05.2016.
  */
-public class DbHelper {
+public class DBServer implements AutoCloseable {
 
-    private static Logger LOG = LoggerFactory.getLogger(DbHelper.class);
+    private static Logger LOG = LoggerFactory.getLogger(DBServer.class);
     private static final String DBURL = "jdbc:h2:./copperdb";
     private static final String DBUSER = "";
     private static final String DBPASS = "";
     public static final Instant INSTANT_MAX = Instant.parse("3000-12-31T00:00:00.00Z");
+    private Server server;
+    final JdbcConnectionPool cp;
 
+    public DBServer(boolean withWebserver) throws SQLException {
+        server = Server.createWebServer("-webAllowOthers", "-browser");
+        server.start();
+        cp = JdbcConnectionPool.create(DBURL, DBUSER, DBPASS);
+
+        // launch web console
+        if (withWebserver) {
+            try {
+                new Thread(() -> {
+                    Connection conn = null;
+                    try {
+                        conn = cp.getConnection();
+                        try {
+                            Server.startWebServer(conn);
+                        } catch (SQLException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (conn != null) {
+                            try {
+                                conn.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }).start();
+                createDatabaseIfNeeded();
+            } finally {
+
+            }
+        }
+    }
+
+    /*
     static {
         try {
             Class.forName("org.h2.Driver");
@@ -33,58 +79,61 @@ public class DbHelper {
             throw new RuntimeException("Cannot load H2: " + e.getMessage(), e);
         }
         createDatabaseIfNeeded();
-    }
+    }*/
 
-    private static void createDatabaseIfNeeded() {
+    private void createDatabaseIfNeeded() throws SQLException {
         LOG.info("Checking Database...");
-        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+        try (Connection con = cp.getConnection();
              Statement stmt = con.createStatement()) {
 
-            // Create table ?
-            ResultSet rs = stmt.executeQuery("select count(*) as nb from information_schema.tables where table_name = 'VALUESTORE'");
-            rs.next();
-            if (rs.getInt("nb") == 0) {
-                LOG.info("Database not found. Creating table VALUESTORE...");
-                stmt.execute("CREATE TABLE valuestore (" +
-                        "  idvaluestore int(11) NOT NULL," +
-                        "  key varchar(50) NOT NULL," +
-                        "  value text NOT NULL," +
-                        "  datefrom timestamp NOT NULL," +
-                        "  dateto timestamp NOT NULL," +
-                        "  primary key (idvaluestore))");
-                LOG.info("Creating sequence SEQ_VALUESTORE_ID");
-                stmt.execute("create sequence SEQ_VALUESTORE_ID start with 1");
-            }
+            // Create table ?            
+            try(ResultSet rs = stmt.executeQuery("select count(*) as nb from information_schema.tables where table_name = 'VALUESTORE'")) {
+                rs.next();
+                if (rs.getInt("nb") == 0) {
+                    LOG.info("Database not found. Creating table VALUESTORE...");
+                    stmt.execute("CREATE TABLE valuestore (" +
+                            "  idvaluestore int(11) NOT NULL," +
+                            "  key varchar(50) NOT NULL," +
+                            "  value text NOT NULL," +
+                            "  datefrom timestamp NOT NULL," +
+                            "  dateto timestamp NOT NULL," +
+                            "  primary key (idvaluestore))");
+                    LOG.info("Creating sequence SEQ_VALUESTORE_ID");
+                    stmt.execute("create sequence SEQ_VALUESTORE_ID start with 1");
+                }
 
-            // Indexes
-            stmt.execute("create index if not exists IDX_VS_KEY on valuestore(key)");
-            stmt.execute(" create index if not exists IDX_VS_FROM on valuestore(datefrom)");
-            stmt.execute("create index if not exists IDX_VS_TO on valuestore(dateto)");
+                // Indexes
+                stmt.execute("create index if not exists IDX_VS_KEY on valuestore(key)");
+                stmt.execute(" create index if not exists IDX_VS_FROM on valuestore(datefrom)");
+                stmt.execute("create index if not exists IDX_VS_TO on valuestore(dateto)");
+            }
 
             // Snapshot fixes
             List<String> keys = new ArrayList<>();
-            rs = stmt.executeQuery("select key, count(*) from valuestore where dateto='3000-12-31 01:00:00.0'\n" +
-                    "group by key having count(*)>1");
-            while (rs.next()) {
-                keys.add(rs.getString(1));
+            try (ResultSet rs = stmt.executeQuery("select key, count(*) from valuestore where dateto='3000-12-31 01:00:00.0'\n" +
+                    "group by key having count(*)>1")) {
+                while (rs.next()) {
+                    keys.add(rs.getString(1));
+                }
             }
+
             for (String key: keys) {
                 LOG.info("Fixing DB snapshots for " + key);
 
-                rs = stmt.executeQuery("select idvaluestore, datefrom, dateto from valuestore where key='" + key + "' order by IDVALUESTORE desc");
-                String lastDateFrom=null;
-                while (rs.next()) {
-                    String dateFrom = rs.getString("datefrom");
-                    String dateTo = rs.getString("dateto");
-                    if (lastDateFrom!=null && dateTo.compareTo(lastDateFrom)==1) {
-                        try (Statement stmt2 = con.createStatement()) {
-                            String sql = "update valuestore set dateto='" + lastDateFrom + "' where idvaluestore=" + rs.getInt(1);
-                            stmt2.execute(sql);
+                try (ResultSet rs = stmt.executeQuery("select idvaluestore, datefrom, dateto from valuestore where key='" + key + "' order by IDVALUESTORE desc")) {
+                    String lastDateFrom = null;
+                    while (rs.next()) {
+                        String dateFrom = rs.getString("datefrom");
+                        String dateTo = rs.getString("dateto");
+                        if (lastDateFrom != null && dateTo.compareTo(lastDateFrom) == 1) {
+                            try (Statement stmt2 = con.createStatement()) {
+                                String sql = "update valuestore set dateto='" + lastDateFrom + "' where idvaluestore=" + rs.getInt(1);
+                                stmt2.execute(sql);
+                            }
                         }
+                        lastDateFrom = dateFrom;
                     }
-                    lastDateFrom = dateFrom;
                 }
-
             }
         } catch (SQLException e2) {
             e2.printStackTrace();
@@ -97,36 +146,39 @@ public class DbHelper {
     /**
      * Delete all DB data
      */
-    public static void clearAllData() {
+    public void clearAllData() {
         String sql = "delete from valuestore";
-        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS)) {
-            PreparedStatement ps = con.prepareStatement(sql);
-            int nbRows = ps.executeUpdate();
+        try (Connection con = cp.getConnection()) {
+            int nbRows;
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                nbRows = ps.executeUpdate();
+            }
             LOG.info("Deleted " + nbRows + " lines");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private static long nextSequence() throws SQLException {
+    private long nextSequence() throws SQLException {
         String sqlNextSequence = "select nextval('SEQ_VALUESTORE_ID')";
 
-        try (Connection con2 = DriverManager.getConnection(DBURL, DBUSER, DBPASS)) {
+        try (Connection con2 = cp.getConnection()) {
             // Find next sequence number
-            ResultSet rs = con2.prepareCall(sqlNextSequence).executeQuery();
-            if (!rs.next()) throw new RuntimeException("Sequence error");
-            return rs.getLong(1);
+            try (ResultSet rs = con2.prepareCall(sqlNextSequence).executeQuery()) {
+                if (!rs.next()) throw new RuntimeException("Sequence error");
+                return rs.getLong(1);
+            }
         }
     }
 
     /**
      * Insert a value at given instant. Actuve value will be finished at the same instant. no data is inserted if current value is the same value
      */
-    public static void insert(String key, String value, Instant instant) throws SQLException {
+    public void insert(String key, String value, Instant instant) throws SQLException {
         String sqlInsert = "INSERT INTO valuestore ( idvaluestore, key, value, datefrom, dateto) VALUES (?,?,?,?,?)";
         String sqlUpdatePrevious = "update valuestore set dateto=? where idvaluestore=?";
 
-        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+        try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sqlInsert)) {
             // no data is inserted if current value is the same value
             StoreValue previousValue = readLatest(key);
@@ -176,18 +228,19 @@ public class DbHelper {
     /**
      * Read the 'key' value at given instant
      */
-    public static StoreValue read(String key, Instant timestamp) throws SQLException {
+    public StoreValue read(String key, Instant timestamp) throws SQLException {
         String sql = "SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where key=? and datefrom<=? and dateto>? order by datefrom";
-        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+        try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, key);
             stmt.setTimestamp(2, Timestamp.from(timestamp));
             stmt.setTimestamp(3, Timestamp.from(timestamp));
-            ResultSet rs = stmt.executeQuery();
-
-            List<StoreValue> values = new ArrayList<>();
-            while (rs.next()) {
-                values.add(mapStoreValue(rs));
+            List<StoreValue> values;
+            try (ResultSet rs = stmt.executeQuery()) {
+                values = new ArrayList<>();
+                while (rs.next()) {
+                    values.add(mapStoreValue(rs));
+                }
             }
 
             if (values.size() == 0) {
@@ -204,7 +257,7 @@ public class DbHelper {
         throw new RuntimeException("Too much value for key=" + key + ", instant=" + timestamp.getEpochSecond());
     }
 
-    public static List<InstantValues> readInstant(List<String> keys, Instant timestampFrom, Instant timestampTo, long intervalSeconds) throws SQLException {
+    public  List<InstantValues> readInstant(List<String> keys, Instant timestampFrom, Instant timestampTo, long intervalSeconds) throws SQLException {
         String sql = "select ts,c1, value, idValueStore from ( " +
                 "select ts, c1 from ( " +
                 "WITH RECURSIVE T(ts) AS ( " +
@@ -220,7 +273,7 @@ public class DbHelper {
             s += "),(?";
         }
         sql = sql.replace("XXX", s);
-        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+        try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setTimestamp(1, Timestamp.from(timestampFrom));
             stmt.setLong(2, intervalSeconds);
@@ -228,18 +281,19 @@ public class DbHelper {
             for (int i = 0; i < keys.size(); i++) {
                 stmt.setString(4 + i, keys.get(i));
             }
-            ResultSet rs = stmt.executeQuery();
-
-            List<InstantValues> values = new ArrayList<>();
-            InstantValues last = null;
-            while (rs.next()) {
-                InstantValue instantValue = mapInstantValue(rs);
-                if (last == null || !instantValue.getTimestamp().equals(last.timestamp)) {
-                    last = new InstantValues();
-                    last.setTimestamp(instantValue.getTimestamp());
-                    values.add(last);
+            List<InstantValues> values;
+            try (ResultSet rs = stmt.executeQuery()) {
+                values = new ArrayList<>();
+                InstantValues last = null;
+                while (rs.next()) {
+                    InstantValue instantValue = mapInstantValue(rs);
+                    if (last == null || !instantValue.getTimestamp().equals(last.timestamp)) {
+                        last = new InstantValues();
+                        last.setTimestamp(instantValue.getTimestamp());
+                        values.add(last);
+                    }
+                    last.put(instantValue.getKey(), instantValue);
                 }
-                last.put(instantValue.getKey(), instantValue);
             }
             return values;
         } catch (SQLException e) {
@@ -251,12 +305,12 @@ public class DbHelper {
     /**
      * Read all values for a given key active between from, to. (could have been inserted before and finish after)
      */
-    public static List<StoreValue> read(String key, Instant timestampFrom, Instant timestampTo) throws SQLException {
+    public List<StoreValue> read(String key, Instant timestampFrom, Instant timestampTo) throws SQLException {
         if (timestampTo.isAfter(Instant.now())) {
             timestampTo = Instant.now();
         }
         String sql = "SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where key=? and ((datefrom<? and dateto>?) or (datefrom>=? and datefrom<?) or (dateto>? and dateto<=?)) order by datefrom";
-        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+        try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, key);
             stmt.setTimestamp(2, Timestamp.from(timestampFrom));
@@ -265,11 +319,12 @@ public class DbHelper {
             stmt.setTimestamp(5, Timestamp.from(timestampTo));
             stmt.setTimestamp(6, Timestamp.from(timestampFrom));
             stmt.setTimestamp(7, Timestamp.from(timestampTo));
-            ResultSet rs = stmt.executeQuery();
-
-            List<StoreValue> values = new ArrayList<>();
-            while (rs.next()) {
-                values.add(mapStoreValue(rs));
+            List<StoreValue> values;
+            try (ResultSet rs = stmt.executeQuery()) {
+                values = new ArrayList<>();
+                while (rs.next()) {
+                    values.add(mapStoreValue(rs));
+                }
             }
             return values;
         } catch (SQLException e) {
@@ -280,14 +335,15 @@ public class DbHelper {
     /**
      * Read the latest value of a key)
      */
-    public static StoreValue readLatest(String key) throws SQLException {
-        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+    public  StoreValue readLatest(String key) throws SQLException {
+        try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where key=? and dateto=?")) {
             stmt.setString(1, key);
             stmt.setTimestamp(2, Timestamp.from(INSTANT_MAX));
-            ResultSet rs = stmt.executeQuery();
-            if (!rs.next()) return null;
-            return mapStoreValue(rs);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) return null;
+                return mapStoreValue(rs);
+            }
         } catch (SQLException e) {
             throw new RuntimeException("An error occured while saving values", e);
         }
@@ -296,14 +352,15 @@ public class DbHelper {
     /**
      * Read all latest values
      */
-    public static List<StoreValue> readLatest() throws SQLException {
+    public  List<StoreValue> readLatest() throws SQLException {
         List<StoreValue> values = new ArrayList<>();
-        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+        try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where dateto=?")) {
             stmt.setTimestamp(1, Timestamp.from(INSTANT_MAX));
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                values.add(mapStoreValue(rs));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    values.add(mapStoreValue(rs));
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("An error occured while saving values", e);
@@ -314,15 +371,16 @@ public class DbHelper {
     /**
      * Read keys updated between from(inclusive) ant to(exclusive)
      */
-    public static Collection<String> readUpdatedKeys(Instant from, Instant to) {
+    public  Collection<String> readUpdatedKeys(Instant from, Instant to) {
         List<String> values = new ArrayList<>();
-        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+        try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement("SELECT distinct key FROM valuestore where datefrom>=? and datefrom<?")) {
             stmt.setTimestamp(1, Timestamp.from(from));
             stmt.setTimestamp(2, Timestamp.from(to));
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                values.add(rs.getString("key"));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    values.add(rs.getString("key"));
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("An error occured while saving values", e);
@@ -330,7 +388,7 @@ public class DbHelper {
         return values;
     }
 
-    private static StoreValue mapStoreValue(ResultSet rs) throws SQLException {
+    private  StoreValue mapStoreValue(ResultSet rs) throws SQLException {
         long idValueStore = rs.getLong("idValueStore");
         String dbKey = rs.getString("key");
         String value = rs.getString("value");
@@ -350,11 +408,22 @@ public class DbHelper {
     }
 
     public static void main(String[] args) {
-        new DbHelper();
+        try (DBServer dbServer = new DBServer(true)) {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void close() throws Exception {
+        cp.dispose();
+        if (server!=null) {
+            server.stop();
+        }
     }
 
 //    public static void dumpForTests() {
-//        try (Connection con = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+//        try (Connection con = cp.getConnection();
 //             PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore order by key, datefrom"))
 //        {
 //            ResultSet rs = stmt.executeQuery();
