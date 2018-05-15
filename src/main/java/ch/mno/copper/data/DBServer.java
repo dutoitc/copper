@@ -28,7 +28,7 @@ import java.util.List;
 public class DBServer implements AutoCloseable {
 
     private static Logger LOG = LoggerFactory.getLogger(DBServer.class);
-    private static final String DBURL = "jdbc:h2:./copperdb";
+    static String DBURL = "jdbc:h2:./copperdb";
     private static final String DBUSER = "";
     private static final String DBPASS = "";
     public static final Instant INSTANT_MAX = Instant.parse("3000-12-31T00:00:00.00Z");
@@ -39,6 +39,7 @@ public class DBServer implements AutoCloseable {
         server = Server.createWebServer("-webAllowOthers", "-browser");
         server.start();
         cp = JdbcConnectionPool.create(DBURL, DBUSER, DBPASS);
+        createDatabaseIfNeeded();
 
         // launch web console
         if (withWebserver) {
@@ -64,7 +65,6 @@ public class DBServer implements AutoCloseable {
                         }
                     }
                 }).start();
-                createDatabaseIfNeeded();
             } finally {
 
             }

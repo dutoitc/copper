@@ -29,6 +29,7 @@ public class DBServerTest {
     
     @Before
     public void init() throws SQLException {
+        DBServer.DBURL= "jdbc:h2:./copperdbtst";
         server = new DBServer(false);
         server.clearAllData();
         server.insert("key1", "value10", i5);
