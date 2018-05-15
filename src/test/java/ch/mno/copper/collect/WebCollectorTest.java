@@ -1,7 +1,6 @@
 package ch.mno.copper.collect;
 
 import ch.mno.copper.collect.connectors.HttpResponseData;
-import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
@@ -155,7 +154,7 @@ public class WebCollectorTest {
         Assert.assertEquals(2, res.size());
         Assert.assertEquals("18.11.5", res.get(0));
        // Assert.assertEquals("18.11.5", res.get(1));
-        Assert.assertEquals("18.11.5", res.get(1));
+        Assert.assertEquals("?", res.get(1));
 
     }
 

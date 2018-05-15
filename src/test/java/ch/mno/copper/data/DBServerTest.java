@@ -44,7 +44,9 @@ public class DBServerTest {
     @After
     public void done() {
         try {
-            server.close();
+            if (server!=null) {
+                server.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

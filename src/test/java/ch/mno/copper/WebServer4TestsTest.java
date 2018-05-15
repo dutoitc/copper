@@ -19,6 +19,7 @@ public class WebServer4TestsTest {
 
     private static WebServer srv;
     private static Thread thread;
+    private static DbValuesStore valueStore;
 
     @BeforeClass
     public static void init() throws InterruptedException {
@@ -26,12 +27,18 @@ public class WebServer4TestsTest {
         thread = new Thread(srv);
         thread.start();
         Thread.sleep(2000);
-        DbValuesStore.getInstance().put("aKey", "aValue");
+        valueStore = DbValuesStore.getInstance();
+        valueStore.put("aKey", "aValue");
     }
 
     @AfterClass
     public static void done() throws Exception {
-        srv.stop();
+        if (srv!=null) {
+            srv.stop();
+        }
+        if (valueStore!=null) {
+            valueStore.close();
+        }
     }
 
     @Test

@@ -49,6 +49,18 @@ public class DbValuesStore implements ValuesStore, AutoCloseable {
         }
     }
 
+    public void put(String key, String value, Instant d) {
+        try {
+            server.insert(key, value, d);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void clearAllData() {
+        server.clearAllData();
+    }
+
     @Override
     public String getValue(String key) {
         StoreValue storeValue = null;
@@ -128,6 +140,12 @@ public class DbValuesStore implements ValuesStore, AutoCloseable {
     public void close() throws Exception {
         if (server!=null) {
             server.close();
+            server = null;
         }
+        DbValuesStore.instance = null;
+    }
+
+    public DBServer getServer4tests() {
+        return server;
     }
 }

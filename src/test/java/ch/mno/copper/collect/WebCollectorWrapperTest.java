@@ -53,8 +53,8 @@ public class WebCollectorWrapperTest {
 
     @Test
     public void test2() {
-        String jmx = "GIVEN COLLECTOR WEB WITH url=http://slv2797v.etat-de-vaud.ch:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list\n" +
-                "    KEEP $.value[?(/rcent.WS_Services$/.test(@.Name))].Version AS RCENT_DE_VERSION\n" +
+        String jmx = "GIVEN COLLECTOR WEB WITH url=http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list\n" +
+                "    KEEP $.value[?(/value.WS_Services$/.test(@.Name))].Version AS value_VERSION\n" +
                 "THEN STORE VALUES";
         WebCollectorWrapper wrapper = WebCollectorWrapper.buildCollector(storyGrammar, jmx);
 
@@ -71,9 +71,9 @@ public class WebCollectorWrapperTest {
 
     @Test
     public void testTemp() {
-//        String jsonPath = "$.value[?(/rcent.WS_Services$/.test(@.Name))].Version";
-//        String jsonPath = "$['value'][?(@['Name']=='rcent.WS_Services')].Version";
-        String jsonPath = "$.value.*.[?(@['Name']=='rcent.WS_Services')].Version";
+//        String jsonPath = "$.value[?(/app.WS_Services$/.test(@.Name))].Version";
+//        String jsonPath = "$['value'][?(@['Name']=='app.WS_Services')].Version";
+        String jsonPath = "$.value.*.[?(@['Name']=='app.WS_Services')].Version";
 
 //        "$['jobs'][?(@['name']=='ATEV-compile')]
         String json="{" +
@@ -86,7 +86,7 @@ public class WebCollectorWrapperTest {
                 "  },\n" +
                 "  \"value\": {\n" +
                 "    \"0\": {\n" +
-                "      \"Name\": \"rcent.WS_Services\",\n" +
+                "      \"Name\": \"app.WS_Services\",\n" +
                 "      \"Blueprint\": \"\",\n" +
                 "      \"State\": \"ACTIVE\",\n" +
                 "      \"Start Level\": 0,\n" +
