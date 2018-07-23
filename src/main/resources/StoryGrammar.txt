@@ -12,7 +12,7 @@ CRON_STD::=¦CRON_EL¦( ¦CRON_EL¦){4}
 # URLS
 JDBC_URL1::=jdbc[:\w@/\d\.\-]+\w
 JDBC_URL2::="jdbc[:\w@/\d\.\-]+\w"
-JDBC_URL::=(JDBC_URL1|JDBC_URL2)
+JDBC_URL::=(¦JDBC_URL1¦|¦JDBC_URL2¦)
 JMX_URL::=service[:\w/\d\.\-]+\w
 HTTP_URL::=https?[:\w/\d\.\-=\/,\?&\[\]]+\w
 
