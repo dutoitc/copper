@@ -88,18 +88,25 @@ public class JdbcCollectorWrapper extends AbstractCollectorWrapper {
         // TODO: fix below (query)
         String collectorJdbcData = matcher.group(0);
         String patSpaceEol = grammar.getPatternFull("SPACE_EOL");
-        String patSpace = grammar.getPatternFull("SPACE");
-        String patEol = grammar.getPatternFull("EOL");
         Matcher matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patSpaceEol + ".*?\"(.*)\"", Pattern.DOTALL).matcher(collectorJdbcData);
         if (matcher2.find()) {
-            String url = matcher2.group(1);
-            String username = matcher2.group(2);
-            String password = matcher2.group(3);
-            String query = matcher2.group(4);
-            return new JdbcCollectorWrapper(url, username, password, query);
+            return buildWrapper(matcher2);
         } else {
-            throw new RuntimeException("Cannot readInstant COLLECTOR_JDBC body in <" + collectorJdbcData + ">");
+            matcher2 = Pattern.compile("url=\"(.*)\",.*user=(.*?),.*password=(.*?)" + patSpaceEol + ".*?\"(.*)\"", Pattern.DOTALL).matcher(collectorJdbcData);
+            if (matcher2.find()) {
+                return buildWrapper(matcher2);
+            } else {
+                throw new RuntimeException("Cannot readInstant COLLECTOR_JDBC body in <" + collectorJdbcData + ">");
+            }
         }
+    }
+
+    private static JdbcCollectorWrapper buildWrapper(Matcher matcher2) {
+        String url = matcher2.group(1);
+        String username = matcher2.group(2);
+        String password = matcher2.group(3);
+        String query = matcher2.group(4);
+        return new JdbcCollectorWrapper(url, username, password, query);
     }
 
 }
