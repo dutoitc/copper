@@ -42,6 +42,7 @@ public class WebServer4TestsTest {
     }
 
     @Test
+    // FIXME: erreur 500
     public void testValues() throws URISyntaxException, IOException {
         String url="http://localhost:30400/ws/values";
         String content = IOUtils.toString(new URI(url));

@@ -13,12 +13,12 @@ import java.util.Arrays;
 /**
  * Created by dutoitc on 02.04.2016.
  */
-public class StoriesValidator {
+public class StoryGrammarValidatorMain {
 
     private final StoryGrammar storyGrammar;
 
 
-    public StoriesValidator() {
+    public StoryGrammarValidatorMain() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
@@ -57,7 +57,7 @@ public class StoriesValidator {
 
 
     public static void main(String[] args) {
-        new StoriesValidator().validate(args);
+        new StoryGrammarValidatorMain().validate(args);
     }
 
 }

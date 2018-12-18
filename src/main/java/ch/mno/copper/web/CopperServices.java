@@ -13,6 +13,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import it.sauronsoftware.cron4j.Predictor;
 
 import javax.ws.rs.Consumes;
@@ -36,7 +38,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+// FIXME: check documentation for http://localhost:30400/swagger.json
+// FIXME: complete documentation with https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X
 @Path("/ws")
+@Api
 public class CopperServices {
 
     private final ValuesStore valuesStore;
@@ -48,6 +53,8 @@ public class CopperServices {
     @GET
     @Path("ping")
     @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "Ping method answering 'pong'",
+            notes="Use this to monitor that Copper is up")
     public String test() {
         return "pong";
     }
@@ -57,6 +64,8 @@ public class CopperServices {
     @Path("story/{storyName}")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes("application/json")
+    @ApiOperation(value = "Method to create a new story",
+            notes="Use this to store a story. If originalStoryName='new', a new story is saved and 'Ok' is returned. otherwise the story will be updated by storyName (originalStoryName)")
     public String postStory(@PathParam("storyName") String storyName, StoryPost post) throws IOException, ConnectorException {
         StoriesFacade sf = StoriesFacade.getInstance();
 
@@ -92,6 +101,8 @@ public class CopperServices {
     @GET
     @Path("values")
     @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "Convenience way to retrieve all valid values from Copper",
+            notes="Use this to extract many values, example for remote webservice, angular service, ...")
     public String getValues() {
         Gson gson = new Gson();
         return gson.toJson(valuesStore.getValues());
@@ -100,6 +111,8 @@ public class CopperServices {
     @GET
     @Path("values/query")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Retrieve values between date",
+            notes="(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of data")
     public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns) {
         Gson gson = new Gson();
         Instant from;
@@ -125,6 +138,8 @@ public class CopperServices {
     @GET
     @Path("instants/query")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Retrieve values between date",
+            notes="")
     public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns, @QueryParam("intervalSeconds") long intervalSeconds) {
         Gson gson = new Gson();
         Instant from;
@@ -180,6 +195,8 @@ public class CopperServices {
     @GET
     @Path("stories")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Retrieve all stories",
+            notes="")
     public String getStories() {
         Gson gson = new GsonBuilder().registerTypeAdapter(Story.class, new MyStoryAdapter<Story>()).create();
 
@@ -190,7 +207,8 @@ public class CopperServices {
 
     @GET
     @Path("story/{storyName}/run")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)@ApiOperation(value = "Ask to run a story",
+            notes="Story is run before 3''")
     public String getStoryRun(@PathParam("storyName") String storyName) {
         CopperMediator.getInstance().run(storyName);
         return "Story " + storyName + " marked for execution";
@@ -198,7 +216,8 @@ public class CopperServices {
 
     @GET
     @Path("story/{storyName}/delete")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)@ApiOperation(value = "Delete story by name",
+            notes="")
     public String getStoryDelete(@PathParam("storyName") String storyName) {
         StoriesFacade.getInstance().deleteStory(storyName);
         return "Story " + storyName + " deleted.";
@@ -207,6 +226,8 @@ public class CopperServices {
     @GET
     @Path("/story/{storyName}")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Retrieve story by name",
+            notes="")
     public String getStory(@PathParam("storyName") String storyName) {
         Story story = StoriesFacade.getInstance().getStoryByName(storyName);
         if (story==null) {
@@ -221,6 +242,8 @@ public class CopperServices {
     @GET
     @Path("value/{valueName}")
     @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "Retrieve a single value",
+            notes="")
     public String getValue(@PathParam("valueName") String valueName) {
         StoreValue storeValue = valuesStore.getValues().get(valueName);
         if (storeValue == null) {
@@ -248,6 +271,8 @@ public class CopperServices {
     @GET
     @Path("overview")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "View stories name and next run",
+            notes="")
     public String getOverview() {
         Gson gson = new Gson();
         return gson.toJson(buildOverview());

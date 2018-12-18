@@ -1,11 +1,11 @@
 package ch.mno.copper.web;
 
+import io.swagger.jaxrs.config.BeanConfig;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 /**
+ * Webserver serving /  /ext  /ws
  * Created by dutoitc on 07.02.2016.
  */
 public class WebServer implements Runnable {
@@ -34,54 +35,41 @@ public class WebServer implements Runnable {
     // http://www.eclipse.org/jetty/documentation/current/embedded-examples.html
     @Override
     public void run() {
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
+        ServletContextHandler rootHandler = buildRootHandler();
 
         server = new Server(PORT);
-//        server.setHandler(context);
 
         // Resources
-        ResourceHandler resource_handler = new ResourceHandler();
-        resource_handler.setDirectoriesListed(true);
-        resource_handler.setWelcomeFiles(new String[]{"index.html"});
-
-        String webDir = WebServer.class.getClassLoader().getResource("WEB-INF").toExternalForm();
-        LOG.info("Serving files from " + webDir);
-        resource_handler.setResourceBase(webDir);
-
-//        if (new File("src").exists()) {
-//            resource_handler.setResourceBase("src/main/webapp/WEB-INF/");
-//        } else {
-//            resource_handler.setResourceBase(".");
-//        }
-
-        // Webservices
-//        ServletHandler servletHandler = new ServletHandler();
-//        servletHandler.addServletWithMapping(CopperServiceServlet.class, "/ws");
-//        servletHandler.addServletWithMapping(CopperServiceServlet.class, "/ws/*");
-
+        ResourceHandler resourceHandler = buildResourcesContextHandler();
 
         // externalweb/* mapped on /ext
-        String webDirExt = new File("externalweb").getAbsolutePath();
-        LOG.info("Serving ext files from " + webDirExt);
-        ResourceHandler resource_handlerExt = new ResourceHandler();
-        resource_handlerExt.setDirectoriesListed(true);
-        resource_handlerExt.setWelcomeFiles(new String[]{"index.html"});
-        resource_handlerExt.setResourceBase("externalweb");
-        ContextHandler ctx = new ContextHandler("/ext"); /* the server uri path */
-        ctx.setHandler(resource_handlerExt);
+        ContextHandler extHandler = buildExtContextHandler();
 
 
         // Handlers
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{resource_handler, ctx, context});//servletHandler});
+        handlers.setHandlers(new Handler[]{resourceHandler, extHandler, rootHandler});//servletHandler});
         server.setHandler(handlers);
 
 
         // ...
-        ServletHolder jerseyServlet = context.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
+        ServletHolder jerseyServlet = rootHandler.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
         jerseyServlet.setInitOrder(0);
-        jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", CopperServices.class.getCanonicalName());
+        jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", "io.swagger.jaxrs.listing.ApiListingResource,"+
+                "io.swagger.jaxrs.listing.SwaggerSerializers,"+CopperServices.class.getCanonicalName());
+
+        BeanConfig beanConfig = new BeanConfig();
+        beanConfig.setVersion("1.0.2");
+        beanConfig.setSchemes(new String[]{"http"});
+        beanConfig.setHost("localhost:"+PORT);
+        beanConfig.setBasePath("/*");
+        beanConfig.setResourcePackage("ch.mno.copper.web");
+        beanConfig.setScan(true);
+
+
+//        jerseyServlet = rootHandler.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/openapi/*");
+//        jerseyServlet.setInitOrder(1);
+//        jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", OpenApiServlet.class.getCanonicalName());
 
         // GZip
 //        GzipHandler gzip = new GzipHandler();
@@ -93,10 +81,42 @@ public class WebServer implements Runnable {
         // See "http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Thread.html#join()" for more details.
         try {
             server.start();
+            LOG.info("Check server at http://localhost:30400/");
+            LOG.info("                http://localhost:30400/ext");
+            LOG.info("                http://localhost:30400/ws");
+            LOG.info("                http://localhost:30400/swagger.json");
             server.join();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private ServletContextHandler buildRootHandler() {
+        ServletContextHandler rootHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        rootHandler.setContextPath("/");
+        return rootHandler;
+    }
+
+    private ResourceHandler buildResourcesContextHandler() {
+        String webDir = WebServer.class.getClassLoader().getResource("WEB-INF").toExternalForm();
+        ResourceHandler resourceHandler = new ResourceHandler();
+        resourceHandler.setDirectoriesListed(true);
+        resourceHandler.setWelcomeFiles(new String[]{"index.html"});
+        resourceHandler.setResourceBase(webDir);
+        LOG.info("Serving files from " + webDir);
+        return resourceHandler;
+    }
+
+    private ContextHandler buildExtContextHandler() {
+        String webDirExt = new File("externalweb").getAbsolutePath();
+        ResourceHandler resourceHandlerExt = new ResourceHandler();
+        resourceHandlerExt.setDirectoriesListed(true);
+        resourceHandlerExt.setWelcomeFiles(new String[]{"index.html"});
+        resourceHandlerExt.setResourceBase("externalweb");
+        ContextHandler extHandler = new ContextHandler("/ext"); /* the server uri path */
+        extHandler.setHandler(resourceHandlerExt);
+        LOG.info("Serving ext files from " + webDirExt);
+        return extHandler;
     }
 
     public void stop() throws Exception {

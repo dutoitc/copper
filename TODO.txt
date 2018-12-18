@@ -5,6 +5,10 @@ v1.1.0 Refactoring:
 [ ] http: store statusCode, store executeTime, store responseLength ?
 [ ] WebCollector: keep header.x, json.path, body, ...
 
+[ ] swagger/openapi.json
+[ ] story editor (debug), new
+[ ] maven update
+
 
 Add database, keep history + retention time ?
 

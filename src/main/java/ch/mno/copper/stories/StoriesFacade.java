@@ -4,7 +4,6 @@ import ch.mno.copper.collect.AbstractCollectorWrapper;
 import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.collect.StoryTaskImpl;
 import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.data.MemoryValuesStore;
 import ch.mno.copper.data.ValuesStore;
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.report.AbstractReporterWrapper;
@@ -17,7 +16,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -99,28 +97,17 @@ public class StoriesFacade {
         }, story.getCron());
     }
 
-    public Map<String, StoryTask> buildStoryTasks(MemoryValuesStore valuesStore) {
-        Map<String, StoryTask> collectorTasks = new HashMap<>(stories.size());
-        stories.forEach(s->{
-            if (s.hasError()) {
-                LOG.warn("Ignoring task build for story in error: " + s.getName());
-            } else {
-                collectorTasks.put(s.getName(), buildStoryTask(s, valuesStore));
-            }
-        });
-        return collectorTasks;
-    }
-
     public String saveNewStory(String storyName, String storyText) throws IOException, ConnectorException {
         Story story = new Story(grammar, storyName, storyText);
         File file = story.getSource().toFile();
         if (file.exists()) {
             return "Error: the file " + file.getName() + " already exists.";
         }
-        FileWriter fw = new FileWriter(file);
-        fw.write(story.getStoryText());
-        fw.flush();
-        fw.close();
+        try (FileWriter fw = new FileWriter(file)) {
+            fw.write(story.getStoryText());
+            fw.flush();
+            fw.close();
+        }
         stories.add(story); // TODO: update listeneres
         return "Ok";
     }
@@ -138,10 +125,11 @@ public class StoriesFacade {
         File file = story.getSource().toFile();
 
 
-        FileWriter fw = new FileWriter(file);
-        fw.write(story.getStoryText());
-        fw.flush();
-        fw.close();
+        try (FileWriter fw = new FileWriter(file)) {
+            fw.write(story.getStoryText());
+            fw.flush();
+            fw.close();
+        }
         stories.add(story); // TODO: update listeneres
         stories.remove(originalStory);
         if (!oldFile.getName().equals(file.getName())) oldFile.delete();
@@ -186,7 +174,9 @@ public class StoriesFacade {
         for (String filename : files) {
             try {
                 if (getStoryByName(filename) == null) {
-                    buildStory(new FileInputStream(filename), new File(filename).toPath());
+                    try (FileInputStream fileInputStream = new FileInputStream(filename)) {
+                        buildStory(fileInputStream, new File(filename).toPath());
+                    }
                     if (storiesInError.contains(filename)) {
                         storiesInError.remove(filename);
                         System.out.println("No longer in error: " + filename);

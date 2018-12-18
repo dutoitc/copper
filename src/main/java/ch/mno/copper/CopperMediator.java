@@ -17,11 +17,10 @@ public class CopperMediator {
     private CopperDaemon daemon;
     private Properties properties;
 
-    public CopperMediator()  {
+    private CopperMediator()  {
         try {
             properties = new Properties();
             properties.load(new FileInputStream("copper.properties"));
-            //this.valuesStore = MemoryValuesStore.getInstance();
             this.valuesStore = DbValuesStore.getInstance();
         }catch (Exception e) {
             throw new RuntimeException(e);

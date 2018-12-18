@@ -72,15 +72,6 @@ public class DBServer implements AutoCloseable {
         }
     }
 
-    /*
-    static {
-        try {
-            Class.forName("org.h2.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Cannot load H2: " + e.getMessage(), e);
-        }
-        createDatabaseIfNeeded();
-    }*/
 
     private void createDatabaseIfNeeded() throws SQLException {
         LOG.info("Checking Database...");
@@ -105,7 +96,7 @@ public class DBServer implements AutoCloseable {
 
                 // Indexes
                 stmt.execute("create index if not exists IDX_VS_KEY on valuestore(key)");
-                stmt.execute(" create index if not exists IDX_VS_FROM on valuestore(datefrom)");
+                stmt.execute("create index if not exists IDX_VS_FROM on valuestore(datefrom)");
                 stmt.execute("create index if not exists IDX_VS_TO on valuestore(dateto)");
             }
 

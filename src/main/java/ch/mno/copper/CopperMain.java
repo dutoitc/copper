@@ -21,7 +21,7 @@ public class CopperMain {
         thread.start();
 
         CopperDaemon daemon = CopperDaemon.runWith(new DataproviderImpl());
-        while (1 < 2) {
+        while (1 < 2) { // Main loop
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
