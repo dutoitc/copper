@@ -3,9 +3,9 @@ jdk:
   - oraclejdk8
 before_install:
   - pip install --user codecov
-after_success:
-  - mvn clean install
   - cp sample/copper.properties .
   - cp -r sample/stories .
+after_success:
+  - mvn clean install
   - mvn test jacoco:report
   - codecov
