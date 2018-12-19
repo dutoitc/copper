@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,6 +45,7 @@ public class WebServer4TestsTest {
     @Test
     // FIXME: erreur 500
     public void testValues() throws URISyntaxException, IOException {
+        System.out.println("Path is " + new File(".").getAbsolutePath());
         String url="http://localhost:" + srv.getPort() + "/ws/values";
         String content = IOUtils.toString(new URI(url), "UTF-8");
         Assert.assertTrue(content.contains("aKey"));
