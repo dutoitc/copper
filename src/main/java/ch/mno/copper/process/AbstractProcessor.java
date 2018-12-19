@@ -2,7 +2,7 @@ package ch.mno.copper.process;
 
 
 import ch.mno.copper.data.ValuesStore;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
 import java.util.HashSet;
