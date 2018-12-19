@@ -23,7 +23,7 @@ public class WebServer4TestsTest {
 
     @BeforeClass
     public static void init() throws InterruptedException {
-        srv = new WebServer();
+        srv = new WebServer(0);
         thread = new Thread(srv);
         thread.start();
         Thread.sleep(2000);
@@ -44,8 +44,8 @@ public class WebServer4TestsTest {
     @Test
     // FIXME: erreur 500
     public void testValues() throws URISyntaxException, IOException {
-        String url="http://localhost:30400/ws/values";
-        String content = IOUtils.toString(new URI(url));
+        String url="http://localhost:" + srv.getPort() + "/ws/values";
+        String content = IOUtils.toString(new URI(url), "UTF-8");
         Assert.assertTrue(content.contains("aKey"));
     }
 
@@ -68,7 +68,7 @@ public class WebServer4TestsTest {
 
     @Test
     public void testHome() throws URISyntaxException, IOException {
-        String url="http://localhost:30400/";
+        String url="http://localhost:" + srv.getPort() + "/";
         String content = IOUtils.toString(new URI(url));
         Assert.assertTrue(content.contains("<title>Copper</title>"));
     }

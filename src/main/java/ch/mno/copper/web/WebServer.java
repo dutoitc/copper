@@ -3,6 +3,7 @@ package ch.mno.copper.web;
 import io.swagger.jaxrs.config.BeanConfig;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
@@ -81,10 +82,11 @@ public class WebServer implements Runnable {
         // See "http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Thread.html#join()" for more details.
         try {
             server.start();
-            LOG.info("Check server at http://localhost:30400/");
-            LOG.info("                http://localhost:30400/ext");
-            LOG.info("                http://localhost:30400/ws");
-            LOG.info("                http://localhost:30400/swagger.json");
+            PORT = ((ServerConnector)server.getConnectors()[0]).getLocalPort();
+            LOG.info("Check server at http://localhost:" + PORT + "/");
+            LOG.info("                http://localhost:" + PORT + "/ext");
+            LOG.info("                http://localhost:" + PORT + "/ws");
+            LOG.info("                http://localhost:" + PORT + "/swagger.json");
             server.join();
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,4 +126,7 @@ public class WebServer implements Runnable {
     }
 
 
+    public int getPort() {
+        return PORT;
+    }
 }

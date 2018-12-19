@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -128,12 +127,12 @@ public class DBServerTest {
         assertTwoValues(server.read("key3", i3, i8), "value30", "value31");
     }
 
-    @Test
-    public void testReadInstantValues() throws SQLException {
+    //@Test
+    /*public void testReadInstantValues() throws SQLException {
         List<InstantValues> iv = server.readInstant(Arrays.asList("key4"), i3, i8, 2);
         Assert.assertEquals(4, iv.size());
         // TODO: continue
-    }
+    }*/
 
     @Test
     public void testReadUpdatedKeys() throws SQLException {
