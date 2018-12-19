@@ -26,7 +26,7 @@ public class WebServer4TestsTest {
         srv = new WebServer(0);
         thread = new Thread(srv);
         thread.start();
-        Thread.sleep(2000);
+        Thread.sleep(5000); // Wait for server start
         valueStore = DbValuesStore.getInstance();
         valueStore.put("aKey", "aValue");
     }
