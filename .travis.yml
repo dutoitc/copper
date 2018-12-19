@@ -5,7 +5,7 @@ before_install:
   - pip install --user codecov
 after_success:
   - mvn clean install
-  - cp sample/copper.properties target/
-  - cp -r sample/stories target/
+  - cp sample/copper.properties .
+  - cp -r sample/stories .
   - mvn test jacoco:report
   - codecov

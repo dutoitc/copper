@@ -3,7 +3,9 @@ package ch.mno.copper;
 import ch.mno.copper.data.DbValuesStore;
 import ch.mno.copper.data.ValuesStore;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Properties;
 
 /**
@@ -22,6 +24,8 @@ public class CopperMediator {
             properties = new Properties();
             properties.load(new FileInputStream("copper.properties"));
             this.valuesStore = DbValuesStore.getInstance();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("File not found: copper.properties in " + new File(".").getAbsolutePath()+"; " + e.getMessage());
         }catch (Exception e) {
             throw new RuntimeException(e);
         }
