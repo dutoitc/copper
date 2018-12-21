@@ -61,7 +61,9 @@ public class WebCollector {
             results = extractValues(data, valuesKept);
         } catch (Exception e) {
             System.err.println("Connector exception (server " + url+ "): " + e.getMessage());
-            e.printStackTrace();
+            if (LOG.isTraceEnabled()) {
+                e.printStackTrace();
+            }
             if (results==null) {
                 results = new ArrayList<>(valuesKept.size());
             }
