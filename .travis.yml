@@ -8,7 +8,8 @@ before_install:
   - pip install --user codecov
   - cp sample/copper.properties .
   - cp -r sample/stories .
-after_success:
+script:
   - mvn clean install --settings src/test/mvnsettings.xml
+after_success:
   - mvn test jacoco:report
   - codecov
