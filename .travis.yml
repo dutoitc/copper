@@ -1,8 +1,6 @@
 language: java
 jdk:
   - oraclejdk8
-script:
-- mvn clean install --settings src/test/mvnsettings.xml
 cache:
   directories:
     - '$HOME/.m2/repository'
@@ -11,6 +9,6 @@ before_install:
   - cp sample/copper.properties .
   - cp -r sample/stories .
 after_success:
-  - mvn clean install
+  - mvn clean install --settings src/test/mvnsettings.xml
   - mvn test jacoco:report
   - codecov
