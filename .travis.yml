@@ -8,8 +8,10 @@ before_install:
   - pip install --user codecov
   - cp sample/copper.properties .
   - cp -r sample/stories .
+before_script:
+ - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V  --settings src/test/mvnsettings.xml
 script:
-  - mvn clean install --settings src/test/mvnsettings.xml
+  - mvn install --settings src/test/mvnsettings.xml
 after_success:
   - mvn test jacoco:report
   - codecov
