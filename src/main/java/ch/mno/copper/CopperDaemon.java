@@ -95,7 +95,7 @@ public class CopperDaemon implements Runnable {
                 } finally {
                     task.markAsRun();
                 }
-                LOG.info("Task {} ended in {}s.", taskName, (System.currentTimeMillis() - t0) / 60);
+                LOG.info("Task {} ended in {}s.", taskName, (System.currentTimeMillis() - t0) /1000);
             });
         }
 
