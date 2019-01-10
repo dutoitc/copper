@@ -1,9 +1,9 @@
 package ch.mno.copper.collect;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.data.NotImplementedException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.StoryGrammar;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
