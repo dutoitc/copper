@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
@@ -28,6 +29,8 @@ public class DBServerTest {
     
     @Before
     public void init() throws SQLException {
+        new File("copperdbtst.mv.db").delete();
+        new File("copperdbtst.trace.db").delete();
         DBServer.DBURL= "jdbc:h2:./copperdbtst";
         server = new DBServer(false);
         server.clearAllData();

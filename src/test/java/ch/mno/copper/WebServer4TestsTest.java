@@ -23,7 +23,7 @@ public class WebServer4TestsTest {
 
     @BeforeClass
     public static void init() throws InterruptedException {
-        srv = new WebServer(0);
+        srv = new WebServer(46789);
         thread = new Thread(srv);
         thread.start();
         Thread.sleep(5000); // Wait for server start
@@ -69,6 +69,7 @@ public class WebServer4TestsTest {
     @Test
     public void testHome() throws URISyntaxException, IOException {
         String url="http://localhost:" + srv.getPort() + "/";
+        System.out.println("Trying " + url);
         String content = IOUtils.toString(new URI(url));
         Assert.assertTrue(content.contains("<title>Copper</title>"));
     }

@@ -127,7 +127,7 @@ public class CopperDaemon implements Runnable {
             try {
                 valuesStore.save();
             } catch (IOException e) {
-                throw new RuntimeException("Cannot save to valuesStore.tmp");
+                throw new RuntimeException("Cannot save to valuesStore");
             }
 
 

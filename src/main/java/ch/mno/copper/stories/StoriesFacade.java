@@ -161,16 +161,18 @@ public class StoriesFacade {
         if (!storiesFolder.exists()) storiesFolder.mkdir();
 
         // Load files: yet use sample values if none is specified
-        List<String> files = new ArrayList<String>();
         File stories = new File("stories");
         if (!stories.exists()) {
             LOG.error("Folder not found: 'stories', cannot refresh stories from disk.");
             return;
         }
-        for (File file : stories.listFiles(f -> f.isFile())) {
+
+        List<String> files = new ArrayList<>();
+        for (File file : stories.listFiles(f -> f.isFile() && f.getName().toLowerCase().endsWith(".txt"))) {
             files.add("stories/" + file.getName());
         }
 
+        // TODO: keep story hash in memory. If different, reload. And test.
         for (String filename : files) {
             try {
                 if (getStoryByName(filename) == null) {

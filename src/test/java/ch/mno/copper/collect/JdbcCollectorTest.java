@@ -39,14 +39,5 @@ public class JdbcCollectorTest {
         coll.query("jdbc:dummy", null, null, "select * from test_table");
     }
 
-    @Test
-    public void testX() throws ConnectorException {
-        JdbcCollector coll = new JdbcCollector();
-        List<List<String>> res = coll.query("jdbc:oracle:thin:@ldap://oid.etat-de-vaud.ch:389/vrcentcs,cn=OracleContext,dc=etat-de-vaud,dc=ch", "dsi_read", "s_read", "select 1 from dual");
-        res.forEach(line-> {
-            res.forEach(row -> System.out.print(res + " "));
-            System.out.println();
-        });
-    }
 
 }

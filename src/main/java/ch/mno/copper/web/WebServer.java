@@ -18,7 +18,7 @@ import java.io.File;
  * Webserver serving /  /ext  /ws
  * Created by dutoitc on 07.02.2016.
  */
-public class WebServer implements Runnable {
+public class WebServer implements Runnable, AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebServer.class);
     public static int PORT;
@@ -122,11 +122,18 @@ public class WebServer implements Runnable {
     }
 
     public void stop() throws Exception {
-        server.stop();
+        if (server!=null) {
+            server.stop();
+        }
     }
 
 
     public int getPort() {
         return PORT;
+    }
+
+    @Override
+    public void close() throws Exception {
+        stop();
     }
 }
