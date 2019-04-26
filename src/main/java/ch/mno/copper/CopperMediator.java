@@ -22,7 +22,14 @@ public class CopperMediator {
     private CopperMediator()  {
         try {
             properties = new Properties();
-            properties.load(new FileInputStream("copper.properties"));
+
+            File file = new File("copper.properties");
+            if (file.exists()) {
+                FileInputStream inStream = new FileInputStream(file);
+                properties.load(inStream);
+            } else {
+                System.err.println("Warning: copper.properties not found");
+            }
             this.valuesStore = DbValuesStore.getInstance();
         } catch (FileNotFoundException e) {
             throw new RuntimeException("File not found: copper.properties in " + new File(".").getAbsolutePath()+"; " + e.getMessage());

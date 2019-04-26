@@ -23,33 +23,25 @@ public class CsvReporter implements AbstractReporter  {
 
         // TODO: add file lock while writing + wait ?
         File file = new File(filename);
-        try {
-            if (file.exists()) {
-                FileWriter fw = new FileWriter(file, true);
+        if (file.exists()) {
+            try (FileWriter fw = new FileWriter(file, true)) {
                 fw.append(line).append("\r\n");
                 fw.flush();
                 fw.close();
-            } else {
-                FileWriter fw = new FileWriter(file);
+            }  catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try (FileWriter fw = new FileWriter(file)) {
                 fw.append(header).append("\r\n");
                 fw.append(line).append("\r\n");
                 fw.flush();
                 fw.close();
+            }  catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
-
-//    Path path = Paths.get(filename);
-//                FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.APPEND);
-//                FileLock lock = fileChannel.lock(0, Long.MAX_VALUE, false);
-//
-//                ByteBuffer bb = ByteBuffer.allocate(line.length() + 2);
-//                bb.put
-//                fileChannel.write((line+"\r\n").());
-//                fileChannel.write(ByteBuffer)
-
 
 
 

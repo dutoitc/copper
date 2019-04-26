@@ -19,10 +19,6 @@ public class Slf4jProcessor extends AbstractProcessor {
         reporter = new Slf4jReporter(name);
     }
 
-//    public void trig(String key, String value) {
-//    }
-
-
     @Override
     public void trig(ValuesStore valueStore, Collection<String> changedValueKeys) {
         StringBuffer sb = new StringBuffer();

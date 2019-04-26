@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -52,7 +51,7 @@ public class MailReporter implements AbstractReporter {
         nbMessageInHour++;
 
         try {
-            HtmlEmail email = new HtmlEmail();
+            HtmlEmail email = buildHtmlEmail();
             email.setSmtpPort(serverPort);
             if (serverUsername!=null) {
                 email.setAuthenticator(new DefaultAuthenticator(serverUsername, serverPassword));
@@ -90,13 +89,9 @@ public class MailReporter implements AbstractReporter {
         }
     }
 
-    public static void main(String[] args) throws ConnectorException {
-        MailReporter mr = new MailReporter(args[0], args[1], args[2], Integer.parseInt(args[3]), args[4], args[4]);
-        Map<String, String> values = new HashMap<>();
-        values.put(PARAMETERS.TO.toString(), args[5]);
-        values.put(PARAMETERS.TITLE.toString(), "aTitle a b c");
-        values.put(PARAMETERS.BODY.toString(), "html");
-        mr.report("aMessage", values);
+    // Method for testing purpose
+    protected HtmlEmail buildHtmlEmail() {
+        return new HtmlEmail();
     }
 
 }

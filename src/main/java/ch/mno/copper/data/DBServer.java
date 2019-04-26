@@ -91,7 +91,9 @@ public class DBServer implements AutoCloseable {
                             "  dateto timestamp NOT NULL," +
                             "  primary key (idvaluestore))");
                     LOG.info("Creating sequence SEQ_VALUESTORE_ID");
+                    con.commit();
                     stmt.execute("create sequence SEQ_VALUESTORE_ID start with 1");
+                    con.commit();
                 }
 
                 // Indexes
@@ -99,6 +101,7 @@ public class DBServer implements AutoCloseable {
                 stmt.execute("create index if not exists IDX_VS_FROM on valuestore(datefrom)");
                 stmt.execute("create index if not exists IDX_VS_TO on valuestore(dateto)");
             }
+            con.commit();
 
             // Snapshot fixes
             List<String> keys = new ArrayList<>();

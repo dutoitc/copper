@@ -22,7 +22,7 @@ public class CsvReporterWrapper extends AbstractReporterWrapper {
     private String line;
     private CsvReporter reporter;
 
-    public CsvReporterWrapper(StoryGrammar grammar, String storyGiven) {
+    private CsvReporterWrapper(StoryGrammar grammar, String storyGiven) {
         this.grammar = grammar;
         this.storyGiven = storyGiven;
 
