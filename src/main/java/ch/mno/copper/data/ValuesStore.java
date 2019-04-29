@@ -25,9 +25,9 @@ public interface ValuesStore {
      */
     Collection<String> queryValues(Instant from, Instant to);
 
-    List<StoreValue> queryValues(Instant from, Instant to, List<String> columns);
+    List<StoreValue> queryValues(Instant from, Instant to, List<String> columns, int maxValues);
 
-    List<InstantValues> queryValues(Instant from, Instant to, long intervalSecond, List<String> columns);
+    List<InstantValues> queryValues(Instant from, Instant to, long intervalSecond, List<String> columns, int maxValues);
 
     void load() throws IOException;
 

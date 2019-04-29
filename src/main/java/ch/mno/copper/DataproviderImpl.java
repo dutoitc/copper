@@ -21,8 +21,6 @@ public class DataproviderImpl implements DataProvider {
 
     public DataproviderImpl() {
         this.valuesStore = CopperMediator.getInstance().getValuesStore();
-        //storiesFacade.refreshFromDisk();
-        //cachedStoryTasks = StoriesFacade.getInstance().buildStoryTasks(valuesStore);
         refreshStoryTasks();
     }
 

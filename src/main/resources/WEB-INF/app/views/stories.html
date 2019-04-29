@@ -8,15 +8,19 @@
     <th style="text-align:right;padding: 5px;">Name</th>
     <th>Notes</th>
     <th style="text-align:left; padding-left: 10px">Cron</th>
+    <th style="text-align:left; padding-left: 10px">Next run</th>
     <th style="text-align:left; padding-left: 10px">Actions</th>
     </thead>
     <tbody>
-    <tr ng-repeat="story in stories | filter:searchText | orderBy:'name'">
+    <tr ng-repeat="story in stories | filter:searchText | orderBy:'story.name'">
         <td style="text-align:right;padding: 5px;font-weight:bold"><a title="{{story.storyText}}">{{story.name}}</a></td>
         <td style="text-align:left; padding-left: 10px">
             <div class="glyphicon glyphicon-exclamation-sign" style="color:red" title="{{story.error}}" ng-show="story.hasError"></div>
         </td>
         <td style="text-align:left; padding-left: 10px">{{story.cron}}</td>
+        <td>
+            {{story.nextRun | date : 'yyyy-MM-dd HH:mm:ss'}}
+        </td>
         <td>
             <button class="btn btn-primary" ng-click="runStory(story.name)">Run</button>
             <a href="#/story/{{story.name}}" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-edit"></span> Edit</a>

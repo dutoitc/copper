@@ -17,13 +17,28 @@
     </div>
     <div class="form-group">
         <label for="storyText">Text</label>
-        <textarea class="form-control" rows="10" ng-model="story.storyText" id="storyText" name="storyText"></textarea>
+        <textarea class="form-control" rows="8" ng-model="story.storyText" id="storyText" name="storyText"></textarea>
     </div>
+
     <div class="form-group">
+        <label for="storyText">Validation</label>
+        <div ng-bind-html="validationHTML"></div>
+        <!--
+        <div ng-show="validation.perfectMatches.length>0">Valid !</div>
+        <div ng-show="validation.perfectMatches.length==0" ng-repeat="match in validation.partialMatches">
+            <b>Partial match: {{match.patternName}}</b> ({{match.start}}-{{match.end}})<br/>
+            &nbsp;&nbsp;Pattern short: {{match.patternShort}}<br/>
+            &nbsp;&nbsp;Pattern full: {{match.patternFull}}<br/>
+        </div>
+        -->
+    </div>
+
+    <div class="form-group" ng-show="story.error">
         <label for="storyText">Errors</label>
         <textarea class="form-control" readonly="true" rows="10" ng-model="story.error" id="storyError" name="storyError"></textarea>
     </div>
 
     <button type="button" class="btn btn-primary glyphicon glyphicon-ok" ng-click="submit()" ng-show="storyForm.$dirty">Save changes</button>
+    <button type="button" class="btn glyphicon glyphicon-check" ng-click="validate()">Validate</button>
     <a href="#/stories" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span> Cancel</a>
 </form>

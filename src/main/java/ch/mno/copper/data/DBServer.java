@@ -252,8 +252,9 @@ public class DBServer implements AutoCloseable {
         throw new RuntimeException("Too much value for key=" + key + ", instant=" + timestamp.getEpochSecond());
     }
 
-    public  List<InstantValues> readInstant(List<String> keys, Instant timestampFrom, Instant timestampTo, long intervalSeconds) throws SQLException {
-        String sql = "select ts,c1, value, idValueStore from ( " +
+    public  List<InstantValues> readInstant(List<String> keys, Instant timestampFrom, Instant timestampTo, long intervalSeconds, int maxValues) throws SQLException {
+        String sql = "select * from (" +
+                "select ts,c1, value, idValueStore, key from ( " +
                 "select ts, c1 from ( " +
                 "WITH RECURSIVE T(ts) AS ( " +
                 "    SELECT ? " +
@@ -262,7 +263,9 @@ public class DBServer implements AutoCloseable {
                 ") " +
                 "SELECT * FROM T) t,  (values (XXX)) " +
                 ") left outer join valuestore vs on ts>=vs.datefrom and ts<vs.dateto and key =c1 " +
-                "order by ts,key";
+                "order by ts desc, key desc" +
+                " FETCH FIRST " + maxValues + " ROWS ONLY " +
+                ") order by ts, key";
         String s = "?";
         for (int i = 1; i < keys.size(); i++) {
             s += "),(?";
@@ -292,7 +295,7 @@ public class DBServer implements AutoCloseable {
             }
             return values;
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while saving values", e);
+            throw new RuntimeException("An error occured while reading values", e);
         }
     }
 
@@ -300,11 +303,16 @@ public class DBServer implements AutoCloseable {
     /**
      * Read all values for a given key active between from, to. (could have been inserted before and finish after)
      */
-    public List<StoreValue> read(String key, Instant timestampFrom, Instant timestampTo) throws SQLException {
+    public List<StoreValue> read(String key, Instant timestampFrom, Instant timestampTo, int maxValues) throws SQLException {
         if (timestampTo.isAfter(Instant.now())) {
             timestampTo = Instant.now();
         }
-        String sql = "SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where key=? and ((datefrom<? and dateto>?) or (datefrom>=? and datefrom<?) or (dateto>? and dateto<=?)) order by datefrom";
+        String sql = "select * from (" +
+                "SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore " +
+                "where key=? and ((datefrom<? and dateto>?) or (datefrom>=? and datefrom<?) or (dateto>? and dateto<=?)) " +
+                "order by datefrom desc " +
+                " FETCH FIRST " + maxValues + " ROWS ONLY " +
+                ") order by datefrom";
         try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, key);

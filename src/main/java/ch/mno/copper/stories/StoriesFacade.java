@@ -16,11 +16,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -130,8 +133,8 @@ public class StoriesFacade {
             fw.flush();
             fw.close();
         }
-        stories.add(story); // TODO: update listeneres
         stories.remove(originalStory);
+        stories.add(story); // TODO: update listeneres
         if (!oldFile.getName().equals(file.getName())) oldFile.delete();
         return "Ok";
     }
@@ -168,7 +171,7 @@ public class StoriesFacade {
         }
 
         List<String> files = new ArrayList<>();
-        for (File file : stories.listFiles(f -> f.isFile() && f.getName().toLowerCase().endsWith(".txt"))) {
+        for (File file : stories.listFiles(f -> f.isFile() && !f.getName().toLowerCase().endsWith("swp"))) {
             files.add("stories/" + file.getName());
         }
 
@@ -207,5 +210,28 @@ public class StoriesFacade {
         }
 
         // TODO: update daemon, web (listeners)
+    }
+
+    public StoryValidationResult validate(String story) {
+        StoryValidationResult result = new StoryValidationResult(story);
+        // TODO: validation
+        List<String> blacklist = Arrays.asList("EOL", "SPACE_EOL", "SPACE", "CRON_EL");
+        for (String key: grammar.getKeys()) {
+            if (blacklist.contains(key)) continue;
+
+            String patternFull = grammar.getPatternFull(key);
+            String patternShort = grammar.getPattern(key);
+            Pattern pattern = Pattern.compile(patternFull);
+            if (patternFull.length()<3) continue;
+            if (pattern.matcher(story).matches()) {
+                result.addPerfectMatch(0, story.length(), key, patternShort, patternFull);
+            } else {
+                Matcher matcher = pattern.matcher(story);
+                while (matcher.find()) {
+                    result.addPartialMatch(matcher.start(), matcher.end(), key, patternShort, patternFull);
+                }
+            }
+        }
+        return result;
     }
 }

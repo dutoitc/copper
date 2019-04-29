@@ -22,8 +22,10 @@ angular.module('copperApp.values', ['ngRoute'])
            if (!filter) return object;
 
            var filteredObject = {};
+           var filterLower = filter.toLowerCase();
            Object.keys(object).forEach(function(key) {
-             if (object[key][field].includes(filter)) {
+             var textLower = object[key][field].toLowerCase();
+             if (textLower.includes(filterLower)) {
                filteredObject[key] = object[key];
              }
            });

@@ -93,11 +93,11 @@ public class DbValuesStore implements ValuesStore, AutoCloseable {
     }
 
     @Override
-    public List<StoreValue> queryValues(Instant from, Instant to, List<String> columns) {
+    public List<StoreValue> queryValues(Instant from, Instant to, List<String> columns, int maxValues) {
         List<StoreValue> values = new ArrayList<>();
         for (String key : columns) {
             try {
-                values.addAll(server.read(key, from, to));
+                values.addAll(server.read(key, from, to, maxValues));
             } catch (SQLException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
@@ -106,9 +106,9 @@ public class DbValuesStore implements ValuesStore, AutoCloseable {
     }
 
     @Override
-    public List<InstantValues> queryValues(Instant from, Instant to, long intervalSecond, List<String> columns) {
+    public List<InstantValues> queryValues(Instant from, Instant to, long intervalSecond, List<String> columns, int maxValues) {
         try {
-            return server.readInstant(columns, from, to, intervalSecond);
+            return server.readInstant(columns, from, to, intervalSecond, maxValues);
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

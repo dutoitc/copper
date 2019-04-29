@@ -109,25 +109,25 @@ public class DBServerTest {
 
     @Test
     public void testReadHistorizedForOneValue() throws SQLException {
-        Assert.assertTrue(server.read("key1", i3, i4).isEmpty());
-        Assert.assertTrue(server.read("key1", i4, i5).isEmpty());
-        assertOneValue(server.read("key1", i5, i6), "value10");
-        assertOneValue(server.read("key1", i6, i7), "value10");
-        assertOneValue(server.read("key1", i5, i7), "value10");
-        assertOneValue(server.read("key1", i4, i7), "value10");
+        Assert.assertTrue(server.read("key1", i3, i4, 100).isEmpty());
+        Assert.assertTrue(server.read("key1", i4, i5, 100).isEmpty());
+        assertOneValue(server.read("key1", i5, i6, 100), "value10");
+        assertOneValue(server.read("key1", i6, i7, 100), "value10");
+        assertOneValue(server.read("key1", i5, i7, 100), "value10");
+        assertOneValue(server.read("key1", i4, i7, 100), "value10");
     }
 
     @Test
     public void testReadHistorizedForTwoValues() throws SQLException {
-        Assert.assertTrue(server.read("key3", i3, i4).isEmpty());
-        assertOneValue(server.read("key3", i4, i5), "value30");
-        assertOneValue(server.read("key3", i5, i6), "value30");
-        assertOneValue(server.read("key3", i6, i7), "value30");
-        assertOneValue(server.read("key3", i4, i7), "value30");
-        assertOneValue(server.read("key3", i3, i7), "value30");
-        assertOneValue(server.read("key3", i7, i8), "value31");
-        assertOneValue(server.read("key3", i8, i9), "value31");
-        assertTwoValues(server.read("key3", i3, i8), "value30", "value31");
+        Assert.assertTrue(server.read("key3", i3, i4, 100).isEmpty());
+        assertOneValue(server.read("key3", i4, i5, 100), "value30");
+        assertOneValue(server.read("key3", i5, i6, 100), "value30");
+        assertOneValue(server.read("key3", i6, i7, 100), "value30");
+        assertOneValue(server.read("key3", i4, i7, 100), "value30");
+        assertOneValue(server.read("key3", i3, i7, 100), "value30");
+        assertOneValue(server.read("key3", i7, i8, 100), "value31");
+        assertOneValue(server.read("key3", i8, i9, 100), "value31");
+        assertTwoValues(server.read("key3", i3, i8, 100), "value30", "value31");
     }
 
     //@Test
