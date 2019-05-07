@@ -57,7 +57,9 @@ public class WebServer implements Runnable, AutoCloseable {
         ServletHolder jerseyServlet = rootHandler.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
         jerseyServlet.setInitOrder(0);
         jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", "io.swagger.jaxrs.listing.ApiListingResource,"+
-                "io.swagger.jaxrs.listing.SwaggerSerializers,"+CopperServices.class.getCanonicalName());
+                "io.swagger.jaxrs.listing.SwaggerSerializers,"+
+                CORSFilter.class.getCanonicalName()+","+
+                CopperServices.class.getCanonicalName());
 
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("1.0.2");
