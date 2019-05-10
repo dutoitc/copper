@@ -75,7 +75,7 @@ class DataManager {
         // TODO: Websocket
         if (spl[0]=="refresh") {
             $.ajax({
-                url: "http://localhost:30400/ws/values"
+                url: "/ws/values"
             }).done(function(data) {
                 dataManager.copperValues = JSON.parse(data);
                 if (!this.editable) {
