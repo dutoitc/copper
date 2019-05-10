@@ -2,6 +2,7 @@
 class DataManager {
     constructor() {
         this.widgets=[];
+        this.style=[];
         this.copperValues={};
         this.editable = false;
     }
@@ -47,6 +48,8 @@ class DataManager {
 
         // Import
         this.widgets=json["widgets"];
+        this.style=json["css"];
+        if (this.style==null) this.style=[];
         this.refreshUI();
     }
 
@@ -75,23 +78,39 @@ class DataManager {
                 url: "http://localhost:30400/ws/values"
             }).done(function(data) {
                 dataManager.copperValues = JSON.parse(data);
-                dataManager.refreshUI();
+                if (!this.editable) {
+                    dataManager.refreshUI();
+                }
             });
         }
 
     }
 
     refreshUI() {
-
+        // Build dom in a disconnected div
         var content = $("<div></div>");
+
+
+        // Widgets
         for (var i=0; i<this.widgets.length; i++) {
             var widget = this.widgets[i];
             var ui = this.editable?new UIWidgetEditable(widget):new UIWidgetRunnable(widget);
             content.append(ui.buildDOM(this.copperValues));
         }
+
+        // Style
+        var style = "<style type='text/css'>";
+        for (var i=0; i<this.style.length; i++) {
+            style+=this.style[i]+"\n";
+        }
+        style+="</style>\n";
+        content.append($(style));
+
+        // Replace data by built dom
         $("#data").empty();
         $("#data").append(content);
-        
+
+        // Toolbox
         if (this.editable) {
             $("#toolbox").draggable();
             $("#toolbox").show();
