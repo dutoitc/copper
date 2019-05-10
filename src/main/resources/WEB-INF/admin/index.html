@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="copperApp">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.ico">
+    <title>Copper</title>
+
+    <!-- Bootstrap -->
+    <link href="../lib/bootstrap-3.3.6-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/copper.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body ng-controller="ApplicationController">
+
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" title="Copper" style="float:left; height:50px; padding: 5px 5px;">
+                <img src="img/copper.png" style="height: 38px; margin: 0px">
+            </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#/help">Help</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="#/overview">Overview <span class="sr-only">(current)</span></a></li>
+            </ul>
+            <ul class="nav nav-sidebar">
+                <li><a href="#/stories">Stories</a></li>
+                <li><a href="#/values">Values</a></li>
+                <li><a href="#/history">History</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+            <div class="container" id="mainView" ng-view>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="lib/jquery.min.js"></script>
+<script src="lib/bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
+<!--<script src="js/bootstrap.min.js"></script>-->
+<script src="js/ie10-viewport-bug-workaround.js"></script>
+
+<script src="js/angular.min.js"></script>
+<script src="js/angular-route.min.js"></script>
+<script src="js/ui-bootstrap-tpls-0.12.1.min.js"></script>
+<script src="lib/Chart.bundle.min.js"></script>
+<script src="lib/angular-chart.min.js"></script>
+<script src="lib/moment.min.js"></script>
+
+<script src="app/app.js"></script>
+<script src="app/controllers/applicationController.js"></script>
+<script src="app/controllers/overview.js"></script>
+<script src="app/controllers/stories.js"></script>
+<script src="app/controllers/story.js"></script>
+<script src="app/controllers/values.js"></script>
+<script src="app/controllers/history.js"></script>
+
+
+</body>
+</html>
