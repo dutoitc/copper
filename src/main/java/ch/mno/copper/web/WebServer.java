@@ -46,13 +46,9 @@ public class WebServer implements Runnable, AutoCloseable {
         // externalweb/* mapped on /ext
         ContextHandler extHandler = buildExtContextHandler();
 
-        // web/* mapped on /ui
-        ContextHandler webHandler = buildWEBContextHandler();
-
-
         // Handlers
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{resourceHandler, extHandler, webHandler, rootHandler});//servletHandler});
+        handlers.setHandlers(new Handler[]{resourceHandler, extHandler, rootHandler});//servletHandler});
         server.setHandler(handlers);
 
 
@@ -123,18 +119,6 @@ public class WebServer implements Runnable, AutoCloseable {
         ContextHandler extHandler = new ContextHandler("/ext"); /* the server uri path */
         extHandler.setHandler(resourceHandlerExt);
         LOG.info("Serving ext files from " + webDirExt);
-        return extHandler;
-    }
-
-    private ContextHandler buildWEBContextHandler() {
-        String webDir = new File("web").getAbsolutePath();
-        ResourceHandler resourceHandlerExt = new ResourceHandler();
-        resourceHandlerExt.setDirectoriesListed(true);
-        resourceHandlerExt.setWelcomeFiles(new String[]{"index.html"});
-        resourceHandlerExt.setResourceBase("web");
-        ContextHandler extHandler = new ContextHandler("/ui"); /* the server uri path */
-        extHandler.setHandler(resourceHandlerExt);
-        LOG.info("Serving web files from " + webDir);
         return extHandler;
     }
 
