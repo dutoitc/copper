@@ -1,0 +1,23 @@
+{"widgets":[
+{"id":"w0","x":20,"y":100,"width":170,"height":70,"title":"Siti","body":""},
+{"id":"w1","x":420,"y":400,"width":140,"height":80,"title":"SB","body":""},
+{"id":"w2","x":780,"y":300,"width":148,"height":68,"title":"IN","body":""},
+{"id":"w3","x":20,"y":200,"width":172,"height":72,"title":"RCPers","body":""},
+{"id":"w4","x":20,"y":300,"width":174,"height":74,"title":"Ref-INF","body":""},
+{"id":"w5","x":600,"y":400,"width":144,"height":84,"title":"TE","body":""},
+{"id":"w6","x":780,"y":400,"width":144,"height":84,"title":"IN","body":""},
+{"id":"w7","x":960,"y":400,"width":144,"height":84,"title":"VA","body":""},
+{"id":"w8","x":20,"y":400,"width":176,"height":76,"title":"RCEnt","body":""},
+{"id":"w9","x":1140,"y":400,"width":144,"height":84,"title":"PP","body":""},
+{"id":"w10","x":1320,"y":400,"width":140,"height":80,"title":"PR","body":""},
+{"id":"w11","x":960,"y":300,"width":150,"height":70,"title":"VA","body":""},
+{"id":"w12","x":1140,"y":300,"width":150,"height":70,"title":"PP","body":""},
+{"id":"w13","x":1320,"y":300,"width":130,"height":70,"title":"PR","body":""},
+{"id":"w15","x":1500,"y":680,"width":368,"height":48,"title":"TIME","body":"#TIME#...#DATE#<b>TEST</b>"},
+{"id":"w16","x":1500,"y":240,"width":374,"height":154,"title":"Météo","body":""},
+{"id":"w16","x":1500,"y":420,"width":370,"height":230,"title":"Webcam","body":""},
+{"id":"w17","x":1500,"y":760,"width":374,"height":254,"title":"Menu","body":""},
+{"id":"w18","x":1500,"y":60,"width":376,"height":156,"title":"Bureau","body":"Some body\nand a new line..."},
+{"id":"w19","x":220,"y":400,"width":158,"height":78,"title":"Builds","body":""},
+{"id":"w20","x":600,"y":300,"width":148,"height":68,"title":"DC","body":""}
+]}
