@@ -12,7 +12,7 @@ angular.module('copperApp.values', ['ngRoute'])
     var scope = $scope;
     var self=this;
 
-      $http.get('ws/values')
+      $http.get('/ws/values')
             .then(function(response) {
                 $scope.values=response.data;
         });

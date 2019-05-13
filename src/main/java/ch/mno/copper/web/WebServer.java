@@ -25,10 +25,6 @@ public class WebServer implements Runnable, AutoCloseable {
 
     private Server server;
 
-    public WebServer() {
-        this(30400);
-    }
-
     public WebServer(int port) {
         PORT = port;
     }
@@ -85,6 +81,7 @@ public class WebServer implements Runnable, AutoCloseable {
             server.start();
             PORT = ((ServerConnector)server.getConnectors()[0]).getLocalPort();
             LOG.info("Check server at http://localhost:" + PORT + "/");
+            LOG.info("Check server at http://localhost:" + PORT + "/admin");
             LOG.info("                http://localhost:" + PORT + "/ext");
             LOG.info("                http://localhost:" + PORT + "/ws");
             LOG.info("                http://localhost:" + PORT + "/swagger.json");

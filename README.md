@@ -1,15 +1,21 @@
 # Copper
-A tool to Collect Operationg data, Process and rEpoRt them. Built as an application monitoring and alerting tool.
-It is actually under strong developement, and already working for JMX/DB collectors and Pushover reporter.
-It has a Web server to view values, run stories manually, and edit them.
-Check the latest version on <https://github.com/dutoitc/copper/releases/tag/v1.0.0>
+Copper is a tool to **C**ollect **OP**erating data, **P**rocess and r**E**po**R**t them.
+It's aim is to be a story-based monitoring and alerting tool.
+
+[Copper 1.0](<https://github.com/dutoitc/copper/releases/tag/v1.0.0>) has been out in 2015 and stable since, with some improvments when needed.
+
+Copper also provides an embedded WEB server to interact with stories, data or serve as monitoring UI server.
 
 
-# How it works ?
 
-The system is based on user stories, in nearly human language.
+# How does it work ?
 
-First, the collect part:
+The system is based on user stories, in nearly human language. Below are some examples.
+
+![Architecture](doc/archi1.png)
+
+
+1/Collect data
 ````
 RUN ON CRON */5 7-18 * * 1-5
 GIVEN COLLECTOR JMX WITH url=service:jmx:rmi://blah-blah,user=xxx,password=yyy
@@ -17,9 +23,12 @@ GIVEN COLLECTOR JMX WITH url=service:jmx:rmi://blah-blah,user=xxx,password=yyy
     QUERY objectName2 FOR att2 AS myVar2
 THEN STORE VALUES
 ````
+(see [Collectors documentation](doc/collectors.md) for details)
 
+2/Process data
+(Example to be added)
 
-Then, the report part
+3/Report
 ````
 RUN ON CRON * * * * *
 GIVEN STORED VALUES
@@ -43,7 +52,12 @@ THEN REPORT BY MAIL to mycustomer@something.com
     WITH message="Dear customer, here is your income for your sells yesterday: {{myVar3}}"
 ````
 
+(see [Reporters documentation](doc/reporters.md) for details)
+
+
+4/ Webservices
 Values can be accessed by web: <http://aHost:30400/copper/ws/value/XXX> with all values easily readable at <http://aHost:30400/copper>
+(see [Web and Webservices documentation]doc/web.md) for details)
 
 
 # Components
@@ -53,7 +67,7 @@ Here is a list of actual components:
 * Web collector: get a web page, keep json first-level values
 * Jmx collector: get values from JMX MBean server
 * Jdbc collector: get values from Jdbc database
-* Log collector: get values from a log file (todo; should support scp)
+* Web collector: get values from a file on a server
 
 ## Triggers
 * When trigger: WHEN a>1, WHEN a<22, WHEN a=33, WHEN a>17.22, ... (float are equals if delta<1/25)
@@ -62,9 +76,11 @@ Here is a list of actual components:
 * Mail reporter: report values, messages by mail
 * Slf4j reporter: report values in a log file
 * Pushover reporter: report values on mobile phone via Pushover
+* CSV reporter: report values as CSV
 
 # WEB
 Everything placed under a special folder 'externalweb' will be served as /web. This could be used to host a monitoring WEB application.
+A special UI generator is available under /ui context.
 
 # Future
 Here is a little wishlist. Add yours (report to dutoitc@shimbawa.ch)
@@ -77,71 +93,7 @@ Here is a little wishlist. Add yours (report to dutoitc@shimbawa.ch)
 * Generation of monitoring web applications
 * Support processing by Groovy, plugins
 
-# Cook book
-## Web collector
-````
-RUN ON CRON */5 7-18 * * 1-5
-GIVEN COLLECTOR WEB WITH url=http://localhost:1530/ws/infra/status
-    KEEP status AS WEB_STATUS
-    KEEP lastReload AS WEB_LAST_RELOAD
-    KEEP body AS WEB_BODY
-    KEEP responseCode as WEB_RETURN_CODE
-THEN STORE VALUES
-````
-Syntax: KEEP (* | body | contentLength | contentType | responseCode | json expression) AS variable
-
-
-## JMX collector
-````
-RUN ON CRON */5 * * * *
-GIVEN COLLECTOR JMX WITH url=service:jmx:rmi:///jndi/rmi://servername:1539/jmxrmi,user=myjmxuser,password=mypassword
-    QUERY com.something.dummy:name=Monitoring,app=Application FOR Status AS MYAPP_PR_STATUS
-    QUERY com.something.dummy:name=Monitoring,app=Application FOR Version AS MYAPP_PR_VERSION
-THEN STORE VALUES
-````
-
-## JDBC collector
-````
-RUN ON CRON 24,56 * * * *
-GIVEN COLLECTOR JDBC WITH url=jdbc:oracle:thin:@myserver:1528/myinstance,user=someuser,password=somepassword
-    QUERY "select count(case when notice.status='Nouveau' then 1 end) APP_PR_NB_NOUVEAU,
-                  count(case when notice.status='A traiter' then 1 end) APP_PR__A_TRAITER,
-                  count(case when notice.status='En cours' then 1 end) APP_PR__EN_COURS,
-                  count(case when notice.status='En erreur' then 1 end) APP_PR_T_EN_ERREUR,
-                  count(case when notice.status='Traitée' then 1 end) APP_PR_TRAITEE
-           from someapp.notice"
-THEN STORE VALUES
-````
-
-## Mail reporter
-````
-RUN ON CRON 0 8,13 * * *
-GIVEN STORED VALUES 
-THEN REPORT BY MAIL to "user1@myserver.com,user2@myserver.com"
-     WITH title="[TEST] some text"
-     WITH message="<h3>Some title</h3>
-     {{APP_PR_NB_NOTICES}} notices yet in production database<br/>
-     {{APP_VA_NB_NOTICES}} notices yet in validation database<br/>
-     Production status is {{APP_PR_STATUS}}"
-````
-
-## Pushover reporter (smartphone)
-````
-RUN ON CRON 0 8,13 * * *
-GIVEN STORED VALUES 
-THEN REPORT BY PUSHOVER to "__mypushover_api_key__"
-     WITH token="__pushover_dest_token__"
-     WITH title="Some Title" 
-     WITH message="Production data
-     {{APP_PR_NB_NOTICES}} notices yet in production database<br/>
-     {{APP_PR_NB_ERRORS}} errors to be handled
-````
-
-## CSV reporter
-````
-RUN ON CRON */15 * * * *
-GIVEN STORED VALUES
-THEN REPORT BY CSV to "prodExtract.csv"
-     WITH headers="time;Nb notices;Nb errors"
-     WITH line="{{NOW_dd.MM.yyyy_HH:mm:ss}};{{APP_PR_NB_NOTICES}};{{APP_PR_NB_ERRORS}}"
-````
+# Detailed documentation
+* [Cookbook](doc/cookbook.md)
+* [Collectors](doc/collectors.md)
+* [Reporters](doc/reporters.md)

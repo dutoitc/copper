@@ -22,14 +22,14 @@ angular.module('copperApp.story', ['ngRoute'])
             storyText:'GIVEN ...\nWHEN ...\nTHEN ...\n'
         }
     } else {
-        $http.get('ws/story/'+$scope.originalStoryName)
+        $http.get('/ws/story/'+$scope.originalStoryName)
                 .then(function(response) {
                     $scope.story=response.data;
             });
     }
 
     $scope.validate = function() {
-        $http.post('ws/validation/story', $scope.story.storyText)
+        $http.post('/ws/validation/story', $scope.story.storyText)
             .then(
                 function(data, status) {
                     console.log(data.data);
@@ -104,7 +104,7 @@ angular.module('copperApp.story', ['ngRoute'])
                         storyText: $scope.story.storyText
                     });
 
-        $http.post('ws/story/'+$scope.originalStoryName, data)
+        $http.post('/ws/story/'+$scope.originalStoryName, data)
             .then(
                 function(data, status) {
                     if (data.data=="Ok") {

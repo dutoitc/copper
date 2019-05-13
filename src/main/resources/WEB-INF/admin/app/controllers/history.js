@@ -39,7 +39,7 @@ angular.module('copperApp.history', ['ngRoute'])
       }
     };
 
-    $http.get('ws/instants/query?columns='+key+'&from=2017-09-30T00:00&intervalSeconds=300')
+    $http.get('/ws/instants/query?columns='+key+'&from=2017-09-30T00:00&intervalSeconds=300')
         .then(function(response) {
             $scope.history=[];
 

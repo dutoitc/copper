@@ -14,7 +14,7 @@ angular.module('copperApp.stories', ['ngRoute'])
 
 
     $scope.refreshStories = function() {
-        $http.get('ws/stories')
+        $http.get('/ws/stories')
             .then(function(response) {
                 $scope.stories=response.data;
         });
