@@ -13,9 +13,7 @@ hs_err_pid*
 
 *.log
 *.db
-*.png
 *.iml
-*.json
 .idea
 *.tmp
 *.csv
