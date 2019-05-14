@@ -24,3 +24,5 @@ target
 dsi
 *.old
 externalweb/*
+plot*
+copper.properties

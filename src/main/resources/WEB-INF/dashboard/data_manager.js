@@ -5,6 +5,7 @@ class DataManager {
         this.style=[];
         this.copperValues={};
         this.editable = false;
+        this.skipRefresh = false;
     }
 
     addWidget(x, y) {
@@ -21,6 +22,15 @@ class DataManager {
     toggleEditable() {
         this.editable = !this.editable;
         this.refreshUI();
+    }
+
+    toggleSkipRefresh() {
+        this.skipRefresh = !this.skipRefresh;
+        if (this.skipRefresh) {
+            alert("Autorefresh is off");
+        } else {
+            alert("Autorefresh is on")
+        }
     }
 
     /** Export to json file */
@@ -74,6 +84,7 @@ class DataManager {
 
         // TODO: Websocket
         if (spl[0]=="refresh") {
+            if (this.skipRefresh) return;
             $.ajax({
                 url: "/ws/values"
             }).done(function(data) {
