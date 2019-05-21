@@ -18,7 +18,7 @@ public class CopperMediator {
     private static final Logger LOG = LoggerFactory.getLogger(CopperMediator.class);
 
     private static CopperMediator instance;
-    private final ValuesStore valuesStore;
+    private ValuesStore valuesStore;
     private CopperDaemon daemon;
     private Properties properties;
 
@@ -33,7 +33,6 @@ public class CopperMediator {
             } else {
                 System.err.println("Warning: copper.properties not found");
             }
-            this.valuesStore = DbValuesStore.getInstance();
         } catch (FileNotFoundException e) {
             throw new RuntimeException("File not found: copper.properties in " + new File(".").getAbsolutePath()+"; " + e.getMessage());
         }catch (Exception e) {
@@ -41,11 +40,16 @@ public class CopperMediator {
         }
     }
 
+    public void setValuesStore(DbValuesStore valuesStore) {
+        this.valuesStore = valuesStore;
+    }
+
     public static CopperMediator getInstance() {
         if (instance==null) {
             synchronized (CopperMediator.class) {
                 if (instance==null) {
                     instance = new CopperMediator();
+                    instance.setValuesStore(DbValuesStore.getInstance());
                 }
             }
         }
