@@ -116,7 +116,7 @@
         <dependency>
             <groupId>oracle.jdbc</groupId>
             <artifactId>ojdbc8</artifactId>
-            <version>11.2.0.1</version>
+            <version>12.2.0.1</version>
         </dependency>
         <dependency>
             <groupId>it.sauronsoftware.cron4j</groupId>
@@ -146,6 +146,21 @@
         <!--<dependency>-->
             <!--<groupId>org.glassfish.jersey.core</groupId>-->
             <!--<artifactId>jersey-server</artifactId>-->
+            <!--<version>2.7</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet-core</artifactId>
+            <version>2.7</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.glassfish.jersey.containers</groupId>-->
+            <!--<artifactId>jersey-container-jetty-http</artifactId>-->
+            <!--<version>2.7</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.glassfish.jersey.media</groupId>-->
+            <!--<artifactId>jersey-media-moxy</artifactId>-->
             <!--<version>2.7</version>-->
         <!--</dependency>-->
 
@@ -201,8 +216,8 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.12</version>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.26</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -222,7 +237,15 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1</version>
-        </dependency>
+    </dependency>
+    <!--
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.8.2.2</version>
+            <scope>test</scope>
+	</dependency>
+-->
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>

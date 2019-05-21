@@ -1,5 +1,7 @@
 package ch.mno.copper.data;
 
+import ch.mno.copper.CopperMediator;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -19,7 +21,8 @@ public class DbValuesStore implements ValuesStore, AutoCloseable {
 
     private DbValuesStore() {
         try {
-            server = new DBServer(true);
+            int dbPort = Integer.parseInt(CopperMediator.getInstance().getProperty("dbPort", "0"));
+            server = new DBServer(true, dbPort);
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

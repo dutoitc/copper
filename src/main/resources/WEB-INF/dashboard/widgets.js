@@ -73,7 +73,7 @@ class UIWidgetRunnable extends UIWidget {
             var start = bodyHTML.indexOf("{{");
             var end = bodyHTML.indexOf("}}", start+2);
             if (end==-1) throw "Invalid HTML";
-            var content = bodyHTML.substr(start+2, end-2);
+            var content = bodyHTML.substr(start+2, end-start-2);
             var content2 = this.evaluate(content, copperValues);
             bodyHTML = bodyHTML.substr(0, start) + content2 + bodyHTML.substr(end+2);
         }
@@ -88,7 +88,11 @@ class UIWidgetRunnable extends UIWidget {
 
     evaluate(expression, copperValues) {
         'use strict'; // forbid modifying values with eval
-        var cv = copperValues; // API
+        //var cv = copperValues; // API
+        var cv = function(name) {
+            if (copperValues[name]!=null) return copperValues[name];
+            return '?';
+        }
 
 	    try {
 			return eval(expression);

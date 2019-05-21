@@ -35,8 +35,8 @@ public class DBServer implements AutoCloseable {
     private Server server;
     final JdbcConnectionPool cp;
 
-    public DBServer(boolean withWebserver) throws SQLException {
-        server = Server.createWebServer("-webAllowOthers", "-browser", "-webPort", "0");
+    public DBServer(boolean withWebserver, int dbPort) throws SQLException {
+        server = Server.createWebServer("-webAllowOthers", "-browser", "-webPort", ""+dbPort);
         server.start();
         LOG.info("Server DB started");
         cp = JdbcConnectionPool.create(DBURL, DBUSER, DBPASS);
@@ -411,7 +411,7 @@ public class DBServer implements AutoCloseable {
     }
 
     public static void main(String[] args) {
-        try (DBServer dbServer = new DBServer(true)) {
+        try (DBServer dbServer = new DBServer(true, 0)) {
         } catch (Exception e) {
             e.printStackTrace();
         }

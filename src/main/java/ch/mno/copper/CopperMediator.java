@@ -2,6 +2,8 @@ package ch.mno.copper;
 
 import ch.mno.copper.data.DbValuesStore;
 import ch.mno.copper.data.ValuesStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,9 +15,10 @@ import java.util.Properties;
  */
 public class CopperMediator {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CopperMediator.class);
 
-    private static final CopperMediator instance = new CopperMediator();
-    private final ValuesStore valuesStore;
+    private static CopperMediator instance;
+    private ValuesStore valuesStore;
     private CopperDaemon daemon;
     private Properties properties;
 
@@ -30,7 +33,6 @@ public class CopperMediator {
             } else {
                 System.err.println("Warning: copper.properties not found");
             }
-            this.valuesStore = DbValuesStore.getInstance();
         } catch (FileNotFoundException e) {
             throw new RuntimeException("File not found: copper.properties in " + new File(".").getAbsolutePath()+"; " + e.getMessage());
         }catch (Exception e) {
@@ -38,7 +40,21 @@ public class CopperMediator {
         }
     }
 
-    public static CopperMediator getInstance() { return instance; }
+    public void setValuesStore(DbValuesStore valuesStore) {
+        this.valuesStore = valuesStore;
+    }
+
+    public static CopperMediator getInstance() {
+        if (instance==null) {
+            synchronized (CopperMediator.class) {
+                if (instance==null) {
+                    instance = new CopperMediator();
+                    instance.setValuesStore(DbValuesStore.getInstance());
+                }
+            }
+        }
+        return instance;
+    }
 
     public ValuesStore getValuesStore() {
         return valuesStore;
@@ -60,7 +76,10 @@ public class CopperMediator {
 
     public String getProperty(String name, String defaultValue) {
         String value = properties.getProperty(name);
-        if (value==null) return defaultValue;
+        if (value==null) {
+            LOG.info("Missing property " + name + ", using default value " + defaultValue);
+            return defaultValue;
+        }
         return value;
     }
 }
