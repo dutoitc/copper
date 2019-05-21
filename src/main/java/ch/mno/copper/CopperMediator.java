@@ -17,7 +17,7 @@ public class CopperMediator {
 
     private static final Logger LOG = LoggerFactory.getLogger(CopperMediator.class);
 
-    private static final CopperMediator instance = new CopperMediator();
+    private static CopperMediator instance;
     private final ValuesStore valuesStore;
     private CopperDaemon daemon;
     private Properties properties;
@@ -41,7 +41,16 @@ public class CopperMediator {
         }
     }
 
-    public static CopperMediator getInstance() { return instance; }
+    public static CopperMediator getInstance() {
+        if (instance==null) {
+            synchronized (CopperMediator.class) {
+                if (instance==null) {
+                    instance = new CopperMediator();
+                }
+            }
+        }
+        return instance;
+    }
 
     public ValuesStore getValuesStore() {
         return valuesStore;
