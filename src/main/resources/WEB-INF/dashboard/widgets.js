@@ -92,7 +92,8 @@ class UIWidgetRunnable extends UIWidget {
 
 	    try {
 			return eval(expression);
-		} catch {
+		} catch (e) {
+		    console.log("Error evaluating " + expression, e);
 			return "!"+expression+"!";
 		}
     }
