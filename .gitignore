@@ -11,6 +11,7 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+<<<<<<< HEAD
 *.log
 *.db
 *.iml
@@ -26,3 +27,20 @@ dsi
 externalweb/*
 plot*
 copper.properties
+*.csv
+*.png
+*.sh
+*.old
+*.log
+*.py
+*.db
+plot.*
+*.tmp
+*.tgz
+copper.properties
+*.iml
+dsi
+target
+stories
+.idea
+externalweb
