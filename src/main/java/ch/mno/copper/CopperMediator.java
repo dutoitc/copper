@@ -2,6 +2,8 @@ package ch.mno.copper;
 
 import ch.mno.copper.data.DbValuesStore;
 import ch.mno.copper.data.ValuesStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +15,7 @@ import java.util.Properties;
  */
 public class CopperMediator {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CopperMediator.class);
 
     private static final CopperMediator instance = new CopperMediator();
     private final ValuesStore valuesStore;
@@ -60,7 +63,10 @@ public class CopperMediator {
 
     public String getProperty(String name, String defaultValue) {
         String value = properties.getProperty(name);
-        if (value==null) return defaultValue;
+        if (value==null) {
+            LOG.info("Missing property " + name + ", using default value " + defaultValue);
+            return defaultValue;
+        }
         return value;
     }
 }
