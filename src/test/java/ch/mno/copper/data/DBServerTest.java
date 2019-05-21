@@ -32,7 +32,7 @@ public class DBServerTest {
         new File("copperdbtst.mv.db").delete();
         new File("copperdbtst.trace.db").delete();
         DBServer.DBURL= "jdbc:h2:./copperdbtst";
-        server = new DBServer(false);
+        server = new DBServer(false, 0);
         server.clearAllData();
         server.insert("key1", "value10", i5);
         server.insert("key2", "value20", i5);

@@ -40,6 +40,7 @@ public class CopperDaemon implements Runnable {
     private boolean shouldRun = true;
     private List<String> storiesToRun = new ArrayList<>();
     private LocalDateTime lastQueryTime = LocalDateTime.MIN;
+    private int jmxPort;
 
     /**
      * Manual run by the web
@@ -52,6 +53,9 @@ public class CopperDaemon implements Runnable {
         executorService = Executors.newFixedThreadPool(N_THREADS);
         this.valuesStore = CopperMediator.getInstance().getValuesStore();
         this.dataProvider = dataProvider;
+
+        String jmxPort = CopperMediator.getInstance().getProperty("jmxPort", "30409");
+        this.jmxPort = Integer.parseInt(jmxPort);
     }
 
     public static CopperDaemon runWith(DataProvider dataProvider) {
@@ -146,8 +150,8 @@ public class CopperDaemon implements Runnable {
     private void startJMX() {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         try {
-            java.rmi.registry.LocateRegistry.createRegistry(30409);
-            JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:30409/server");
+            java.rmi.registry.LocateRegistry.createRegistry(jmxPort);
+            JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + jmxPort + "/server");
             jmxConnectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
             jmxConnectorServer.start();
         } catch (RemoteException e) {
