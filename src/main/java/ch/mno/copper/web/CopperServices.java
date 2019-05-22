@@ -27,16 +27,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 // FIXME: check documentation for http://localhost:30400/swagger.json
@@ -414,8 +411,11 @@ public class CopperServices {
         public JsonElement serialize(Instant instant, Type type, JsonSerializationContext jsonSerializationContext) {
             if (instant==null) {
                 return new JsonPrimitive((String)null);
-            } 
-            String sdatetime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(instant);
+            }
+            String sdatetime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                    .withLocale(Locale.getDefault())
+                    .withZone(ZoneId.systemDefault())
+                    .format(instant);
             return new JsonPrimitive(sdatetime);
         }
     }
