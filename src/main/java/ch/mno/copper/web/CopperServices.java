@@ -9,9 +9,7 @@ import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.Story;
 import ch.mno.copper.stories.StoryValidationResult;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
+import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import io.swagger.annotations.Api;
@@ -28,6 +26,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -129,7 +128,9 @@ public class CopperServices {
     @ApiOperation(value = "Convenience way to retrieve all valid values from Copper",
             notes = "Use this to extract many values, example for remote webservice, angular service, ...")
     public String getValues() {
-        Gson gson = new Gson();
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Instant.class, new InstantAdapter());
+        Gson gson = builder.create();
         return gson.toJson(valuesStore.getValues());
     }
 
@@ -139,7 +140,10 @@ public class CopperServices {
     @ApiOperation(value = "Retrieve values between date",
             notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of data")
     public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns) {
-        Gson gson = new Gson();
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Instant.class, new InstantAdapter());
+        Gson gson = builder.create();
+
         Instant from;
         if (dateFrom == null) {
             from = Instant.parse("2000-01-01T00:00:00.00Z");
@@ -404,21 +408,15 @@ public class CopperServices {
 
     }
 
-    private class InstantAdapter extends TypeAdapter {
-        @Override
-        public void write(JsonWriter jsonWriter, Object o) throws IOException {
-            if (o==null) {
-                jsonWriter.nullValue();
-            } else {
-                Instant i = (Instant)o;
-                String sdatetime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(i);
-                jsonWriter.value(sdatetime);
-            }
-        }
+    private class InstantAdapter implements JsonSerializer<Instant> {
 
         @Override
-        public Object read(JsonReader jsonReader) throws IOException {
-            throw new RuntimeException("InstantAdapter::read not yet Implemented.");
+        public JsonElement serialize(Instant instant, Type type, JsonSerializationContext jsonSerializationContext) {
+            if (instant==null) {
+                return new JsonPrimitive((String)null);
+            } 
+            String sdatetime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(instant);
+            return new JsonPrimitive(sdatetime);
         }
     }
 }
