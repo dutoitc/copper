@@ -85,6 +85,7 @@ public class WebServer implements Runnable, AutoCloseable {
             LOG.info("                http://localhost:" + PORT + "/ext");
             LOG.info("                http://localhost:" + PORT + "/ws");
             LOG.info("                http://localhost:" + PORT + "/swagger.json");
+            LOG.info("                http://127.0.1.1:35251");
             server.join();
         } catch (Exception e) {
             e.printStackTrace();

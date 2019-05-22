@@ -23,6 +23,10 @@ $(document).keypress(function( event ) {
         event.preventDefault();
         dataManager.toggleEditable();
     }
+    if ( event.key == 'r' ) {
+        event.preventDefault();
+        dataManager.toggleSkipRefresh();
+    }
 });
 
 

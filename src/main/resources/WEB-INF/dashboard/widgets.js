@@ -15,6 +15,7 @@ class Widget {
         this.classes="";
     }
 
+
 }
 
 /* Widget mappable to DOM */
@@ -38,6 +39,8 @@ class UIWidget {
 }
 
 class UIWidgetRunnable extends UIWidget {
+
+
     buildDOM(copperValues) {
         super.buildDOM(copperValues);
         var bodyHTML = this.widget.body;
@@ -88,17 +91,18 @@ class UIWidgetRunnable extends UIWidget {
 
     evaluate(expression, copperValues) {
         'use strict'; // forbid modifying values with eval
-        //var cv = copperValues; // API
+        // API
         var cv = function(name) {
             if (copperValues[name]!=null) return copperValues[name];
             return '?';
         }
+        var widget = this.widget;
 
-	    try {
+		try {
 			return eval(expression);
-		} catch (e) {
-		    console.log("Error evaluating " + expression, e);
-			return "!"+expression+"!";
+		} catch(error) {
+            console.log("Error", expression, error);
+            return "<span style='color:red' title='Invalid expression: " + expression + ": " + error + "'>&#x26A0;</span>";
 		}
     }
 }

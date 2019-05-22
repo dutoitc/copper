@@ -3,6 +3,7 @@ class DataManager {
     constructor() {
         this.widgets=[];
         this.style=[];
+        this.script=[];
         this.copperValues={};
         this.editable = false;
         this.skipRefresh = false;
@@ -59,7 +60,9 @@ class DataManager {
         // Import
         this.widgets=json["widgets"];
         this.style=json["css"];
+        this.script=json["script"];
         if (this.style==null) this.style=[];
+        if (this.script==null) this.script=[];
         this.refreshUI();
     }
 
@@ -97,17 +100,10 @@ class DataManager {
 
     }
 
+    // TODO: diff old and new dom, replace only new elements
     refreshUI() {
         // Build dom in a disconnected div
         var content = $("<div></div>");
-
-
-        // Widgets
-        for (var i=0; i<this.widgets.length; i++) {
-            var widget = this.widgets[i];
-            var ui = this.editable?new UIWidgetEditable(widget):new UIWidgetRunnable(widget);
-            content.append(ui.buildDOM(this.copperValues));
-        }
 
         // Style
         var style = "<style type='text/css'>";
@@ -116,6 +112,21 @@ class DataManager {
         }
         style+="</style>\n";
         content.append($(style));
+
+        // Widgets
+        for (var i=0; i<this.widgets.length; i++) {
+            var widget = this.widgets[i];
+            var ui = this.editable?new UIWidgetEditable(widget):new UIWidgetRunnable(widget);
+            content.append(ui.buildDOM(this.copperValues));
+        }
+
+        // Script
+        var script = "<script type='text/javascript'>";
+        for (var i=0; i<this.script.length; i++) {
+            script+=this.script[i]+"\n";
+        }
+        script+="</script>\n";
+        content.append($(script));
 
         // Replace data by built dom
         $("#data").empty();

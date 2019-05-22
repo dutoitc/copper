@@ -262,8 +262,8 @@ public class CopperServices {
         if (story == null) {
             throw new RuntimeException("Story not found");
         } else {
-            Gson gson = new GsonBuilder().registerTypeAdapter(Story.class, new MyStoryAdapter<Story>()).create();
-            return gson.toJson(story);
+            Gson gson = new GsonBuilder().registerTypeAdapter(StoryWEBDTO.class, new MyStoryAdapter()).create();
+            return gson.toJson(new StoryWEBDTO(story));
         }
     }
 
@@ -334,17 +334,16 @@ public class CopperServices {
     }
 
 
-    private static class MyStoryAdapter<T> extends TypeAdapter<T> {
-        public T read(JsonReader reader) throws IOException {
+    private static class MyStoryAdapter<T extends StoryWEBDTO> extends TypeAdapter<StoryWEBDTO> {
+        public StoryWEBDTO read(JsonReader reader) throws IOException {
             return null;
         }
 
-        public void write(JsonWriter writer, T obj) throws IOException {
-            if (obj == null) {
+        public void write(JsonWriter writer, StoryWEBDTO storyWebDTO) throws IOException {
+            if (storyWebDTO == null) {
                 writer.nullValue();
                 return;
             }
-            StoryWEBDTO storyWebDTO = (StoryWEBDTO) obj;
             Story story = storyWebDTO.getStory();
 
 //            writer.name("story");
