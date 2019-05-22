@@ -102,7 +102,7 @@ class UIWidgetRunnable extends UIWidget {
 			return eval(expression);
 		} catch(error) {
             console.log("Error", expression, error);
-            return "<span style='color:red' title='Invalid expression: " + expression + ": " + error + "'>&#x26A0;</span>";
+            return "<span style='color:red' title=\"Invalid expression: " + expression + ": " + error + "\">&#x26A0;</span>";
 		}
     }
 }

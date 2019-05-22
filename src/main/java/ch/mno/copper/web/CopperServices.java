@@ -166,7 +166,11 @@ public class CopperServices {
     @ApiOperation(value = "Retrieve values between date",
             notes = "")
     public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns, @QueryParam("intervalSeconds") long intervalSeconds) {
-        Gson gson = new Gson();
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Instant.class, new InstantAdapter());
+        Gson gson = builder.create();
+
+
         Instant from;
         if (dateFrom == null) {
             from = Instant.parse("2000-01-01T00:00:00.00Z");
@@ -400,4 +404,21 @@ public class CopperServices {
 
     }
 
+    private class InstantAdapter extends TypeAdapter {
+        @Override
+        public void write(JsonWriter jsonWriter, Object o) throws IOException {
+            if (o==null) {
+                jsonWriter.nullValue();
+            } else {
+                Instant i = (Instant)o;
+                String sdatetime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(i);
+                jsonWriter.value(sdatetime);
+            }
+        }
+
+        @Override
+        public Object read(JsonReader jsonReader) throws IOException {
+            throw new RuntimeException("InstantAdapter::read not yet Implemented.");
+        }
+    }
 }
