@@ -79,7 +79,7 @@ public class JdbcConnector implements AutoCloseable {
     }
 
     public static void main(String[] args) throws ConnectorException {
-        new JdbcConnector("jdbc:oracle:thin:@acv-ora-val-scan:1521:vrcentdx", "dsi_read", "x_read").query("select 1 from dual");
+        new JdbcConnector("jdbc:oracle:thin:@my-defcon:1521:myinstance", "auser", "apass").query("select 1 from dual");
     }
 
 }

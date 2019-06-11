@@ -29,8 +29,8 @@ public class Sandbox {
         List<Pair<String, String>> str = new ArrayList<>();
         str.add(new ImmutablePair<>("body", ""));
 
-        //List<String> ret = WebCollector.query("http://int-outils-jenkins-refent-ws.etat-de-vaud.ch/outils/jenkins-refent/job/ATEV-compile/api/json?tree=color", "gvd0jenkinsrefent", "aezaen7auw7ViethuuWi", str);
-        List<String> ret = WebCollector.query("http://int-outils-jenkins-refent-ws.etat-de-vaud.ch/outils/jenkins-refent/job/ATEV-compile/api/json?tree=color", "gvd0jenkinsrefent", "aezaen7auw7ViethuuWi", str);
+        //List<String> ret = WebCollector.query("http://someprefix-jenkins-myapp-ws.mydomain.ch/outils/jenkins-myapp/job/COPPER-compile/api/json?tree=color", "username", "apass", str);
+        List<String> ret = WebCollector.query("http://someprefix-jenkins-myapp-ws.mydomain.ch/outils/jenkins-myapp/job/COPPER-compile/api/json?tree=color", "username", "apass", str);
         System.out.println(ret.get(0));
     }
 
