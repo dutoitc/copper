@@ -5,6 +5,7 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.data.InstantValues;
 import ch.mno.copper.data.StoreValue;
 import ch.mno.copper.data.ValuesStore;
+import ch.mno.copper.helpers.GraphHelper;
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.Story;
@@ -15,25 +16,30 @@ import com.google.gson.stream.JsonWriter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import it.sauronsoftware.cron4j.Predictor;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.Plot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.time.*;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 // FIXME: check documentation for http://localhost:30400/swagger.json
@@ -141,18 +147,8 @@ public class CopperServices {
         builder.registerTypeAdapter(Instant.class, new InstantAdapter());
         Gson gson = builder.create();
 
-        Instant from;
-        if (dateFrom == null) {
-            from = Instant.parse("2000-01-01T00:00:00.00Z");
-        } else {
-            from = toInstant(dateFrom, true);
-        }
-        Instant to;
-        if (dateTo == null) {
-            to = Instant.now();
-        } else {
-            to = toInstant(dateTo, false);
-        }
+        Instant from = findInstant(dateFrom, Instant.parse("2000-01-01T00:00:00.00Z"), true);
+        Instant to = findInstant(dateTo, Instant.now(), false);
         if (maxValues==null) {
             maxValues = 100;
         }
@@ -175,18 +171,8 @@ public class CopperServices {
         Gson gson = builder.create();
 
 
-        Instant from;
-        if (dateFrom == null) {
-            from = Instant.parse("2000-01-01T00:00:00.00Z");
-        } else {
-            from = toInstant(dateFrom, true);
-        }
-        Instant to;
-        if (dateTo == null) {
-            to = Instant.now();
-        } else {
-            to = toInstant(dateTo, false);
-        }
+        Instant from = findInstant(dateFrom, Instant.parse("2000-01-01T00:00:00.00Z"), true);
+        Instant to = findInstant(dateTo, Instant.now(), false);
         if (maxValues==null) {
             maxValues = 100;
         }
@@ -316,6 +302,56 @@ public class CopperServices {
     public String getOverview() {
         Gson gson = new Gson();
         return gson.toJson(buildOverview());
+    }
+
+
+
+    @GET
+    @Path("values/query/png")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @ApiOperation(value = "Retrieve values between date",
+            notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of data")
+    public Response getValuesAsPNG(@QueryParam("from") String dateFrom,
+                                   @QueryParam("to") String dateTo,
+                                   @QueryParam("columns") String columns,
+                                   @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues,
+                                   @DefaultValue("600") @QueryParam("width") Integer width,
+                                   @DefaultValue("400") @QueryParam("height") Integer height) {
+        Instant from = findInstant(dateFrom, Instant.parse("2000-01-01T00:00:00.00Z"), true);
+        Instant to = findInstant(dateTo, Instant.now(), false);
+
+        try {
+            // Query
+            List<String> cols = Arrays.asList(columns.split(","));
+            List<StoreValue> storeValues = valuesStore.queryValues(from, to, cols, maxValues);
+
+            // Graph
+            JFreeChart chart = GraphHelper.createChart(storeValues, columns);
+
+
+            // Image
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = image.createGraphics();
+            g2.setRenderingHint(JFreeChart.KEY_SUPPRESS_SHADOW_GENERATION, true);
+            Rectangle r = new Rectangle(0, 0, width, height);
+            chart.draw(g2, r);
+            BufferedImage chartImage = chart.createBufferedImage(width, height, null);
+            // TODO: return values
+            byte[] png = ChartUtilities.encodeAsPNG(chartImage);
+            return Response.ok(new ByteArrayInputStream(png)).build();
+        } catch (RuntimeException|IOException e) {
+            return Response.serverError().entity("SERVER ERROR\n" + e.getMessage()).build();
+        }
+    }
+
+    private Instant findInstant(@QueryParam("from") String dateFrom, Instant defaultValue, boolean b) {
+        Instant from;
+        if (dateFrom == null) {
+            from = defaultValue;
+        } else {
+            from = toInstant(dateFrom, b);
+        }
+        return from;
     }
 
 
