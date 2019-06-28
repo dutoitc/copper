@@ -25,14 +25,14 @@ import java.util.List;
 // c.f. https://stackoverflow.com/questions/26556268/jfree-chart-scatter-plot-date-against-time
 public class GraphHelper {
 
-    public static JFreeChart createChart(List<StoreValue> values, String yLabel) {
+    public static JFreeChart createChart(List<StoreValue> values, String title, String yLabel) {
         XYDataset dataset = createDataset(values);
 
 
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart("Values",
                 "Time",                // data
-                "°C",                   // include legend
+                yLabel,                   // include legend
                 dataset,
                 true,
                 true,

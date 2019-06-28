@@ -314,6 +314,7 @@ public class CopperServices {
     public Response getValuesAsPNG(@QueryParam("from") String dateFrom,
                                    @QueryParam("to") String dateTo,
                                    @QueryParam("columns") String columns,
+                                   @QueryParam("ytitle") String yTitle,
                                    @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues,
                                    @DefaultValue("600") @QueryParam("width") Integer width,
                                    @DefaultValue("400") @QueryParam("height") Integer height) {
@@ -326,7 +327,7 @@ public class CopperServices {
             List<StoreValue> storeValues = valuesStore.queryValues(from, to, cols, maxValues);
 
             // Graph
-            JFreeChart chart = GraphHelper.createChart(storeValues, columns);
+            JFreeChart chart = GraphHelper.createChart(storeValues, columns, yTitle);
 
 
             // Image
