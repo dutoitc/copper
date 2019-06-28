@@ -136,7 +136,7 @@ public class CopperServices {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Retrieve values between date",
             notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of data")
-    public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns) {
+    public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns, @QueryParam("maxvalues") Integer maxValues) {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Instant.class, new InstantAdapter());
         Gson gson = builder.create();
@@ -153,9 +153,12 @@ public class CopperServices {
         } else {
             to = toInstant(dateTo, false);
         }
+        if (maxValues==null) {
+            maxValues = 100;
+        }
         try {
             List<String> cols = Arrays.asList(columns.split(","));
-            return Response.ok(gson.toJson(valuesStore.queryValues(from, to, cols, 100)), MediaType.APPLICATION_JSON).build();
+            return Response.ok(gson.toJson(valuesStore.queryValues(from, to, cols, maxValues)), MediaType.APPLICATION_JSON).build();
         } catch (RuntimeException e) {
             return Response.serverError().entity("SERVER ERROR\n" + e.getMessage()).build();
         }
@@ -166,7 +169,7 @@ public class CopperServices {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Retrieve values between date",
             notes = "")
-    public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns, @QueryParam("intervalSeconds") long intervalSeconds) {
+    public Response getValues(@QueryParam("from") String dateFrom, @QueryParam("to") String dateTo, @QueryParam("columns") String columns, @QueryParam("intervalSeconds") long intervalSeconds,@QueryParam("maxvalues") Integer maxValues) {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Instant.class, new InstantAdapter());
         Gson gson = builder.create();
@@ -184,9 +187,12 @@ public class CopperServices {
         } else {
             to = toInstant(dateTo, false);
         }
+        if (maxValues==null) {
+            maxValues = 100;
+        }
         try {
             List<String> cols = Arrays.asList(columns.split(","));
-            List<InstantValues> values = valuesStore.queryValues(from, to, intervalSeconds, cols, 100);
+            List<InstantValues> values = valuesStore.queryValues(from, to, intervalSeconds, cols, maxValues);
             return Response.ok(gson.toJson(values), MediaType.APPLICATION_JSON).build();
         } catch (RuntimeException e) {
             e.printStackTrace();
