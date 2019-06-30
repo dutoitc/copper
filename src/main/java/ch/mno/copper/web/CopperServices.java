@@ -121,6 +121,14 @@ public class CopperServices {
         return buildGson().toJson(valuesStore.getValues());
     }
 
+    @GET
+    @Path("values/alerts")
+    @ApiOperation(value="Find alerts on values volumetry", notes="Use this to find values with too much data")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getValuesAlerts() {
+        return valuesStore.getValuesAlerts();
+    }
+
 
     @GET
     @Path("values/query")

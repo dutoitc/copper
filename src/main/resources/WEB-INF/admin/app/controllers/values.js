@@ -17,6 +17,12 @@ angular.module('copperApp.values', ['ngRoute'])
                 $scope.values=response.data;
         });
 
+
+      $http.get('/ws/values/alerts')
+            .then(function(response) {
+                $scope.alerts=response.data;
+        });
+
         $scope.filter = function(object, field, filter) {
            if (!object) return {};
            if (!filter) return object;

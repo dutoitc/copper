@@ -140,6 +140,11 @@ public class DbValuesStore implements ValuesStore, AutoCloseable {
     }
 
     @Override
+    public String getValuesAlerts() {
+        return server.findAlerts();
+    }
+
+    @Override
     public void close() throws Exception {
         if (server!=null) {
             server.close();

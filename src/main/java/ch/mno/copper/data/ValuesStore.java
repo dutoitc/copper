@@ -35,4 +35,6 @@ public interface ValuesStore {
 
     @Deprecated // Use getValues()
     Map<String,String> getValuesMapString();
+
+    String getValuesAlerts();
 }

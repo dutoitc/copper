@@ -107,6 +107,11 @@ public class StoryTest {
             public Map<String, String> getValuesMapString() {
                 return null;
             }
+
+            @Override
+            public String getValuesAlerts() {
+                return "";
+            }
         };
         Assert.assertTrue(story.matchWhen(values, store));
         values.put("AAA", "0");

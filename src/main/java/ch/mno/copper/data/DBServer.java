@@ -371,6 +371,31 @@ public class DBServer implements AutoCloseable {
         return values;
     }
 
+    public String findAlerts() {
+        String sql="\n" +
+                "        select key, count(*) as nb\n" +
+                "        from valuestore\n" +
+                "        group by key\n" +
+                "        having count(*)>100\n" +
+                "        order by count(*) desc";
+
+        StringBuilder sb = new StringBuilder();
+        try (Connection con = cp.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    sb.append(rs.getString("key"));
+                    sb.append(':');
+                    sb.append(rs.getLong("nb"));
+                    sb.append('\n');
+                }
+                return sb.toString();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("An error occured while saving values", e);
+        }
+    }
+
     /**
      * Read keys updated between from(inclusive) ant to(exclusive)
      */
@@ -426,6 +451,7 @@ public class DBServer implements AutoCloseable {
         LOG.info("Server DB stopped");
         Thread.sleep(100);
     }
+
 
 //    public static void dumpForTests() {
 //        try (Connection con = cp.getConnection();
