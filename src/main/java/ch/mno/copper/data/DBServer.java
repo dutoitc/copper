@@ -1,5 +1,6 @@
 package ch.mno.copper.data;
 
+import org.h2.jdbc.JdbcSQLException;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.h2.tools.Server;
 import org.slf4j.Logger;
@@ -425,7 +426,12 @@ public class DBServer implements AutoCloseable {
         String value = rs.getString("value");
         Instant from = rs.getTimestamp("datefrom").toInstant();
         Instant to = rs.getTimestamp("dateto").toInstant();
-        Long nbValues = rs.getLong("nbValues");
+        Long nbValues = -1l;
+        try {
+            nbValues = rs.getLong("nbValues");
+        } catch (JdbcSQLException e) {
+            if (!e.getMessage().contains("Column \"nbValues\" not found")) throw e;
+        }
         return new StoreValue(idValueStore, dbKey, value, from, to, nbValues);
     }
 
