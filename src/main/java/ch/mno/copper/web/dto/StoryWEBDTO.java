@@ -1,4 +1,4 @@
-package ch.mno.copper.web;
+package ch.mno.copper.web.dto;
 
 import ch.mno.copper.stories.Story;
 import it.sauronsoftware.cron4j.Predictor;

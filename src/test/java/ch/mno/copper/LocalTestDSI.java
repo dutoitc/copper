@@ -146,7 +146,7 @@ public class LocalTestDSI {
     }
 
     public static String extractIDEWSV3_Valid(String xml) {
-        // Capture "organisation" outer balise, do not support prefixed namespace.
+        // Capture "organisation" outer balise, do not dto prefixed namespace.
         Matcher match = Pattern.compile("(?<xml2><organisation.*)<(.*?:)?rating", Pattern.DOTALL).matcher(xml);
         if (match.find()) {
             String xml2 = match.group("xml2");

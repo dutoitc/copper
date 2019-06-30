@@ -1,5 +1,6 @@
 package ch.mno.copper.web;
 
+import ch.mno.copper.web.filters.CORSFilter;
 import io.swagger.jaxrs.config.BeanConfig;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;

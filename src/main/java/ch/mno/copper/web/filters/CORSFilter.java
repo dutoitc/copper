@@ -1,4 +1,4 @@
-package ch.mno.copper.web;
+package ch.mno.copper.web.filters;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
