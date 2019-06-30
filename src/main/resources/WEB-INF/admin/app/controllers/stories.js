@@ -11,7 +11,18 @@ angular.module('copperApp.stories', ['ngRoute'])
 .controller('StoriesCtrl', ['$http', '$scope', function($http, $scope) {
     var scope = $scope;
     var self=this;
+    $scope.sortBy='story.name';
+    $scope.sortReverse=false;
 
+
+    $scope.triggerSort = function(value) {
+        if (value==$scope.sortBy) {
+            $scope.sortReverse = !$scope.sortReverse;
+        } else {
+            $scope.sortReverse = false;
+            $scope.sortBy = value;
+        }
+    }
 
     $scope.refreshStories = function() {
         $http.get('/ws/stories')

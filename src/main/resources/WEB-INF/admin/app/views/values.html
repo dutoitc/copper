@@ -5,24 +5,24 @@
     <label>Search: <input ng-model="searchText"></label>
     <table class="table-striped table-bordered" style="width: 100%; border: 1px outset silver">
         <thead>
-            <th style="text-align:right;padding: 5px">Key</th>
-            <th style="text-align:left; padding-left: 10px">Value</th>
-            <th style="text-align:center">Date from</th>
-            <th style="text-align:center">Date to</th>
-            <th style="text-align:center">Nb stored values</th>
+            <th style="text-align:right;padding: 5px"><a ng-click="triggerSort('k')">Key</a></th>
+            <th style="text-align:left; padding-left: 10px"><a ng-click="triggerSort('v.value')">Value</a></th>
+            <th style="text-align:center"><a ng-click="triggerSort('v.timestampFrom')">Date from</a></th>
+            <th style="text-align:center"><a ng-click="triggerSort('v.timestampTo')">Date to</a></th>
+            <th style="text-align:center"><a ng-click="triggerSort('v.nbValues')">Nb stored values</a></th>
             <th style="text-align:center">Actions</th>
         </thead>
         <tbody>
-            <tr ng-repeat="(k,v) in filter(values, 'key', searchText)">
-                <td style="text-align:right;padding: 5px;font-weight:bold"><a href="/#/history?key={{k}}">{{k}}</a></td>
-                <td style="text-align:left; padding-left: 10px">{{v.value}}</td>
-                <td style="text-align:center;width: 150px">{{v.timestampFrom | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
-                <td style="text-align:center;width: 150px">{{v.timestampTo | date : 'yyyy-MM-dd HH:mm:ss'}}
-                <td style="text-align:center">{{v.nbValues}}</td>
+            <tr ng-repeat="row in values | filter:searchText | orderBy:sortBy:sortReverse">
+                <td style="text-align:right;padding: 5px;font-weight:bold">{{row.key}}</td>
+                <td style="text-align:left; padding-left: 10px">{{row.value}}</td>
+                <td style="text-align:center;width: 150px">{{row.timestampFrom | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td style="text-align:center;width: 150px">{{row.timestampTo | date : 'yyyy-MM-dd HH:mm:ss'}}
+                <td style="text-align:center">{{row.nbValues}}</td>
                 <td>
-                    <a href="/ws/values/query/png?columns={{k}}" target="_blank">Graph (small)</a>
+                    <a href="/ws/values/query/png?columns={{row.key}}" target="_blank">Graph (small)</a>
                     /
-                    <a href="/ws/values/query/png?columns={{k}}&width=1280&height=960" target="_blank">Graph (big)</a>
+                    <a href="/ws/values/query/png?columns={{row.key}}&width=1280&height=960" target="_blank">Graph (big)</a>
                 </td>
             </tr>
         </tbody>
