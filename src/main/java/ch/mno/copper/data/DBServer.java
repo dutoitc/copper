@@ -358,7 +358,10 @@ public class DBServer implements AutoCloseable {
     public  List<StoreValue> readLatest() throws SQLException {
         List<StoreValue> values = new ArrayList<>();
         try (Connection con = cp.getConnection();
-             PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where dateto=?")) {
+             PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto,\n" +
+                     "(select count(*) from valuestore vs2 where vs2.key = vs.key) as nbValues\n" +
+                     "FROM valuestore vs\n" +
+                     "where dateto=?")) {
             stmt.setTimestamp(1, Timestamp.from(INSTANT_MAX));
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -422,7 +425,8 @@ public class DBServer implements AutoCloseable {
         String value = rs.getString("value");
         Instant from = rs.getTimestamp("datefrom").toInstant();
         Instant to = rs.getTimestamp("dateto").toInstant();
-        return new StoreValue(idValueStore, dbKey, value, from, to);
+        Long nbValues = rs.getLong("nbValues");
+        return new StoreValue(idValueStore, dbKey, value, from, to, nbValues);
     }
 
     private static InstantValue mapInstantValue(ResultSet rs) throws SQLException {

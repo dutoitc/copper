@@ -12,6 +12,7 @@ public class StoreValue {
     protected String value;
     protected Instant timestampFrom;
     protected Instant timestampTo;
+    protected Long nbValues;
 
     public String getValue() {
         return value;
@@ -33,12 +34,17 @@ public class StoreValue {
         return timestampTo;
     }
 
-    public StoreValue(long id, String key, String value, Instant timestampFrom, Instant timestampTo) {
+    public Long getNbValues() {
+        return nbValues;
+    }
+
+    public StoreValue(long id, String key, String value, Instant timestampFrom, Instant timestampTo, long nbValues) {
         this.id = id;
         this.key = key;
         this.value = value;
         this.timestampFrom = timestampFrom;
         this.timestampTo = timestampTo;
+        this.nbValues = nbValues;
     }
 
     @Override
@@ -48,6 +54,7 @@ public class StoreValue {
                 ", value='" + value + '\'' +
                 ", timestampFrom=" + timestampFrom +
                 ", timestampTo=" + timestampTo +
+                ", nbValues=" + nbValues +
                 '}';
     }
 }

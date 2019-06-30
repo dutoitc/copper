@@ -9,6 +9,7 @@
             <th style="text-align:left; padding-left: 10px">Value</th>
             <th style="text-align:center">Date from</th>
             <th style="text-align:center">Date to</th>
+            <th style="text-align:center">Nb stored values</th>
             <th style="text-align:center">Actions</th>
         </thead>
         <tbody>
@@ -16,7 +17,8 @@
                 <td style="text-align:right;padding: 5px;font-weight:bold"><a href="/#/history?key={{k}}">{{k}}</a></td>
                 <td style="text-align:left; padding-left: 10px">{{v.value}}</td>
                 <td style="text-align:center;width: 150px">{{v.timestampFrom | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
-                <td style="text-align:center;width: 150px">{{v.timestampTo | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td style="text-align:center;width: 150px">{{v.timestampTo | date : 'yyyy-MM-dd HH:mm:ss'}}
+                <td style="text-align:center">{{v.nbValues}}</td>
                 <td>
                     <a href="/ws/values/query/png?columns={{k}}" target="_blank">Graph (small)</a>
                     /
