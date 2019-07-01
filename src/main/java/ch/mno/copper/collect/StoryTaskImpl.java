@@ -1,6 +1,6 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.stories.Story;
+import ch.mno.copper.stories.data.Story;
 import it.sauronsoftware.cron4j.Predictor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

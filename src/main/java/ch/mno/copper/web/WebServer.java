@@ -33,19 +33,12 @@ public class WebServer implements Runnable, AutoCloseable {
     // http://www.eclipse.org/jetty/documentation/current/embedded-examples.html
     @Override
     public void run() {
-        ServletContextHandler rootHandler = buildRootHandler();
-
         server = new Server(PORT);
 
-        // Resources
-        ResourceHandler resourceHandler = buildResourcesContextHandler();
-
-        // externalweb/* mapped on /ext
-        ContextHandler extHandler = buildExtContextHandler();
-
         // Handlers
+        ServletContextHandler rootHandler = buildRootHandler();
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{resourceHandler, extHandler, rootHandler});//servletHandler});
+        handlers.setHandlers(new Handler[]{buildResourcesContextHandler(), buildExtContextHandler(), rootHandler});//servletHandler});
         server.setHandler(handlers);
 
 
@@ -57,6 +50,7 @@ public class WebServer implements Runnable, AutoCloseable {
                 CORSFilter.class.getCanonicalName()+","+
                 CopperServices.class.getCanonicalName());
 
+        // Swagger
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("1.0.2");
         beanConfig.setSchemes(new String[]{"http"});
@@ -99,6 +93,10 @@ public class WebServer implements Runnable, AutoCloseable {
         return rootHandler;
     }
 
+    /**
+     * Expose WEB-INF/* as resources
+     * @return
+     */
     private ResourceHandler buildResourcesContextHandler() {
         String webDir = WebServer.class.getClassLoader().getResource("WEB-INF").toExternalForm();
         ResourceHandler resourceHandler = new ResourceHandler();
@@ -109,6 +107,10 @@ public class WebServer implements Runnable, AutoCloseable {
         return resourceHandler;
     }
 
+    /**
+     * Expose folder externalweb as /ext
+     * @return
+     */
     private ContextHandler buildExtContextHandler() {
         String webDirExt = new File("externalweb").getAbsolutePath();
         ResourceHandler resourceHandlerExt = new ResourceHandler();

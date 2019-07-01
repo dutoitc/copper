@@ -1,25 +1,28 @@
-package ch.mno.copper.data;
+package ch.mno.copper.store.db;
 
 import ch.mno.copper.CopperMediator;
+import ch.mno.copper.store.StoreValue;
+import ch.mno.copper.store.ValuesStore;
+import ch.mno.copper.store.data.InstantValues;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by dutoitc on 19.09.2017.
  */
-public class DbValuesStore implements ValuesStore, AutoCloseable {
+public class DBValuesStore implements ValuesStore, AutoCloseable {
 
-    private static DbValuesStore instance;
+    private static DBValuesStore instance;
     private static DBServer server;
 
-    private DbValuesStore() {
+    private DBValuesStore() {
         try {
             int dbPort = Integer.parseInt(CopperMediator.getInstance().getProperty("dbPort", "0"));
             server = new DBServer(true, dbPort);
@@ -31,11 +34,11 @@ public class DbValuesStore implements ValuesStore, AutoCloseable {
     /**
      * Singleton factory
      */
-    public static DbValuesStore getInstance() {
+    public static DBValuesStore getInstance() {
         if (instance == null) {
-            synchronized (DbValuesStore.class) {
+            synchronized (DBValuesStore.class) {
                 if (instance == null) {
-                    instance = new DbValuesStore();
+                    instance = new DBValuesStore();
                 }
             }
         }
@@ -68,12 +71,13 @@ public class DbValuesStore implements ValuesStore, AutoCloseable {
     public String getValue(String key) {
         StoreValue storeValue = null;
         try {
+            System.out.println("DBG-" + (server==null));
             storeValue = server.readLatest(key);
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant value " + key + ": " + e.getMessage());
         }
         if (storeValue == null) {
-            return ""; // no data
+            return ""; // no store
         }
         return storeValue.getValue();
     }
@@ -81,10 +85,8 @@ public class DbValuesStore implements ValuesStore, AutoCloseable {
     @Override
     public Map<String, StoreValue> getValues() {
         try {
-            List<StoreValue> values = server.readLatest();
-            Map<String, StoreValue> map = new HashMap<>(values.size() * 4 / 3 + 1);
-            values.forEach(v -> map.put(v.getKey(), v));
-            return map;
+            return server.readLatest().stream()
+                    .collect(Collectors.toMap(x -> x.getKey(), x->x));
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
         }
@@ -130,10 +132,8 @@ public class DbValuesStore implements ValuesStore, AutoCloseable {
     @Override
     public Map<String, String> getValuesMapString() {
         try {
-            List<StoreValue> values = server.readLatest();
-            Map<String, String> map = new HashMap<>(values.size() * 4 / 3 + 1);
-            values.forEach(v -> map.put(v.getKey(), v.getValue()));
-            return map;
+            return server.readLatest().stream()
+                    .collect(Collectors.toMap(x -> x.getKey(), x->x.getValue()));
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
         }
@@ -150,7 +150,7 @@ public class DbValuesStore implements ValuesStore, AutoCloseable {
             server.close();
             server = null;
         }
-        DbValuesStore.instance = null;
+        DBValuesStore.instance = null;
     }
 
     public DBServer getServer4tests() {

@@ -1,6 +1,6 @@
 package ch.mno.copper.report;
 
-import ch.mno.copper.data.ValuesStore;
+import ch.mno.copper.store.ValuesStore;
 
 import java.util.Map;
 

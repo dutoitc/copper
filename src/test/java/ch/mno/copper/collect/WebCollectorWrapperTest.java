@@ -1,8 +1,8 @@
 package ch.mno.copper.collect;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.stories.Story;
-import ch.mno.copper.stories.StoryGrammar;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Assert;
 import org.junit.Before;

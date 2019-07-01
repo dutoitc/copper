@@ -1,7 +1,7 @@
 package ch.mno.copper;
 
 import ch.mno.copper.collect.StoryTask;
-import ch.mno.copper.stories.Story;
+import ch.mno.copper.stories.data.Story;
 
 import java.util.List;
 import java.util.Map;

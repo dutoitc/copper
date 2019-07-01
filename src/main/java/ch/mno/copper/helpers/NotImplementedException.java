@@ -1,4 +1,4 @@
-package ch.mno.copper.data;
+package ch.mno.copper.helpers;
 
 /**
  * Created by dutoitc on 10.01.2019.

@@ -2,8 +2,8 @@ package ch.mno.copper.report;
 
 import ch.mno.copper.CopperMediator;
 import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.data.ValuesStore;
-import ch.mno.copper.stories.StoryGrammar;
+import ch.mno.copper.store.ValuesStore;
+import ch.mno.copper.stories.data.StoryGrammar;
 
 import java.util.HashMap;
 import java.util.Map;

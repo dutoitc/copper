@@ -1,9 +1,9 @@
 package ch.mno.copper;
 
 import ch.mno.copper.collect.StoryTask;
-import ch.mno.copper.data.ValuesStore;
+import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.StoriesFacade;
-import ch.mno.copper.stories.Story;
+import ch.mno.copper.stories.data.Story;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A provider with data cache. At each call, it will load newer stories from disk, remove older from cache
+ * A provider with store cache. At each call, it will load newer stories from disk, remove older from cache
  */
 public class DataproviderImpl implements DataProvider {
 

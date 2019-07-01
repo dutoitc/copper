@@ -1,6 +1,6 @@
 package ch.mno.copper;
 
-import ch.mno.copper.data.DbValuesStore;
+import ch.mno.copper.store.db.DBValuesStore;
 import ch.mno.copper.web.WebServer;
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
@@ -19,7 +19,7 @@ public class WebServer4TestsTest {
 
     private static WebServer srv;
     private static Thread thread;
-    private static DbValuesStore valueStore;
+    private static DBValuesStore valueStore;
 
     @BeforeClass
     public static void init() throws InterruptedException {
@@ -27,7 +27,7 @@ public class WebServer4TestsTest {
         thread = new Thread(srv);
         thread.start();
         Thread.sleep(5000); // Wait for server start
-        valueStore = DbValuesStore.getInstance();
+        valueStore = DBValuesStore.getInstance();
         valueStore.put("aKey", "aValue");
     }
 
@@ -68,9 +68,10 @@ public class WebServer4TestsTest {
 
     @Test
     public void testHome() throws URISyntaxException, IOException {
-        String url="http://localhost:" + srv.getPort() + "/";
+        String url="http://localhost:" + srv.getPort() + "/dashboard";
         System.out.println("Trying " + url);
         String content = IOUtils.toString(new URI(url));
-        Assert.assertTrue(content.contains("<title>Copper</title>"));
+        System.out.println(content);
+        Assert.assertTrue(content.contains("<title>Copper UI</title>"));
     }
 }

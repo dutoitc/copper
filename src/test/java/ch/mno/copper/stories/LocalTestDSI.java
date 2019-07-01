@@ -1,8 +1,8 @@
 package ch.mno.copper.stories;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.helpers.SyntaxHelper;
-import jdk.nashorn.internal.runtime.regexp.joni.Syntax;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -12,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.regex.Pattern;
 
 /**
  * Created by xsicdt on 11/02/16.

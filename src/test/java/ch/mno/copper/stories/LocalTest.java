@@ -1,6 +1,8 @@
 package ch.mno.copper.stories;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.experimental.theories.DataPoints;

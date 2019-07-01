@@ -1,6 +1,6 @@
 package ch.mno.copper.helpers;
 
-import ch.mno.copper.stories.StoryGrammar;
+import ch.mno.copper.stories.data.StoryGrammar;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

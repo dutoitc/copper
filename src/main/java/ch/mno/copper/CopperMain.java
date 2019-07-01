@@ -1,5 +1,6 @@
 package ch.mno.copper;
 
+import ch.mno.copper.daemon.CopperDaemon;
 import ch.mno.copper.web.WebServer;
 
 /**

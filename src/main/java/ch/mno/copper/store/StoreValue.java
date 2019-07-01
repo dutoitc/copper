@@ -1,4 +1,4 @@
-package ch.mno.copper.data;
+package ch.mno.copper.store;
 
 import java.time.Instant;
 

@@ -1,6 +1,8 @@
-package ch.mno.copper.data;
+package ch.mno.copper.store.db;
 
-import org.h2.jdbc.JdbcSQLException;
+import ch.mno.copper.store.StoreValue;
+import ch.mno.copper.store.data.InstantValue;
+import ch.mno.copper.store.data.InstantValues;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.h2.tools.Server;
 import org.slf4j.Logger;
@@ -18,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Helper to readInstant-write data to a local H2 Database. The DB is automatically created if not existent.
+ * Helper to readInstant-write store to a local H2 Database. The DB is automatically created if not existent.
  * Time is from-inclusive, to-exclusive like String.substring.
  * Values once stored will never end but could change over time.
  * Only one value is allowed at a given instant.
@@ -42,6 +44,7 @@ public class DBServer implements AutoCloseable {
         LOG.info("Server DB started");
         cp = JdbcConnectionPool.create(DBURL, DBUSER, DBPASS);
         createDatabaseIfNeeded();
+        fixSnapshots();
 
         // launch web console
         if (withWebserver) {
@@ -73,13 +76,12 @@ public class DBServer implements AutoCloseable {
         }
     }
 
-
     private void createDatabaseIfNeeded() throws SQLException {
         LOG.info("Checking Database...");
         try (Connection con = cp.getConnection();
              Statement stmt = con.createStatement()) {
 
-            // Create table ?            
+            // Create table ?
             try(ResultSet rs = stmt.executeQuery("select count(*) as nb from information_schema.tables where table_name = 'VALUESTORE'")) {
                 rs.next();
                 if (rs.getInt("nb") == 0) {
@@ -103,6 +105,18 @@ public class DBServer implements AutoCloseable {
                 stmt.execute("create index if not exists IDX_VS_TO on valuestore(dateto)");
             }
             con.commit();
+        } catch (SQLException e2) {
+            e2.printStackTrace();
+            throw new RuntimeException("An error occured while initializing DB: " + e2.getMessage(), e2);
+        }
+        LOG.info("Database checked");
+    }
+
+
+    private void fixSnapshots() throws SQLException {
+        LOG.info("Checking Database...");
+        try (Connection con = cp.getConnection();
+             Statement stmt = con.createStatement()) {
 
             // Snapshot fixes
             List<String> keys = new ArrayList<>();
@@ -140,7 +154,7 @@ public class DBServer implements AutoCloseable {
 
 
     /**
-     * Delete all DB data
+     * Delete all DB store
      */
     public void clearAllData() {
         String sql = "delete from valuestore";
@@ -168,7 +182,7 @@ public class DBServer implements AutoCloseable {
     }
 
     /**
-     * Insert a value at given instant. Actuve value will be finished at the same instant. no data is inserted if current value is the same value
+     * Insert a value at given instant. Actuve value will be finished at the same instant. no store is inserted if current value is the same value
      */
     public void insert(String key, String value, Instant instant) throws SQLException {
         String sqlInsert = "INSERT INTO valuestore ( idvaluestore, key, value, datefrom, dateto) VALUES (?,?,?,?,?)";
@@ -176,7 +190,7 @@ public class DBServer implements AutoCloseable {
 
         try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sqlInsert)) {
-            // no data is inserted if current value is the same value
+            // no store is inserted if current value is the same value
             StoreValue previousValue = readLatest(key);
             if (previousValue != null) {
                 if (previousValue.getValue() == null) {
@@ -210,7 +224,7 @@ public class DBServer implements AutoCloseable {
 
                 try (PreparedStatement stmt2 = con.prepareStatement(sqlUpdatePrevious)) {
                     stmt2.setTimestamp(1, Timestamp.from(instant));
-                    stmt2.setLong(2, previousValue.id);
+                    stmt2.setLong(2, previousValue.getId());
                     stmt2.executeUpdate();
                 } catch (SQLException e) {
                     throw new RuntimeException("Cannot update previous value: " + e.getMessage(), e);
@@ -235,7 +249,7 @@ public class DBServer implements AutoCloseable {
             try (ResultSet rs = stmt.executeQuery()) {
                 values = new ArrayList<>();
                 while (rs.next()) {
-                    values.add(mapStoreValue(rs));
+                    values.add(StoreValueMapper.map(rs));
                 }
             }
 
@@ -285,8 +299,8 @@ public class DBServer implements AutoCloseable {
                 values = new ArrayList<>();
                 InstantValues last = null;
                 while (rs.next()) {
-                    InstantValue instantValue = mapInstantValue(rs);
-                    if (last == null || !instantValue.getTimestamp().equals(last.timestamp)) {
+                    InstantValue instantValue = InstantValueMapper.map(rs);
+                    if (last == null || !instantValue.getTimestamp().equals(last.getTimestamp())) {
                         last = new InstantValues();
                         last.setTimestamp(instantValue.getTimestamp());
                         values.add(last);
@@ -327,7 +341,7 @@ public class DBServer implements AutoCloseable {
             try (ResultSet rs = stmt.executeQuery()) {
                 values = new ArrayList<>();
                 while (rs.next()) {
-                    values.add(mapStoreValue(rs));
+                    values.add(StoreValueMapper.map(rs));
                 }
             }
             return values;
@@ -346,7 +360,7 @@ public class DBServer implements AutoCloseable {
             stmt.setTimestamp(2, Timestamp.from(INSTANT_MAX));
             try (ResultSet rs = stmt.executeQuery()) {
                 if (!rs.next()) return null;
-                return mapStoreValue(rs);
+                return StoreValueMapper.map(rs);
             }
         } catch (SQLException e) {
             throw new RuntimeException("An error occured while saving values", e);
@@ -366,7 +380,7 @@ public class DBServer implements AutoCloseable {
             stmt.setTimestamp(1, Timestamp.from(INSTANT_MAX));
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    values.add(mapStoreValue(rs));
+                    values.add(StoreValueMapper.map(rs));
                 }
             }
         } catch (SQLException e) {
@@ -406,7 +420,7 @@ public class DBServer implements AutoCloseable {
     public  Collection<String> readUpdatedKeys(Instant from, Instant to) {
         List<String> values = new ArrayList<>();
         try (Connection con = cp.getConnection();
-             PreparedStatement stmt = con.prepareStatement("SELECT distinct key FROM valuestore where datefrom>=? and datefrom<?")) {
+            PreparedStatement stmt = con.prepareStatement("SELECT distinct key FROM valuestore where datefrom>=? and datefrom<?")) {
             stmt.setTimestamp(1, Timestamp.from(from));
             stmt.setTimestamp(2, Timestamp.from(to));
             try (ResultSet rs = stmt.executeQuery()) {
@@ -415,42 +429,12 @@ public class DBServer implements AutoCloseable {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while saving values", e);
+            throw new RuntimeException("An error occured while reading values", e);
         }
         return values;
     }
 
-    private  StoreValue mapStoreValue(ResultSet rs) throws SQLException {
-        long idValueStore = rs.getLong("idValueStore");
-        String dbKey = rs.getString("key");
-        String value = rs.getString("value");
-        Instant from = rs.getTimestamp("datefrom").toInstant();
-        Instant to = rs.getTimestamp("dateto").toInstant();
-        Long nbValues = -1l;
-        try {
-            nbValues = rs.getLong("nbValues");
-        } catch (JdbcSQLException e) {
-            if (!e.getMessage().contains("Column \"nbValues\" not found")) throw e;
-        }
-        return new StoreValue(idValueStore, dbKey, value, from, to, nbValues);
-    }
 
-    private static InstantValue mapInstantValue(ResultSet rs) throws SQLException {
-        long idValueStore = rs.getLong("idValueStore");
-        if (idValueStore == 0) idValueStore = -1; // TODO: check if id is null, not zero
-        String dbKey = rs.getString("c1");
-        String value = rs.getString("value");
-        if (value == null) value = "";
-        Instant ts = rs.getTimestamp("ts").toInstant();
-        return new InstantValue(idValueStore, dbKey, value, ts);
-    }
-
-    public static void main(String[] args) {
-        try (DBServer dbServer = new DBServer(true, 0)) {
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void close() throws Exception {
@@ -461,26 +445,5 @@ public class DBServer implements AutoCloseable {
         LOG.info("Server DB stopped");
         Thread.sleep(100);
     }
-
-
-//    public static void dumpForTests() {
-//        try (Connection con = cp.getConnection();
-//             PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore order by key, datefrom"))
-//        {
-//            ResultSet rs = stmt.executeQuery();
-//            System.out.println("-----------------------------------");
-//            System.out.println("dumpForTests");
-//            while (rs.next()) {
-//                long idValueStore = rs.getLong("idValueStore");
-//                String dbKey = rs.getString("key");
-//                String value = rs.getString("value");
-//                Instant from = rs.getTimestamp("datefrom").toInstant();
-//                Instant to = rs.getTimestamp("dateto").toInstant();
-//                System.out.println(idValueStore+";"+dbKey+";"+value+";"+from+";"+to);
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException("An error occured while saving values", e);
-//        }
-//    }
 
 }

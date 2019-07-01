@@ -1,5 +1,7 @@
-package ch.mno.copper.data;
+package ch.mno.copper.store.db;
 
+import ch.mno.copper.store.StoreValue;
+import ch.mno.copper.store.db.DBServer;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Assert;

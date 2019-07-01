@@ -1,4 +1,6 @@
-package ch.mno.copper.data;
+package ch.mno.copper.store;
+
+import ch.mno.copper.store.data.InstantValues;
 
 import java.io.IOException;
 import java.time.Instant;

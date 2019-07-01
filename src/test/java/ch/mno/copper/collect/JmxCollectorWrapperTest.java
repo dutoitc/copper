@@ -1,14 +1,12 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.stories.Story;
-import ch.mno.copper.stories.StoryGrammar;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
-import java.util.Map;
 
 /**
  * Created by xsicdt on 29/02/16.

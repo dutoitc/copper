@@ -1,9 +1,9 @@
 package ch.mno.copper.collect;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.data.NotImplementedException;
+import ch.mno.copper.helpers.NotImplementedException;
 import ch.mno.copper.helpers.SyntaxHelper;
-import ch.mno.copper.stories.StoryGrammar;
+import ch.mno.copper.stories.data.StoryGrammar;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 

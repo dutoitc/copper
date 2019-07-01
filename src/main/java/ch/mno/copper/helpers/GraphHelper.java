@@ -1,6 +1,6 @@
 package ch.mno.copper.helpers;
 
-import ch.mno.copper.data.StoreValue;
+import ch.mno.copper.store.StoreValue;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -31,7 +31,7 @@ public class GraphHelper {
 
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart("Values",
-                "Time",                // data
+                "Time",                // store
                 yLabel,                   // include legend
                 dataset,
                 true,

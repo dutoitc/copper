@@ -1,7 +1,8 @@
 package ch.mno.copper;
 
-import ch.mno.copper.data.DbValuesStore;
-import ch.mno.copper.data.ValuesStore;
+import ch.mno.copper.daemon.CopperDaemon;
+import ch.mno.copper.store.db.DBValuesStore;
+import ch.mno.copper.store.ValuesStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class CopperMediator {
         }
     }
 
-    public void setValuesStore(DbValuesStore valuesStore) {
+    public void setValuesStore(DBValuesStore valuesStore) {
         this.valuesStore = valuesStore;
     }
 
@@ -49,7 +50,7 @@ public class CopperMediator {
             synchronized (CopperMediator.class) {
                 if (instance==null) {
                     instance = new CopperMediator();
-                    instance.setValuesStore(DbValuesStore.getInstance());
+                    instance.setValuesStore(DBValuesStore.getInstance());
                 }
             }
         }

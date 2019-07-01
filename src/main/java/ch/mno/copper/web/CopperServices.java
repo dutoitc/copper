@@ -2,14 +2,14 @@ package ch.mno.copper.web;
 
 import ch.mno.copper.CopperMediator;
 import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.data.InstantValues;
-import ch.mno.copper.data.StoreValue;
-import ch.mno.copper.data.ValuesStore;
+import ch.mno.copper.store.data.InstantValues;
+import ch.mno.copper.store.StoreValue;
+import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.helpers.GraphHelper;
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.stories.StoriesFacade;
-import ch.mno.copper.stories.Story;
-import ch.mno.copper.stories.StoryValidationResult;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryValidationResult;
 import ch.mno.copper.web.adapters.JsonInstantAdapter;
 import ch.mno.copper.web.adapters.JsonStoryAdapter;
 import ch.mno.copper.web.dto.OverviewDTO;
@@ -123,7 +123,7 @@ public class CopperServices {
 
     @GET
     @Path("values/alerts")
-    @ApiOperation(value="Find alerts on values volumetry", notes="Use this to find values with too much data")
+    @ApiOperation(value="Find alerts on values volumetry", notes="Use this to find values with too much store")
     @Produces(MediaType.TEXT_PLAIN)
     public String getValuesAlerts() {
         return valuesStore.getValuesAlerts();
@@ -134,7 +134,7 @@ public class CopperServices {
     @Path("values/query")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Retrieve values between date",
-            notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of data")
+            notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
     public Response getValues(@QueryParam("from") String dateFrom,
                               @QueryParam("to") String dateTo,
                               @QueryParam("columns") String columns,
@@ -271,7 +271,7 @@ public class CopperServices {
     @Path("values/query/png")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @ApiOperation(value = "Retrieve values between date",
-            notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of data")
+            notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
     public Response getValuesAsPNG(@QueryParam("from") String dateFrom,
                                    @QueryParam("to") String dateTo,
                                    @QueryParam("columns") String columns,
@@ -306,7 +306,7 @@ public class CopperServices {
         OverviewDTO overview = new OverviewDTO();
         List<Story> stories = StoriesFacade.getInstance().getStories(true);
         overview.overviewStories = new ArrayList<>(stories.size());
-        stories.stream().forEach(s -> overview.overviewStories.add(new OverviewStoryDTO(s)));
+        stories.forEach(s -> overview.overviewStories.add(new OverviewStoryDTO(s)));
         return overview;
     }
 

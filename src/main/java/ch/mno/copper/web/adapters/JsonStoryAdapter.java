@@ -1,6 +1,6 @@
 package ch.mno.copper.web.adapters;
 
-import ch.mno.copper.stories.Story;
+import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.web.dto.StoryWEBDTO;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

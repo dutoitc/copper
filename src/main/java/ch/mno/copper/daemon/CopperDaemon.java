@@ -1,20 +1,15 @@
-package ch.mno.copper;
+package ch.mno.copper.daemon;
 
+import ch.mno.copper.CopperMediator;
+import ch.mno.copper.DataProvider;
 import ch.mno.copper.collect.StoryTask;
-import ch.mno.copper.data.ValuesStore;
+import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.process.AbstractProcessor;
-import ch.mno.copper.stories.Story;
+import ch.mno.copper.stories.data.Story;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.MBeanServer;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.net.MalformedURLException;
-import java.rmi.RemoteException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -40,14 +35,13 @@ public class CopperDaemon implements Runnable {
     private boolean shouldRun = true;
     private List<String> storiesToRun = new ArrayList<>();
     private LocalDateTime lastQueryTime = LocalDateTime.MIN;
-    private int jmxPort;
+    private final JMXConnector jmxConnector;
 
     /**
      * Manual run by the web
      */
 
     private ExecutorService executorService;
-    private JMXConnectorServer jmxConnectorServer;
 
     private CopperDaemon(DataProvider dataProvider) {
         executorService = Executors.newFixedThreadPool(N_THREADS);
@@ -55,7 +49,7 @@ public class CopperDaemon implements Runnable {
         this.dataProvider = dataProvider;
 
         String jmxPort = CopperMediator.getInstance().getProperty("jmxPort", "30409");
-        this.jmxPort = Integer.parseInt(jmxPort);
+        jmxConnector = new JMXConnector(jmxPort);
     }
 
     public static CopperDaemon runWith(DataProvider dataProvider) {
@@ -74,37 +68,14 @@ public class CopperDaemon implements Runnable {
         for (Story story : stories) {
             // Run story ?
             StoryTask task = dataProvider.getStoryTask(story);
-            if (!storiesToRun.contains(story.getName()) && (task == null || !task.shouldRun())) continue;
-            storiesToRun.remove(story.getName());
-
-            executorService.submit(() -> {
-                // Run CopperTask with exception catch, next run computation and time logging.
-                long t0 = System.currentTimeMillis();
-                String taskName = task.getTaskId() + "[" + task.getTitle() + "]";
-                task.markAsRunning();
-                try {
-                    LOG.info("Running task " + task.getTaskId());
-                    task.getRunnable().run();
-                } catch (NullPointerException e) {
-                    LOG.error("Task {} execution error: {}", taskName, e.getMessage());
-                    LOG.error("Error NPE ", e.getMessage());
-                    e.printStackTrace();
-                    LOG.error("Error NPE ", e.getCause().getMessage());
-                    for (StackTraceElement s: e.getStackTrace()) {
-                        LOG.error("  " + s.getClass() + "."+s.getMethodName()+":"+s.getLineNumber());
-                    }
-                } catch (Exception e) {
-                    LOG.error("Task {} execution error: {}", taskName, e.getMessage());
-                    LOG.error("Error", e);
-                } finally {
-                    task.markAsRun();
-                }
-                LOG.info("Task {} ended in {}s.", taskName, (System.currentTimeMillis() - t0) /1000);
-            });
+            if (storiesToRun.contains(story.getName()) || (task != null && task.shouldRun())) {
+                storiesToRun.remove(story.getName());
+                executorService.submit(new StoryTaskRunnable(task));
+            }
         }
 
         // Processors
-        LocalDateTime queryTime = LocalDateTime.now(); // Keep time, so that next run will have data between query time assignation and valueStore readInstant time
+        LocalDateTime queryTime = LocalDateTime.now(); // Keep time, so that next run will have store between query time assignation and valueStore readInstant time
         Collection<String> changedValues = valuesStore.queryValues(lastQueryTime.toInstant(ZoneOffset.UTC), Instant.MAX);
         lastQueryTime = queryTime;
         processors.forEach(p -> {
@@ -121,7 +92,7 @@ public class CopperDaemon implements Runnable {
         LOG.info("Copper daemon has started.");
 
         // Start JMX
-        startJMX();
+        jmxConnector.startJMX();
 
         while (shouldRun) {
             LOG.trace("Daemon run");
@@ -133,7 +104,6 @@ public class CopperDaemon implements Runnable {
             } catch (IOException e) {
                 throw new RuntimeException("Cannot save to valuesStore");
             }
-
 
             // Wait for some time
             LOG.trace("Daemon sleep");
@@ -147,28 +117,11 @@ public class CopperDaemon implements Runnable {
     }
 
 
-    private void startJMX() {
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        try {
-            java.rmi.registry.LocateRegistry.createRegistry(jmxPort);
-            JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + jmxPort + "/server");
-            jmxConnectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
-            jmxConnectorServer.start();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     public void stop() {
         shouldRun = false;
-        try {
-            jmxConnectorServer.stop();
-        } catch (IOException e) {
-        }
+        jmxConnector.close();
     }
 
     public void runStory(String storyName) {

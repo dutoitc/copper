@@ -3,6 +3,8 @@ package ch.mno.copper.stories;
 import ch.mno.copper.collect.JdbcCollectorWrapper;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxHelper;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -235,13 +237,13 @@ public class StoryGrammarTest {
     public void testCSV2() {
 //        String txt="RUN ON CRON 0 * * * *\n" +
 //                "GIVEN STORED VALUES\n" +
-//                "THEN REPORT BY CSV to \"data.csv\"\n" +
+//                "THEN REPORT BY CSV to \"store.csv\"\n" +
 //                "     WITH headers=\"h1\"\n" +
 //                "     WITH line=\"v1\"\n";
 
         String txt = "RUN ON CRON 0 * * * *\n" +
                 "GIVEN STORED VALUES\n" +
-                "THEN REPORT BY CSV to \"RCFACE-data.csv\"\n" +
+                "THEN REPORT BY CSV to \"RCFACE-store.csv\"\n" +
                 "     WITH header=\"DATETIME;RCFACE_PR_DB_CH_AK;RCFACE_PR_DB_UID_NOT_FOUND;RCFACE_PR_DB_NOINFO;RCFACE_PR_DB_DOC;RCFACE_PR_DB_IDERR019;RCFACE_PR_DB_ERRORS;RCFACE_IN_STG_NOUVEAU;RCFACE_IN_STG_EN_COURS;RCFACE_IN_MST_EN_ERREUR;RCFACE_IN_MST_TRAITEE;RCFACE_IN_PUBLISHED_1;RCFACE_IN_PUBLISHED_2;RCFACE_VA_STG_NOUVEAU;RCFACE_VA_STG_EN_COURS;RCFACE_VA_MST_EN_ERREUR;RCFACE_VA_MST_TRAITEE;RCFACE_VA_PUBLISHED_1;RCFACE_VA_PUBLISHED_2;RCFACE_PP_STG_NOUVEAU;RCFACE_PP_STG_EN_COURS;RCFACE_PP_MST_EN_ERREUR;RCFACE_PP_MST_TRAITEE;RCFACE_PP_PUBLISHED_1;RCFACE_PP_PUBLISHED_2;RCFACE_PR_STG_NOUVEAU;RCFACE_PR_STG_EN_COURS;RCFACE_PR_MST_EN_ERREUR;RCFACE_PR_MST_TRAITEE;RCFACE_PR_PUBLISHED_1;RCFACE_PR_PUBLISHED_2\"\n" +
 //                "     WITH line=\"{{NOW_dd.MM.yyyy_HH:mm}},{{RCFACE_PR_DB_CH_AK}};{{RCFACE_PR_DB_UID_NOT_FOUND}};{{RCFACE_PR_DB_NOINFO}};{{RCFACE_PR_DB_DOC}};{{RCFACE_PR_DB_IDERR019}};{{RCFACE_PR_DB_ERRORS}};{{RCFACE_IN_STG_NOUVEAU}};{{RCFACE_IN_STG_EN_COURS}};{{RCFACE_IN_MST_EN_ERREUR}};{{RCFACE_IN_MST_TRAITEE}};{{RCFACE_IN_PUBLISHED_1}};{{RCFACE_IN_PUBLISHED_2}};{{RCFACE_VA_STG_NOUVEAU}};{{RCFACE_VA_STG_EN_COURS}};{{RCFACE_VA_MST_EN_ERREUR}};{{RCFACE_VA_MST_TRAITEE}};{{RCFACE_VA_PUBLISHED_1}};{{RCFACE_VA_PUBLISHED_2}};{{RCFACE_PP_STG_NOUVEAU}};{{RCFACE_PP_STG_EN_COURS}};{{RCFACE_PP_MST_EN_ERREUR}};{{RCFACE_PP_MST_TRAITEE}};{{RCFACE_PP_PUBLISHED_1}};{{RCFACE_PP_PUBLISHED_2}};{{RCFACE_PR_STG_NOUVEAU}};{{RCFACE_PR_STG_EN_COURS}};{{RCFACE_PR_MST_EN_ERREUR}};{{RCFACE_PR_MST_TRAITEE}};{{RCFACE_PR_PUBLISHED_1}};{{RCFACE_PR_PUBLISHED_2}}\"\n";
 //                        "     WITH headers=\"h1\"\n" +

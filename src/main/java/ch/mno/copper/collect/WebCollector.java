@@ -95,7 +95,7 @@ public class WebCollector {
                 if (matcher.find()) {
                     results.add(matcher.group("capture"));
                 } else {
-                    //System.out.println("Not found " + key.substring((7)) + " in " + data.getData());
+                    //System.out.println("Not found " + key.substring((7)) + " in " + store.getData());
                     results.add("?");
                 }
             } else {

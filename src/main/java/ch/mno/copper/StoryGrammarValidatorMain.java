@@ -2,8 +2,8 @@ package ch.mno.copper;
 
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.helpers.SyntaxHelper;
-import ch.mno.copper.stories.Story;
-import ch.mno.copper.stories.StoryGrammar;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;

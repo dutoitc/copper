@@ -1,5 +1,7 @@
-package ch.mno.copper.data;
+package ch.mno.copper.store.db;
 
+import ch.mno.copper.store.db.DBServer;
+import ch.mno.copper.store.db.DBValuesStore;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,12 +22,12 @@ public class DbValueStoreTest {
     Instant i8 = Instant.parse("2015-10-21T07:28:03.00Z");
     Instant i9 = Instant.parse("2045-10-21T07:28:00.00Z");
 
-    private DbValuesStore store;
+    private DBValuesStore store;
     
     @Before
     public void init() throws SQLException {
         DBServer.DBURL= "jdbc:h2:./copperdbtst";
-        store =DbValuesStore.getInstance();
+        store = DBValuesStore.getInstance();
         store.clearAllData();
         store.put("key1", "value10", i5);
         store.put("key2", "value20", i5);

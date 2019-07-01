@@ -1,14 +1,8 @@
 package ch.mno.copper;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.report.MailReporter;
-import ch.mno.copper.report.MailReporterWrapper;
-import ch.mno.copper.stories.Story;
-import ch.mno.copper.stories.StoryGrammar;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

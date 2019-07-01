@@ -1,7 +1,7 @@
 package ch.mno.copper.report;
 
-import ch.mno.copper.stories.Story;
-import ch.mno.copper.stories.StoryGrammar;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
