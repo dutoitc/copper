@@ -30,8 +30,6 @@ $(document).keypress(function( event ) {
 });
 
 
-
-
 // Upload file by simulating a click on <input type='file'> and capturing file
 uploadFile = function(callback) {
     document.getElementById('upload').addEventListener('change', 
@@ -57,9 +55,6 @@ downloadFile = function(mime, encoding, body, filename) {
     });
     $("#download").get(0).click();
 }
-
-
-
 
 
 setInterval(function() {

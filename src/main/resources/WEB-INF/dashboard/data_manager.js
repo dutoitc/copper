@@ -7,6 +7,10 @@ class DataManager {
         this.copperValues={};
         this.editable = false;
         this.skipRefresh = false;
+
+        // Load from disk
+        var json = localStorage.getItem("copperJson");
+        if (json!=null && confirm("Use last dashboard ?")) this.importJSON(JSON.parse(json));
     }
 
     addWidget(x, y) {
@@ -49,28 +53,36 @@ class DataManager {
                     //content = content.substr(content.indexOf(",")+1);
                     if (content==null) return;
                     json = JSON.parse(content);
-                    dataManager.import(json);
+                    dataManager.importJSON(json);
+
+                    // Save for later use
+                    localStorage.setItem("copperJson", JSON.stringify(json));
+                    console.log("Setting copperJson",json);
                 } catch (e) {
                     alert("Erreur: " + e);
                 }
             });
             return;
         }
+    }
 
+    importJSON(json) {
         // Import
         this.widgets=json["widgets"];
         this.style=json["css"];
         this.script=json["script"];
         if (this.style==null) this.style=[];
         if (this.script==null) this.script=[];
-        this.refreshUI();
+        this.editable=false;
+        this.handleMessage("refresh");
     }
 
     handleMessage(msg) {
         var spl = msg.split("/");
+        var verb = spl[0];
 
         // Time and reschedule
-        if (spl[0]=="updateTime") {
+        if (verb=="updateTime") {
             var now = new Date();
             var stime=now.getHours() + ":" + (now.getMinutes()<10?"0":"") + now.getMinutes() + ":" + (now.getSeconds()<10?"0":"") + now.getSeconds() ;
             $("#"+spl[1]).text(stime);
@@ -78,7 +90,7 @@ class DataManager {
         }
 
         // Date and reschedule
-        if (spl[0]=="updateDate") {
+        if (verb=="updateDate") {
             var now = new Date();
             var sdate=(now.getDate()<10?"0":"") + now.getDate() + "." + (now.getMonth()<9?"0":"") + (now.getMonth()+1) + "." + now.getFullYear();
             $("#"+spl[1]).text(sdate);
@@ -86,7 +98,7 @@ class DataManager {
         }
 
         // TODO: Websocket
-        if (spl[0]=="refresh") {
+        if (verb=="refresh") {
             if (this.skipRefresh) return;
             $.ajax({
                 url: "/ws/values"
