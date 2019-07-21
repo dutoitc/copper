@@ -15,12 +15,13 @@ import java.util.Set;
  */
 public class DataproviderImpl implements DataProvider {
 
-    StoriesFacade storiesFacade = StoriesFacade.getInstance();
+    StoriesFacade storiesFacade;
     private ValuesStore valuesStore;
     private Map<String, StoryTask> cachedStoryTasks = new HashMap<>();
 
-    public DataproviderImpl() {
-        this.valuesStore = CopperMediator.getInstance().getValuesStore();
+    public DataproviderImpl(StoriesFacade storiesFacade, ValuesStore valuesStore) {
+        this.storiesFacade = storiesFacade;
+        this.valuesStore = valuesStore;
         refreshStoryTasks();
     }
 

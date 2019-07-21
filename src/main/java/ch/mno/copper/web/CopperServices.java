@@ -7,7 +7,7 @@ import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.helpers.GraphHelper;
 import ch.mno.copper.helpers.SyntaxException;
-import ch.mno.copper.stories.StoriesFacade;
+import ch.mno.copper.stories.StoriesFacadeImpl;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryValidationResult;
 import ch.mno.copper.web.adapters.JsonInstantAdapter;
@@ -80,7 +80,7 @@ public class CopperServices {
     @ApiOperation(value = "Validation of a posted story",
             notes = "Post a story to this service, and validate it without saving it")
     public StoryValidationResult postStory(String story) {
-        return StoriesFacade.getInstance().validate(story);
+        return StoriesFacadeImpl.getInstance().validate(story);
     }
 
 
@@ -91,7 +91,7 @@ public class CopperServices {
     @ApiOperation(value = "Method to create a new story",
             notes = "Use this to store a story. If originalStoryName='new', a new story is saved and 'Ok' is returned. otherwise the story will be updated by storyName (originalStoryName)")
     public String postStory(@PathParam("storyName") String storyName, StoryPostDTO post) throws IOException, ConnectorException {
-        StoriesFacade sf = StoriesFacade.getInstance();
+        StoriesFacadeImpl sf = StoriesFacadeImpl.getInstance();
 
         // Create
         if (post.isNew()) {
@@ -184,7 +184,7 @@ public class CopperServices {
     public String getStories() {
         Gson gson = new GsonBuilder().registerTypeAdapter(StoryWEBDTO.class, new JsonStoryAdapter<>()).create();
 
-        List<StoryWEBDTO> stories = StoriesFacade.getInstance().getStories(true).stream()
+        List<StoryWEBDTO> stories = StoriesFacadeImpl.getInstance().getStories(true).stream()
                 .map(s -> new StoryWEBDTO(s))
                 .collect(Collectors.toList());
         return gson.toJson(stories);
@@ -207,7 +207,7 @@ public class CopperServices {
     @ApiOperation(value = "Delete story by name",
             notes = "")
     public String getStoryDelete(@PathParam("storyName") String storyName) {
-        StoriesFacade.getInstance().deleteStory(storyName);
+        StoriesFacadeImpl.getInstance().deleteStory(storyName);
         return "Story " + storyName + " deleted.";
     }
 
@@ -217,7 +217,7 @@ public class CopperServices {
     @ApiOperation(value = "Retrieve story by name",
             notes = "")
     public String getStory(@PathParam("storyName") String storyName) {
-        Story story = StoriesFacade.getInstance().getStoryByName(storyName);
+        Story story = StoriesFacadeImpl.getInstance().getStoryByName(storyName);
         if (story == null) {
             throw new RuntimeException("Story not found");
         } else {
@@ -304,7 +304,7 @@ public class CopperServices {
 
     private OverviewDTO buildOverview() {
         OverviewDTO overview = new OverviewDTO();
-        List<Story> stories = StoriesFacade.getInstance().getStories(true);
+        List<Story> stories = StoriesFacadeImpl.getInstance().getStories(true);
         overview.overviewStories = new ArrayList<>(stories.size());
         stories.forEach(s -> overview.overviewStories.add(new OverviewStoryDTO(s)));
         return overview;

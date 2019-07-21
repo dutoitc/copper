@@ -1,5 +1,7 @@
 package ch.mno.copper.store;
 
+import ch.mno.copper.store.data.InstantValue;
+
 import java.time.Instant;
 
 /**
@@ -13,6 +15,15 @@ public class StoreValue {
     protected Instant timestampFrom;
     protected Instant timestampTo;
     protected Long nbValues;
+
+    public StoreValue(long id, String key, String value, Instant timestampFrom, Instant timestampTo, long nbValues) {
+        this.id = id;
+        this.key = key;
+        this.value = value;
+        this.timestampFrom = timestampFrom;
+        this.timestampTo = timestampTo;
+        this.nbValues = nbValues;
+    }
 
     public String getValue() {
         return value;
@@ -38,13 +49,8 @@ public class StoreValue {
         return nbValues;
     }
 
-    public StoreValue(long id, String key, String value, Instant timestampFrom, Instant timestampTo, long nbValues) {
-        this.id = id;
-        this.key = key;
-        this.value = value;
-        this.timestampFrom = timestampFrom;
-        this.timestampTo = timestampTo;
-        this.nbValues = nbValues;
+    public InstantValue toInstantValue() {
+        return new InstantValue(id, key, value, timestampFrom);
     }
 
     @Override

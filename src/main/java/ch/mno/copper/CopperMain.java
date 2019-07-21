@@ -1,6 +1,7 @@
 package ch.mno.copper;
 
 import ch.mno.copper.daemon.CopperDaemon;
+import ch.mno.copper.stories.StoriesFacadeImpl;
 import ch.mno.copper.web.WebServer;
 
 /**
@@ -21,7 +22,7 @@ public class CopperMain {
         Thread thread = new Thread(webServer);
         thread.start();
 
-        CopperDaemon daemon = CopperDaemon.runWith(new DataproviderImpl());
+        CopperDaemon daemon = CopperDaemon.runWith(new DataproviderImpl(StoriesFacadeImpl.getInstance(), CopperMediator.getInstance().getValuesStore()));
         while (1 < 2) { // Main loop
             try {
                 Thread.sleep(1000);

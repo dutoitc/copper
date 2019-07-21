@@ -24,6 +24,11 @@ public class CopperMediator {
     private Properties properties;
 
     private CopperMediator()  {
+        loadProperties();
+    }
+
+    /** Load copper.properties */
+    private void loadProperties() {
         try {
             properties = new Properties();
 
@@ -39,6 +44,25 @@ public class CopperMediator {
         }catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String getProperty(String name) {
+        String value = properties.getProperty(name);
+        if (value==null) throw new RuntimeException("Missing property: " + name);
+        return value;
+    }
+
+    public String getProperty(String name, String defaultValue) {
+        String value = properties.getProperty(name);
+        if (value==null) {
+            LOG.info("Missing property " + name + ", using default value " + defaultValue);
+            return defaultValue;
+        }
+        return value;
+    }
+
+    public ValuesStore getValuesStore() {
+        return valuesStore;
     }
 
     public void setValuesStore(DBValuesStore valuesStore) {
@@ -57,10 +81,6 @@ public class CopperMediator {
         return instance;
     }
 
-    public ValuesStore getValuesStore() {
-        return valuesStore;
-    }
-
     public void run(String storyName) {
         daemon.runStory(storyName);
     }
@@ -69,18 +89,4 @@ public class CopperMediator {
         this.daemon = daemon;
     }
 
-    public String getProperty(String name) {
-        String value = properties.getProperty(name);
-        if (value==null) throw new RuntimeException("Missing property: " + name);
-        return value;
-    }
-
-    public String getProperty(String name, String defaultValue) {
-        String value = properties.getProperty(name);
-        if (value==null) {
-            LOG.info("Missing property " + name + ", using default value " + defaultValue);
-            return defaultValue;
-        }
-        return value;
-    }
 }
