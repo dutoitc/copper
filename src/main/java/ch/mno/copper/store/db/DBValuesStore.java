@@ -1,6 +1,5 @@
 package ch.mno.copper.store.db;
 
-import ch.mno.copper.CopperMediator;
 import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.store.data.InstantValues;
@@ -19,32 +18,16 @@ import java.util.stream.Collectors;
  */
 public class DBValuesStore implements ValuesStore, AutoCloseable {
 
-    private static DBValuesStore instance;
+//    private static DBValuesStore instance;
     private static DBServer server;
 
-    private DBValuesStore() {
+    public DBValuesStore(int dbPort) {
         try {
-            int dbPort = Integer.parseInt(CopperMediator.getInstance().getProperty("dbPort", "0"));
             server = new DBServer(true, dbPort);
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-
-    /**
-     * Singleton factory
-     */
-    public static DBValuesStore getInstance() {
-        if (instance == null) {
-            synchronized (DBValuesStore.class) {
-                if (instance == null) {
-                    instance = new DBValuesStore();
-                }
-            }
-        }
-        return instance;
-    }
-
 
     @Override
     public void put(String key, String value) {
@@ -150,7 +133,7 @@ public class DBValuesStore implements ValuesStore, AutoCloseable {
             server.close();
             server = null;
         }
-        DBValuesStore.instance = null;
+//        DBValuesStore.instance = null;
     }
 
     public DBServer getServer4tests() {

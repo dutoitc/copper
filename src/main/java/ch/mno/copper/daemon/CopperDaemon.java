@@ -1,10 +1,9 @@
 package ch.mno.copper.daemon;
 
-import ch.mno.copper.CopperMediator;
 import ch.mno.copper.DataProvider;
 import ch.mno.copper.collect.StoryTask;
-import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.process.AbstractProcessor;
+import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,7 @@ public class CopperDaemon implements Runnable {
     public static final int N_THREADS = 10;
     public static int TASK_CHEK_INTERVAL = 1000 * 3; // don't overload processors !
     private final List<AbstractProcessor> processors = new ArrayList<>();
-    private final ValuesStore valuesStore;
+//    private final ValuesStore valuesStore;
     private boolean shouldRun = true;
     private List<String> storiesToRun = new ArrayList<>();
     private LocalDateTime lastQueryTime = LocalDateTime.MIN;
@@ -43,27 +42,21 @@ public class CopperDaemon implements Runnable {
 
     private ExecutorService executorService;
 
-    private CopperDaemon(DataProvider dataProvider) {
+    public CopperDaemon(DataProvider dataProvider, String jmxPort) {
         executorService = Executors.newFixedThreadPool(N_THREADS);
-        this.valuesStore = CopperMediator.getInstance().getValuesStore();
+//        this.valuesStore = CopperMediator.getInstance().getValuesStore();
         this.dataProvider = dataProvider;
 
-        String jmxPort = CopperMediator.getInstance().getProperty("jmxPort", "30409");
         jmxConnector = new JMXConnector(jmxPort);
-    }
-
-    public static CopperDaemon runWith(DataProvider dataProvider) {
-        CopperDaemon daemon = new CopperDaemon(dataProvider);
-        CopperMediator.getInstance().registerCopperDaemon(daemon);
-        Thread thread = new Thread(daemon);
-        thread.start();
-        return daemon;
     }
 
 
     private void runIteration() {
         // Refresh stories from disk
         List<Story> stories = dataProvider.getStories(); // With refresh
+
+        //
+        ValuesStore valuesStore = dataProvider.getValuesStore();
 
         for (Story story : stories) {
             // Run story ?
@@ -100,7 +93,7 @@ public class CopperDaemon implements Runnable {
 
             // Save
             try {
-                valuesStore.save();
+                dataProvider.getValuesStore().save();
             } catch (IOException e) {
                 throw new RuntimeException("Cannot save to valuesStore");
             }

@@ -11,15 +11,16 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A provider with store cache. At each call, it will load newer stories from disk, remove older from cache
+ * Stories and values provider with cache.
+ * At each call, it will load newer stories from disk, remove older from cache
  */
-public class DataproviderImpl implements DataProvider {
+public class DataProviderImpl implements DataProvider {
 
     StoriesFacade storiesFacade;
     private ValuesStore valuesStore;
     private Map<String, StoryTask> cachedStoryTasks = new HashMap<>();
 
-    public DataproviderImpl(StoriesFacade storiesFacade, ValuesStore valuesStore) {
+    public DataProviderImpl(StoriesFacade storiesFacade, ValuesStore valuesStore) {
         this.storiesFacade = storiesFacade;
         this.valuesStore = valuesStore;
         refreshStoryTasks();
@@ -53,5 +54,10 @@ public class DataproviderImpl implements DataProvider {
     @Override
     public StoryTask getStoryTask(Story story) {
         return cachedStoryTasks.get(story.getName());
+    }
+
+    @Override
+    public ValuesStore getValuesStore() {
+        return valuesStore;
     }
 }

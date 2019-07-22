@@ -1,6 +1,7 @@
 package ch.mno.copper;
 
-import ch.mno.copper.store.db.DBValuesStore;
+import ch.mno.copper.store.MapValuesStore;
+import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.web.WebServer;
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
@@ -19,7 +20,7 @@ public class WebServer4TestsTest {
 
     private static WebServer srv;
     private static Thread thread;
-    private static DBValuesStore valueStore;
+    private static ValuesStore valueStore;
 
     @BeforeClass
     public static void init() throws InterruptedException {
@@ -27,17 +28,15 @@ public class WebServer4TestsTest {
         thread = new Thread(srv);
         thread.start();
         Thread.sleep(5000); // Wait for server start
-        valueStore = DBValuesStore.getInstance();
+        valueStore = new MapValuesStore();
         valueStore.put("aKey", "aValue");
+        new CopperMediator(valueStore, null, null, null, null);
     }
 
     @AfterClass
     public static void done() throws Exception {
         if (srv!=null) {
             srv.stop();
-        }
-        if (valueStore!=null) {
-            valueStore.close();
         }
     }
 

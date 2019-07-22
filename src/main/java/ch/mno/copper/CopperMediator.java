@@ -1,92 +1,76 @@
 package ch.mno.copper;
 
 import ch.mno.copper.daemon.CopperDaemon;
-import ch.mno.copper.store.db.DBValuesStore;
 import ch.mno.copper.store.ValuesStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.Properties;
+import ch.mno.copper.stories.StoriesFacade;
 
 /**
  * Created by dutoitc on 14.02.2016.
  */
 public class CopperMediator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CopperMediator.class);
+//    private static final Logger LOG = LoggerFactory.getLogger(CopperMediator.class);
 
     private static CopperMediator instance;
+
+    private final PropertiesProvider propertiesProvider;
+
+    /** Where to store values */
     private ValuesStore valuesStore;
+
+    /** Stories and values provider, with cache */
+    private DataProvider dataProvider;
+
+    /** Everything that is related to stories */
+    private StoriesFacade storiesFacade;
+
+    /** The daemon which run stories */
     private CopperDaemon daemon;
-    private Properties properties;
 
-    private CopperMediator()  {
-        loadProperties();
+
+    public CopperMediator(ValuesStore valuesStore, DataProvider dataProvider, StoriesFacade storiesFacade, CopperDaemon daemon, PropertiesProvider propertiesProvider) {
+        this.valuesStore = valuesStore;
+        this.dataProvider = dataProvider;
+        this.storiesFacade = storiesFacade;
+        this.daemon = daemon;
+        this.propertiesProvider = propertiesProvider;
+        CopperMediator.instance = this;
     }
 
-    /** Load copper.properties */
-    private void loadProperties() {
-        try {
-            properties = new Properties();
-
-            File file = new File("copper.properties");
-            if (file.exists()) {
-                FileInputStream inStream = new FileInputStream(file);
-                properties.load(inStream);
-            } else {
-                System.err.println("Warning: copper.properties not found");
-            }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("File not found: copper.properties in " + new File(".").getAbsolutePath()+"; " + e.getMessage());
-        }catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String getProperty(String name) {
-        String value = properties.getProperty(name);
-        if (value==null) throw new RuntimeException("Missing property: " + name);
-        return value;
-    }
-
-    public String getProperty(String name, String defaultValue) {
-        String value = properties.getProperty(name);
-        if (value==null) {
-            LOG.info("Missing property " + name + ", using default value " + defaultValue);
-            return defaultValue;
-        }
-        return value;
+    /** For webservices */
+    public static CopperMediator getInstance() {
+        return instance;
     }
 
     public ValuesStore getValuesStore() {
         return valuesStore;
     }
 
-    public void setValuesStore(DBValuesStore valuesStore) {
-        this.valuesStore = valuesStore;
-    }
-
-    public static CopperMediator getInstance() {
-        if (instance==null) {
-            synchronized (CopperMediator.class) {
-                if (instance==null) {
-                    instance = new CopperMediator();
-                    instance.setValuesStore(DBValuesStore.getInstance());
-                }
-            }
-        }
-        return instance;
+    public DataProvider getDataProvider() {
+        return dataProvider;
     }
 
     public void run(String storyName) {
         daemon.runStory(storyName);
     }
 
-    public void registerCopperDaemon(CopperDaemon daemon) {
-        this.daemon = daemon;
+    public StoriesFacade getStoriesFacade() {
+        return storiesFacade;
     }
+
+    public String getProperty(String key, String defaultValue) {
+        return propertiesProvider.getProperty(key, defaultValue);
+    }
+
+    public String getProperty(String key) {
+        return propertiesProvider.getProperty(key);
+    }
+
+
+//    public CopperDaemon getCopperDaemon() {
+//        return daemon;
+//    }
+
+
 
 }

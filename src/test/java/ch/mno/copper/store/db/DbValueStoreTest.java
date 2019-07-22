@@ -1,7 +1,6 @@
 package ch.mno.copper.store.db;
 
-import ch.mno.copper.store.db.DBServer;
-import ch.mno.copper.store.db.DBValuesStore;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +26,7 @@ public class DbValueStoreTest {
     @Before
     public void init() throws SQLException {
         DBServer.DBURL= "jdbc:h2:./copperdbtst";
-        store = DBValuesStore.getInstance();
+        store = new DBValuesStore(12345);
         store.clearAllData();
         store.put("key1", "value10", i5);
         store.put("key2", "value20", i5);
@@ -36,7 +35,11 @@ public class DbValueStoreTest {
         store.put("key4", "value40", i4);
         store.put("key4", "value41", i5);
         store.put("key4", "value42", i6);
+    }
 
+    @After
+    public void done() throws Exception {
+        store.close();
     }
 
 

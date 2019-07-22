@@ -16,15 +16,19 @@ import java.util.stream.Collectors;
 public class MapValuesStore implements ValuesStore {
 
     private ConcurrentHashMap<String, StoreValue> map = new ConcurrentHashMap<>();
+    public static final Instant INSTANT_MAX = Instant.parse("3000-12-31T00:00:00.00Z");
     private long nextId=1;
 
     @Override
     public void put(String key, String value) {
-            map.put(key, new StoreValue(nextId++, key, value, Instant.now(), Instant.MAX, 1));
+            map.put(key, new StoreValue(nextId++, key, value, Instant.now(), INSTANT_MAX, 1));
     }
 
     @Override
     public String getValue(String key) {
+        if (map.get(key)==null) {
+            return null;
+        }
         return map.get(key).getValue();
     }
 

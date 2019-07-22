@@ -1,6 +1,9 @@
 package ch.mno.copper;
 
 import ch.mno.copper.daemon.CopperDaemon;
+import ch.mno.copper.store.ValuesStore;
+import ch.mno.copper.store.db.DBValuesStore;
+import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.StoriesFacadeImpl;
 import ch.mno.copper.web.WebServer;
 
@@ -15,15 +18,32 @@ public class CopperMain {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        CopperMediator mediator = CopperMediator.getInstance();
-        int serverPort = Integer.parseInt(mediator.getProperty("serverPort", "30400"));
+        // Properties
+        PropertiesProvider propertiesProvider = new PropertiesProvider();
+        int serverPort = Integer.parseInt(propertiesProvider.getProperty("serverPort", "30400"));
+        String jmxPort = propertiesProvider.getProperty("jmxPort", "30409");
+        int dbPort = Integer.parseInt(propertiesProvider.getProperty("dbPort", "0"));
 
+        // Initialize instances
+        ValuesStore valuesStore = new DBValuesStore(dbPort);
+        StoriesFacade storiesFacade = new StoriesFacadeImpl();
+        DataProvider dataProvider = new DataProviderImpl(storiesFacade, valuesStore);
+
+        // Start daemon
+        CopperDaemon daemon = new CopperDaemon(dataProvider, jmxPort);
+        CopperMediator mediator = new CopperMediator(valuesStore, dataProvider, storiesFacade, daemon, propertiesProvider); // keep instances (used by services)
+        Thread threadDaemon = new Thread(daemon);
+        threadDaemon.start();
+
+
+
+        // Start web server
         WebServer webServer = new WebServer(serverPort);
-        Thread thread = new Thread(webServer);
-        thread.start();
+        Thread threadWebserver = new Thread(webServer);
+        threadWebserver.start();
 
-        CopperDaemon daemon = CopperDaemon.runWith(new DataproviderImpl(StoriesFacadeImpl.getInstance(), CopperMediator.getInstance().getValuesStore()));
-        while (1 < 2) { // Main loop
+        // infinite loop
+        while (1 < 2) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -34,7 +54,5 @@ public class CopperMain {
             }
         }
     }
-
-
 
 }

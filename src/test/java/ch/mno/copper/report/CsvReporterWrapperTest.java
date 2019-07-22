@@ -1,5 +1,7 @@
 package ch.mno.copper.report;
 
+import ch.mno.copper.store.MapValuesStore;
+import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import org.apache.commons.io.IOUtils;
@@ -28,6 +30,8 @@ public class CsvReporterWrapperTest {
 
     @Test
     public void test() throws IOException {
+        ValuesStore valuesStore = new MapValuesStore();
+
         // New file
         File file = File.createTempFile("copper", "tmp");
         file.delete();
@@ -43,7 +47,7 @@ public class CsvReporterWrapperTest {
         values.put("value1", "123");
         values.put("value2", "456");
         values.put("value3", "789");
-        wrapper.execute(values);
+        wrapper.execute(values, valuesStore);
 
         // Test
         String res = IOUtils.toString(new FileInputStream(file));
@@ -53,11 +57,11 @@ public class CsvReporterWrapperTest {
         values = new HashMap();
         values.put("value1", "aaa");
         values.put("value3", "ccc");
-        wrapper.execute(values);
+        wrapper.execute(values, valuesStore);
 
         // Test
         res = IOUtils.toString(new FileInputStream(file));
-        Assert.assertEquals("my header1;my header2;my header3\r\n123;456;789\r\naaa;;ccc\r\n", res);
+        Assert.assertEquals("my header1;my header2;my header3\r\n123;456;789\r\naaa;?;ccc\r\n", res);
     }
 
 }

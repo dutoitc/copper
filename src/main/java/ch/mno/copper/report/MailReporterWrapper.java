@@ -2,6 +2,7 @@ package ch.mno.copper.report;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxHelper;
+import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.StoryGrammar;
 
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class MailReporterWrapper extends AbstractReporterWrapper {
     }
 
     @Override
-    public void execute(Map<String, String> values) {
+    public void execute(Map<String, String> values, ValuesStore valuesStore) {
         String message = messageTemplate;
         String message2 = replaceValues(values, message);
         String title2 = replaceValues(values, title);

@@ -1,5 +1,7 @@
 package ch.mno.copper.report;
 
+import ch.mno.copper.store.ValuesStore;
+
 import java.util.Map;
 
 /**
@@ -8,6 +10,6 @@ import java.util.Map;
  */
 public abstract class AbstractReporterWrapper {
 
-    public abstract void execute(Map<String, String> values);
+    public abstract void execute(Map<String, String> values, ValuesStore valuesStore);
 
 }

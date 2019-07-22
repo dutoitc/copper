@@ -1,6 +1,5 @@
 package ch.mno.copper.report;
 
-import ch.mno.copper.CopperMediator;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.StoryGrammar;
@@ -45,8 +44,7 @@ public class PushoverReporterWrapper extends AbstractReporterWrapper {
     }
 
     @Override
-    public void execute(Map<String, String> values) {
-        ValuesStore valuesStore = CopperMediator.getInstance().getValuesStore();
+    public void execute(Map<String, String> values, ValuesStore valuesStore) {
         String message = ReportHelper.expandMessage(values, messageTemplate, valuesStore);
 
         Map<String, String> reporterValues = new HashMap<>();

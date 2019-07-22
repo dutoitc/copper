@@ -25,7 +25,7 @@ public class DataProviderTest {
     public void testAfterNewStory() throws IOException, ConnectorException {
         StoriesFacadeMock storiesFacade = new StoriesFacadeMock();
         MapValuesStore valuesStore = new MapValuesStore();
-        DataproviderImpl dataprovider = new DataproviderImpl(storiesFacade, valuesStore);
+        DataProviderImpl dataprovider = new DataProviderImpl(storiesFacade, valuesStore);
         StoryGrammar storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
 
         // Initial: zero stories
