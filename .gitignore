@@ -40,7 +40,6 @@ copper.properties
 *.iml
 dsi
 target
-stories
 .idea
 externalweb
 Local*.java
