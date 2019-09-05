@@ -1,0 +1,13 @@
+[ ] cvValue(x), cvSince(x)
+[ ] Style en fonction de valeurs: dans style {{cvValue(x)==200?'ok':'ko'}}
+[ ] Investiguer 'undefined'
+[ ] Upload image base64 ?
+[ ] Embarquer du Javascript (ex: formatterMenuEldora())
+[ ] Dom différentiel ?
+[ ] skipRefresh: bouton qui tourne ? = pause
+
+
+[ ] Export: stylé
+[ ] Edition: CSS
+[ ] Style: si valeur, classe...
+[ ] Websocket
