@@ -7,14 +7,20 @@
     <groupId>ch.mno.copper</groupId>
     <artifactId>copper</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Copper-parent</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jersey.version>2.25.1</jersey.version>
         <jackson.version>2.9.9</jackson.version>
         <!--<oracle.version>12.2.0.1</oracle.version>-->
-	<jetty.version>9.4.18.v20190429</jetty.version>
+    <jetty.version>9.4.18.v20190429</jetty.version>
     </properties>
+
+    <modules>
+        <module>business</module>
+    </modules>
 
 
     <build>
@@ -31,74 +37,6 @@
             </plugin>
 
 
-            <!--<plugin>-->
-                <!--<groupId>org.eclipse.jetty</groupId>-->
-                <!--<artifactId>jetty-maven-plugin</artifactId>-->
-                <!--<version>9.2.11.v20150529</version>-->
-                <!--<configuration>-->
-                    <!--<scanIntervalSeconds>10</scanIntervalSeconds>-->
-                    <!--<webApp>-->
-                        <!--<contextPath>/copper</contextPath>-->
-                    <!--</webApp>-->
-                    <!--<httpConnector>-->
-                        <!--<port>30400</port>-->
-                    <!--</httpConnector>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>1.6</version>
-                <configuration>
-                    <createDependencyReducedPom>true</createDependencyReducedPom>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <manifestEntries>
-                                        <Main-Class>ch.mno.copper.CopperMain</Main-Class>
-                                    </manifestEntries>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Karaf Bundle packaging -->
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-		<version>4.2.0</version>
-                <configuration>
-                    <instructions>
-                        <Bundle-Activator>ch.mno.copper.karaf.Activator</Bundle-Activator>
-                        <Private-Package>
-                            ch.mno.copper.karaf
-                        </Private-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -214,22 +152,13 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1</version>
-    </dependency>
-    <dependency>
-        <groupId>org.jfree</groupId>
-        <artifactId>jfreechart</artifactId>
-        <version>1.0.19</version>
-    </dependency>
-
-
-    <!--
+        </dependency>
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>10.8.2.2</version>
-            <scope>test</scope>
-	</dependency>
--->
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.19</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
