@@ -1,6 +1,6 @@
 package ch.mno.copper.web.filters;
 
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 
 public class BasicAuth {
     /**
@@ -9,7 +9,8 @@ public class BasicAuth {
     public static String[] decode(String auth) {
         auth = auth.replaceFirst("[B|b]asic ", "");
 
-        byte[] decodedBytes = DatatypeConverter.parseBase64Binary(auth);
+
+        byte[] decodedBytes = Base64.getDecoder().decode(auth);
 
         if(decodedBytes == null || decodedBytes.length == 0){
             return null;

@@ -15,7 +15,8 @@
         <jersey.version>2.25.1</jersey.version>
         <jackson.version>2.9.9</jackson.version>
         <!--<oracle.version>12.2.0.1</oracle.version>-->
-    <jetty.version>9.4.18.v20190429</jetty.version>
+        <jetty.version>9.4.18.v20190429</jetty.version>
+        <maven.compiler.release>11</maven.compiler.release>
     </properties>
 
     <modules>
@@ -28,11 +29,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.8.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
+                    <release>11</release>
+                    <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
 
