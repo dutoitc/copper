@@ -31,14 +31,18 @@ import java.util.List;
 public class DBServer implements AutoCloseable {
 
     private static Logger LOG = LoggerFactory.getLogger(DBServer.class);
-    static String DBURL = "jdbc:h2:./copperdb";
-    private static final String DBUSER = "";
-    private static final String DBPASS = "";
+    String DBURL = "jdbc:h2:./copperdb";
+    private final String DBUSER = "";
+    private final String DBPASS = "";
     public static final Instant INSTANT_MAX = Instant.parse("3000-12-31T00:00:00.00Z");
     private Server server;
     final JdbcConnectionPool cp;
 
     public DBServer(boolean withWebserver, int dbPort) throws SQLException {
+        if (System.getenv("copper.db.url")!=null) {
+            DBURL = System.getenv("copper.db.url");
+        }
+
         server = Server.createWebServer("-webAllowOthers", "-browser", "-webPort", ""+dbPort);
         server.start();
         LOG.info("Server DB started");
