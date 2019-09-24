@@ -23,7 +23,6 @@
         <fileSet>
             <directory>conf</directory>
 			<outputDirectory>refmon-${version}/</outputDirectory>
-            <includes>.*</includes>
         </fileSet>
     </fileSets>
 </assembly>
