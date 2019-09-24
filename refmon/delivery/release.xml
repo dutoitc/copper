@@ -13,8 +13,7 @@
 
 	<files>
 		<file>
-			<!-- Application jar file -->
-			<source>../../business/target/copper-*.jar</source>
+			<source>../../business/target/copper.jar</source>
 			<outputDirectory>refmon-${version}/deployment</outputDirectory>
 			<destName>copper.jar</destName>
 			<fileMode>644</fileMode>
