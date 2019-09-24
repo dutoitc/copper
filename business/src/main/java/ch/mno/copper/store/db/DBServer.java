@@ -31,7 +31,7 @@ import java.util.List;
 public class DBServer implements AutoCloseable {
 
     private static Logger LOG = LoggerFactory.getLogger(DBServer.class);
-    String DBURL = "jdbc:h2:./copperdb";
+    static String DBURL = "jdbc:h2:./copperdb"; // static for tests
     private final String DBUSER = "";
     private final String DBPASS = "";
     public static final Instant INSTANT_MAX = Instant.parse("3000-12-31T00:00:00.00Z");
