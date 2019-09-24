@@ -15,7 +15,7 @@ public class DiskHelper {
     public static String STORIES_FOLDER = "stories";
 
     static {
-        String folder = System.getenv("copper.stories.folder");
+        String folder = System.getProperty("copper.stories.folder");
         if (folder!=null) {
             STORIES_FOLDER = folder;
         }

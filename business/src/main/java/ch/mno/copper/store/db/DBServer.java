@@ -39,8 +39,8 @@ public class DBServer implements AutoCloseable {
     final JdbcConnectionPool cp;
 
     public DBServer(boolean withWebserver, int dbPort) throws SQLException {
-        if (System.getenv("copper.db.url")!=null) {
-            DBURL = System.getenv("copper.db.url");
+        if (System.getProperty("copper.db.url")!=null) {
+            DBURL = System.getProperty("copper.db.url");
         }
 
         server = Server.createWebServer("-webAllowOthers", "-browser", "-webPort", ""+dbPort);
