@@ -3,7 +3,7 @@ CLASS=ch.mno.copper.CopperMain
 LOG=app/refmon/logs/console.log
 PID=0
 JMX="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=43479 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
-APP="-Dcopper.stories.folder=data/stories"
+APP="-Dcopper.stories.folder=data/stories -Dcopper.db.url=jdbc:h2:./data/copperdb"
 OPTIONS="$APP $JMX"
 
 ################################################################################
@@ -21,7 +21,7 @@ check_status() {
   #s=`ps -C 'java -jar $JAR' -o pid h`
   #s=`ps -e -o pid,cmd –sort cmd | grep “java -jar $JAR” | grep -v “grep ” | tail -n1 | awk ‘{ print $1 }`
   #s=`ps -e -o pid,cmd | grep refmon | grep -v grep | grep -v command | tail -n 1 | cut -f 1 -d' '`
-  s=`ps -e -o pid,cmd | grep copper- | grep jar | grep -v grep | tail -n 1 | awk '{print $1}'`
+  s=`ps -e -o pid,cmd | grep copper | grep jar | grep -v grep | tail -n 1 | awk '{print $1}'`
 
   # If somethig was returned by the ps command, this function returns the PID
   if [ $s ] ; then
