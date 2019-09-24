@@ -57,7 +57,7 @@ public class DiskHelper {
     }
 
     public static List<String> findStoryNames() {
-        File stories = new File("stories");
+        File stories = new File(STORIES_FOLDER);
         List<String> files = new ArrayList<>();
         for (File file : stories.listFiles(f -> f.isFile() && !f.getName().toLowerCase().endsWith("swp"))) {
             files.add(file.getName());
