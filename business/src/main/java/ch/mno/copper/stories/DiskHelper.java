@@ -12,7 +12,14 @@ import java.util.List;
 public class DiskHelper {
 
 
-    public static final String STORIES_FOLDER = "stories";
+    public static String STORIES_FOLDER = "stories";
+
+    static {
+        String folder = System.getenv("copper.stories.folder");
+        if (folder!=null) {
+            STORIES_FOLDER = folder;
+        }
+    }
 
     /**
      * Save text as new file
