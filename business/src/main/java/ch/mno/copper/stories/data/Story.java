@@ -28,7 +28,7 @@ public class Story {
 
     private static final Logger LOG = LoggerFactory.getLogger(Story.class);
     private When when = null;
-    private Path source;
+    private String storyName;
     private String storyText;
     private String error;
     private String cron;
@@ -37,12 +37,12 @@ public class Story {
 
 
     public Story(StoryGrammar grammar, String storyName, String storyText) throws IOException, ConnectorException {
-        this(grammar, new ByteArrayInputStream(storyText.getBytes()), Paths.get("stories/" + storyName));
+        this(grammar, new ByteArrayInputStream(storyText.getBytes()), storyName);
     }
 
 
-    public Story(StoryGrammar grammar, InputStream is, Path source) throws IOException, ConnectorException {
-        this.source = source;
+    public Story(StoryGrammar grammar, InputStream is, String storyName) throws IOException, ConnectorException {
+        this.storyName = storyName;
         storyText = IOUtils.toString(is);
         storyText = Pattern.compile("#.*?\n", Pattern.DOTALL).matcher(storyText).replaceAll(""); // Remove comments lines
         if (!storyText.endsWith("\n")) storyText = storyText + "\n"; // Little help for parsing
@@ -55,8 +55,8 @@ public class Story {
             SyntaxHelper.checkSyntax(grammar, patternMain, storyText);
         } catch (SyntaxException e) {
             error = e.getMessage();
-            LOG.error("Wrong story: " + error);
-            return;
+            LOG.error("Story syntax error: " + error);
+            throw new RuntimeException("Story syntax error: " + error);
         }
 
         // Extract triggers
@@ -124,16 +124,13 @@ public class Story {
     }
 
     public String getName() {
-        return source.getFileName().toString();
+        return storyName;
     }
 
     public String getStoryText() {
         return storyText;
     }
 
-    public Path getSource() {
-        return source;
-    }
 
     public boolean hasError() {
         return error != null;

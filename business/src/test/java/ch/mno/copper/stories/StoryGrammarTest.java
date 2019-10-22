@@ -268,7 +268,7 @@ public class StoryGrammarTest {
 
 
         Path path = Paths.get(resource.toURI());
-        Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), path);
+        Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), "OracleStory1.txt");
         JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) story.getCollectorWrapper();
         Assert.assertEquals("jdbc:oracle:thin:@//myhost:1521/orcl", wrapper.getUrl());
         Assert.assertEquals("aUser", wrapper.getUsername());
@@ -290,7 +290,7 @@ public class StoryGrammarTest {
 
 
         Path path = Paths.get(resource.toURI());
-        Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), path);
+        Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), "OracleStory2.txt");
         JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) story.getCollectorWrapper();
         Assert.assertEquals("jdbc:oracle:thin:@host:port/instance", wrapper.getUrl());
         Assert.assertEquals("myuser", wrapper.getUsername());

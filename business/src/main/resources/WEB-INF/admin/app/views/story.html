@@ -1,6 +1,6 @@
 <h1>Story {{originalStoryName}}</h1>
 
-{{errors}}<br/>
+<div ng-bind="errors" ng-if="errors" style="color:#d8000c;background:#ffd2d2;margin: 10px 0px; padding: 12px;"></div><br/>
 <div ng-bind-html="message"></div><br/>
 
 <div ng-show="redirectToStories">

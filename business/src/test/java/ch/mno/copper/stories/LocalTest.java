@@ -35,7 +35,7 @@ public class LocalTest {
     @Theory
     public void checkStory(File file) throws IOException, ConnectorException {
         System.out.println("Checking " + file.getName());
-        new Story(grammar, new FileInputStream(file), file.toPath());
+        new Story(grammar, new FileInputStream(file), file.getName());
     }
 
     public static @DataPoints File[] candidates;

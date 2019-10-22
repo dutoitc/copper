@@ -32,17 +32,23 @@ public class DataProviderTest {
         Assert.assertEquals(0,dataprovider.getStories().size());
 
         // Add one story
-        storiesFacade.stories.put("story1", new Story(storyGrammar, "MyStory1Name", "someData"));
+        storiesFacade.stories.put("story1", new Story(storyGrammar, "MyStory1Name", "RUN ON CRON */5 * * * *\n" +
+                "GIVEN COLLECTOR WEB WITH url=https://localhost/temp1\n" +
+                "    KEEP body AS ELDORA_MENU_VALUES\n" +
+                "THEN STORE VALUES"));
         Assert.assertEquals(1,dataprovider.getStories().size());
 
         // Get story
-        Assert.assertEquals("someData\n", dataprovider.getStories().get(0).getStoryText());
+        Assert.assertTrue(dataprovider.getStories().get(0).getStoryText().contains("temp1"));
 
         // Update story
-        storiesFacade.stories.put("story1", new Story(storyGrammar, "MyStory1Name", "someDataNew"));
+        storiesFacade.stories.put("story1", new Story(storyGrammar, "MyStory1Name", "RUN ON CRON */5 * * * *\n" +
+                "GIVEN COLLECTOR WEB WITH url=https://localhost/temp2\n" +
+                "    KEEP body AS ELDORA_MENU_VALUES\n" +
+                "THEN STORE VALUES"));
 
         // Get story new
-        Assert.assertEquals("someDataNew\n", dataprovider.getStories().get(0).getStoryText());
+        Assert.assertTrue(dataprovider.getStories().get(0).getStoryText().contains("temp2"));
     }
 
 
@@ -61,7 +67,7 @@ public class DataProviderTest {
         }
 
         @Override
-        public Story buildStory(FileInputStream fileInputStream, Path path) throws IOException, ConnectorException {
+        public Story buildStory(FileInputStream fileInputStream, String storyName) throws IOException, ConnectorException {
             return null;
         }
 

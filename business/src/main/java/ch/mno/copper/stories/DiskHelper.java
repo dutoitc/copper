@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystemException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,22 +25,29 @@ public class DiskHelper {
 
     /**
      * Save text as new file
-     * @param file
+     * @param storyName
      * @param storyText
      * @throws FileAlreadyExistsException if file already exists
      * @throws IOException on any IO exception
      */
-    public static void saveNewStory(File file, String storyText) throws IOException {
+    public static void saveNewStory(String storyName, String storyText) throws IOException {
+        File file = new File(STORIES_FOLDER + '/' + storyName);
         if (file.exists()) {
             throw new FileAlreadyExistsException("Error: the file " + file.getName() + " already exists.");
+        }
+        if (file.canWrite()) {
+            throw new AccessDeniedException("Error: the file " + file.getName() + " cannot be written.");
         }
         try (FileWriter fw = new FileWriter(file)) {
             fw.write(storyText);
             fw.flush();
+        } catch (Exception e) {
+            throw new FileSystemException(e.getMessage());
         }
     }
 
-    public static void updateStory(File file, String storyText) throws IOException {
+    public static void updateStory(String storyName, String storyText) throws IOException {
+        File file = new File(STORIES_FOLDER + '/' + storyName);
         if (!file.exists()) {
             throw new FileAlreadyExistsException("Error: the file " + file.getName() + " must already exists.");
         }
