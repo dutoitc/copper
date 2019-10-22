@@ -92,15 +92,16 @@ public class CopperServices {
     @Consumes("application/json")
     @ApiOperation(value = "Method to create a new story",
             notes = "Use this to store a story. If originalStoryName='new', a new story is saved and 'Ok' is returned. otherwise the story will be updated by storyName (originalStoryName)")
-    public String postStory(@PathParam("storyName") String storyName, StoryPostDTO post) throws IOException, ConnectorException {
+    public Response postStory(@PathParam("storyName") String storyName, StoryPostDTO post) throws IOException, ConnectorException {
         StoriesFacade sf = getStoriesFacade();
 
         // Create
         if (post.isNew()) {
             try {
-                return sf.saveNewStory(post.getStoryName(), post.getStoryText());
-            } catch (SyntaxException e) {
-                return e.getMessage();
+                String ret = sf.saveNewStory(post.getStoryName(), post.getStoryText());
+                return Response.ok(ret).build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
             }
         }
 
@@ -109,8 +110,12 @@ public class CopperServices {
         if (story == null) {
             throw new RuntimeException("Story " + storyName + " was not found");
         } else {
-            String msg = sf.updateStory(post.getOriginalStoryName(), post.getStoryName(), post.getStoryText());
-            return msg;
+            try {
+                String msg = sf.updateStory(post.getOriginalStoryName(), post.getStoryName(), post.getStoryText());
+                return Response.ok(msg).build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            }
         }
     }
 

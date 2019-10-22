@@ -27,6 +27,10 @@ public class StoriesFacadeImpl implements StoriesFacade {
     private StoriesHolder storiesHolder = new StoriesHolder();
     private StoryGrammar grammar;
 
+
+
+
+
     public StoriesFacadeImpl() {
         grammar = new StoryGrammar(StoriesFacadeImpl.class.getResourceAsStream("/StoryGrammar.txt"));
     }
@@ -43,8 +47,8 @@ public class StoriesFacadeImpl implements StoriesFacade {
     }
 
     @Override
-    public Story buildStory(FileInputStream fileInputStream, Path path) throws IOException, ConnectorException {
-       return new Story(grammar, fileInputStream, path);
+    public Story buildStory(FileInputStream fileInputStream, String storyName) throws IOException, ConnectorException {
+       return new Story(grammar, fileInputStream, storyName);
     }
 
     @Override
@@ -55,7 +59,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
     @Override
     public String saveNewStory(String storyName, String storyText) throws IOException, ConnectorException {
         Story story = new Story(grammar, storyName, storyText);
-        DiskHelper.saveNewStory(story.getSource().toFile(), story.getStoryText());
+        DiskHelper.saveNewStory(storyName, story.getStoryText());
         storiesHolder.add(story); // TODO: update listeneres
         return "Ok";
     }
@@ -70,7 +74,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
         Story story = new Story(grammar, storyName, storyText);
 
         // Update
-        DiskHelper.updateStory(story.getSource().toFile(), story.getStoryText());
+        DiskHelper.updateStory(story.getName(), story.getStoryText());
         storiesHolder.replace(originalStory, story);
 
         // TODO: update listeneres
@@ -102,13 +106,13 @@ public class StoriesFacadeImpl implements StoriesFacade {
                     FileInputStream fileInputStream = DiskHelper.getStoryAsStream(storyName)
             )
             {
-                Story diskStory = buildStory(fileInputStream, new File(storyName).toPath());
+                Story diskStory = buildStory(fileInputStream, storyName);
                 Story holderStory = getStoryByName(storyName);
                 storiesHolder.removeIfError(storyName);
 
                 // New
                 if (holderStory == null) {
-                    LOG.info("Adding story: " + diskStory.getSource().getFileName().toString()); // TODO: should create story with storyName, not path ?
+                    LOG.info("Adding story: " + diskStory.getName());
                     storiesHolder.add(diskStory);
                 } else if (!holderStory.getStoryText().equals(diskStory.getStoryText())) {
                     // Reload if changed

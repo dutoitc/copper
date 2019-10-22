@@ -17,7 +17,7 @@ public interface StoriesFacade {
 
     List<Story> getStories(boolean shouldRefreshFromDisk);
 
-    Story buildStory(FileInputStream fileInputStream, Path path) throws IOException, ConnectorException;
+    Story buildStory(FileInputStream fileInputStream, String storyName) throws IOException, ConnectorException;
 
     StoryTask buildStoryTask(Story story, ValuesStore valuesStore);
 

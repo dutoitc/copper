@@ -13,6 +13,7 @@ angular.module('copperApp.story', ['ngRoute'])
     var self=this;
     $scope.originalStoryName = $routeParams.pStoryName;
     $scope.redirectToStories=false;
+    $scope.errors=null;
 
 
 
@@ -38,7 +39,7 @@ angular.module('copperApp.story', ['ngRoute'])
                     console.log("validationHTML", $scope.validationHTML);
                 },
                 function(data, status) {
-                    $scope.error="Cannot save: " + data;
+                    $scope.errors="Cannot validate: " + data;
                 });
         };
 
@@ -97,6 +98,7 @@ angular.module('copperApp.story', ['ngRoute'])
      }
 
     $scope.submit = function() {
+         $scope.errors=null;
         var data = JSON.stringify({
                         //json: JSON.stringify($scope.story)
                         originalStoryName: $scope.originalStoryName,
@@ -115,7 +117,8 @@ angular.module('copperApp.story', ['ngRoute'])
                     }
                 },
                 function(data, status) {
-                    $scope.error="Cannot save: " + data;
+                    $scope.errors="Cannot save story: " + data.data;
+                    console.log("Cannot save story", data);
                 });
     };
 
