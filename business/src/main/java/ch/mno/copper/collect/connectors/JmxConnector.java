@@ -13,6 +13,7 @@ import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * Created by dutoitc on 29.01.2016.
@@ -28,9 +29,24 @@ public class JmxConnector extends AbstractConnector {
         Map<String, String[]> env = new HashMap<>();
         String[] creds = {username, password};
         env.put(JMXConnector.CREDENTIALS, creds);
-        jmxc = JMXConnectorFactory.connect(jmxServiceURL, env);
+        try {
+            jmxc = connectWithTimeout(jmxServiceURL, env, 1000*5);
+        } catch (InterruptedException e) {
+            throw new IOException("JMX connection interrupted");
+        } catch (ExecutionException e) {
+            throw new IOException("JMX connection error: " + e.getMessage());
+        } catch (TimeoutException e) {
+            throw new IOException("JMX connection error: timeout");
+        }
         mbsc = jmxc.getMBeanServerConnection();
     }
+
+    private static JMXConnector connectWithTimeout(JMXServiceURL jmxServiceURL, Map<String, String[]> env, long timeoutMSec) throws InterruptedException, ExecutionException, TimeoutException {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<JMXConnector> future = executor.submit(() -> JMXConnectorFactory.connect(jmxServiceURL, env));
+        return future.get(timeoutMSec, TimeUnit.MILLISECONDS);
+    }
+
 
     public JmxConnector(String url) throws IOException {
         JMXServiceURL jmxServiceURL = new JMXServiceURL(url);

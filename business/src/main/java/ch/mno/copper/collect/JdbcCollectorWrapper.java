@@ -4,6 +4,7 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.data.StoryGrammar;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,18 +14,24 @@ import java.util.regex.Pattern;
 /**
  * Created by dutoitc on 07.02.2016.
  */
+// TODO: parse query and store "AS xxx " values in 'as'
 public class JdbcCollectorWrapper extends AbstractCollectorWrapper {
 
     private String url;
     private String username;
     private String password;
     private String query;
+    private List<String> as;
 
     public JdbcCollectorWrapper(String url, String username, String password, String query ) {
         this.url = url;
         this.username =username;
         this.password = password;
-        this.query = query;
+        this.setQuery(query);
+    }
+
+    public List<String> getAs() {
+        return as;
     }
 
     public String getUrl() {
@@ -49,6 +56,12 @@ public class JdbcCollectorWrapper extends AbstractCollectorWrapper {
 
     public void setQuery(String query) {
         this.query = query;
+        // Parse 'as': in case of errors(timeout, exception), values are put as {KEY}=ERR
+        as = new ArrayList<>();
+        Matcher matcher = Pattern.compile("[aA][sS] ([a-zA-Z0-9_]+)").matcher(this.query);
+        while (matcher.find()) {
+            as.add(matcher.group(1));
+        }
     }
 
     @Override

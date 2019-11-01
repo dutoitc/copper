@@ -4,6 +4,7 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import com.jayway.jsonpath.JsonPath;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +37,7 @@ public class WebCollectorWrapperTest {
         Assert.assertEquals("WEB_STATUS", wrapper.valuesKept.get(0).getValue());
         Assert.assertEquals("lastReload", wrapper.valuesKept.get(1).getKey());
         Assert.assertEquals("WEB_LAST_RELOAD", wrapper.valuesKept.get(1).getValue());
+        Assert.assertEquals("[status, lastReload]", StringUtils.join(wrapper.getAs()));
 
         /*
         // Local wrapper test

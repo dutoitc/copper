@@ -7,7 +7,6 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.report.AbstractReporterWrapper;
-import ch.mno.copper.report.ReporterWrapperFactory;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -196,4 +193,9 @@ public class Story {
             this.value = matcher.group(3);
         }
     }
+
+    public void setCollectorWrapper4Tests(AbstractCollectorWrapper cw) {
+        this.collectorWrapper = cw;
+    }
+
 }

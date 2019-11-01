@@ -2,6 +2,7 @@ package ch.mno.copper.collect;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,5 +19,11 @@ public abstract class AbstractCollectorWrapper {
      * @throws ConnectorException
      */
     public abstract List<List<String>> execute2D() throws ConnectorException;
+
+
+    /** Return AS values, keys */
+    public List<String> getAs() {
+        return new ArrayList<>();
+    }
 
 }

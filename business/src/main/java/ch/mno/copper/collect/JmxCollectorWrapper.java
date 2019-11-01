@@ -31,6 +31,10 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
         this.as = as;
     }
 
+    public List<String> getAs() {
+        return as;
+    }
+
     @Override
     public Map<String, String> execute() throws ConnectorException {
         List<String> values = JmxCollector.jmxQueryWithCreds(url, username, password, jmxQueries);
