@@ -5,10 +5,7 @@ import ch.mno.copper.store.data.InstantValues;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -79,5 +76,12 @@ public class MapValuesStore implements ValuesStore {
     @Override
     public String getValuesAlerts() {
         return null;
+    }
+
+    /** Values as string for tests */
+    public String getValuesAsString() {
+        StringBuilder sb = new StringBuilder();
+        map.values().stream().sorted(Comparator.comparing(StoreValue::getKey)).forEach(e->sb.append("[").append(e.getKey()).append("=").append(e.getValue()).append("]"));
+        return sb.toString();
     }
 }

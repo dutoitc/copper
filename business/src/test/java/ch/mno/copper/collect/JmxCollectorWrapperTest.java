@@ -2,6 +2,7 @@ package ch.mno.copper.collect;
 
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class JmxCollectorWrapperTest {
         Assert.assertEquals("SpecVersion", wrapper.jmxQueries.get(1).value);
         Assert.assertEquals("JMX_LOCAL_RUNTIME_SPECNAME", wrapper.as.get(0));
         Assert.assertEquals("JMX_LOCAL_RUNTIME_SPECVERSION", wrapper.as.get(1));
+        Assert.assertEquals("[JMX_LOCAL_RUNTIME_SPECNAME, JMX_LOCAL_RUNTIME_SPECVERSION]", StringUtils.join(wrapper.getAs()));
     }
-
 
 }

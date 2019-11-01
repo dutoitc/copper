@@ -23,12 +23,22 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
     private String username;
     private String password;
     protected List<Pair<String, String>> valuesKept;
+    private List<String> as;
 
     public WebCollectorWrapper(String url, String username, String password, List<Pair<String, String>>  valuesKept) {
         this.url = url;
         this.username =username;
         this.password = password;
         this.valuesKept = valuesKept;
+
+        this.as = new ArrayList<>();
+        for (Pair<String, String> pair : valuesKept) {
+            as.add(pair.getKey());
+        }
+    }
+
+    public List<String> getAs() {
+        return as;
     }
 
     @Override
