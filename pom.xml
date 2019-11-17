@@ -54,9 +54,9 @@
 
         <!-- Oracle Driver is not in any Maven Repo, see https://github.com/sgrillon14/MavenSampleOracleJdbc for details -->
         <dependency>
-            <groupId>oracle.jdbc</groupId>
+            <groupId>com.oracle.ojdbc</groupId>
             <artifactId>ojdbc8</artifactId>
-            <version>12.2.0.1</version>
+            <version>19.3.0.0</version>
         </dependency>
         <dependency>
             <groupId>it.sauronsoftware.cron4j</groupId>
