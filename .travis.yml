@@ -7,7 +7,7 @@ cache:
 before_install:
   - pip install --user codecov
   - cp sample/copper.properties .
-  - cp -r sample/stories .
+  - mkdir stories
 install:
  - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V  --settings src/test/mvnsettings.xml
 script:
