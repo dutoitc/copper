@@ -9,9 +9,9 @@ before_install:
   - cp sample/copper.properties .
   - mkdir stories
 install:
- - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V  --settings src/test/mvnsettings.xml
+ - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V  --settings business/src/test/mvnsettings.xml
 script:
-  - mvn install --settings src/test/mvnsettings.xml
+  - mvn install --settings business/src/test/mvnsettings.xml
 after_success:
   - mvn test jacoco:report
   - codecov
