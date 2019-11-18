@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" strict="true" name="XMLConfigTest"
+               packages="org.apache.logging.log4j.test">
+    <Properties>
+        <Property name="filename">target/test.log</Property>
+    </Properties>
+    <Filter type="ThresholdFilter" level="trace"/>
+
+    <Appenders>
+        <Appender type="Console" name="STDOUT">
+            <Layout type="PatternLayout"
+                    pattern="%-5p [%d{yyyy-MM-dd HH:mm:ss.SSS}] (%t) (%X{CurrentPrincipal}) %c{1}.%M(%L) | %m%n"/>
+        </Appender>
+    </Appenders>
+
+    <Loggers>
+
+        <Root level="trace">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
