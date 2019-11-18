@@ -57,3 +57,16 @@ Some rules do apply:
 * \* and body return all the web page body
 
 
+## SOCKET Collectors
+```
+RUN ON CRON * * * * *
+GIVEN COLLECTOR SOCKET WITH host=myhost,port=80,timeout_ms=1000
+   KEEP status AS SOCKET_MY1
+THEN STORE VALUES
+```
+This socket check connection on a remote host/port, waiting max timeout_ms milliseconds.
+Response status could be:
+- OK is socket was bound
+- UNKNOWN_HOST if the hostname could not be resolved
+- IO_EXCEPTION on any exception
+- UNKNOWN if socket has been initiated but not bound (should never happen)
