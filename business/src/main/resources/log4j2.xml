@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" strict="true" name="XMLConfigTest"
+               packages="org.apache.logging.log4j.test">
+    <Filter type="ThresholdFilter" level="trace"/>
+
+    <Appenders>
+        <Appender type="Console" name="STDOUT">
+            <Layout type="PatternLayout"
+                    pattern="%-5p [%d{yyyy-MM-dd HH:mm:ss.SSS}] (%t) (%X{CurrentPrincipal}) %c{1}.%M(%L) | %m%n"/>
+        </Appender>
+
+        <RollingFile name="fileInfoLogger" fileName="logs/refmon.log" filePattern="logs/refmon-%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <!--<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>-->
+                <pattern>%-5p [%d{yyyy-MM-dd HH:mm:ss.SSS}] (%X{CurrentPrincipal}) [%8.8t] %c{1}.%M(%L) | %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="fileDebugLogger" fileName="logs/refmon-debug.log" filePattern="logs/refmon-debug-%d{yyyy-MM-dd}-%i.log">
+            <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout>
+                <pattern>%-5p [%d{yyyy-MM-dd HH:mm:ss.SSS}] (%X{CurrentPrincipal}) [%8.8t] %c{1}.%M(%L) | %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="WARN">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+        <Logger name="fileInfo" level="info" additivity="true">
+            <appender-ref ref="fileInfoLogger" level="info" />
+        </Logger>
+        <Logger name="fileDebug" level="debug" additivity="true">
+            <appender-ref ref="fileDebugLogger" level="debug" />
+        </Logger>
+    </Loggers>
+
+</Configuration>
