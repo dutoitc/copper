@@ -53,7 +53,7 @@ import java.net.Socket;
                     // Read until blank line (end of HTTP Header)
                     String str = ".";
                     String sent = "";
-                    while (!str.equals("")) {
+                    while (str!=null && !str.equals("")) {
                         str = in.readLine();
                         sent += str + "\r\n";
                     }

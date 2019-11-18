@@ -327,6 +327,7 @@ public class StoryGrammarTest {
     }
 
 
+
 //    @Test
 //    public void testTemp() {
 //        String pat="GIVEN[\\s+\\r\\n]+COLLECTOR[\\s+\\r\\n]+(ORACLE[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=jdbc[:\\w@/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?\\r?\\n|JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?\\r?\\n)[\\s+\\r\\n]*WHEN[\\s+\\r\\n]+CRON[\\s+\\r\\n]+(DAILY at \\d{4})\\r?\\n";
