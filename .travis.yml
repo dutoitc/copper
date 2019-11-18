@@ -1,17 +1,17 @@
 language: java
 jdk:
-  - oraclejdk8
+  - openjdk11
 cache:
   directories:
     - '$HOME/.m2/repository'
 before_install:
   - pip install --user codecov
   - cp sample/copper.properties .
-  - cp -r sample/stories .
+  - mkdir stories
 install:
- - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V  --settings src/test/mvnsettings.xml
+ - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V  --settings business/src/test/mvnsettings.xml
 script:
-  - mvn install --settings src/test/mvnsettings.xml
+  - mvn install --settings business/src/test/mvnsettings.xml
 after_success:
   - mvn test jacoco:report
   - codecov

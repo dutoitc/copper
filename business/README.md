@@ -97,3 +97,4 @@ Here is a little wishlist. Add yours (report to dutoitc@shimbawa.ch)
 * [Cookbook](doc/cookbook.md)
 * [Collectors](doc/collectors.md)
 * [Reporters](doc/reporters.md)
+

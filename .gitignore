@@ -28,7 +28,6 @@ plot*
 copper.properties
 *.csv
 *.png
-*.sh
 *.old
 *.log
 *.py

@@ -29,6 +29,7 @@ public class Story {
     private String storyText;
     private String error;
     private String cron;
+    private boolean valid;
     private transient AbstractCollectorWrapper collectorWrapper;
     private transient AbstractReporterWrapper reporterWrapper;
 
@@ -50,10 +51,11 @@ public class Story {
         // TODO: mark storyText as invalid, and permit WEB update
         try {
             SyntaxHelper.checkSyntax(grammar, patternMain, storyText);
+            valid = true;
         } catch (SyntaxException e) {
             error = e.getMessage();
-            LOG.error("Story syntax error: " + error);
-            throw new RuntimeException("Story syntax error: " + error);
+            LOG.trace("Story syntax error: " + error);
+            valid = false;
         }
 
         // Extract triggers
@@ -198,4 +200,7 @@ public class Story {
         this.collectorWrapper = cw;
     }
 
+    public boolean isValid() {
+        return valid;
+    }
 }

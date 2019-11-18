@@ -11,10 +11,8 @@ import ch.mno.copper.stories.data.StoryValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,6 +123,9 @@ public class StoriesFacadeImpl implements StoriesFacade {
                 e.printStackTrace();
             } catch (ConnectorException e) {
                 e.printStackTrace();
+            } catch (RuntimeException e) {
+                //e.printStackTrace();
+                // Too verbose yet: invalid stories log errors on each story refresh, every second or so
             }
         }
 
