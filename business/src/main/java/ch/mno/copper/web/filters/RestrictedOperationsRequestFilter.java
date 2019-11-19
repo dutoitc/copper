@@ -43,6 +43,8 @@ public class RestrictedOperationsRequestFilter implements ContainerRequestFilter
         // Allow valid cookies
         Cookie cookie = ctx.getCookies().get(COOKIE_NAME);
         if (cookie!=null && isCookieValid(cookie)) {
+            String auth = ctx.getHeaderString("authorization");
+            ctx.setSecurityContext(buildSecurityContext(auth));
             return; // ok
         }
 
@@ -58,6 +60,7 @@ public class RestrictedOperationsRequestFilter implements ContainerRequestFilter
                     AuthStorage.addToken(token, expirationDate);
                     ctx.setProperty("Cookie", new Cookie(COOKIE_NAME, token));
                     ctx.setProperty("SetCookie", "true");
+                    ctx.setSecurityContext(buildSecurityContext(auth));
                     return; // Ok
                 } else {
                     requireAuth(ctx);
@@ -67,6 +70,15 @@ public class RestrictedOperationsRequestFilter implements ContainerRequestFilter
             ctx.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Server error: " + e.getMessage()).build());
         }
 
+    }
+
+
+    private SecurityContext buildSecurityContext(String auth) {
+        String[] lap = BasicAuth.decode(auth);
+        assert lap!=null;
+        assert lap.length==2;
+        SecurityContext context = new CopperSecurityContext(lap[0], lap[1]);
+        return context;
     }
 
     @Override

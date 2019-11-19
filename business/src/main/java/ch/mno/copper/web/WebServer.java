@@ -1,6 +1,7 @@
 package ch.mno.copper.web;
 
 import ch.mno.copper.web.filters.CORSFilter;
+import ch.mno.copper.web.filters.LoggingRequestFilter;
 import ch.mno.copper.web.filters.RestrictedOperationsRequestFilter;
 import io.swagger.jaxrs.config.BeanConfig;
 import org.eclipse.jetty.server.Handler;
@@ -49,6 +50,7 @@ public class WebServer implements Runnable, AutoCloseable {
         jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", "io.swagger.jaxrs.listing.ApiListingResource,"+
                 "io.swagger.jaxrs.listing.SwaggerSerializers,"+
                 RestrictedOperationsRequestFilter.class.getCanonicalName() + "," + // TODO: add in copper.properties
+                LoggingRequestFilter.class.getCanonicalName() + "," +
                 CORSFilter.class.getCanonicalName()+","+
                 CopperServices.class.getCanonicalName());
 
