@@ -128,6 +128,12 @@ public class DBValuesStore implements ValuesStore, AutoCloseable {
     }
 
     @Override
+    public String deleteValuesOlderThanXDays(int nbDays) {
+        int nb = server.deleteValuesOlderThanXDays(nbDays);
+        return "OK, " + nb + " deleted";
+    }
+
+    @Override
     public void close() throws Exception {
         if (server!=null) {
             server.close();

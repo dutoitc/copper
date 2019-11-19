@@ -78,6 +78,11 @@ public class MapValuesStore implements ValuesStore {
         return null;
     }
 
+    @Override
+    public String deleteValuesOlderThanXDays(int nbDays) {
+        return "OK (no historized values in Map Values Store)";
+    }
+
     /** Values as string for tests */
     public String getValuesAsString() {
         StringBuilder sb = new StringBuilder();

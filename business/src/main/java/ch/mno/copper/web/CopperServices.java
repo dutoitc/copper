@@ -23,14 +23,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.jfree.chart.JFreeChart;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
@@ -141,6 +134,23 @@ public class CopperServices {
     @Produces(MediaType.TEXT_PLAIN)
     public String getValuesAlerts() {
         return valuesStore.getValuesAlerts();
+    }
+
+    @DELETE
+    @Path("values/olderThanOneMonth")
+    @ApiOperation(value="Delete values older than one month", notes="Use this to clean data after some time")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String deleteValuesOlderThanOneMonth() {
+        return valuesStore.deleteValuesOlderThanXDays(30);
+    }
+
+
+    @DELETE
+    @Path("values/olderThanThreeMonth")
+    @ApiOperation(value="Delete values older than one month", notes="Use this to clean data after some time")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String deleteValuesOlderThanThreeMonth() {
+        return valuesStore.deleteValuesOlderThanXDays(90);
     }
 
 

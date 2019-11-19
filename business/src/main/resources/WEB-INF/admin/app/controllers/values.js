@@ -25,24 +25,51 @@ angular.module('copperApp.values', ['ngRoute'])
     }
 
 
-      $http.get('/ws/values')
-            .then(function(response) {
+    $scope.refresh = function() {
+        $http.get('/ws/values')
+            .then(function (response) {
                 //$scope.values=response.data;
                 console.log(response.data);
-             var values = [];
-             Object.keys(response.data).forEach(function(key) {
-                console.log("Adding", response.data[key]);
-                values.push(response.data[key]);
-             });
-             $scope.values = values;
-             console.log(values);
-        });
+                var values = [];
+                Object.keys(response.data).forEach(function (key) {
+                    console.log("Adding", response.data[key]);
+                    values.push(response.data[key]);
+                });
+                $scope.values = values;
+                console.log(values);
+            });
 
 
-      $http.get('/ws/values/alerts')
-            .then(function(response) {
-                $scope.alerts=response.data;
-        });
+        $http.get('/ws/values/alerts')
+            .then(function (response) {
+                $scope.alerts = response.data;
+            });
+    }
+
+    $scope.refresh();
+
+
+
+    $scope.deleteValuesOlderThanOneMonth = function() {
+        if ( window.confirm("Delete values older than one month ?") ) {
+            $http.delete('/ws/values/olderThanOneMonth')
+                .then(function(response) {
+                    alert(response.data);
+                    $scope.refresh();
+                });
+        }
+    }
+
+    $scope.deleteValuesOlderThanThreeMonth = function() {
+        if ( window.confirm("Delete values older than three month ?") ) {
+            $http.delete('/ws/values/olderThanThreeMonth')
+                .then(function(response) {
+                    alert(response.data);
+                    $scope.refresh();
+                });
+        }
+    }
+
 
 
 
@@ -61,6 +88,8 @@ angular.module('copperApp.values', ['ngRoute'])
 
         return filteredObject;
     };
+
+
 
 /*
 
