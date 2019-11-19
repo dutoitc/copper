@@ -22,6 +22,16 @@
             </Policies>
         </RollingFile>
 
+        <RollingFile name="auditLogger" fileName="logs/audit.log" filePattern="logs/audit-%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <pattern>%-5p [%d{yyyy-MM-dd HH:mm:ss.SSS}] (%X{CurrentPrincipal}) [%8.8t] %c{1}.%M(%L) | %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+
         <RollingFile name="fileDebugLogger" fileName="logs/refmon-debug.log" filePattern="logs/refmon-debug-%d{yyyy-MM-dd}-%i.log">
             <LevelRangeFilter minLevel="debug"  onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout>
@@ -39,6 +49,9 @@
     </Appenders>
 
     <Loggers>
+        <Logger name="copper_audit" level="info" additivity="false">
+            <AppenderRef ref="auditLogger" />
+        </Logger>
         <Logger name="ch.mno.copper" level="debug" additivity="true">
             <AppenderRef ref="fileDebugLogger" />
         </Logger>
