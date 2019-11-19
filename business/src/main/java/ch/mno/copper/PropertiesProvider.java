@@ -15,20 +15,29 @@ public class PropertiesProvider {
     /** Copper properties */
     private Properties properties;
 
+    public static String PROPERTIES_FILE = "copper.properties";
+
+    static {
+        String folder = System.getProperty("copper.properties");
+        if (folder!=null) {
+            PROPERTIES_FILE = folder;
+        }
+    }
+
     /** Load copper.properties */
     PropertiesProvider() {
         try {
             properties = new Properties();
 
-            File file = new File("copper.properties");
+            File file = new File(PROPERTIES_FILE);
             if (file.exists()) {
                 FileInputStream inStream = new FileInputStream(file);
                 properties.load(inStream);
             } else {
-                System.err.println("Warning: copper.properties not found");
+                System.err.println("Warning: " + PROPERTIES_FILE + " not found");
             }
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("File not found: copper.properties in " + new File(".").getAbsolutePath()+"; " + e.getMessage());
+            throw new RuntimeException("File not found: " + PROPERTIES_FILE + " in " + new File(".").getAbsolutePath()+"; " + e.getMessage());
         }catch (Exception e) {
             throw new RuntimeException(e);
         }
