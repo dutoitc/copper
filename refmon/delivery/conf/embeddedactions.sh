@@ -3,7 +3,7 @@ CLASS=ch.mno.copper.CopperMain
 LOG=app/refmon/logs/console.log
 PID=0
 JMX="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=43479 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
-APP="-Dcopper.properties=applications/refmon/config/copper.properties  -Dcopper.stories.folder=data/stories -Dcopper.db.url=jdbc:h2:./data/copperdb"
+APP="-Dcopper.properties=applications/refmon/config/environment.properties  -Dcopper.stories.folder=data/stories -Dcopper.db.url=jdbc:h2:./data/copperdb"
 OPTIONS="$APP $JMX"
 
 ################################################################################
