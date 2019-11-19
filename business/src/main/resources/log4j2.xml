@@ -37,16 +37,15 @@
     </Appenders>
 
     <Loggers>
-        <!-- Every logger are DEBUG by default. Note that default console level is INFO (/Configuration/@status) -->
-        <Root level="DEBUG">
-            <AppenderRef ref="STDOUT"/>
+        <Logger name="ch.mno.copper" level="debug" additivity="true">
+            <AppenderRef ref="fileDebugLogger" />
+        </Logger>
+        <Logger name="ch.mno.copper" level="info" additivity="true">
+            <AppenderRef ref="fileInfoLogger" />
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="STDOUT" />
         </Root>
-        <Logger name="ch.mno.copper" level="INFO" additivity="true">
-            <AppenderRef ref="fileInfoLogger" level="info" />
-        </Logger>
-        <Logger name="ch.mno.copper" level="DEBUG" additivity="true">
-            <AppenderRef ref="fileDebugLogger" level="debug" />
-        </Logger>
     </Loggers>
 
 </Configuration>
