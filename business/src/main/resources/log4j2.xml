@@ -41,11 +41,11 @@
         <Root level="DEBUG">
             <AppenderRef ref="STDOUT"/>
         </Root>
-        <Logger name="fileInfo" level="INFO" additivity="true">
-            <appender-ref ref="fileInfoLogger" level="info" />
+        <Logger name="ch.mno.copper" level="INFO" additivity="true">
+            <AppenderRef ref="fileInfoLogger" level="info" />
         </Logger>
-        <Logger name="fileDebug" level="DEBUG" additivity="true">
-            <appender-ref ref="fileDebugLogger" level="debug" />
+        <Logger name="ch.mno.copper" level="DEBUG" additivity="true">
+            <AppenderRef ref="fileDebugLogger" level="debug" />
         </Logger>
     </Loggers>
 
