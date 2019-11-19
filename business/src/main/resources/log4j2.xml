@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO" strict="true" name="Ref-Mon Logging configuration">
+<Configuration status="error" strict="true" name="Ref-Mon Logging configuration">
     <!-- SEE https://logging.apache.org/log4j/2.x/manual/configuration.html#XML -->
 
     <Filter type="ThresholdFilter" level="trace"/>
 
     <Appenders>
+        <!--
         <Appender type="Console" name="STDOUT">
             <Layout type="PatternLayout"
                     pattern="%-5p [%d{yyyy-MM-dd HH:mm:ss.SSS}] (%t) (%X{CurrentPrincipal}) %c{1}.%M(%L) | %m%n"/>
         </Appender>
+        -->
 
         <RollingFile name="fileInfoLogger" fileName="logs/refmon.log" filePattern="logs/refmon-%d{yyyy-MM-dd}.log">
             <PatternLayout>
@@ -21,7 +23,7 @@
         </RollingFile>
 
         <RollingFile name="fileDebugLogger" fileName="logs/refmon-debug.log" filePattern="logs/refmon-debug-%d{yyyy-MM-dd}-%i.log">
-            <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <LevelRangeFilter minLevel="debug"  onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout>
                 <pattern>%-5p [%d{yyyy-MM-dd HH:mm:ss.SSS}] (%X{CurrentPrincipal}) [%8.8t] %c{1}.%M(%L) | %m%n</pattern>
             </PatternLayout>
@@ -43,9 +45,6 @@
         <Logger name="ch.mno.copper" level="info" additivity="true">
             <AppenderRef ref="fileInfoLogger" />
         </Logger>
-        <Root level="error">
-            <AppenderRef ref="STDOUT" />
-        </Root>
     </Loggers>
 
 </Configuration>
