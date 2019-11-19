@@ -114,6 +114,11 @@ public class StoryTest {
             public String getValuesAlerts() {
                 return "";
             }
+
+            @Override
+            public String deleteValuesOlderThanXDays(int nbDays) {
+                return null;
+            }
         };
         Assert.assertTrue(story.matchWhen(values, store));
         values.put("AAA", "0");

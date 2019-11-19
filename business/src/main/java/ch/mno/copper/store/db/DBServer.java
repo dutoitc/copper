@@ -450,4 +450,12 @@ public class DBServer implements AutoCloseable {
         Thread.sleep(100);
     }
 
+    public int deleteValuesOlderThanXDays(int nbDays) {
+        try (Connection con = cp.getConnection();
+             PreparedStatement stmt = con.prepareStatement("DELETE from valuestore where dateto<DATEADD('DAY',-" + nbDays + ", CURRENT_DATE)")) {
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("An error occured while reading values", e);
+        }
+    }
 }

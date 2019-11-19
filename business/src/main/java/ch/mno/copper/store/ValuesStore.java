@@ -39,4 +39,6 @@ public interface ValuesStore {
     Map<String,String> getValuesMapString();
 
     String getValuesAlerts();
+
+    String deleteValuesOlderThanXDays(int nbDays);
 }
