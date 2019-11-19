@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="debug" strict="true" name="XMLConfigTest"
-               packages="org.apache.logging.log4j.test">
+<Configuration status="INFO" strict="true" name="Ref-Mon Logging configuration">
+    <!-- SEE https://logging.apache.org/log4j/2.x/manual/configuration.html#XML -->
+
     <Filter type="ThresholdFilter" level="trace"/>
 
     <Appenders>
@@ -36,13 +37,14 @@
     </Appenders>
 
     <Loggers>
-        <Root level="WARN">
+        <!-- Every logger are DEBUG by default. Note that default console level is INFO (/Configuration/@status) -->
+        <Root level="DEBUG">
             <AppenderRef ref="STDOUT"/>
         </Root>
-        <Logger name="fileInfo" level="info" additivity="true">
+        <Logger name="fileInfo" level="INFO" additivity="true">
             <appender-ref ref="fileInfoLogger" level="info" />
         </Logger>
-        <Logger name="fileDebug" level="debug" additivity="true">
+        <Logger name="fileDebug" level="DEBUG" additivity="true">
             <appender-ref ref="fileDebugLogger" level="debug" />
         </Logger>
     </Loggers>
