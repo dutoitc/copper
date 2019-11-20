@@ -7,11 +7,13 @@ import io.swagger.jaxrs.config.BeanConfig;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlet.ServletMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,15 @@ public class WebServer implements Runnable, AutoCloseable {
 
     public WebServer(int port) {
         PORT = port;
+    }
+
+    private static String context = "/";
+
+    static {
+        String property = System.getProperty("copper.context");
+        if (property!=null) {
+            context = property;
+        }
     }
 
     // http://www.eclipse.org/jetty/documentation/current/embedded-examples.html
@@ -59,7 +70,7 @@ public class WebServer implements Runnable, AutoCloseable {
         beanConfig.setVersion("1.0.2");
         beanConfig.setSchemes(new String[]{"http"});
         beanConfig.setHost("localhost:"+PORT);
-        beanConfig.setBasePath("/*");
+        beanConfig.setBasePath(context);
         beanConfig.setResourcePackage("ch.mno.copper.web");
         beanConfig.setScan(true);
 
@@ -79,12 +90,12 @@ public class WebServer implements Runnable, AutoCloseable {
         try {
             server.start();
             PORT = ((ServerConnector)server.getConnectors()[0]).getLocalPort();
-            LOG.info("Check server at http://localhost:" + PORT + "/");
-            LOG.info("Check server at http://localhost:" + PORT + "/admin");
-            LOG.info("                http://localhost:" + PORT + "/ext");
-            LOG.info("                http://localhost:" + PORT + "/ws");
-            LOG.info("                http://localhost:" + PORT + "/swagger.json");
-            LOG.info("                http://127.0.1.1:35251");
+            LOG.info("Check server at http://localhost:" + PORT + context + "/");
+            LOG.info("Check server at http://localhost:" + PORT + context + "/admin");
+            LOG.info("                http://localhost:" + PORT + context + "/ext");
+            LOG.info("                http://localhost:" + PORT + context + "/ws");
+            LOG.info("                http://localhost:" + PORT + context + "/swagger.json");
+            LOG.info("      DB at     http://127.0.1.1:35251");
             server.join();
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,7 +104,7 @@ public class WebServer implements Runnable, AutoCloseable {
 
     private ServletContextHandler buildRootHandler() {
         ServletContextHandler rootHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        rootHandler.setContextPath("/");
+        rootHandler.setContextPath(context);
         return rootHandler;
     }
 
@@ -101,14 +112,18 @@ public class WebServer implements Runnable, AutoCloseable {
      * Expose WEB-INF/* as resources
      * @return
      */
-    private ResourceHandler buildResourcesContextHandler() {
+    private AbstractHandler buildResourcesContextHandler() {
         String webDir = WebServer.class.getClassLoader().getResource("WEB-INF").toExternalForm();
         ResourceHandler resourceHandler = new ResourceHandler();
         resourceHandler.setDirectoriesListed(true);
         resourceHandler.setWelcomeFiles(new String[]{"index.html"});
         resourceHandler.setResourceBase(webDir);
         LOG.info("Serving files from " + webDir);
-        return resourceHandler;
+
+
+        ContextHandler context1 = new ContextHandler(context);
+        context1.setHandler(resourceHandler);
+        return context1;
     }
 
     /**
@@ -121,7 +136,8 @@ public class WebServer implements Runnable, AutoCloseable {
         resourceHandlerExt.setDirectoriesListed(true);
         resourceHandlerExt.setWelcomeFiles(new String[]{"index.html"});
         resourceHandlerExt.setResourceBase("externalweb");
-        ContextHandler extHandler = new ContextHandler("/ext"); /* the server uri path */
+
+        ContextHandler extHandler = new ContextHandler(context + "/ext"); /* the server uri path */
         extHandler.setHandler(resourceHandlerExt);
         LOG.info("Serving ext files from " + webDirExt);
         return extHandler;

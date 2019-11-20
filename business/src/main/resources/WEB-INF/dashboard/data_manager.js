@@ -101,7 +101,7 @@ class DataManager {
         if (verb=="refresh") {
             if (this.skipRefresh) return;
             $.ajax({
-                url: "/ws/values"
+                url: "../ws/values"
             }).done(function(data) {
                 dataManager.copperValues = JSON.parse(data);
                 if (!this.editable) {

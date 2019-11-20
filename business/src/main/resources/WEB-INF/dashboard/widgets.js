@@ -94,7 +94,7 @@ class UIWidgetRunnable extends UIWidget {
         // API
         var cv = function(name) {
             if (copperValues[name]!=null) return copperValues[name];
-            return '?';
+            return {"id":-1,"key":"UNKNOWN","value":"?","timestampFrom":"1980-01-01T00:00:00","timestampTo":"3000-12-31T01:00:00","nbValues":1};
         }
         var widget = this.widget;
 

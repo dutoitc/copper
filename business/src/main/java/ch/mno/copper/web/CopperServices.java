@@ -3,7 +3,6 @@ package ch.mno.copper.web;
 import ch.mno.copper.CopperMediator;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.GraphHelper;
-import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.store.data.InstantValues;
@@ -28,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +58,12 @@ public class CopperServices {
 //                .header("Access-Control-Max-Age", "1209600")
 //                .build();
 //    }
+
+    @GET
+    @Path("/")
+    public Response root() {
+        return Response.temporaryRedirect(URI.create("swagger.json")).build();
+    }
 
     @GET
     @Path("ping")
