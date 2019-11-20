@@ -26,7 +26,7 @@ angular.module('copperApp.values', ['ngRoute'])
 
 
     $scope.refresh = function() {
-        $http.get('/ws/values')
+        $http.get('../ws/values')
             .then(function (response) {
                 //$scope.values=response.data;
                 console.log(response.data);
@@ -40,7 +40,7 @@ angular.module('copperApp.values', ['ngRoute'])
             });
 
 
-        $http.get('/ws/values/alerts')
+        $http.get('../ws/values/alerts')
             .then(function (response) {
                 $scope.alerts = response.data;
             });
@@ -52,7 +52,7 @@ angular.module('copperApp.values', ['ngRoute'])
 
     $scope.deleteValuesOlderThanOneMonth = function() {
         if ( window.confirm("Delete values older than one month ?") ) {
-            $http.delete('/ws/values/olderThanOneMonth')
+            $http.delete('../ws/values/olderThanOneMonth')
                 .then(function(response) {
                     alert(response.data);
                     $scope.refresh();
@@ -62,7 +62,7 @@ angular.module('copperApp.values', ['ngRoute'])
 
     $scope.deleteValuesOlderThanThreeMonth = function() {
         if ( window.confirm("Delete values older than three month ?") ) {
-            $http.delete('/ws/values/olderThanThreeMonth')
+            $http.delete('../ws/values/olderThanThreeMonth')
                 .then(function(response) {
                     alert(response.data);
                     $scope.refresh();
