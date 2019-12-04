@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    
     <groupId>ch.dsivd.copper</groupId>
-    <artifactId>copper-parent</artifactId>
+    <artifactId>copper</artifactId>
     <version>1.2.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>Copper-parent</name>
     <description>Copper - Monitoring Engine</description>
     <url>https://github.com/dutoitc/copper</url>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jersey.version>2.25.1</jersey.version>
+        <jackson.version>2.10.1</jackson.version>
+        <!--<oracle.version>12.2.0.1</oracle.version>-->
+        <jetty.version>9.4.18.v20190429</jetty.version>
+        <maven.compiler.release>11</maven.compiler.release>
+    </properties>
+
 
     <scm>
         <connection>scm:git:git@github.com::/dutoitc/copper.git</connection>
@@ -28,7 +37,7 @@
         <developer>
             <name>Cedric Dutoit</name>
             <email>cedricdutoit@gmail.com</email>
-            <organization>MNO</organization>
+            <organization>MNO-Software</organization>
             <organizationUrl>https://github.com/dutoitc</organizationUrl>
         </developer>
         <developer>
@@ -39,18 +48,7 @@
         </developer>
     </developers>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jersey.version>2.25.1</jersey.version>
-        <jackson.version>2.10.1</jackson.version>
-        <!--<oracle.version>12.2.0.1</oracle.version>-->
-        <jetty.version>9.4.18.v20190429</jetty.version>
-        <maven.compiler.release>11</maven.compiler.release>
-    </properties>
 
-    <modules>
-        <module>business</module>
-    </modules>
 
     <profiles>
         <profile>
@@ -76,8 +74,47 @@
         </profile>
     </profiles>
 
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.6</version>
+                <configuration>
+                    <createDependencyReducedPom>true</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Main-Class>ch.mno.copper.CopperMain</Main-Class>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
