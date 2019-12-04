@@ -7,7 +7,7 @@ public class DBServerMain {
 
     public static void main(String[] args) {
         try (
-                DBServer dbServer = new DBServer(true, 0)) {
+                DBServer dbServer = new DBServerManual(true, 0)) {
         } catch (Exception e) {
             e.printStackTrace();
         }

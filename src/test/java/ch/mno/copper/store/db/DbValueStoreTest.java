@@ -23,8 +23,9 @@ public class DbValueStoreTest {
     
     @Before
     public void init() throws SQLException {
-        DBServer.DBURL= "jdbc:h2:./copperdbtst";
-        store = new DBValuesStore(12345);
+        DBServerManual.DBURL= "jdbc:h2:./copperdbtst";
+        DBServer server = new DBServerManual(false, 12345);
+        store = new DBValuesStore(server);
         store.clearAllData();
         store.put("key1", "value10", i5);
         store.put("key2", "value20", i5);

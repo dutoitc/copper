@@ -1,5 +1,7 @@
 package ch.mno.copper;
 
+import config.CopperDbProperties;
+import config.CopperServicesConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
@@ -9,6 +11,8 @@ import org.springframework.context.annotation.PropertySources;
 
 @SpringBootApplication
 @Import({
+        CopperServicesConfig.class,
+        CopperDbProperties.class
 })
 @PropertySources(value = {
         @PropertySource(value = "file:copper.properties", ignoreResourceNotFound = true),
@@ -17,8 +21,6 @@ import org.springframework.context.annotation.PropertySources;
 public class CopperApplication {
 
     public static void main(String... args) {
-        // Pour éviter un WARN de Atomikos
-        System.setProperty("com.atomikos.icatch.registered", "true");
         SpringApplication.run(CopperApplication.class, args);
     }
 }

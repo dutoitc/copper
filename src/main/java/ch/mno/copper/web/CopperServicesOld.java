@@ -18,12 +18,11 @@ import ch.mno.copper.web.dto.StoryWEBDTO;
 import ch.mno.copper.web.helpers.InstantHelper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.jfree.chart.JFreeChart;
-import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
@@ -36,31 +35,48 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@RestController
-@RequestMapping(value = "/ws", produces = MediaType.APPLICATION_JSON, consumes = MediaType.WILDCARD)
-public class CopperServices {
+// FIXME: check documentation for http://localhost:30400/swagger.json
+// FIXME: complete documentation with https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X
+@Path("/ws")
+@Api
+public class CopperServicesOld {
 
     private final ValuesStore valuesStore;
-    private final StoriesFacade storiesFacade;
 
-    public CopperServices(ValuesStore valuesStore, final StoriesFacade storiesFacade) {
-        this.valuesStore = valuesStore;
-        this.storiesFacade = storiesFacade;
+    public CopperServicesOld() {
+        this.valuesStore = CopperMediator.getInstance().getValuesStore();
     }
 
-    @GetMapping(value = "/")
+//    @OPTIONS
+//    @Path("{path : .*}")
+//    public Response options() {
+//        return Response.ok("")
+//                .header("Access-Control-Allow-Origin", "*")
+//                .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+//                .header("Access-Control-Allow-Credentials", "true")
+//                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+//                .header("Access-Control-Max-Age", "1209600")
+//                .build();
+//    }
+
+    @GET
+    @Path("/")
     public Response root() {
         return Response.temporaryRedirect(URI.create("swagger.json")).build();
     }
 
-    @GetMapping(value = "/ping", produces = MediaType.TEXT_PLAIN)
+    @GET
+    @Path("ping")
+    @Produces(MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Ping method answering 'pong'",
             notes = "Use this to monitor that Copper is up")
     public String test() {
         return "pong";
     }
 
-    @PostMapping("validation/story")
+    @POST
+    @Path("validation/story")
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Validation of a posted story",
             notes = "Post a story to this service, and validate it without saving it")
     public StoryValidationResult postStory(String story) {
@@ -69,10 +85,13 @@ public class CopperServices {
 
 
 
-    @PostMapping(value = "story/{storyName}", produces = MediaType.TEXT_PLAIN)
+    @POST
+    @Path("story/{storyName}")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes("application/json")
     @ApiOperation(value = "Method to create a new story",
             notes = "Use this to store a story. If originalStoryName='new', a new story is saved and 'Ok' is returned. otherwise the story will be updated by storyName (originalStoryName)")
-    public Response postStory(@PathVariable("storyName") String storyName, StoryPostDTO post) throws IOException, ConnectorException {
+    public Response postStory(@PathParam("storyName") String storyName, StoryPostDTO post) throws IOException, ConnectorException {
         StoriesFacade sf = getStoriesFacade();
 
         // Create
@@ -99,7 +118,9 @@ public class CopperServices {
         }
     }
 
-    @GetMapping(value = "values", produces = MediaType.TEXT_PLAIN)
+    @GET
+    @Path("values")
+    @Produces(MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Convenience way to retrieve all valid values from Copper",
             notes = "Use this to extract many values, example for remote webservice, angular service, ...")
     public String getValues() {
@@ -113,27 +134,35 @@ public class CopperServices {
         }
     }
 
-    @GetMapping(value = "values/alerts", produces = MediaType.TEXT_PLAIN)
+    @GET
+    @Path("values/alerts")
     @ApiOperation(value="Find alerts on values volumetry", notes="Use this to find values with too much store")
+    @Produces(MediaType.TEXT_PLAIN)
     public String getValuesAlerts() {
         return valuesStore.getValuesAlerts();
     }
 
-    @DeleteMapping(value = "values/olderThanOneMonth", produces = MediaType.TEXT_PLAIN)
+    @DELETE
+    @Path("values/olderThanOneMonth")
     @ApiOperation(value="Delete values older than one month", notes="Use this to clean data after some time")
+    @Produces(MediaType.TEXT_PLAIN)
     public String deleteValuesOlderThanOneMonth() {
         return valuesStore.deleteValuesOlderThanXDays(30);
     }
 
 
-    @DeleteMapping(value = "values/olderThanThreeMonth", produces = MediaType.TEXT_PLAIN)
+    @DELETE
+    @Path("values/olderThanThreeMonth")
     @ApiOperation(value="Delete values older than one month", notes="Use this to clean data after some time")
+    @Produces(MediaType.TEXT_PLAIN)
     public String deleteValuesOlderThanThreeMonth() {
         return valuesStore.deleteValuesOlderThanXDays(90);
     }
 
 
-    @GetMapping(value = "values/query")
+    @GET
+    @Path("values/query")
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Retrieve values between date",
             notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
     public Response getValues(@QueryParam("from") String dateFrom,
@@ -152,7 +181,9 @@ public class CopperServices {
         }
     }
 
-    @GetMapping(value = "instants/query")
+    @GET
+    @Path("instants/query")
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Retrieve values between date",
             notes = "")
     public Response getValues(@QueryParam("from") String dateFrom,
@@ -175,7 +206,9 @@ public class CopperServices {
     }
 
 
-    @GetMapping("stories")
+    @GET
+    @Path("stories")
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Retrieve all stories",
             notes = "")
     public String getStories() {
@@ -188,26 +221,32 @@ public class CopperServices {
     }
 
 
-    @GetMapping(value = "story/{storyName}/run", produces = MediaType.TEXT_PLAIN)
+    @GET
+    @Path("story/{storyName}/run")
+    @Produces(MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Ask to run a story",
             notes = "Story is run before 3''")
-    public String getStoryRun(@PathVariable("storyName") String storyName) {
+    public String getStoryRun(@PathParam("storyName") String storyName) {
         CopperMediator.getInstance().run(storyName);
         return "Story " + storyName + " marked for execution";
     }
 
-    @GetMapping(value = "story/{storyName}/delete", produces = MediaType.TEXT_PLAIN)
+    @GET
+    @Path("story/{storyName}/delete")
+    @Produces(MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Delete story by name",
             notes = "")
-    public String getStoryDelete(@PathVariable("storyName") String storyName) {
+    public String getStoryDelete(@PathParam("storyName") String storyName) {
         getStoriesFacade().deleteStory(storyName);
         return "Story " + storyName + " deleted.";
     }
 
-    @GetMapping(value = "/story/{storyName}")
+    @GET
+    @Path("/story/{storyName}")
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Retrieve story by name",
             notes = "")
-    public String getStory(@PathVariable("storyName") String storyName) {
+    public String getStory(@PathParam("storyName") String storyName) {
         Story story = getStoriesFacade().getStoryByName(storyName);
         if (story == null) {
             throw new RuntimeException("Story not found");
@@ -218,10 +257,12 @@ public class CopperServices {
     }
 
 
-    @GetMapping(value = "value/{valueName}", produces = MediaType.TEXT_PLAIN)
+    @GET
+    @Path("value/{valueName}")
+    @Produces(MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Retrieve a single value",
             notes = "")
-    public String getValue(@PathVariable("valueName") String valueName) {
+    public String getValue(@PathParam("valueName") String valueName) {
         StoreValue storeValue = valuesStore.getValues().get(valueName);
         if (storeValue == null) {
             throw new RuntimeException("Value not found: " + valueName);
@@ -230,8 +271,11 @@ public class CopperServices {
     }
 
 
-    @PostMapping(value = "value/{valueName}", produces = MediaType.TEXT_PLAIN)
-    public String posttValue(@PathVariable("valueName") String valueName, String message) {
+    @POST
+    @Path("value/{valueName}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String posttValue(@PathParam("valueName") String valueName, String message) {
         valuesStore.put(valueName, message);
         StoreValue storeValue = valuesStore.getValues().get(valueName);
 
@@ -242,7 +286,9 @@ public class CopperServices {
     }
 
 
-    @GetMapping("overview")
+    @GET
+    @Path("overview")
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "View stories name and next run",
             notes = "")
     public String getOverview() {
@@ -251,7 +297,9 @@ public class CopperServices {
 
 
 
-    @GetMapping(value = "values/query/png", produces = MediaType.APPLICATION_OCTET_STREAM)
+    @GET
+    @Path("values/query/png")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @ApiOperation(value = "Retrieve values between date",
             notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
     public Response getValuesAsPNG(@QueryParam("from") String dateFrom,
@@ -283,6 +331,10 @@ public class CopperServices {
     }
 
 
+    private StoriesFacade getStoriesFacade() {
+        return CopperMediator.getInstance().getStoriesFacade();
+    }
+
     private OverviewDTO buildOverview() {
         OverviewDTO overview = new OverviewDTO();
         List<Story> stories = getStoriesFacade().getStories(true);
@@ -298,7 +350,4 @@ public class CopperServices {
         return builder.create();
     }
 
-    public StoriesFacade getStoriesFacade() {
-        return storiesFacade;
-    }
 }

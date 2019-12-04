@@ -18,15 +18,10 @@ import java.util.stream.Collectors;
  */
 public class DBValuesStore implements ValuesStore, AutoCloseable {
 
-//    private static DBValuesStore instance;
     private static DBServer server;
 
-    public DBValuesStore(int dbPort) {
-        try {
-            server = new DBServer(true, dbPort);
-        } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+    public DBValuesStore(DBServer server) {
+        this.server = server;
     }
 
     @Override
@@ -54,7 +49,7 @@ public class DBValuesStore implements ValuesStore, AutoCloseable {
     public String getValue(String key) {
         StoreValue storeValue = null;
         try {
-            System.out.println("DBG-" + (server==null));
+            System.out.println("DBG-" + (server == null));
             storeValue = server.readLatest(key);
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant value " + key + ": " + e.getMessage());
@@ -69,7 +64,7 @@ public class DBValuesStore implements ValuesStore, AutoCloseable {
     public Map<String, StoreValue> getValues() {
         try {
             return server.readLatest().stream()
-                    .collect(Collectors.toMap(x -> x.getKey(), x->x));
+                    .collect(Collectors.toMap(x -> x.getKey(), x -> x));
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
         }
@@ -116,7 +111,7 @@ public class DBValuesStore implements ValuesStore, AutoCloseable {
     public Map<String, String> getValuesMapString() {
         try {
             return server.readLatest().stream()
-                    .collect(Collectors.toMap(x -> x.getKey(), x->x.getValue()));
+                    .collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
         }
@@ -135,7 +130,7 @@ public class DBValuesStore implements ValuesStore, AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        if (server!=null) {
+        if (server != null) {
             server.close();
             server = null;
         }
