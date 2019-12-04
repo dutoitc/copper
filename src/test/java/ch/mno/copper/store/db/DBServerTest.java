@@ -17,6 +17,7 @@ import java.util.List;
 /**
  * Created by dutoitc on 20.09.2017.
  */
+@Ignore
 public class DBServerTest {
 
     Instant i3 = Instant.parse("2015-10-21T07:27:58.00Z");

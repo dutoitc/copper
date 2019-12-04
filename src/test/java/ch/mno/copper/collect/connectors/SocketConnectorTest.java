@@ -1,10 +1,7 @@
 package ch.mno.copper.collect.connectors;
 
 import ch.mno.copper.test.WebServer4Tests;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.management.MBeanServer;
 import javax.management.remote.JMXConnectorServer;
@@ -13,6 +10,7 @@ import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
+@Ignore
 public class SocketConnectorTest {
 
     public static final int JMX_PORT = 39055;

@@ -1,9 +1,6 @@
 package ch.mno.copper.collect.connectors;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -20,6 +17,7 @@ import java.lang.management.ManagementFactory;
 /**
  * Created by dutoitc on 15.02.2016.
  */
+@Ignore
 public class JmxConnectorTest {
 
     private static JMXConnectorServer connectorServer;
