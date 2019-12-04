@@ -9,6 +9,8 @@
     <version>1.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Copper-parent</name>
+    <description>Copper - Monitoring Engine</description>
+    <url>https://github.com/dutoitc/copper</url>
 
     <scm>
         <connection>scm:git:git@github.com::/dutoitc/copper.git</connection>
