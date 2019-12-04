@@ -4,7 +4,7 @@
 
     <groupId>ch.dsivd.copper</groupId>
     <artifactId>copper-parent</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Copper-parent</name>
     <description>Copper - Monitoring Engine</description>
@@ -14,7 +14,7 @@
         <connection>scm:git:git@github.com::/dutoitc/copper.git</connection>
         <developerConnection>scm:git:git@github.com::/dutoitc/copper.git</developerConnection>
         <url>https://github.com/dutoitc/copper.git</url>
-        <tag>1.2.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <licenses>
