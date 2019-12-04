@@ -1,6 +1,7 @@
 package ch.mno.copper.report;
 
 import ch.mno.copper.CopperMediator;
+import ch.mno.copper.PropertiesProvider;
 import ch.mno.copper.stories.data.StoryGrammar;
 
 import java.util.regex.Pattern;
@@ -14,10 +15,15 @@ public class ReporterWrapperFactory {
         if (Pattern.compile(grammar.getPatternFull("PUSHOVER"), Pattern.DOTALL).matcher(storyGiven).find()) {
             return (T)PushoverReporterWrapper.buildReporter(grammar, storyGiven + '\n');
         } else if (Pattern.compile(grammar.getPatternFull("MAIL"), Pattern.DOTALL).matcher(storyGiven).find()) {
-            CopperMediator mediator = CopperMediator.getInstance();
-            String sport = mediator.getProperty("mailPort", "25");
+            PropertiesProvider p = new PropertiesProvider();
+            String sport = p.getProperty("mailPort", "25");
             int port=Integer.parseInt(sport);
-            return (T)MailReporterWrapper.buildReporter(grammar, storyGiven + '\n', mediator.getProperty("mailServer"), mediator.getProperty("mailUsername"), mediator.getProperty("mailPassword"), port, mediator.getProperty("mailFrom"), mediator.getProperty("mailReplyTo"));
+            return (T)MailReporterWrapper.buildReporter(grammar, storyGiven + '\n',
+                    p.getProperty("mailServer"),
+                    p.getProperty("mailUsername"),
+                    p.getProperty("mailPassword"), port,
+                    p.getProperty("mailFrom"),
+                    p.getProperty("mailReplyTo"));
         } else if (Pattern.compile(grammar.getPatternFull("CSV"), Pattern.DOTALL).matcher(storyGiven).find()) {
             return (T)CsvReporterWrapper.buildReporter(grammar, storyGiven + '\n');
         }  else if (Pattern.compile("STORE VALUES").matcher(storyGiven).find()) {

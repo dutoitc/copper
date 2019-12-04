@@ -25,7 +25,7 @@ public class PropertiesProvider {
     }
 
     /** Load copper.properties */
-    PropertiesProvider() {
+    public PropertiesProvider() {
         try {
             properties = new Properties();
 
