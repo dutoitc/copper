@@ -2,15 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ch.mno.copper.business</groupId>
     <artifactId>copper</artifactId>
-    <version>1.2-SNAPSHOT</version>
+
     <parent>
-        <groupId>ch.mno.copper</groupId>
-        <artifactId>copper</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <groupId>ch.dsivd.copper</groupId>
+        <artifactId>copper-parent</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <build>
@@ -59,7 +60,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-		<version>4.2.0</version>
+                <version>4.2.0</version>
                 <configuration>
                     <instructions>
                         <Bundle-Activator>ch.mno.copper.karaf.Activator</Bundle-Activator>
@@ -71,6 +72,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>

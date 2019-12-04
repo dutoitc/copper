@@ -104,3 +104,15 @@ Some JVM arguments could be set:
 * [Collectors](doc/collectors.md)
 * [Reporters](doc/reporters.md)
 
+# Releasing to Maven central
+
+```
+mvn release:prepare
+mvn release:perform
+```
+
+Then to see errors:
+
+https://oss.sonatype.org/
+
+Login with Sonatype JIRA account
