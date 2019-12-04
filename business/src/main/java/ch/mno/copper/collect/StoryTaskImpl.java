@@ -46,7 +46,7 @@ public class StoryTaskImpl implements StoryTask {
 
     /**
      * pattern minutes(0-59) hours(0-23) day_of_month(1-31), month(1-12 or jan,feb...), days of week(0-6=sunday-saturday or sun mon tue...) e.g. 0 3 * jan-jun,sep-dec mon-fri
-     *                @see {http://www.sauronsoftware.it/projects/cron4j/manual.php}
+     * {http://www.sauronsoftware.it/projects/cron4j/manual.php}
      * @param runnable
      * @param cronExpression
      */
