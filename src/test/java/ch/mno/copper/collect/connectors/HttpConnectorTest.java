@@ -1,36 +1,25 @@
 package ch.mno.copper.collect.connectors;
 
-import ch.mno.copper.test.WebServer4Tests;
-import org.junit.*;
+import ch.mno.copper.AbstractWebPortSpringTest;
+import ch.mno.copper.CopperApplication;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by dutoitc on 31.01.2016.
- */
-@Ignore
-public class HttpConnectorTest {
-
-    final static int PORT = 35742;
-    private static WebServer4Tests ws;
-
-    @BeforeClass
-    public static void init() {
-        ws = new WebServer4Tests(PORT);
-        ws.start();
-    }
-
-    @AfterClass
-    public static void done() throws Exception {
-        ws.close();
-    }
+public class HttpConnectorTest extends AbstractWebPortSpringTest {
 
     @Test
     public void test1() throws Exception {
-        try (
-                HttpConnector conn = new HttpConnector("localhost", PORT, "http");
-        ) {
+        try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             String value = conn.get("/ping1");
             Assert.assertEquals("pong1", value);
         }
@@ -38,7 +27,7 @@ public class HttpConnectorTest {
 
     @Test
     public void test2() throws ConnectorException {
-        try (HttpConnector conn = new HttpConnector("localhost", PORT + 10, "http")) {
+        try (HttpConnector conn = new HttpConnector("localhost", port + 10, "http")) {
             String res = conn.get("/something");
             Assert.fail("Should raise an exception, but got " + res);
         } catch (ConnectorException e) {
@@ -48,8 +37,9 @@ public class HttpConnectorTest {
 
 
     @Test
+    @Ignore // On veut tester quoi?
     public void test3() throws ConnectorException {
-        try (HttpConnector conn = new HttpConnector("localhost", PORT, "http")) {
+        try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             Map<String, String> nvs = new HashMap<>();
             nvs.put("key1", "value1");
             nvs.put("key2", "value2");
@@ -58,19 +48,17 @@ public class HttpConnectorTest {
         }
     }
 
-
     @Test
     public void testErr() throws ConnectorException {
-        try (HttpConnector conn = new HttpConnector("localhost", PORT, "http")) {
+        try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             String res = conn.get("/err404");
             Assert.assertEquals("Error 404:Not Found", res);
         }
     }
 
-
     @Test
     public void testErrPost() throws ConnectorException {
-        try (HttpConnector conn = new HttpConnector("localhost", PORT, "http")) {
+        try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             Map<String, String> nvs = new HashMap<>();
             nvs.put("key1", "value1");
             nvs.put("key2", "value2");
@@ -78,8 +66,6 @@ public class HttpConnectorTest {
             Assert.assertEquals("Error 404:Not Found", res);
         }
     }
-
-
 
 
 }

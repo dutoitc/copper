@@ -8,6 +8,8 @@ import ch.mno.copper.stories.data.Story;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -23,7 +25,7 @@ import java.util.concurrent.Executors;
  * Created by dutoitc on 02.02.2016.
  */
 // Optimisations: sleep until next task run (compute on task addition). Log next task run.
-public class CopperDaemon implements Runnable, InitializingBean {
+public class CopperDaemon implements Runnable, ApplicationListener<ContextRefreshedEvent> {
 
     private final DataProvider dataProvider;
     private Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
@@ -52,7 +54,7 @@ public class CopperDaemon implements Runnable, InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         Thread threadDaemon = new Thread(this);
         threadDaemon.start();
     }
