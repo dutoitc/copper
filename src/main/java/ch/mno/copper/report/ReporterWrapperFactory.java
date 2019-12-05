@@ -1,6 +1,5 @@
 package ch.mno.copper.report;
 
-import ch.mno.copper.CopperMediator;
 import ch.mno.copper.PropertiesProvider;
 import ch.mno.copper.stories.data.StoryGrammar;
 

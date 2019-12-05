@@ -1,7 +1,7 @@
 package ch.mno.copper.web;
 
-import ch.mno.copper.CopperMediator;
 import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.daemon.CopperDaemon;
 import ch.mno.copper.helpers.GraphHelper;
 import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.ValuesStore;
@@ -42,10 +42,12 @@ public class CopperServices {
 
     private final ValuesStore valuesStore;
     private final StoriesFacade storiesFacade;
+    private final CopperDaemon daemon;
 
-    public CopperServices(ValuesStore valuesStore, final StoriesFacade storiesFacade) {
+    public CopperServices(ValuesStore valuesStore, final StoriesFacade storiesFacade, final CopperDaemon daemon) {
         this.valuesStore = valuesStore;
         this.storiesFacade = storiesFacade;
+        this.daemon = daemon;
     }
 
     @GetMapping(value = "/")
@@ -66,7 +68,6 @@ public class CopperServices {
     public StoryValidationResult postStory(String story) {
         return getStoriesFacade().validate(story);
     }
-
 
 
     @PostMapping(value = "story/{storyName}", produces = MediaType.TEXT_PLAIN)
@@ -114,20 +115,20 @@ public class CopperServices {
     }
 
     @GetMapping(value = "values/alerts", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value="Find alerts on values volumetry", notes="Use this to find values with too much store")
+    @ApiOperation(value = "Find alerts on values volumetry", notes = "Use this to find values with too much store")
     public String getValuesAlerts() {
         return valuesStore.getValuesAlerts();
     }
 
     @DeleteMapping(value = "values/olderThanOneMonth", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value="Delete values older than one month", notes="Use this to clean data after some time")
+    @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
     public String deleteValuesOlderThanOneMonth() {
         return valuesStore.deleteValuesOlderThanXDays(30);
     }
 
 
     @DeleteMapping(value = "values/olderThanThreeMonth", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value="Delete values older than one month", notes="Use this to clean data after some time")
+    @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
     public String deleteValuesOlderThanThreeMonth() {
         return valuesStore.deleteValuesOlderThanXDays(90);
     }
@@ -140,7 +141,7 @@ public class CopperServices {
                               @QueryParam("to") String dateTo,
                               @QueryParam("columns") String columns,
                               @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues) {
-        if (columns==null) return Response.serverError().entity("Missing 'columns'").build();
+        if (columns == null) return Response.serverError().entity("Missing 'columns'").build();
         Instant from = InstantHelper.findInstant(dateFrom, InstantHelper.INSTANT_2000, true);
         Instant to = InstantHelper.findInstant(dateTo, Instant.now(), false);
 
@@ -192,7 +193,7 @@ public class CopperServices {
     @ApiOperation(value = "Ask to run a story",
             notes = "Story is run before 3''")
     public String getStoryRun(@PathVariable("storyName") String storyName) {
-        CopperMediator.getInstance().run(storyName);
+        daemon.runStory(storyName);
         return "Story " + storyName + " marked for execution";
     }
 
@@ -250,7 +251,6 @@ public class CopperServices {
     }
 
 
-
     @GetMapping(value = "values/query/png", produces = MediaType.APPLICATION_OCTET_STREAM)
     @ApiOperation(value = "Retrieve values between date",
             notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
@@ -261,7 +261,7 @@ public class CopperServices {
                                    @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues,
                                    @DefaultValue("600") @QueryParam("width") Integer width,
                                    @DefaultValue("400") @QueryParam("height") Integer height) {
-        if (columns==null) return Response.serverError().entity("Missing 'columns'").build();
+        if (columns == null) return Response.serverError().entity("Missing 'columns'").build();
         Instant from = InstantHelper.findInstant(dateFrom, InstantHelper.INSTANT_2000, true);
         Instant to = InstantHelper.findInstant(dateTo, Instant.now(), false);
 
@@ -276,7 +276,7 @@ public class CopperServices {
 
             // Response as stream
             return Response.ok(new ByteArrayInputStream(png), MediaType.valueOf("image/png")).build();
-        } catch (RuntimeException|IOException e) {
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
             return Response.serverError().entity("SERVER ERROR\n" + e.getMessage()).build();
         }
