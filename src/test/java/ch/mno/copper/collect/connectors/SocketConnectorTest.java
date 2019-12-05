@@ -10,7 +10,6 @@ import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
-@Ignore
 public class SocketConnectorTest {
 
     public static final int JMX_PORT = 39055;

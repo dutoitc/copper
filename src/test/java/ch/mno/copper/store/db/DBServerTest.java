@@ -1,23 +1,25 @@
 package ch.mno.copper.store.db;
 
+import ch.mno.copper.CopperApplication;
 import ch.mno.copper.store.StoreValue;
-import ch.mno.copper.store.db.DBServer;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
 
-/**
- * Created by dutoitc on 20.09.2017.
- */
-@Ignore
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {
+        CopperApplication.class
+}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class DBServerTest {
 
     Instant i3 = Instant.parse("2015-10-21T07:27:58.00Z");
@@ -28,14 +30,11 @@ public class DBServerTest {
     Instant i8 = Instant.parse("2015-10-21T07:28:03.00Z");
     Instant i9 = Instant.parse("2045-10-21T07:28:00.00Z");
 
+    @Autowired
     private DBServer server;
-    
+
     @Before
     public void init() throws SQLException {
-        new File("copperdbtst.mv.db").delete();
-        new File("copperdbtst.trace.db").delete();
-        DBServerManual.DBURL= "jdbc:h2:./copperdbtst";
-        server = new DBServerManual(false, 0);
         server.clearAllData();
         server.insert("key1", "value10", i5);
         server.insert("key2", "value20", i5);
@@ -44,17 +43,6 @@ public class DBServerTest {
         server.insert("key4", "value40", i4);
         server.insert("key4", "value41", i5);
         server.insert("key4", "value42", i6);
-    }
-
-    @After
-    public void done() {
-        try {
-            if (server!=null) {
-                server.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Test
@@ -172,11 +160,11 @@ public class DBServerTest {
 
         t0 = System.currentTimeMillis();
         server.readLatest("keyPerf");
-        System.out.println("Read latest by key took " + (System.currentTimeMillis() - t0)  + "ms");
+        System.out.println("Read latest by key took " + (System.currentTimeMillis() - t0) + "ms");
 
         t0 = System.currentTimeMillis();
         server.readLatest();
-        System.out.println("Read latest took " + (System.currentTimeMillis() - t0)  + "ms");
+        System.out.println("Read latest took " + (System.currentTimeMillis() - t0) + "ms");
     }
 
 

@@ -17,7 +17,6 @@ import java.lang.management.ManagementFactory;
 /**
  * Created by dutoitc on 15.02.2016.
  */
-@Ignore
 public class JmxConnectorTest {
 
     private static JMXConnectorServer connectorServer;
