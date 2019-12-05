@@ -2,6 +2,7 @@ package config;
 
 import ch.mno.copper.DataProviderImpl;
 import ch.mno.copper.daemon.CopperDaemon;
+import ch.mno.copper.report.ReporterWrapperFactory;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.store.db.DBServerSpring;
 import ch.mno.copper.store.db.DBValuesStore;
@@ -9,6 +10,7 @@ import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.StoriesFacadeImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 
@@ -25,6 +27,12 @@ public class CopperServicesConfig {
 
  */
 
+
+
+    @Bean
+    public ReporterWrapperFactory reporterWrapperFactory(Environment environment) {
+        return new ReporterWrapperFactory(environment);
+    }
 
     @Bean
     public CopperDaemon copperDaemon(DataSource dataSource) {

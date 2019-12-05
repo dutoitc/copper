@@ -1,10 +1,7 @@
 package ch.mno.copper.collect.connectors;
 
 import ch.mno.copper.test.WebServer4Tests;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +9,7 @@ import java.util.Map;
 /**
  * Created by dutoitc on 31.01.2016.
  */
+@Ignore
 public class HttpConnectorTest {
 
     final static int PORT = 35742;
