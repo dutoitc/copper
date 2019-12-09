@@ -22,7 +22,7 @@ public class SocketConnectorTest {
         // JMX Server
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         java.rmi.registry.LocateRegistry.createRegistry(JMX_PORT);
-        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:39055/server");
+        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:"+JMX_PORT+"/server");
         connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
         connectorServer.start();
 

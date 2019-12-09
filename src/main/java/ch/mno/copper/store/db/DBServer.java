@@ -135,7 +135,7 @@ public class DBServer implements AutoCloseable {
             try (ResultSet rs = stmt.executeQuery()) {
                 values = new ArrayList<>();
                 while (rs.next()) {
-                    values.add(StoreValueMapper.map(rs));
+                    values.add(StoreValueMapper.map(rs, false));
                 }
             }
 
@@ -227,7 +227,7 @@ public class DBServer implements AutoCloseable {
             try (ResultSet rs = stmt.executeQuery()) {
                 values = new ArrayList<>();
                 while (rs.next()) {
-                    values.add(StoreValueMapper.map(rs));
+                    values.add(StoreValueMapper.map(rs, false));
                 }
             }
             return values;
@@ -246,7 +246,7 @@ public class DBServer implements AutoCloseable {
             stmt.setTimestamp(2, Timestamp.from(INSTANT_MAX));
             try (ResultSet rs = stmt.executeQuery()) {
                 if (!rs.next()) return null;
-                return StoreValueMapper.map(rs);
+                return StoreValueMapper.map(rs, false);
             }
         } catch (SQLException e) {
             throw new RuntimeException("An error occured while saving values", e);
@@ -266,7 +266,7 @@ public class DBServer implements AutoCloseable {
             stmt.setTimestamp(1, Timestamp.from(INSTANT_MAX));
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    values.add(StoreValueMapper.map(rs));
+                    values.add(StoreValueMapper.map(rs, true));
                 }
             }
         } catch (SQLException e) {

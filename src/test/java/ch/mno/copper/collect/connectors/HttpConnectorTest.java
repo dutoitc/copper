@@ -37,7 +37,6 @@ public class HttpConnectorTest extends AbstractWebPortSpringTest {
 
 
     @Test
-    @Ignore // On veut tester quoi?
     public void test3() throws ConnectorException {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             Map<String, String> nvs = new HashMap<>();

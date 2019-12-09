@@ -9,17 +9,15 @@ import java.time.Instant;
 
 public class StoreValueMapper {
 
-    static StoreValue map(ResultSet rs) throws SQLException {
+    static StoreValue map(ResultSet rs, boolean wantNbValues) throws SQLException {
         long idValueStore = rs.getLong("idValueStore");
         String dbKey = rs.getString("key");
         String value = rs.getString("value");
         Instant from = rs.getTimestamp("datefrom").toInstant();
         Instant to = rs.getTimestamp("dateto").toInstant();
         Long nbValues = -1l;
-        try {
+        if (wantNbValues) {
             nbValues = rs.getLong("nbValues");
-        } catch (JdbcSQLException e) {
-            if (!e.getMessage().contains("Column \"nbValues\" not found")) throw e;
         }
         return new StoreValue(idValueStore, dbKey, value, from, to, nbValues);
     }
