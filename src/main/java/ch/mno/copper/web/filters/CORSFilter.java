@@ -2,7 +2,6 @@ package ch.mno.copper.web.filters;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.*;
 import java.io.IOException;
@@ -20,10 +19,8 @@ public class CORSFilter implements Filter {
 //    public CORSFilter(CorsConfigurationSource configSource) {
 //        super(configSource);
 //    }
-
-
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 }

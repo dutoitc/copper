@@ -18,7 +18,7 @@ import java.util.Map;
 public class HttpConnectorTest extends AbstractWebPortSpringTest {
 
     @Test
-    public void test1() throws Exception {
+    public void ping1() throws Exception {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             String value = conn.get("/ping1");
             Assert.assertEquals("pong1", value);
