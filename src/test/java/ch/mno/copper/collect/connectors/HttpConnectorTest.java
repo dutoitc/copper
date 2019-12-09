@@ -27,6 +27,7 @@ public class HttpConnectorTest extends AbstractWebPortSpringTest {
 
     @Test
     public void test2() throws ConnectorException {
+        // Port non ouvert + 10
         try (HttpConnector conn = new HttpConnector("localhost", port + 10, "http")) {
             String res = conn.get("/something");
             Assert.fail("Should raise an exception, but got " + res);
@@ -40,10 +41,10 @@ public class HttpConnectorTest extends AbstractWebPortSpringTest {
     public void test3() throws ConnectorException {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             Map<String, String> nvs = new HashMap<>();
-            nvs.put("key1", "value1");
+            nvs.put("key1", "value3");
             nvs.put("key2", "value2");
             String res = conn.post("/repeat", nvs);
-            Assert.assertTrue(res.startsWith("POST"));
+            Assert.assertTrue(res.contains("key1=value3&key2=value2"));
         }
     }
 
