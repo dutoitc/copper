@@ -10,12 +10,12 @@ import java.lang.management.ManagementFactory;
 /**
  * A JMX Connector service JMX on localhost:jmxPort/server
  */
-public class JMXConnector implements AutoCloseable {
+public class JmxServerStarter implements AutoCloseable {
 
     private final int jmxPort;
     private JMXConnectorServer jmxConnectorServer;
 
-    public JMXConnector(int jmxPort) {
+    public JmxServerStarter(int jmxPort) {
         this.jmxPort = jmxPort;
     }
 
