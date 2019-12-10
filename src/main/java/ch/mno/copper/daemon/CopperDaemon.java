@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
  * Created by dutoitc on 02.02.2016.
  */
 // Optimisations: sleep until next task run (compute on task addition). Log next task run.
-public class CopperDaemon implements Runnable, ApplicationListener<ContextRefreshedEvent> {
+public class CopperDaemon implements Runnable, ApplicationListener<ContextRefreshedEvent>, AutoCloseable {
 
     private final DataProvider dataProvider;
     private Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
@@ -42,17 +42,23 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
      */
 
     private ExecutorService executorService;
+    private Thread threadDaemon;
 
-    public CopperDaemon(DataProvider dataProvider, String jmxPort) {
+    public CopperDaemon(DataProvider dataProvider) {
         executorService = Executors.newFixedThreadPool(N_THREADS);
-//        this.valuesStore = CopperMediator.getInstance().getValuesStore();
         this.dataProvider = dataProvider;
     }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        Thread threadDaemon = new Thread(this);
+        threadDaemon = new Thread(this);
         threadDaemon.start();
+    }
+
+    @Override
+    public void close() throws Exception {
+        shouldRun = false;
+        threadDaemon.interrupt();
     }
 
     private void runIteration() {
@@ -104,15 +110,10 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
             try {
                 Thread.sleep(TASK_CHEK_INTERVAL);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                // OK
             }
         }
         executorService.shutdown();
-    }
-
-
-    public void stop() {
-        shouldRun = false;
     }
 
     public void runStory(String storyName) {
