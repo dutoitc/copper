@@ -53,8 +53,18 @@ public class SocketConnectorTest {
 
     @Test
     public void testCheckConnectionOnRealServerHTTP() {
-        SocketConnector.CONNECTION_CHECK status = new SocketConnector("localhost", HTTP_PORT, 1000).checkConnection();
-        Assert.assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
+        SocketConnector connector = new SocketConnector("localhost", HTTP_PORT, 1000);
+        SocketConnector.CONNECTION_CHECK status = connector.checkConnection();
+        try {
+            Assert.assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
+        }
+        catch (Exception e) {
+            Exception exception = connector.getLastException();
+            System.err.println("Dernière exception: " + exception==null?"null":exception.getMessage());
+            exception.printStackTrace();
+            throw e;
+        }
+
     }
 
 

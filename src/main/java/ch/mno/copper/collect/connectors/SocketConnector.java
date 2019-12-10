@@ -12,6 +12,7 @@ public class SocketConnector extends AbstractConnector {
     private int port;
     private int timeoutMSec;
     public enum CONNECTION_CHECK { OK, UNKNOWN_HOST, IO_EXCEPTION, UNKNOWN }
+    private Exception lastException; // Not thread-safe
 
     public SocketConnector(String host, int port, int timeoutMSec) {
         this.host = host;
@@ -19,6 +20,10 @@ public class SocketConnector extends AbstractConnector {
         this.timeoutMSec = timeoutMSec;
     }
 
+    /** Not thread-safe */
+    public Exception getLastException() {
+        return lastException;
+    }
 
     public CONNECTION_CHECK checkConnection() {
         // create a socket
@@ -36,8 +41,10 @@ public class SocketConnector extends AbstractConnector {
             }
             return CONNECTION_CHECK.UNKNOWN;
         } catch (UnknownHostException e) {
+            lastException = e;
             return CONNECTION_CHECK.UNKNOWN_HOST;
         } catch (IOException e) {
+            lastException = e;
             return CONNECTION_CHECK.IO_EXCEPTION;
         } finally {
             if (socket!=null) {
