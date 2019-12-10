@@ -14,16 +14,14 @@ import java.net.ServerSocket;
 
 public class SocketConnectorTest {
 
-    static int JMX_PORT;
+    static int JMX_PORT = CopperTestHelper.findFreePort();;
     private static JMXConnectorServer connectorServer;
-    static int HTTP_PORT;
+    static int HTTP_PORT = CopperTestHelper.findFreePort();;
     private static WebServer4Tests ws;
 
     @BeforeClass
     public static void setup() throws IOException {
         // JMX Server
-        JMX_PORT = CopperTestHelper.findFreePort();
-        System.out.println("JMX port " + JMX_PORT);
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         java.rmi.registry.LocateRegistry.createRegistry(JMX_PORT);
         JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:"+JMX_PORT+"/server");
@@ -31,8 +29,6 @@ public class SocketConnectorTest {
         connectorServer.start();
 
         // HTTP Server
-        HTTP_PORT = CopperTestHelper.findFreePort();
-        System.out.println("HTTP port " + HTTP_PORT);
         ws = new WebServer4Tests(HTTP_PORT);
         ws.start();
     }
