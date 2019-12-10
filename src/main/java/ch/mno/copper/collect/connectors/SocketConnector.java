@@ -28,8 +28,9 @@ public class SocketConnector extends AbstractConnector {
     public CONNECTION_CHECK checkConnection() {
         // create a socket
         Socket socket = null;
+        InetAddress inteAddress = null;
         try {
-            InetAddress inteAddress = InetAddress.getByName(host);
+            inteAddress = InetAddress.getByName(host);
             SocketAddress socketAddress = new InetSocketAddress(inteAddress, port);
 
             socket = new Socket();
@@ -45,6 +46,7 @@ public class SocketConnector extends AbstractConnector {
             return CONNECTION_CHECK.UNKNOWN_HOST;
         } catch (IOException e) {
             lastException = e;
+            System.err.println("IOException connecting to " + host + ": " + port + ", resolved to " + inteAddress==null?"null":inteAddress.getHostName());
             return CONNECTION_CHECK.IO_EXCEPTION;
         } finally {
             if (socket!=null) {
