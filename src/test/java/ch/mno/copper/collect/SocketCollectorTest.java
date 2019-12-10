@@ -1,10 +1,6 @@
 package ch.mno.copper.collect;
 
-<<<<<<< HEAD
-import ch.mno.copper.CopperTestHelper;
-=======
 import ch.mno.copper.AbstractJmxServerTestStarter;
->>>>>>> Correction du port JMX de CopperDaemon
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
@@ -15,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
+
 
 /**
  * Created by dutoitc on 26.03.2016.
