@@ -9,17 +9,20 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.ServerSocket;
 
 public class SocketConnectorTest {
 
-    public static final int JMX_PORT = 39055;
+    static int JMX_PORT;
     private static JMXConnectorServer connectorServer;
-    final static int HTTP_PORT = 35742;
+    static int HTTP_PORT;
     private static WebServer4Tests ws;
 
     @BeforeClass
     public static void setup() throws IOException {
         // JMX Server
+        ServerSocket s = new ServerSocket(0);
+        JMX_PORT = s.getLocalPort();  // returns the port the system selected
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         java.rmi.registry.LocateRegistry.createRegistry(JMX_PORT);
         JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:"+JMX_PORT+"/server");
@@ -27,6 +30,8 @@ public class SocketConnectorTest {
         connectorServer.start();
 
         // HTTP Server
+        s = new ServerSocket(0);
+        HTTP_PORT = s.getLocalPort();  // returns the port the system selected
         ws = new WebServer4Tests(HTTP_PORT);
         ws.start();
     }
