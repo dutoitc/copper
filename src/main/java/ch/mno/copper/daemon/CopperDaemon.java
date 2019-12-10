@@ -7,7 +7,6 @@ import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
@@ -37,7 +36,6 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
     private boolean shouldRun = true;
     private List<String> storiesToRun = new ArrayList<>();
     private LocalDateTime lastQueryTime = LocalDateTime.MIN;
-    private final JMXConnector jmxConnector;
 
     /**
      * Manual run by the web
@@ -49,8 +47,6 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
         executorService = Executors.newFixedThreadPool(N_THREADS);
 //        this.valuesStore = CopperMediator.getInstance().getValuesStore();
         this.dataProvider = dataProvider;
-
-        jmxConnector = new JMXConnector(jmxPort);
     }
 
     @Override
@@ -92,9 +88,6 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
     public void run() {
         LOG.info("Copper daemon has started.");
 
-        // Start JMX
-        jmxConnector.startJMX();
-
         while (shouldRun) {
             LOG.trace("Daemon run");
             runIteration();
@@ -120,7 +113,6 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
 
     public void stop() {
         shouldRun = false;
-        jmxConnector.close();
     }
 
     public void runStory(String storyName) {
