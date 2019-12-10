@@ -1,6 +1,5 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import com.jayway.jsonpath.JsonPath;
@@ -26,11 +25,11 @@ public class WebCollectorWrapperTest {
 
     @Test
     public void test() {
-            String jmx = "GIVEN COLLECTOR WEB WITH url=http://localhost:1530/ws/infra/status\n" +
-                    "    KEEP status AS WEB_STATUS\n" +
-                    "    KEEP lastReload AS WEB_LAST_RELOAD\n" +
-                    "WHEN CRON */5 7-18 * * 1-5\n" +
-                    "THEN STORE VALUES\n";
+        String jmx = "GIVEN COLLECTOR WEB WITH url=http://localhost:1530/ws/infra/status\n" +
+                "    KEEP status AS WEB_STATUS\n" +
+                "    KEEP lastReload AS WEB_LAST_RELOAD\n" +
+                "WHEN CRON */5 7-18 * * 1-5\n" +
+                "THEN STORE VALUES\n";
         WebCollectorWrapper wrapper = WebCollectorWrapper.buildCollector(storyGrammar, jmx);
         Assert.assertEquals(2, wrapper.valuesKept.size());
         Assert.assertEquals("status", wrapper.valuesKept.get(0).getKey());
@@ -52,22 +51,17 @@ public class WebCollectorWrapperTest {
     }
 
 
-
     @Test
-    public void test2() {
-        String jmx = "GIVEN COLLECTOR WEB WITH url=http://dummy_hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list\n" +
+    public void test2() throws Exception {
+        String jmx = "GIVEN COLLECTOR WEB WITH url=http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list\n" +
                 "    KEEP $.value[?(/value.WS_Services$/.test(@.Name))].Version AS value_VERSION\n" +
                 "THEN STORE VALUES";
         WebCollectorWrapper wrapper = WebCollectorWrapper.buildCollector(storyGrammar, jmx);
 
         // Local wrapper test
-        try {
-            Map<String, String> res = wrapper.execute();
-            String status = res.get("WEB_STATUS");
-            String lastReload = res.get("WEB_LAST_RELOAD");
-        } catch (ConnectorException e) {
-            e.printStackTrace();
-        }
+        Map<String, String> res = wrapper.execute();
+        String status = res.get("WEB_STATUS");
+        String lastReload = res.get("WEB_LAST_RELOAD");
     }
 
     @Test
@@ -77,7 +71,7 @@ public class WebCollectorWrapperTest {
         String jsonPath = "$.value.*.[?(@['Name']=='app.WS_Services')].Version";
 
 //        "$['jobs'][?(@['name']=='ATEV-compile')]
-        String json="{" +
+        String json = "{" +
                 "  \"timestamp\": 1503928437,\n" +
                 "  \"status\": 200,\n" +
                 "  \"request\": {\n" +
