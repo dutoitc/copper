@@ -65,7 +65,6 @@ public class WebCollectorWrapperTest {
             Map<String, String> res = wrapper.execute();
             String status = res.get("WEB_STATUS");
             String lastReload = res.get("WEB_LAST_RELOAD");
-            System.out.println("Values: " + status + "," + lastReload);
         } catch (ConnectorException e) {
             e.printStackTrace();
         }

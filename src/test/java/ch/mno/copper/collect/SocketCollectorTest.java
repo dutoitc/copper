@@ -1,5 +1,6 @@
 package ch.mno.copper.collect;
 
+import ch.mno.copper.CopperTestHelper;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.collect.connectors.SocketConnector;
 import ch.mno.copper.stories.data.Story;
@@ -27,9 +28,9 @@ import java.util.List;
 public class SocketCollectorTest {
 
 
-    public static final int JMX_PORT = 39056;
+    public static final int JMX_PORT = CopperTestHelper.findFreePort();
     private static JMXConnectorServer connectorServer;
-    final static int HTTP_PORT = 35743;
+    final static int HTTP_PORT = CopperTestHelper.findFreePort();
     private static WebServer4Tests ws;
     private static StoryGrammar storyGrammar;
 
@@ -73,7 +74,7 @@ public class SocketCollectorTest {
 
     @Test
     public void testCheckConnectionOnRealServerHTTP() throws ConnectorException {
-        SocketCollectorWrapper collector = SocketCollectorWrapper.buildCollector(storyGrammar, "SOCKET WITH host=localhost,port=" + HTTP_PORT + ",timeout_ms=5000\nKEEP status AS myStatus\n");
+        SocketCollectorWrapper collector = SocketCollectorWrapper.buildCollector(storyGrammar, "SOCKET WITH host=127.0.0.1,port=" + HTTP_PORT + ",timeout_ms=5000\nKEEP status AS myStatus\n");
         Assert.assertEquals("OK", collector.execute2D().get(0).get(0));
         Assert.assertEquals("OK", collector.execute().get("myStatus"));
     }

@@ -1,5 +1,6 @@
 package ch.mno.copper.collect.connectors;
 
+import ch.mno.copper.CopperTestHelper;
 import ch.mno.copper.test.WebServer4Tests;
 import org.junit.*;
 
@@ -9,12 +10,13 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.ServerSocket;
 
 public class SocketConnectorTest {
 
-    public static final int JMX_PORT = 39055;
+    static int JMX_PORT = CopperTestHelper.findFreePort();;
     private static JMXConnectorServer connectorServer;
-    final static int HTTP_PORT = 35742;
+    static int HTTP_PORT = CopperTestHelper.findFreePort();;
     private static WebServer4Tests ws;
 
     @BeforeClass
@@ -51,8 +53,18 @@ public class SocketConnectorTest {
 
     @Test
     public void testCheckConnectionOnRealServerHTTP() {
-        SocketConnector.CONNECTION_CHECK status = new SocketConnector("localhost", HTTP_PORT, 1000).checkConnection();
-        Assert.assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
+        SocketConnector connector = new SocketConnector("localhost", HTTP_PORT, 1000);
+        SocketConnector.CONNECTION_CHECK status = connector.checkConnection();
+        try {
+            Assert.assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
+        }
+        catch (AssertionError e) {
+            Exception exception = connector.getLastException();
+            System.err.println("Dernière exception: " + exception==null?"null":exception.getMessage());
+            exception.printStackTrace();
+            throw e;
+        }
+
     }
 
 
