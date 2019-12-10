@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 /**
  * Created by dutoitc on 19.09.2017.
  */
-public class DBValuesStore implements ValuesStore, AutoCloseable {
+public class DBValuesStore implements ValuesStore {
 
-    private static DBServer server;
+    private DBServer server;
 
     public DBValuesStore(DBServer server) {
         this.server = server;
@@ -126,18 +126,5 @@ public class DBValuesStore implements ValuesStore, AutoCloseable {
     public String deleteValuesOlderThanXDays(int nbDays) {
         int nb = server.deleteValuesOlderThanXDays(nbDays);
         return "OK, " + nb + " deleted";
-    }
-
-    @Override
-    public void close() throws Exception {
-        if (server != null) {
-            server.close();
-            server = null;
-        }
-//        DBValuesStore.instance = null;
-    }
-
-    public DBServer getServer4tests() {
-        return server;
     }
 }

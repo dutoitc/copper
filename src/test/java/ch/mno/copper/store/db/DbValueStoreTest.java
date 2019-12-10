@@ -20,11 +20,12 @@ public class DbValueStoreTest {
     Instant i9 = Instant.parse("2045-10-21T07:28:00.00Z");
 
     private DBValuesStore store;
-    
+    private DBServer server;
+
     @Before
     public void init() throws SQLException {
         DBServerManual.DBURL= "jdbc:h2:./copperdbtst";
-        DBServer server = new DBServerManual(false, 12345);
+        server = new DBServerManual(false, 12345);
         store = new DBValuesStore(server);
         store.clearAllData();
         store.put("key1", "value10", i5);
@@ -38,7 +39,7 @@ public class DbValueStoreTest {
 
     @After
     public void done() throws Exception {
-        store.close();
+        server.close();
     }
 
 

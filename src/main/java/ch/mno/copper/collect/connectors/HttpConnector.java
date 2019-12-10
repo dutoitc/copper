@@ -15,7 +15,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.hibernate.validator.internal.IgnoreForbiddenApisErrors;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -85,7 +84,7 @@ public class HttpConnector extends AbstractConnector {
 
         try (CloseableHttpResponse response = httpclient.execute(target, request)) {
             if (response.getStatusLine().getStatusCode() != 200) {
-                return "Error " + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase();
+                return  "Error " + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase();
             }
             return EntityUtils.toString(response.getEntity()).trim();
         } catch (IOException e) {

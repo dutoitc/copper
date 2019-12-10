@@ -7,7 +7,6 @@ import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
@@ -25,7 +24,7 @@ import java.util.concurrent.Executors;
  * Created by dutoitc on 02.02.2016.
  */
 // Optimisations: sleep until next task run (compute on task addition). Log next task run.
-public class CopperDaemon implements Runnable, ApplicationListener<ContextRefreshedEvent> {
+public class CopperDaemon implements Runnable, ApplicationListener<ContextRefreshedEvent>, AutoCloseable {
 
     private final DataProvider dataProvider;
     private Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
@@ -37,26 +36,29 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
     private boolean shouldRun = true;
     private List<String> storiesToRun = new ArrayList<>();
     private LocalDateTime lastQueryTime = LocalDateTime.MIN;
-    private final JMXConnector jmxConnector;
 
     /**
      * Manual run by the web
      */
 
     private ExecutorService executorService;
+    private Thread threadDaemon;
 
-    public CopperDaemon(DataProvider dataProvider, String jmxPort) {
+    public CopperDaemon(DataProvider dataProvider) {
         executorService = Executors.newFixedThreadPool(N_THREADS);
-//        this.valuesStore = CopperMediator.getInstance().getValuesStore();
         this.dataProvider = dataProvider;
-
-        jmxConnector = new JMXConnector(jmxPort);
     }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        Thread threadDaemon = new Thread(this);
+        threadDaemon = new Thread(this);
         threadDaemon.start();
+    }
+
+    @Override
+    public void close() throws Exception {
+        shouldRun = false;
+        threadDaemon.interrupt();
     }
 
     private void runIteration() {
@@ -92,9 +94,6 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
     public void run() {
         LOG.info("Copper daemon has started.");
 
-        // Start JMX
-        jmxConnector.startJMX();
-
         while (shouldRun) {
             LOG.trace("Daemon run");
             runIteration();
@@ -111,16 +110,10 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
             try {
                 Thread.sleep(TASK_CHEK_INTERVAL);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                // OK
             }
         }
         executorService.shutdown();
-    }
-
-
-    public void stop() {
-        shouldRun = false;
-        jmxConnector.close();
     }
 
     public void runStory(String storyName) {

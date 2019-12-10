@@ -52,7 +52,7 @@ public class HttpConnectorTest extends AbstractWebPortSpringTest {
     public void testErr() throws ConnectorException {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             String res = conn.get("/err404");
-            Assert.assertEquals("Error 404:Not Found", res);
+            Assert.assertEquals("Error 404:", res);
         }
     }
 
@@ -63,7 +63,7 @@ public class HttpConnectorTest extends AbstractWebPortSpringTest {
             nvs.put("key1", "value1");
             nvs.put("key2", "value2");
             String res = conn.post("/err404", nvs);
-            Assert.assertEquals("Error 404:Not Found", res);
+            Assert.assertEquals("Error 404:", res);
         }
     }
 

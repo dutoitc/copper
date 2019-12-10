@@ -4,32 +4,22 @@ import ch.mno.copper.CopperTestHelper;
 import ch.mno.copper.test.WebServer4Tests;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
+import ch.mno.copper.AbstractJmxServerTestStarter;
+import ch.mno.copper.test.WebServer4Tests;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import javax.management.MBeanServer;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.net.ServerSocket;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class SocketConnectorTest {
+public class SocketConnectorTest extends AbstractJmxServerTestStarter {
 
-    static int JMX_PORT = CopperTestHelper.findFreePort();;
-    private static JMXConnectorServer connectorServer;
-    static int HTTP_PORT = CopperTestHelper.findFreePort();;
+    final static int HTTP_PORT = 35742;
     private static WebServer4Tests ws;
 
     @BeforeClass
     public static void setup() throws IOException {
-        // JMX Server
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        java.rmi.registry.LocateRegistry.createRegistry(JMX_PORT);
-        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:"+JMX_PORT+"/server");
-        connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
-        connectorServer.start();
-
         // HTTP Server
         ws = new WebServer4Tests(HTTP_PORT);
         ws.start();
@@ -37,7 +27,6 @@ public class SocketConnectorTest {
 
     @AfterClass
     public static void done() throws Exception {
-        connectorServer.stop();
         ws.close();
     }
 
