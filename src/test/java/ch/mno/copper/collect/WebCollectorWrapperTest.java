@@ -55,7 +55,7 @@ public class WebCollectorWrapperTest {
 
     @Test
     public void test2() {
-        String jmx = "GIVEN COLLECTOR WEB WITH url=http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list\n" +
+        String jmx = "GIVEN COLLECTOR WEB WITH url=http://dummy_hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list\n" +
                 "    KEEP $.value[?(/value.WS_Services$/.test(@.Name))].Version AS value_VERSION\n" +
                 "THEN STORE VALUES";
         WebCollectorWrapper wrapper = WebCollectorWrapper.buildCollector(storyGrammar, jmx);
