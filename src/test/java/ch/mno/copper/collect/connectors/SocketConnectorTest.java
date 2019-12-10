@@ -3,6 +3,7 @@ package ch.mno.copper.collect.connectors;
 import ch.mno.copper.CopperTestHelper;
 import ch.mno.copper.test.WebServer4Tests;
 import org.junit.*;
+import org.junit.runners.MethodSorters;
 
 import javax.management.MBeanServer;
 import javax.management.remote.JMXConnectorServer;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SocketConnectorTest {
 
     static int JMX_PORT = CopperTestHelper.findFreePort();;
@@ -53,7 +55,7 @@ public class SocketConnectorTest {
 
     @Test
     public void testCheckConnectionOnRealServerHTTP() {
-        SocketConnector connector = new SocketConnector("localhost", HTTP_PORT, 1000);
+        SocketConnector connector = new SocketConnector("localhost", HTTP_PORT, 10000);
         SocketConnector.CONNECTION_CHECK status = connector.checkConnection();
         try {
             Assert.assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
