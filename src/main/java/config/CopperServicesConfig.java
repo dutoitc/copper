@@ -34,9 +34,10 @@ public class CopperServicesConfig {
         return new ReporterWrapperFactory(environment);
     }
 
+    private static int jmxPort = 30401;
     @Bean
     public CopperDaemon copperDaemon(DataSource dataSource) {
-        return new CopperDaemon(dataProvider(dataSource), "30401");
+        return new CopperDaemon(dataProvider(dataSource), ""+(jmxPort++));
     }
 
     @Bean
