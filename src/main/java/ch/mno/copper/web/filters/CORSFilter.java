@@ -1,22 +1,26 @@
 package ch.mno.copper.web.filters;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.ext.Provider;
+import org.springframework.stereotype.Service;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import javax.servlet.*;
 import java.io.IOException;
 
-@Provider
-public class CORSFilter implements ContainerResponseFilter {
+@Service
+public class CORSFilter implements Filter {
 
+    /**
+     * Constructor accepting a {@link CorsConfigurationSource} used by the filter
+     * to find the {@link CorsConfiguration} to use for each incoming request.
+     *
+     * @param configSource
+     * @see UrlBasedCorsConfigurationSource
+     */
+//    public CORSFilter(CorsConfigurationSource configSource) {
+//        super(configSource);
+//    }
     @Override
-    public void filter(final ContainerRequestContext requestContext,
-                       final ContainerResponseContext cres) throws IOException {
-        cres.getHeaders().add("Access-Control-Allow-Origin", "*");
-        cres.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
-        cres.getHeaders().add("Access-Control-Allow-Credentials", "true");
-        cres.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
-        cres.getHeaders().add("Access-Control-Max-Age", "1209600");
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        filterChain.doFilter(servletRequest, servletResponse);
     }
-
 }

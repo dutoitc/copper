@@ -15,6 +15,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.hibernate.validator.internal.IgnoreForbiddenApisErrors;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -40,11 +41,11 @@ public class HttpConnector extends AbstractConnector {
 
     public HttpConnector(String hostname, int port, String scheme, String proxyHostname, int proxyPort, String proxyScheme, String username, String password) {
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        if (proxyHostname!=null) {
+        if (proxyHostname != null) {
             HttpHost proxy = new HttpHost(proxyHostname, proxyPort, proxyScheme);
             httpClientBuilder.setProxy(proxy);
         }
-        if (username!=null) {
+        if (username != null) {
             CredentialsProvider provider = new BasicCredentialsProvider();
             UsernamePasswordCredentials credentials
                     = new UsernamePasswordCredentials(username, password);
@@ -61,15 +62,15 @@ public class HttpConnector extends AbstractConnector {
 
         HttpPost post = new HttpPost(uri);
         final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-        for (Map.Entry<String, String> entry: values.entrySet()) {
+        for (Map.Entry<String, String> entry : values.entrySet()) {
             nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }
 
         post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
 //        post.setConfig(config);
 
-        try (CloseableHttpResponse response = httpclient.execute(target, post)){
-            if (response.getStatusLine().getStatusCode()!=200) {
+        try (CloseableHttpResponse response = httpclient.execute(target, post)) {
+            if (response.getStatusLine().getStatusCode() != 200) {
                 return "Error " + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase();
             }
             return EntityUtils.toString(response.getEntity()).trim();
@@ -82,8 +83,8 @@ public class HttpConnector extends AbstractConnector {
 
         HttpGet request = new HttpGet(uri);
 
-        try (CloseableHttpResponse response = httpclient.execute(target, request)){
-            if (response.getStatusLine().getStatusCode()!=200) {
+        try (CloseableHttpResponse response = httpclient.execute(target, request)) {
+            if (response.getStatusLine().getStatusCode() != 200) {
                 return "Error " + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase();
             }
             return EntityUtils.toString(response.getEntity()).trim();
@@ -96,10 +97,10 @@ public class HttpConnector extends AbstractConnector {
 
         HttpGet request = new HttpGet(uri);
 
-        try (CloseableHttpResponse response = httpclient.execute(target, request)){
+        try (CloseableHttpResponse response = httpclient.execute(target, request)) {
 
             HttpResponseData<String> data = new HttpResponseData<>();
-            if (response.getStatusLine().getStatusCode()!=200) {
+            if (response.getStatusLine().getStatusCode() != 200) {
                 data.setData("Error " + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase());
             } else {
                 data.setData(EntityUtils.toString(response.getEntity()).trim());
@@ -107,13 +108,13 @@ public class HttpConnector extends AbstractConnector {
             data.setResponseCode(response.getStatusLine().getStatusCode());
 
             Header lastHeader = response.getLastHeader("Content-Length");
-            if (lastHeader!=null) {
+            if (lastHeader != null) {
                 data.setContentLength(lastHeader.getValue());
             }
 
 
             Header lastHeader1 = response.getLastHeader("Content-Type");
-            if (lastHeader1!=null) {
+            if (lastHeader1 != null) {
                 data.setContentType(lastHeader1.getValue());
             }
 

@@ -27,9 +27,9 @@ import java.util.List;
 public class SocketCollectorTest {
 
 
-    public static final int JMX_PORT = 39055;
+    public static final int JMX_PORT = 39056;
     private static JMXConnectorServer connectorServer;
-    final static int HTTP_PORT = 35742;
+    final static int HTTP_PORT = 35743;
     private static WebServer4Tests ws;
     private static StoryGrammar storyGrammar;
 
@@ -41,7 +41,7 @@ public class SocketCollectorTest {
         // JMX Server
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         java.rmi.registry.LocateRegistry.createRegistry(JMX_PORT);
-        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:39055/server");
+        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:"+JMX_PORT+"/server");
         connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
         connectorServer.start();
 

@@ -1,10 +1,7 @@
 package ch.mno.copper.collect.connectors;
 
 import ch.mno.copper.test.WebServer4Tests;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.management.MBeanServer;
 import javax.management.remote.JMXConnectorServer;
@@ -25,7 +22,7 @@ public class SocketConnectorTest {
         // JMX Server
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         java.rmi.registry.LocateRegistry.createRegistry(JMX_PORT);
-        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:39055/server");
+        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:"+JMX_PORT+"/server");
         connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
         connectorServer.start();
 

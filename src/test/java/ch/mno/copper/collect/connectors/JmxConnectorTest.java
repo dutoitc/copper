@@ -1,9 +1,6 @@
 package ch.mno.copper.collect.connectors;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -22,13 +19,15 @@ import java.lang.management.ManagementFactory;
  */
 public class JmxConnectorTest {
 
+    public static final int JMX_PORT = 39057;
+
     private static JMXConnectorServer connectorServer;
 
     @BeforeClass
     public static void setup() throws IOException {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        java.rmi.registry.LocateRegistry.createRegistry(39055);
-        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:39055/server");
+        java.rmi.registry.LocateRegistry.createRegistry(JMX_PORT);
+        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:"+JMX_PORT+"/server");
 
         connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
         connectorServer.start();
@@ -41,7 +40,7 @@ public class JmxConnectorTest {
 
     @Test
     public void testX() throws IOException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException, InterruptedException {
-        JmxConnector conn = new JmxConnector("service:jmx:rmi:///jndi/rmi://localhost:39055/server");
+        JmxConnector conn = new JmxConnector("service:jmx:rmi:///jndi/rmi://localhost:"+JMX_PORT+"/server");
         String aValue = conn.getObject("java.lang:type=Runtime", "SpecName");
         Assert.assertTrue(aValue.contains("Java"));
         conn.close();

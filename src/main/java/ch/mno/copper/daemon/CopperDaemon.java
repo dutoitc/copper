@@ -7,6 +7,9 @@ import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -22,7 +25,7 @@ import java.util.concurrent.Executors;
  * Created by dutoitc on 02.02.2016.
  */
 // Optimisations: sleep until next task run (compute on task addition). Log next task run.
-public class CopperDaemon implements Runnable {
+public class CopperDaemon implements Runnable, ApplicationListener<ContextRefreshedEvent> {
 
     private final DataProvider dataProvider;
     private Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
@@ -30,7 +33,7 @@ public class CopperDaemon implements Runnable {
     public static final int N_THREADS = 10;
     public static int TASK_CHEK_INTERVAL = 1000 * 3; // don't overload processors !
     private final List<AbstractProcessor> processors = new ArrayList<>();
-//    private final ValuesStore valuesStore;
+    //    private final ValuesStore valuesStore;
     private boolean shouldRun = true;
     private List<String> storiesToRun = new ArrayList<>();
     private LocalDateTime lastQueryTime = LocalDateTime.MIN;
@@ -50,6 +53,11 @@ public class CopperDaemon implements Runnable {
         jmxConnector = new JMXConnector(jmxPort);
     }
 
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        Thread threadDaemon = new Thread(this);
+        threadDaemon.start();
+    }
 
     private void runIteration() {
         // Refresh stories from disk
@@ -108,8 +116,6 @@ public class CopperDaemon implements Runnable {
         }
         executorService.shutdown();
     }
-
-
 
 
     public void stop() {
