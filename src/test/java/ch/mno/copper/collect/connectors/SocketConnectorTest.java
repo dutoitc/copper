@@ -58,7 +58,7 @@ public class SocketConnectorTest {
         try {
             Assert.assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
         }
-        catch (Exception e) {
+        catch (AssertionError e) {
             Exception exception = connector.getLastException();
             System.err.println("Dernière exception: " + exception==null?"null":exception.getMessage());
             exception.printStackTrace();
