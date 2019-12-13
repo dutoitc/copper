@@ -153,9 +153,10 @@ Here is a little wishlist. Add yours (report to dutoitc@shimbawa.ch)
 
 # Customization
 Some JVM arguments could be set:
-* -Dcopper.stories.folder=data/stories : use data/stories for stories folder (default: 'stories')
-* -Dcopper.db.url=jdbc:h2:./data/copperdb : use data/copperdb as h2 database (default: 'copperdb')
-* -Dcopper.context=/mycontext/env-blah : use /mycontext/env-blah as WEB context (default: '/')
+* -Dcopper.properties=config/my.properties : use this properties file
+* -Dstories.folder=data/stories : use data/stories for stories folder (default: 'stories')
+* -Dserver.port=12345 : listen on port 12345 (default: 8080)
+* -Dserver.servlet.context-path=/mycontext/env-blah : use /mycontext/env-blah as WEB context (default: '/')
 
 # Detailed documentation
 * [Cookbook](doc/cookbook.md)

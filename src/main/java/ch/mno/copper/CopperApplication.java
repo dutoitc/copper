@@ -1,8 +1,8 @@
 package ch.mno.copper;
 
-import config.CopperDbProperties;
 import config.CopperMailProperties;
 import config.CopperServicesConfig;
+import config.CopperStoriesProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
@@ -13,8 +13,8 @@ import org.springframework.context.annotation.PropertySources;
 @SpringBootApplication
 @Import({
         CopperServicesConfig.class,
-        CopperDbProperties.class,
-        CopperMailProperties.class
+        CopperMailProperties.class,
+        CopperStoriesProperties.class
 })
 @PropertySources(value = {
         @PropertySource(value = "file:copper.properties", ignoreResourceNotFound = true),

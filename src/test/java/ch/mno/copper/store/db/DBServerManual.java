@@ -21,12 +21,12 @@ public class DBServerManual extends DBServer implements AutoCloseable {
     private Server server;
     private JdbcConnectionPool pool;
 
-    public DBServerManual(boolean withWebserver, int dbPort) throws SQLException {
+    public DBServerManual(boolean withWebserver, int webPort) throws SQLException {
         if (System.getProperty("copper.db.url") != null) {
             DBURL = System.getProperty("copper.db.url");
         }
 
-        server = Server.createWebServer("-webAllowOthers", "-browser", "-webPort", "" + dbPort);
+        server = Server.createWebServer("-webAllowOthers", "-browser", "-webPort", "" + webPort);
         server.start();
         LOG.info("Server DB started");
         pool = JdbcConnectionPool.create(DBURL, DBUSER, DBPASS);
