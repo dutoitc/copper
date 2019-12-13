@@ -30,8 +30,8 @@ public class CopperServicesConfig {
 
 
     @Bean
-    public ReporterWrapperFactory reporterWrapperFactory(Environment environment) {
-        return new ReporterWrapperFactory(environment);
+    public ReporterWrapperFactory reporterWrapperFactory(CopperMailProperties copperMailProperties) {
+        return new ReporterWrapperFactory(copperMailProperties);
     }
 
     @Bean
