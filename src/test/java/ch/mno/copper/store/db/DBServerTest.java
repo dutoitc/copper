@@ -3,10 +3,7 @@ package ch.mno.copper.store.db;
 import ch.mno.copper.CopperApplication;
 import ch.mno.copper.store.StoreValue;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +18,11 @@ import java.util.List;
         CopperApplication.class
 }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class DBServerTest {
+
+    @BeforeClass
+    public static void beforeClass() {
+        System.setProperty("logging.config", "classpath:logback-test.xml");
+    }
 
     Instant i3 = Instant.parse("2015-10-21T07:27:58.00Z");
     Instant i4 = Instant.parse("2015-10-21T07:27:59.00Z");
