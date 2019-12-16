@@ -4,12 +4,11 @@ import ch.mno.copper.store.MapValuesStore;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
+import config.CopperMailProperties;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.core.env.Environment;
-import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +33,7 @@ public class CsvReporterWrapperTest {
     public void test() throws IOException {
         ValuesStore valuesStore = new MapValuesStore();
 
-        Environment e = new MockEnvironment();
+        CopperMailProperties props = new CopperMailProperties();
 
         // New file
         File file = File.createTempFile("copper", "tmp");
@@ -44,7 +43,7 @@ public class CsvReporterWrapperTest {
         // Story
         String story = "REPORT BY CSV to \"" + file.getAbsolutePath() + "\" WITH headers=\"my header1;my header2;my header3\"\n" +
                 "    WITH line=\"{{value1}};{{value2}};{{value3}}\"";
-        CsvReporterWrapper wrapper = new ReporterWrapperFactory(e).buildReporterWrapper(storyGrammar, story);
+        CsvReporterWrapper wrapper = new ReporterWrapperFactory(props).buildReporterWrapper(storyGrammar, story);
 
         // Run
         Map<String, String> values = new HashMap();

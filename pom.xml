@@ -4,7 +4,7 @@
 
     <groupId>ch.dsivd.copper</groupId>
     <artifactId>copper</artifactId>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.2.7-SNAPSHOT</version>
     <description>Copper - Monitoring Engine</description>
     <url>https://github.com/dutoitc/copper</url>
 
@@ -103,6 +103,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
             </plugin>
         </plugins>
     </build>
