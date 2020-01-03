@@ -40,15 +40,14 @@ public class BinaryCollectorWrapper extends AbstractCollectorWrapper {
             switch (el.cmd) {
                 case "CHECK_BY_WHICH":
                     String res = BinaryConnector.executeCommand("which " + el.path);
-                    System.out.println("DBG>" + res);
                     status = !res.contains("which: no ") && !res.contains("Cannot run") && !res.contains("EXIT_");
                     break;
                 case "CHECK_BY_PATH":
                     status = new File(el.path).exists();
                     break;
                 default:
-                    System.out.println("DBG> invalid command");
-                    throw new RuntimeException("Invalid command: " + el.cmd);
+                    results.put(el.as, "KO Invalid command: " + el.cmd);
+                    continue;
             }
             results.put(el.as, status?"OK":"KO");
         }

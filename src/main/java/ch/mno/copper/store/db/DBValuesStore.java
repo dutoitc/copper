@@ -49,7 +49,6 @@ public class DBValuesStore implements ValuesStore {
     public String getValue(String key) {
         StoreValue storeValue = null;
         try {
-            System.out.println("DBG-" + (server == null));
             storeValue = server.readLatest(key);
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant value " + key + ": " + e.getMessage());
