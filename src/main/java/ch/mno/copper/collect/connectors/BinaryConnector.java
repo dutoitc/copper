@@ -21,15 +21,18 @@ public class BinaryConnector {
         try {
             Process process = Runtime.getRuntime().exec(String.format(cmd));
             StringBuilder sb = new StringBuilder();
+            StringBuilder sbErr = new StringBuilder();
             Consumer<String> consumer = (s->sb.append(s));
+            Consumer<String> consumerErr = (s->sbErr.append(s));
             StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), consumer);
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            StreamGobbler streamGobblerErr = new StreamGobbler(process.getErrorStream(), consumer);
+            ExecutorService executorService = Executors.newFixedThreadPool(2);
             executorService.submit(streamGobbler);
+            executorService.submit(streamGobblerErr);
             int exitCode = process.waitFor();
-            assert exitCode == 0;
             Thread.sleep(100);
             executorService.shutdown();
-            return sb.toString();
+            return sb.toString() + sbErr.toString() + (exitCode==0?"":"EXIT_"+exitCode);
         } catch (IOException | InterruptedException e) {
             LOG.trace("Exception: " + e.getMessage(), e);
             return "Exception: " + e.getMessage();
