@@ -20,6 +20,7 @@ import java.util.UUID;
         ServerSocket s;
         Thread thread;
         boolean stopAsked = false;
+        boolean running = false;
         int port;
         String uuid = UUID.randomUUID().toString();
 
@@ -62,6 +63,7 @@ import java.util.UUID;
             System.out.println("[WebServer4Tests " + uuid + "]: Successfully bound to " + port);
 
 //            System.out.println("Waiting for connection");
+            running = true;
             while (!stopAsked) {
                 try {
                     // wait for a connection
@@ -107,6 +109,7 @@ import java.util.UUID;
                     System.out.println("Error: " + e);
                 }
             }
+            running = false;
 
             System.out.println("[WebServer4Tests" + uuid + "]: Stopping...");
             try {
@@ -121,8 +124,13 @@ import java.util.UUID;
         @Override
         public void close() throws Exception {
             stopAsked = true;
+            running = false;
             Thread.sleep(10);
             thread.interrupt();
             System.out.println("[WebServer4Tests" + uuid + "]: Webserver at port " + port + ": close");
         }
+
+    public boolean isRunning() {
+        return running;
     }
+}
