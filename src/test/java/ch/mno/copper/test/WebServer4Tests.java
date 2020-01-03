@@ -33,7 +33,7 @@ import java.net.Socket;
         @Override
         public void run() {
 //            System.out.println("Webserver starting up on port " + PORT);
-            int nbRetry=3;
+            int nbRetry=5;
             boolean ok = false;
             while (!ok && nbRetry-->0) {
                 try {
@@ -57,6 +57,7 @@ import java.net.Socket;
                 System.err.println("Error: Cannot bind to " + port);
                 return;
             }
+            System.out.println("Successfully bound to " + port);
 
 //            System.out.println("Waiting for connection");
             while (!stopAsked) {
@@ -120,5 +121,6 @@ import java.net.Socket;
             stopAsked = true;
             Thread.sleep(10);
             thread.interrupt();
+            System.out.println("Webserver stopped at port " + port);
         }
     }

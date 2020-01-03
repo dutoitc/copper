@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
@@ -22,9 +23,12 @@ public class BinaryConnector {
             StringBuilder sb = new StringBuilder();
             Consumer<String> consumer = (s->sb.append(s));
             StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), consumer);
-            Executors.newSingleThreadExecutor().submit(streamGobbler);
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            executorService.submit(streamGobbler);
             int exitCode = process.waitFor();
             assert exitCode == 0;
+            Thread.sleep(100);
+            executorService.shutdown();
             return sb.toString();
         } catch (IOException | InterruptedException e) {
             LOG.trace("Exception: " + e.getMessage(), e);
