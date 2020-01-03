@@ -44,7 +44,7 @@ public class BinaryCollectorTest {
     @Test
     public void testWhichOnInexistant() throws ConnectorException {
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
-                "BINARY_CHECK\nCHECK_BY_WHICH dummy AS DUMMY_AVAILABLE\n");
+                "BINARY_CHECK\nCHECK_BY_WHICH dummy123 AS DUMMY_AVAILABLE\n");
         Assert.assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
         Assert.assertEquals("KO", collector.execute2D().get(0).get(0));
         Assert.assertEquals("KO", collector.execute().get("DUMMY_AVAILABLE"));

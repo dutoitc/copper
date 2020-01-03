@@ -33,11 +33,28 @@ import java.net.Socket;
         @Override
         public void run() {
 //            System.out.println("Webserver starting up on port " + PORT);
-            try {
-                // create the main server socket
-                s = new ServerSocket(port);
-            } catch (Exception e) {
-                System.out.println("Error: " + e);
+            int nbRetry=3;
+            boolean ok = false;
+            while (!ok && nbRetry-->0) {
+                try {
+                    // create the main server socket
+                    s = new ServerSocket(port);
+                    ok = true;
+                } catch (Exception e) {
+                    if (e.getMessage().contains("Address already in use")) {
+                        System.out.println("Address already in use, waiting some time and retrying");
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                    } else {
+                        System.err.println("Error: " + e + ", retrying");
+                    }
+                }
+            }
+            if (!ok) {
+                System.err.println("Error: Cannot bind to " + port);
                 return;
             }
 

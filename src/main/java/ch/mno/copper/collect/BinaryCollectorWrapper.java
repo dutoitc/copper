@@ -40,6 +40,7 @@ public class BinaryCollectorWrapper extends AbstractCollectorWrapper {
             switch (el.cmd) {
                 case "CHECK_BY_WHICH":
                     String res = BinaryConnector.executeCommand("which " + el.path);
+                    System.out.println("DBG>" + res);
                     status = !res.contains("which: no ") && !res.contains("Cannot run");
                     break;
                 case "CHECK_BY_PATH":
