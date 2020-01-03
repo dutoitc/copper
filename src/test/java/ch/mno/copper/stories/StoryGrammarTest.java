@@ -326,6 +326,23 @@ public class StoryGrammarTest {
         SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("COLLECTOR_WEB"), txt);
     }
 
+    @Test
+    public void testSOCKET() {
+        String txt="SOCKET WITH host=myhost,port=80,timeout_ms=1000\n" +
+                "   KEEP status AS SOCKET_MY1\n";
+
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("COLLECTOR_SOCKET"), txt);
+    }
+
+    @Test
+    public void testBINARY() {
+        String txt="BINARY_CHECK\n" +
+                "   CHECK_BY_WHICH find AS FIND_AVAILABLE\n" +
+                "   CHECK_BY_PATH /usr/bin/ls AS LS_AVAILABLE\n";
+
+        SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("COLLECTOR_BINARY"), txt);
+    }
+
 
 
 //    @Test

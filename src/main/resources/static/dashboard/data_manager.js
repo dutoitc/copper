@@ -126,16 +126,16 @@ class DataManager {
         content.append($(style));
 
         // Widgets
-        for (var i=0; i<this.widgets.length; i++) {
-            var widget = this.widgets[i];
+        for (var j=0; j<this.widgets.length; j++) {
+            var widget = this.widgets[j];
             var ui = this.editable?new UIWidgetEditable(widget):new UIWidgetRunnable(widget);
             content.append(ui.buildDOM(this.copperValues));
         }
 
         // Script
         var script = "<script type='text/javascript'>";
-        for (var i=0; i<this.script.length; i++) {
-            script+=this.script[i]+"\n";
+        for (var k=0; k<this.script.length; k++) {
+            script+=this.script[k]+"\n";
         }
         script+="</script>\n";
         content.append($(script));
