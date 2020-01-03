@@ -7,10 +7,48 @@ class DataManager {
         this.copperValues={};
         this.editable = false;
         this.skipRefresh = false;
+        this.jsonScreens = [];
 
-        // Load from disk
-        var json = localStorage.getItem("copperJson");
-        if (json!=null && confirm("Use last dashboard ?")) this.importJSON(JSON.parse(json));
+        // Load JSON from local by webservice
+        $.ajax({
+            url: "../ws/screens"
+            //  Format: [ {'name':'screen1', 'data':jsonScreen}, ... ]
+        }).done(function(data) {
+            var jsonScreens = data;
+            dataManager.jsonScreens = data;
+            var nb = Object.getOwnPropertyNames(jsonScreens).length;
+            if (nb==0) {
+                // Load JSON from local storage
+                var json = localStorage.getItem("copperJson");
+                if (json!=null && confirm("Use last dashboard ?")) this.importJSON(JSON.parse(json));
+            } else if (nb==1) {
+                dataManager.defineScreenJsonObject(jsonScreens[0].data);
+            } else if (nb>1) {
+                dataManager.chooseAndImportScreen(jsonScreens);
+            }
+        });
+    }
+
+    chooseAndImportScreen(jsonScreens) {
+        var screens = jsonScreens;
+        $( function() {
+            $( "#dialog-screenchoice" ).dialog({
+              resizable: false,
+              height: "auto",
+              width: 400,
+              modal: true,
+              buttons: {
+                "Ecran 1": function() {
+                    dataManager.defineScreenJsonObject(JSON.parse(dataManager.jsonScreens['myScreen1']));
+                    $( this ).dialog( "close" );
+                },
+                "Ecran 2": function() {
+                    dataManager.defineScreenJsonObject(JSON.parse(dataManager.jsonScreens['myScreen2']));
+                    $( this ).dialog( "close" );
+                }
+              }
+            });
+          } );
     }
 
     addWidget(x, y) {
@@ -50,14 +88,9 @@ class DataManager {
             // Upload file, then call import with JSON
             uploadFile(function(content) {
                 try {
-                    //content = content.substr(content.indexOf(",")+1);
                     if (content==null) return;
                     json = JSON.parse(content);
-                    dataManager.importJSON(json);
-
-                    // Save for later use
-                    localStorage.setItem("copperJson", JSON.stringify(json));
-                    console.log("Setting copperJson",json);
+                    dataManager.defineScreenJsonObject(json);
                 } catch (e) {
                     alert("Erreur: " + e);
                 }
@@ -66,8 +99,19 @@ class DataManager {
         }
     }
 
+
+    // Use the given screen and save to local storage
+    defineScreenJsonObject(json) {
+        dataManager.importJSON(json);
+
+        // Save for later use
+        localStorage.setItem("copperJson", JSON.stringify(json));
+        console.log("Setting copperJson",json);
+    }
+
     importJSON(json) {
         // Import
+        console.log("Importing JSON", json);
         this.widgets=json["widgets"];
         this.style=json["css"];
         this.script=json["script"];

@@ -1,6 +1,7 @@
 package ch.mno.copper;
 
 import config.CopperMailProperties;
+import config.CopperScreensProperties;
 import config.CopperServicesConfig;
 import config.CopperStoriesProperties;
 import org.springframework.boot.SpringApplication;
@@ -18,7 +19,8 @@ import java.io.IOException;
 @Import({
         CopperServicesConfig.class,
         CopperMailProperties.class,
-        CopperStoriesProperties.class
+        CopperStoriesProperties.class,
+        CopperScreensProperties.class
 })
 @PropertySources(value = {
         @PropertySource(value = "file:copper.properties", ignoreResourceNotFound = true),

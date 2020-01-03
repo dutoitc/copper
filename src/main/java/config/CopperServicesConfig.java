@@ -18,8 +18,8 @@ import javax.sql.DataSource;
 public class CopperServicesConfig {
 
     @Bean
-    public DiskHelper diskHelper(CopperStoriesProperties copperStoriesProperties) {
-        return new DiskHelper(copperStoriesProperties);
+    public DiskHelper diskHelper(CopperStoriesProperties copperStoriesProperties, CopperScreensProperties copperScreensProperties) {
+        return new DiskHelper(copperStoriesProperties, copperScreensProperties);
     }
 
     @Bean

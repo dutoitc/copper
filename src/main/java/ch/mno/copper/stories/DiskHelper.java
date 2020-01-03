@@ -1,23 +1,38 @@
 package ch.mno.copper.stories;
 
+import config.CopperScreensProperties;
 import config.CopperStoriesProperties;
+import org.apache.commons.io.FileUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystemException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DiskHelper {
 
-    public final String storiesFolder;
     public final CopperStoriesProperties copperStoriesProperties;
+    private final CopperScreensProperties copperScreensProperties;
+    public final String storiesFolder;
+    private final String screensFolder;
 
-    public DiskHelper(CopperStoriesProperties copperStoriesProperties) {
+    public DiskHelper(CopperStoriesProperties copperStoriesProperties, CopperScreensProperties copperScreensProperties) {
         this.copperStoriesProperties = copperStoriesProperties;
+        this.copperScreensProperties = copperScreensProperties;
 
         this.storiesFolder = copperStoriesProperties.getFolder();
+        this.screensFolder = copperScreensProperties.getFolder();
         ensureStoriesFolderExists();
     }
 
@@ -82,4 +97,26 @@ public class DiskHelper {
     public FileInputStream getStoryAsStream(String storyName) throws FileNotFoundException {
         return new FileInputStream(storiesFolder + "/" + storyName);
     }
+
+    public Map<String, String> findScreens() {
+        Map<String, String> screens = new LinkedHashMap<>();
+        if (new File(screensFolder).exists()) {
+            try {
+                Files.list(Path.of(screensFolder))
+                        .sorted(Comparator.comparing(a -> a.getFileName()))
+                        .filter(a->a.getFileName().toString().endsWith(".json"))
+                        .forEach(a-> {
+                            try {
+                                screens.put(a.getFileName().toString().replace(".json", ""), FileUtils.readFileToString(a.toFile()));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return screens;
+    }
+
 }

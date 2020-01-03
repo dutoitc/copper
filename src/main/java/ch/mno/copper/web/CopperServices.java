@@ -6,6 +6,7 @@ import ch.mno.copper.helpers.GraphHelper;
 import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.store.data.InstantValues;
+import ch.mno.copper.stories.DiskHelper;
 import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryValidationResult;
@@ -20,7 +21,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.swagger.annotations.ApiOperation;
 import org.jfree.chart.JFreeChart;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
@@ -44,6 +51,9 @@ public class CopperServices {
     private final StoriesFacade storiesFacade;
     private final CopperDaemon daemon;
 
+    @Autowired
+    private DiskHelper diskHelper;
+
     public CopperServices(ValuesStore valuesStore, final StoriesFacade storiesFacade, final CopperDaemon daemon) {
         this.valuesStore = valuesStore;
         this.storiesFacade = storiesFacade;
@@ -61,6 +71,14 @@ public class CopperServices {
     public String test() {
         return "pong";
     }
+
+    @GetMapping(value = "/screens", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Get embedded screens",
+            notes = "A way to get the embedded screens")
+    public Map<String, String> getScreens() {
+        return diskHelper.findScreens();
+    }
+
 
     @PostMapping("validation/story")
     @ApiOperation(value = "Validation of a posted story",

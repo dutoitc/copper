@@ -126,6 +126,8 @@ Here is a list of actual components:
 * Jmx collector: get values from JMX MBean server
 * Jdbc collector: get values from Jdbc database
 * Web collector: get values from a file on a server
+* Socket collector: ping a socket
+* Binary check collector: check if binary exists on disk
 
 ## Triggers
 * When trigger: WHEN a>1, WHEN a<22, WHEN a=33, WHEN a>17.22, ... (float are equals if delta<1/25)
