@@ -5,9 +5,9 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.test.WebServer4Tests;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class SocketCollectorTest extends AbstractJmxServerTestStarter {
     private WebServer4Tests ws;
     private StoryGrammar storyGrammar;
 
-    @Before
+    @BeforeClass
     public void setup() throws IOException {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
         // HTTP Server
@@ -31,7 +31,7 @@ public class SocketCollectorTest extends AbstractJmxServerTestStarter {
         ws.start();
     }
 
-    @After
+    @AfterClass
     public void done() throws Exception {
         ws.close();
     }
