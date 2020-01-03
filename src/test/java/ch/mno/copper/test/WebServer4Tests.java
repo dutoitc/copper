@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.UUID;
 
 /**
  * ping1 -> pong1
@@ -19,7 +20,8 @@ import java.net.Socket;
         ServerSocket s;
         Thread thread;
         boolean stopAsked = false;
-    int port;
+        int port;
+        String uuid = UUID.randomUUID().toString();
 
     public WebServer4Tests(int port) {
         this.port = port;
@@ -42,22 +44,22 @@ import java.net.Socket;
                     ok = true;
                 } catch (Exception e) {
                     if (e.getMessage().contains("Address already in use")) {
-                        System.out.println("Address already in use, waiting some time and retrying");
+                        System.out.println("[WebServer4Tests " + uuid + "]: Address already in use, waiting some time and retrying");
                         try {
                             Thread.sleep(3000);
                         } catch (InterruptedException ex) {
                             ex.printStackTrace();
                         }
                     } else {
-                        System.err.println("Error: " + e + ", retrying");
+                        System.err.println("[WebServer4Tests " + uuid + "]: Error: " + e + ", retrying");
                     }
                 }
             }
             if (!ok) {
-                System.err.println("Error: Cannot bind to " + port);
+                System.err.println("[WebServer4Tests " + uuid + "]: Error: Cannot bind to " + port);
                 return;
             }
-            System.out.println("Successfully bound to " + port);
+            System.out.println("[WebServer4Tests " + uuid + "]: Successfully bound to " + port);
 
 //            System.out.println("Waiting for connection");
             while (!stopAsked) {
@@ -106,13 +108,13 @@ import java.net.Socket;
                 }
             }
 
-            System.out.println("Stopping...");
+            System.out.println("[WebServer4Tests" + uuid + "]: Stopping...");
             try {
                 s.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Stopped");
+            System.out.println("[WebServer4Tests" + uuid + "]: Stopped");
         }
 
 
@@ -121,6 +123,6 @@ import java.net.Socket;
             stopAsked = true;
             Thread.sleep(10);
             thread.interrupt();
-            System.out.println("Webserver stopped at port " + port);
+            System.out.println("[WebServer4Tests" + uuid + "]: Webserver at port " + port + ": close");
         }
     }

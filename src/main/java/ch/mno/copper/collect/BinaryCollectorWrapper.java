@@ -47,6 +47,7 @@ public class BinaryCollectorWrapper extends AbstractCollectorWrapper {
                     status = new File(el.path).exists();
                     break;
                 default:
+                    System.out.println("DBG> invalid command");
                     throw new RuntimeException("Invalid command: " + el.cmd);
             }
             results.put(el.as, status?"OK":"KO");
