@@ -16,17 +16,12 @@ import java.util.stream.Collectors;
 /**
  * Created by dutoitc on 19.09.2017.
  */
-public class DBValuesStore implements ValuesStore, AutoCloseable {
+public class DBValuesStore implements ValuesStore {
 
-//    private static DBValuesStore instance;
-    private static DBServer server;
+    private DBServer server;
 
-    public DBValuesStore(int dbPort) {
-        try {
-            server = new DBServer(true, dbPort);
-        } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+    public DBValuesStore(DBServer server) {
+        this.server = server;
     }
 
     @Override
@@ -54,7 +49,6 @@ public class DBValuesStore implements ValuesStore, AutoCloseable {
     public String getValue(String key) {
         StoreValue storeValue = null;
         try {
-            System.out.println("DBG-" + (server==null));
             storeValue = server.readLatest(key);
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant value " + key + ": " + e.getMessage());
@@ -69,7 +63,7 @@ public class DBValuesStore implements ValuesStore, AutoCloseable {
     public Map<String, StoreValue> getValues() {
         try {
             return server.readLatest().stream()
-                    .collect(Collectors.toMap(x -> x.getKey(), x->x));
+                    .collect(Collectors.toMap(x -> x.getKey(), x -> x));
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
         }
@@ -116,7 +110,7 @@ public class DBValuesStore implements ValuesStore, AutoCloseable {
     public Map<String, String> getValuesMapString() {
         try {
             return server.readLatest().stream()
-                    .collect(Collectors.toMap(x -> x.getKey(), x->x.getValue()));
+                    .collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
         }
@@ -131,18 +125,5 @@ public class DBValuesStore implements ValuesStore, AutoCloseable {
     public String deleteValuesOlderThanXDays(int nbDays) {
         int nb = server.deleteValuesOlderThanXDays(nbDays);
         return "OK, " + nb + " deleted";
-    }
-
-    @Override
-    public void close() throws Exception {
-        if (server!=null) {
-            server.close();
-            server = null;
-        }
-//        DBValuesStore.instance = null;
-    }
-
-    public DBServer getServer4tests() {
-        return server;
     }
 }

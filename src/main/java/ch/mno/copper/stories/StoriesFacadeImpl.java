@@ -22,14 +22,12 @@ import java.util.List;
 public class StoriesFacadeImpl implements StoriesFacade {
     private Logger LOG = LoggerFactory.getLogger(StoriesFacadeImpl.class);
 
-    private StoriesHolder storiesHolder = new StoriesHolder();
-    private StoryGrammar grammar;
+    private final StoriesHolder storiesHolder = new StoriesHolder();
+    private final StoryGrammar grammar;
+    private final DiskHelper diskHelper;
 
-
-
-
-
-    public StoriesFacadeImpl() {
+    public StoriesFacadeImpl(DiskHelper diskHelper) {
+        this.diskHelper = diskHelper;
         grammar = new StoryGrammar(StoriesFacadeImpl.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
@@ -46,7 +44,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
 
     @Override
     public Story buildStory(FileInputStream fileInputStream, String storyName) throws IOException, ConnectorException {
-       return new Story(grammar, fileInputStream, storyName);
+        return new Story(grammar, fileInputStream, storyName);
     }
 
     @Override
@@ -57,14 +55,14 @@ public class StoriesFacadeImpl implements StoriesFacade {
     @Override
     public String saveNewStory(String storyName, String storyText) throws IOException, ConnectorException {
         Story story = new Story(grammar, storyName, storyText);
-        DiskHelper.saveNewStory(storyName, story.getStoryText());
+        diskHelper.saveNewStory(storyName, story.getStoryText());
         storiesHolder.add(story); // TODO: update listeneres
         return "Ok";
     }
 
     @Override
     public String updateStory(String originalStoryName, String storyName, String storyText) throws IOException, ConnectorException {
-        if (!DiskHelper.storyExists(originalStoryName)) {
+        if (!diskHelper.storyExists(originalStoryName)) {
             return "Error: the file " + originalStoryName + " does not exist.";
         }
 
@@ -72,11 +70,12 @@ public class StoriesFacadeImpl implements StoriesFacade {
         Story story = new Story(grammar, storyName, storyText);
 
         // Update
-        DiskHelper.updateStory(story.getName(), story.getStoryText());
+        diskHelper.updateStory(story.getName(), story.getStoryText());
         storiesHolder.replace(originalStory, story);
 
         // TODO: update listeneres
-        if (!originalStoryName.equals(storyName)) DiskHelper.deleteStory(originalStoryName);;
+        if (!originalStoryName.equals(storyName)) diskHelper.deleteStory(originalStoryName);
+        ;
         return "Ok";
     }
 
@@ -88,22 +87,21 @@ public class StoriesFacadeImpl implements StoriesFacade {
     @Override
     public void deleteStory(String storyName) {
         Story story = getStoryByName(storyName);
-        DiskHelper.deleteStory(storyName);
+        diskHelper.deleteStory(storyName);
         storiesHolder.remove(story);
     }
 
     @Override
     public void refreshFromDisk() {
-        DiskHelper.ensureStoriesFolderExists();
+        diskHelper.ensureStoriesFolderExists();
 
-        List<String> storyNames = DiskHelper.findStoryNames();
+        List<String> storyNames = diskHelper.findStoryNames();
 
         // TODO: keep story hash in memory. If different, reload. And test.
         for (String storyName : storyNames) {
             try (
-                    FileInputStream fileInputStream = DiskHelper.getStoryAsStream(storyName)
-            )
-            {
+                    FileInputStream fileInputStream = diskHelper.getStoryAsStream(storyName)
+            ) {
                 Story diskStory = buildStory(fileInputStream, storyName);
                 Story holderStory = getStoryByName(storyName);
                 storiesHolder.removeIfError(storyName);
@@ -130,8 +128,8 @@ public class StoriesFacadeImpl implements StoriesFacade {
         }
 
         // Evict stories from memory if not present on disk
-        for (Story story: new ArrayList<>(this.storiesHolder.getStories())) {
-            if (!DiskHelper.storyExists(story.getName())) {
+        for (Story story : new ArrayList<>(this.storiesHolder.getStories())) {
+            if (!diskHelper.storyExists(story.getName())) {
                 LOG.info("Removing story from memory, no longer on disk: " + story.getName());
                 this.storiesHolder.remove(story);
             }

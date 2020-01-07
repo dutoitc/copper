@@ -4,6 +4,7 @@ import ch.mno.copper.store.MapValuesStore;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
+import config.CopperMailProperties;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,6 +33,8 @@ public class CsvReporterWrapperTest {
     public void test() throws IOException {
         ValuesStore valuesStore = new MapValuesStore();
 
+        CopperMailProperties props = new CopperMailProperties();
+
         // New file
         File file = File.createTempFile("copper", "tmp");
         file.delete();
@@ -40,7 +43,7 @@ public class CsvReporterWrapperTest {
         // Story
         String story = "REPORT BY CSV to \"" + file.getAbsolutePath() + "\" WITH headers=\"my header1;my header2;my header3\"\n" +
                 "    WITH line=\"{{value1}};{{value2}};{{value3}}\"";
-        CsvReporterWrapper wrapper = ReporterWrapperFactory.buildReporterWrapper(storyGrammar, story);
+        CsvReporterWrapper wrapper = new ReporterWrapperFactory(props).buildReporterWrapper(storyGrammar, story);
 
         // Run
         Map<String, String> values = new HashMap();

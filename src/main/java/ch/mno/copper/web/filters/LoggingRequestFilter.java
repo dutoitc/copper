@@ -2,30 +2,30 @@ package ch.mno.copper.web.filters;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 
-public class LoggingRequestFilter implements ContainerRequestFilter, ContainerResponseFilter {
+public class LoggingRequestFilter extends OncePerRequestFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger("copper_audit");
 
-    @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
-
-    }
+    @Autowired
+    private SecurityContext securityContext;
 
     @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        SecurityContext securityContext = requestContext.getSecurityContext();
-        if (securityContext!=null) {
-            String principal = securityContext.getUserPrincipal()==null?"?":securityContext.getUserPrincipal().getName();
-            LOG.info("[" + principal + "] "  + requestContext.getMethod() + " " + requestContext.getUriInfo().getPath(true)
-              + " -> status=" + responseContext.getStatus() + " l=" + responseContext.getLength());
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+//    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+        if (securityContext != null) {
+            String principal = securityContext.getUserPrincipal() == null ? "?" : securityContext.getUserPrincipal().getName();
+            LOG.info("[" + principal + "] " + request.getMethod() + " " + request.getRequestURI()
+                    + " -> status=" + response.getStatus() );//+ " l=" + response.getLength());
         }
     }
 

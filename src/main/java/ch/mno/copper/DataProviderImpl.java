@@ -16,8 +16,8 @@ import java.util.Set;
  */
 public class DataProviderImpl implements DataProvider {
 
-    StoriesFacade storiesFacade;
-    private ValuesStore valuesStore;
+    private final StoriesFacade storiesFacade;
+    private final ValuesStore valuesStore;
     private Map<String, StoryTask> cachedStoryTasks = new HashMap<>();
 
     public DataProviderImpl(StoriesFacade storiesFacade, ValuesStore valuesStore) {
@@ -45,7 +45,7 @@ public class DataProviderImpl implements DataProvider {
         // Add newer
         stories.stream()
                 .filter(s -> !cachedStoryTasks.containsKey(s.getName()))
-                .filter(s->!s.hasError())
+                .filter(s -> !s.hasError())
                 .forEach(s -> newStoryTasks.put(s.getName(), storiesFacade.buildStoryTask(s, valuesStore)));
         cachedStoryTasks = newStoryTasks;
         return stories;

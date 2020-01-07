@@ -1,42 +1,35 @@
 package ch.mno.copper.collect.connectors;
 
+import ch.mno.copper.AbstractJmxServerTestStarter;
 import ch.mno.copper.test.WebServer4Tests;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.management.MBeanServer;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 
-public class SocketConnectorTest {
+public class SocketConnectorTest extends AbstractJmxServerTestStarter {
 
-    public static final int JMX_PORT = 39055;
-    private static JMXConnectorServer connectorServer;
     final static int HTTP_PORT = 35742;
     private static WebServer4Tests ws;
 
     @BeforeClass
-    public static void setup() throws IOException {
-        // JMX Server
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        java.rmi.registry.LocateRegistry.createRegistry(JMX_PORT);
-        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:39055/server");
-        connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
-        connectorServer.start();
-
+    public static void setup() throws IOException, InterruptedException {
         // HTTP Server
         ws = new WebServer4Tests(HTTP_PORT);
         ws.start();
+        int nbTries=30;
+        while (!ws.isRunning() && nbTries-->0) {
+            Thread.sleep(100);
+        }
+        if (!ws.isRunning()) {
+            throw new RuntimeException("Webservice4Tests not running after some time !");
+        }
     }
 
     @AfterClass
     public static void done() throws Exception {
-        connectorServer.stop();
         ws.close();
     }
 
@@ -54,8 +47,18 @@ public class SocketConnectorTest {
 
     @Test
     public void testCheckConnectionOnRealServerHTTP() {
-        SocketConnector.CONNECTION_CHECK status = new SocketConnector("localhost", HTTP_PORT, 1000).checkConnection();
-        Assert.assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
+        SocketConnector connector = new SocketConnector("localhost", HTTP_PORT, 10000);
+        SocketConnector.CONNECTION_CHECK status = connector.checkConnection();
+        try {
+            Assert.assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
+        }
+        catch (AssertionError e) {
+            Exception exception = connector.getLastException();
+            System.err.println("Dernière exception: " + exception==null?"null":exception.getMessage());
+            exception.printStackTrace();
+            throw e;
+        }
+
     }
 
 

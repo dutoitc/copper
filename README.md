@@ -126,6 +126,8 @@ Here is a list of actual components:
 * Jmx collector: get values from JMX MBean server
 * Jdbc collector: get values from Jdbc database
 * Web collector: get values from a file on a server
+* Socket collector: ping a socket
+* Binary check collector: check if binary exists on disk
 
 ## Triggers
 * When trigger: WHEN a>1, WHEN a<22, WHEN a=33, WHEN a>17.22, ... (float are equals if delta<1/25)
@@ -153,9 +155,10 @@ Here is a little wishlist. Add yours (report to dutoitc@shimbawa.ch)
 
 # Customization
 Some JVM arguments could be set:
-* -Dcopper.stories.folder=data/stories : use data/stories for stories folder (default: 'stories')
-* -Dcopper.db.url=jdbc:h2:./data/copperdb : use data/copperdb as h2 database (default: 'copperdb')
-* -Dcopper.context=/mycontext/env-blah : use /mycontext/env-blah as WEB context (default: '/')
+* -Dcopper.properties=config/my.properties : use this properties file
+* -Dstories.folder=data/stories : use data/stories for stories folder (default: 'stories')
+* -Dserver.port=12345 : listen on port 12345 (default: 8080)
+* -Dserver.servlet.context-path=/mycontext/env-blah : use /mycontext/env-blah as WEB context (default: '/')
 
 # Detailed documentation
 * [Cookbook](doc/cookbook.md)
@@ -163,7 +166,16 @@ Some JVM arguments could be set:
 * [Reporters](doc/reporters.md)
 
 # Releasing to Maven central
+(add this to ~/m2/settings)
+<servers>
+    <server>
+        <id>GitHub</id>
+        <username>[User]</username>
+        <password>[Password]</password>
+    </server>
+</servers>
 
+Then execute:
 ```
 mvn release:prepare
 mvn release:perform

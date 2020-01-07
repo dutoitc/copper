@@ -1,7 +1,7 @@
 package ch.mno.copper.collect;
 
+import ch.mno.copper.AbstractJmxServerTestStarter;
 import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.collect.connectors.SocketConnector;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.test.WebServer4Tests;
@@ -10,49 +10,29 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.management.MBeanServer;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-import java.util.List;
+
 
 /**
  * Created by dutoitc on 26.03.2016.
  */
-public class SocketCollectorTest {
+public class SocketCollectorTest extends AbstractJmxServerTestStarter {
 
+    final static int HTTP_PORT = 35743;
 
-    public static final int JMX_PORT = 39055;
-    private static JMXConnectorServer connectorServer;
-    final static int HTTP_PORT = 35742;
-    private static WebServer4Tests ws;
-    private static StoryGrammar storyGrammar;
-
+    private WebServer4Tests ws;
+    private StoryGrammar storyGrammar;
 
     @BeforeClass
-    public static void setup() throws IOException {
+    public void setup() throws IOException {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
-
-        // JMX Server
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        java.rmi.registry.LocateRegistry.createRegistry(JMX_PORT);
-        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:39055/server");
-        connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
-        connectorServer.start();
-
         // HTTP Server
         ws = new WebServer4Tests(HTTP_PORT);
         ws.start();
     }
 
     @AfterClass
-    public static void done() throws Exception {
-        connectorServer.stop();
+    public void done() throws Exception {
         ws.close();
     }
 
@@ -73,9 +53,17 @@ public class SocketCollectorTest {
 
     @Test
     public void testCheckConnectionOnRealServerHTTP() throws ConnectorException {
-        SocketCollectorWrapper collector = SocketCollectorWrapper.buildCollector(storyGrammar, "SOCKET WITH host=localhost,port=" + HTTP_PORT + ",timeout_ms=1000\nKEEP status AS myStatus\n");
-        Assert.assertEquals("OK", collector.execute2D().get(0).get(0));
-        Assert.assertEquals("OK", collector.execute().get("myStatus"));
+        try (
+                // HTTP Server
+                WebServer4Tests ws = new WebServer4Tests(HTTP_PORT);
+        ) {
+            ws.start();
+            SocketCollectorWrapper collector = SocketCollectorWrapper.buildCollector(storyGrammar, "SOCKET WITH host=127.0.0.1,port=" + HTTP_PORT + ",timeout_ms=5000\nKEEP status AS myStatus\n");
+            Assert.assertEquals("OK", collector.execute2D().get(0).get(0));
+            Assert.assertEquals("OK", collector.execute().get("myStatus"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

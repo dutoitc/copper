@@ -70,3 +70,17 @@ Response status could be:
 - UNKNOWN_HOST if the hostname could not be resolved
 - IO_EXCEPTION on any exception
 - UNKNOWN if socket has been initiated but not bound (should never happen)
+
+
+
+## BINARY Check
+```
+RUN ON CRON * * * * *
+GIVEN COLLECTOR BINARY_CHECK
+   CHECK_BY_WHICH find AS FIND_AVAILABLE
+   CHECK_BY_PATH /usr/bin/ls AS LS_AVAILABLE
+THEN STORE VALUES
+```
+Check that some binary is accessible:
+- BY_WHICH: execute 'which' command, return OK if a path is returned, KO if element is not found
+- BY_PATH: execute 'ls' command to find if path exists, return OK if so, or KO otherwise
