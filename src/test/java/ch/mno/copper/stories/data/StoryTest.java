@@ -119,6 +119,11 @@ public class StoryTest {
             public String deleteValuesOlderThanXDays(int nbDays) {
                 return null;
             }
+
+            @Override
+            public String deleteValuesOfKey(String key) {
+                return null;
+            }
         };
         Assert.assertTrue(story.matchWhen(values, store));
         values.put("AAA", "0");

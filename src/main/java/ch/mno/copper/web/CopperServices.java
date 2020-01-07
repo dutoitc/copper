@@ -152,6 +152,14 @@ public class CopperServices {
     }
 
 
+
+    @DeleteMapping(value = "values/bykey/{key}", produces = MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
+    public String deleteValuesOfKey(@PathVariable String key) {
+        return valuesStore.deleteValuesOfKey(key);
+    }
+
+
     @GetMapping(value = "values/query")
     @ApiOperation(value = "Retrieve values between date",
             notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")

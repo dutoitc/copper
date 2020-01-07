@@ -327,4 +327,16 @@ public class DBServer implements AutoCloseable {
             throw new RuntimeException("An error occured while reading values", e);
         }
     }
+
+    public int deleteValuesOfKey(String key) {
+        if (key.contains(";")) {
+            throw new RuntimeException("SQL Injection error"); // Really simple protection
+        }
+        try (Connection con = cp.getConnection();
+             PreparedStatement stmt = con.prepareStatement("DELETE from valuestore where key='" + key + "'")) {
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("An error occured while reading values", e);
+        }
+    }
 }
