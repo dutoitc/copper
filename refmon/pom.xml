@@ -12,7 +12,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>../business</module>
+        <module>..</module>
         <module>delivery</module>
     </modules>
 
