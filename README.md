@@ -166,7 +166,16 @@ Some JVM arguments could be set:
 * [Reporters](doc/reporters.md)
 
 # Releasing to Maven central
+(add this to ~/m2/settings)
+<servers>
+    <server>
+        <id>GitHub</id>
+        <username>[User]</username>
+        <password>[Password]</password>
+    </server>
+</servers>
 
+Then execute:
 ```
 mvn release:prepare
 mvn release:perform

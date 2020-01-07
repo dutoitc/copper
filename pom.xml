@@ -4,7 +4,7 @@
 
     <groupId>ch.dsivd.copper</groupId>
     <artifactId>copper</artifactId>
-    <version>1.2.8</version>
+    <version>1.2.9-SNAPSHOT</version>
     <description>Copper - Monitoring Engine</description>
     <url>https://github.com/dutoitc/copper</url>
 
@@ -20,6 +20,7 @@
 
         <java.version>11</java.version>
         <maven.compiler.release>11</maven.compiler.release>
+        <project.scm.id>GitHub</project.scm.id>
     </properties>
 
 
@@ -40,7 +41,7 @@
     <developers>
         <developer>
             <name>Cedric Dutoit</name>
-            <email>cedricdutoit@gmail.com</email>
+            <email>dutoitc@shimbawa.ch</email>
             <organization>MNO-Software</organization>
             <organizationUrl>https://github.com/dutoitc</organizationUrl>
         </developer>
