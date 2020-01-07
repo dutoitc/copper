@@ -71,6 +71,16 @@ angular.module('copperApp.values', ['ngRoute'])
     }
 
 
+    $scope.deleteValuesOfKey = function(key) {
+        if ( window.confirm("Delete all values of key " + key + " ?") ) {
+            $http.delete('../ws/values/bykey/' + key)
+                .then(function(response) {
+                    alert(response.data);
+                    $scope.refresh();
+                });
+        }
+    }
+
 
 
     $scope.filterOLD = function(object, field, filter) {

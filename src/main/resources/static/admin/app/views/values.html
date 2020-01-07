@@ -23,6 +23,8 @@
                     <a href="../ws/values/query/png?columns={{row.key}}" target="_blank">Graph (small)</a>
                     /
                     <a href="../ws/values/query/png?columns={{row.key}}&width=1280&height=960" target="_blank">Graph (big)</a>
+                    /
+                    <button class="btn btn-primary" ng-click="deleteValuesOfKey({{row.key}})">Delete values older than 1 month</button>
                 </td>
             </tr>
         </tbody>

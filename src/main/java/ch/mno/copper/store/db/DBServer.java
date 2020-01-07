@@ -3,19 +3,14 @@ package ch.mno.copper.store.db;
 import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.data.InstantValue;
 import ch.mno.copper.store.data.InstantValues;
-import com.zaxxer.hikari.HikariDataSource;
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.h2.tools.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.jdbc.metadata.HikariDataSourcePoolMetadata;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -327,6 +322,18 @@ public class DBServer implements AutoCloseable {
     public int deleteValuesOlderThanXDays(int nbDays) {
         try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement("DELETE from valuestore where dateto<DATEADD('DAY',-" + nbDays + ", CURRENT_DATE)")) {
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("An error occured while reading values", e);
+        }
+    }
+
+    public int deleteValuesOfKey(String key) {
+        if (key.contains(";")) {
+            throw new RuntimeException("SQL Injection error"); // Really simple protection
+        }
+        try (Connection con = cp.getConnection();
+             PreparedStatement stmt = con.prepareStatement("DELETE from valuestore where key='" + key + "'")) {
             return stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("An error occured while reading values", e);

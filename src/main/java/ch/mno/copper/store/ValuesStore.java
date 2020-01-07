@@ -41,4 +41,6 @@ public interface ValuesStore {
     String getValuesAlerts();
 
     String deleteValuesOlderThanXDays(int nbDays);
+
+    String deleteValuesOfKey(String key);
 }

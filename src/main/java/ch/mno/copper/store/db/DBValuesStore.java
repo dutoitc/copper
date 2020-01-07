@@ -126,4 +126,11 @@ public class DBValuesStore implements ValuesStore {
         int nb = server.deleteValuesOlderThanXDays(nbDays);
         return "OK, " + nb + " deleted";
     }
+
+    @Override
+    public String deleteValuesOfKey(String key) {
+        int nb = server.deleteValuesOfKey(key);
+        return "OK, " + nb + " deleted";
+    }
+
 }

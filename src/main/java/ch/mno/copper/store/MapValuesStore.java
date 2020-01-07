@@ -83,6 +83,12 @@ public class MapValuesStore implements ValuesStore {
         return "OK (no historized values in Map Values Store)";
     }
 
+    @Override
+    public String deleteValuesOfKey(String key) {
+        map.remove(key);
+        return "";
+    }
+
     /** Values as string for tests */
     public String getValuesAsString() {
         StringBuilder sb = new StringBuilder();
