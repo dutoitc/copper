@@ -5,6 +5,7 @@ class DataManager {
         this.style=[];
         this.script=[];
         this.copperValues={};
+        this.copperStatus="KO loading";
         this.editable = false;
         this.skipRefresh = false;
         this.jsonScreens = [];
@@ -37,6 +38,7 @@ class DataManager {
               height: "auto",
               width: 400,
               modal: true,
+              style: 'visibility: visible',
               buttons: {
                 "Ecran 1": function() {
                     dataManager.defineScreenJsonObject(JSON.parse(dataManager.jsonScreens['myScreen1']));
@@ -148,9 +150,15 @@ class DataManager {
                 url: "../ws/values"
             }).done(function(data) {
                 dataManager.copperValues = JSON.parse(data);
+                dataManager.copperStatus='OK';
+                window.document.body.style='border-top: 1px solid green; margin: 1px'
                 if (!this.editable) {
                     dataManager.refreshUI();
                 }
+            }).fail(function() {
+                dataManager.copperStatus='KO';
+                window.document.body.style='border-top: 10px solid red; margin: 0px'
+                console.log("ERROR: Copper values /ws/values read failed.");
             });
         }
 
