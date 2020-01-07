@@ -28,7 +28,7 @@
         <connection>scm:git:git@github.com::/dutoitc/copper.git</connection>
         <developerConnection>scm:git:git@github.com::/dutoitc/copper.git</developerConnection>
         <url>https://github.com/dutoitc/copper.git</url>
-        <tag>1.2.8</tag>
+        <tag>1.2.7</tag>
     </scm>
 
     <licenses>
