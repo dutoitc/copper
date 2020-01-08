@@ -5,7 +5,7 @@ PID=0
 
 
 JMX="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=43479 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
-APP="-Dcopper.properties=applications/refmon/config/environment.properties"
+APP="-Dcopper.properties=../config/environment.properties"
 OPTIONS="$APP $JMX -classpath ."
 
 ################################################################################
@@ -55,10 +55,10 @@ start() {
   #java $OPTIONS -jar $JAR >> $LOG 2>&1 &
   #java $OPTIONS -classpath .:$JAR $CLASS >> $LOG 2>&1 &
 
-  CMD="nohup java $OPTIONS -jar $JAR > $LOG 2>&1 & "
+  CMD="nohup java $OPTIONS -jar $JAR > $LOG 2>&1 "
   #CMD="sh $JAR start >> $LOG 2>&1 &"
-  echo "$CMD" > command.log
-  $CMD
+  echo "$CMD &" > command.log
+  $CMD &
   echo "OK"
 }
 
