@@ -5,7 +5,7 @@ PID=0
 
 
 JMX="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=43479 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
-APP="-Dcopper.properties=../config/environment.properties"
+APP="-Dcopper.properties=applications/refmon/config/environment.properties"
 OPTIONS="$APP $JMX -classpath ."
 
 ################################################################################
