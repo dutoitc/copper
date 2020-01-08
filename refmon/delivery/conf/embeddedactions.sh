@@ -1,21 +1,11 @@
 JAR=applications/refmon/deployment/copper.jar
-CLASS=ch.mno.copper.CopperMain
+CLASS=ch.mno.copper.CopperApplication
 LOG=app/refmon/logs/console.log
 PID=0
 
-#########
-CONTEXT=/
-ENV=${PROJECT_NAME: -2}
-case "$ENV" in
-  IN) CONTEXT=/referentiels/int-refmon ;;
-  VA) CONTEXT=/referentiels/val-refmon ;;
-  PR) CONTEXT=/referentiels/refmon ;;
-  *) echo "Unknown env $ENV"; exit 1 ;;
-esac
-########
 
 JMX="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=43479 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
-APP="-Dcopper.properties=applications/refmon/config/environment.properties  -Dcopper.stories.folder=data/stories -Dcopper.db.url=jdbc:h2:./data/copperdb -Dcopper.context=$CONTEXT"
+APP="-Dcopper.properties=applications/refmon/config/environment.properties"
 OPTIONS="$APP $JMX"
 
 ################################################################################
