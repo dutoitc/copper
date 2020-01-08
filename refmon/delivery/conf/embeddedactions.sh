@@ -45,7 +45,7 @@ start() {
 
   if [ $PID -ne 0 ] ; then
     echo "The application is already started"
-    exit 1
+    exit 0
   fi
 
   # If the application isn't running, starts it
@@ -66,7 +66,7 @@ stop() {
 
   if [ $PID -eq 0 ] ; then
     echo "Application is already stopped"
-    exit 1
+    exit 0
   fi
 
   # Kills the application process
