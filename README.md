@@ -186,3 +186,11 @@ Then to see errors:
 https://oss.sonatype.org/
 
 Login with Sonatype JIRA account
+
+
+# Troubleshooting
+- Liquibase lock at startup (due to an startup failing)
+  - create file clean.sql:
+    `UPDATE DATABASECHANGELOGLOCK SET LOCKED=FALSE, LOCKGRANTED=null, LOCKEDBY=null where ID=1;`
+  - execute sql: (adjust path)
+    `java -classpath /tmp/h2-1.4.200.jar org.h2.tools.RunScript -url jdbc:h2:./data/copperdb -script clean.sql -user sa`
