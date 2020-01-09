@@ -58,7 +58,8 @@ start() {
   CMD="nohup java $OPTIONS -jar $JAR > $LOG 2>&1 "
   #CMD="sh $JAR start >> $LOG 2>&1 &"
   echo "$CMD &" > command.log
-  $CMD &
+  #$CMD &
+  nohup java $OPTIONS -jar $JAR > $LOG 2>&1 &
   echo "OK"
 }
 
