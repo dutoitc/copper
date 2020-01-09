@@ -1,22 +1,12 @@
 JAR=applications/refmon/deployment/copper.jar
-CLASS=ch.mno.copper.CopperMain
+CLASS=ch.mno.copper.CopperApplication
 LOG=app/refmon/logs/console.log
 PID=0
 
-#########
-CONTEXT=/
-ENV=${PROJECT_NAME: -2}
-case "$ENV" in
-  IN) CONTEXT=/referentiels/int-refmon ;;
-  VA) CONTEXT=/referentiels/val-refmon ;;
-  PR) CONTEXT=/referentiels/refmon ;;
-  *) echo "Unknown env $ENV"; exit 1 ;;
-esac
-########
 
 JMX="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=43479 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
-APP="-Dcopper.properties=applications/refmon/config/environment.properties  -Dcopper.stories.folder=data/stories -Dcopper.db.url=jdbc:h2:./data/copperdb -Dcopper.context=$CONTEXT"
-OPTIONS="$APP $JMX"
+APP="-Dcopper.properties=applications/refmon/config/environment.properties"
+OPTIONS="$APP $JMX -classpath ."
 
 ################################################################################
 
@@ -55,7 +45,7 @@ start() {
 
   if [ $PID -ne 0 ] ; then
     echo "The application is already started"
-    exit 1
+    exit 0
   fi
 
   # If the application isn't running, starts it
@@ -63,7 +53,12 @@ start() {
 
   # Redirects default and error output to a log file
   #java $OPTIONS -jar $JAR >> $LOG 2>&1 &
-  java $OPTIONS -classpath .:$JAR $CLASS >> $LOG 2>&1 &
+  #java $OPTIONS -classpath .:$JAR $CLASS >> $LOG 2>&1 &
+
+  CMD="nohup java $OPTIONS -jar $JAR > $LOG 2>&1 "
+  #CMD="sh $JAR start >> $LOG 2>&1 &"
+  echo "$CMD &" > command.log
+  $CMD &
   echo "OK"
 }
 
@@ -76,7 +71,7 @@ stop() {
 
   if [ $PID -eq 0 ] ; then
     echo "Application is already stopped"
-    exit 1
+    exit 0
   fi
 
   # Kills the application process

@@ -13,15 +13,9 @@
 
 	<files>
 		<file>
-			<source>../../target/copper.jar</source>
+			<source>../../business/target/copper.jar</source>
 			<outputDirectory>refmon-${version}/deployment</outputDirectory>
 			<destName>copper.jar</destName>
-			<fileMode>644</fileMode>
-		</file>
-		<file>
-			<source>log4j2.xml</source>
-			<outputDirectory>refmon-${version}/deployment</outputDirectory>
-			<destName>log4j2.xml</destName>
 			<fileMode>644</fileMode>
 		</file>
 	</files>
