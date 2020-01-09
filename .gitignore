@@ -27,7 +27,6 @@ externalweb/*
 plot*
 copper.properties
 *.csv
-*.png
 *.old
 *.log
 *.py
@@ -35,7 +34,6 @@ copper.properties
 plot.*
 *.tmp
 *.tgz
-copper.properties
 *.iml
 dsi
 target
