@@ -22,23 +22,20 @@ import com.google.gson.GsonBuilder;
 import io.swagger.annotations.ApiOperation;
 import org.jfree.chart.JFreeChart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -59,8 +56,9 @@ public class CopperServices {
     }
 
     @GetMapping(value = "/")
-    public Response root() {
-        return Response.temporaryRedirect(URI.create("swagger.json")).build();
+    public String root() {
+        // See https://stackoverflow.com/questions/32184175/how-to-use-spring-redirect-if-controller-method-returns-responseentity
+        return "redirect:swagger.json";
     }
 
     @GetMapping(value = "/ping", produces = MediaType.TEXT_PLAIN)
@@ -81,7 +79,7 @@ public class CopperServices {
     @PostMapping("validation/story")
     @ApiOperation(value = "Validation of a posted story",
             notes = "Post a story to this service, and validate it without saving it")
-    public StoryValidationResult postStory(String story) {
+    public StoryValidationResult postStory(@RequestBody String story) {
         return getStoriesFacade().validate(story);
     }
 
@@ -89,16 +87,16 @@ public class CopperServices {
     @PostMapping(value = "story/{storyName}", produces = MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Method to create a new story",
             notes = "Use this to store a story. If originalStoryName='new', a new story is saved and 'Ok' is returned. otherwise the story will be updated by storyName (originalStoryName)")
-    public Response postStory(@PathVariable("storyName") String storyName, StoryPostDTO post) throws IOException, ConnectorException {
+    public ResponseEntity<String> postStory(@PathVariable("storyName") String storyName, @RequestBody StoryPostDTO post) throws IOException, ConnectorException {
         StoriesFacade sf = getStoriesFacade();
 
         // Create
         if (post.isNew()) {
             try {
                 String ret = sf.saveNewStory(post.getStoryName(), post.getStoryText());
-                return Response.ok(ret).build();
+                return ResponseEntity.of(Optional.of(ret));
             } catch (Exception e) {
-                return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
             }
         }
 
@@ -109,9 +107,9 @@ public class CopperServices {
         } else {
             try {
                 String msg = sf.updateStory(post.getOriginalStoryName(), post.getStoryName(), post.getStoryText());
-                return Response.ok(msg).build();
+                return ResponseEntity.of(Optional.of(msg));
             } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
             }
         }
     }
@@ -161,41 +159,47 @@ public class CopperServices {
     @GetMapping(value = "values/query")
     @ApiOperation(value = "Retrieve values between date",
             notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
-    public Response getValues(@QueryParam("from") String dateFrom,
+    public ResponseEntity getValues(@QueryParam("from") String dateFrom,
                               @QueryParam("to") String dateTo,
                               @QueryParam("columns") String columns,
                               @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues) {
-        if (columns == null) return Response.serverError().entity("Missing 'columns'").build();
+        if (columns == null) {
+            return new ResponseEntity("Missing 'columns'", HttpStatus.NOT_ACCEPTABLE);
+        }
         Instant from = InstantHelper.findInstant(dateFrom, InstantHelper.INSTANT_2000, true);
         Instant to = InstantHelper.findInstant(dateTo, Instant.now(), false);
 
         try {
             List<String> cols = Arrays.asList(columns.split(","));
-            return Response.ok(buildGson().toJson(valuesStore.queryValues(from, to, cols, maxValues)), MediaType.APPLICATION_JSON).build();
+            String ret = buildGson().toJson(valuesStore.queryValues(from, to, cols, maxValues));
+            return ResponseEntity.of(Optional.of(ret));
+
         } catch (RuntimeException e) {
-            return Response.serverError().entity("SERVER ERROR\n" + e.getMessage()).build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     @GetMapping(value = "instants/query")
     @ApiOperation(value = "Retrieve values between date",
             notes = "")
-    public Response getValues(@QueryParam("from") String dateFrom,
+    public ResponseEntity getValues(@QueryParam("from") String dateFrom,
                               @QueryParam("to") String dateTo,
                               @QueryParam("columns") String columns,
                               @QueryParam("intervalSeconds") long intervalSeconds,
-                              @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues) {
+                              @QueryParam("maxvalues") Integer maxValues) {
 
+        maxValues = maxValues==null?100:maxValues;
 
         Instant from = InstantHelper.findInstant(dateFrom, InstantHelper.INSTANT_2000, true);
         Instant to = InstantHelper.findInstant(dateTo, Instant.now(), false);
         try {
             List<String> cols = Arrays.asList(columns.split(","));
             List<InstantValues> values = valuesStore.queryValues(from, to, intervalSeconds, cols, maxValues);
-            return Response.ok(buildGson().toJson(values), MediaType.APPLICATION_JSON).build();
+            String ret = buildGson().toJson(values);
+            return ResponseEntity.of(Optional.of(ret));
         } catch (RuntimeException e) {
             e.printStackTrace();
-            return Response.serverError().entity("SERVER ERROR\n" + e.getMessage()).build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -235,7 +239,7 @@ public class CopperServices {
     public String getStory(@PathVariable("storyName") String storyName) {
         Story story = getStoriesFacade().getStoryByName(storyName);
         if (story == null) {
-            throw new RuntimeException("Story not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sory " + storyName + " not found");
         } else {
             Gson gson = new GsonBuilder().registerTypeAdapter(StoryWEBDTO.class, new JsonStoryAdapter()).create();
             return gson.toJson(new StoryWEBDTO(story));
@@ -274,14 +278,21 @@ public class CopperServices {
     @GetMapping(value = "values/query/png", produces = MediaType.APPLICATION_OCTET_STREAM)
     @ApiOperation(value = "Retrieve values between date",
             notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
-    public Response getValuesAsPNG(@QueryParam("from") String dateFrom,
-                                   @QueryParam("to") String dateTo,
-                                   @QueryParam("columns") String columns,
-                                   @QueryParam("ytitle") String yTitle,
-                                   @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues,
-                                   @DefaultValue("600") @QueryParam("width") Integer width,
-                                   @DefaultValue("400") @QueryParam("height") Integer height) {
-        if (columns == null) return Response.serverError().entity("Missing 'columns'").build();
+    public HttpEntity getValuesAsPNG(@QueryParam("from") String dateFrom,
+                                     @QueryParam("to") String dateTo,
+                                     @QueryParam("columns") String columns,
+                                     @QueryParam("ytitle") String yTitle,
+                                     @QueryParam("maxvalues") Integer maxValues,
+                                     @QueryParam("width") Integer width,
+                                     @QueryParam("height") Integer height,
+                                     HttpServletResponse response) {
+        if (columns == null) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Missing 'columns'");
+        }
+        maxValues=maxValues==null?100:maxValues;
+        width=width==null?600:width;
+        height=height==null?400:height;
+
         Instant from = InstantHelper.findInstant(dateFrom, InstantHelper.INSTANT_2000, true);
         Instant to = InstantHelper.findInstant(dateTo, Instant.now(), false);
 
@@ -294,11 +305,12 @@ public class CopperServices {
             JFreeChart chart = GraphHelper.createChart(storeValues, columns, yTitle);
             byte[] png = GraphHelper.toPNG(chart, width, height);
 
-            // Response as stream
-            return Response.ok(new ByteArrayInputStream(png), MediaType.valueOf("image/png")).build();
+            response.setContentType(org.springframework.http.MediaType.IMAGE_PNG_VALUE);
+            StreamUtils.copy(png, response.getOutputStream());
+            return new ResponseEntity(HttpStatus.OK);
         } catch (RuntimeException | IOException e) {
             e.printStackTrace();
-            return Response.serverError().entity("SERVER ERROR\n" + e.getMessage()).build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

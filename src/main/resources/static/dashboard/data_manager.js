@@ -21,7 +21,7 @@ class DataManager {
             if (nb==0) {
                 // Load JSON from local storage
                 var json = localStorage.getItem("copperJson");
-                if (json!=null && confirm("Use last dashboard ?")) this.importJSON(JSON.parse(json));
+                if (json!=null && confirm("Use last dashboard ?")) dataManager.importJSON(JSON.parse(json));
             } else if (nb==1) {
                 dataManager.defineScreenJsonObject(jsonScreens[0].data);
             } else if (nb>1) {

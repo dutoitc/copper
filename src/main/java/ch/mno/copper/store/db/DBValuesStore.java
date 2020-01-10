@@ -63,7 +63,7 @@ public class DBValuesStore implements ValuesStore {
     public Map<String, StoreValue> getValues() {
         try {
             return server.readLatest().stream()
-                    .collect(Collectors.toMap(x -> x.getKey(), x -> x));
+                    .collect(Collectors.toMap(x -> x.getKey(), x -> x, (a,b)->b)); // Ignoring duplicate, keep last
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
         }
