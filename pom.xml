@@ -260,6 +260,13 @@
             <version>0.9.10</version>
         </dependency>
 
+        <!-- for Response, otherwise ClassNotFoundException: com.sun.ws.rs.ext.RuntimeDelegateImpl -->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.12</version>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
