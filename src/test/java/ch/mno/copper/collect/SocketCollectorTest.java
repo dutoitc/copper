@@ -20,11 +20,11 @@ public class SocketCollectorTest extends AbstractJmxServerTestStarter {
 
     final static int HTTP_PORT = 35743;
 
-    private WebServer4Tests ws;
-    private StoryGrammar storyGrammar;
+    private static WebServer4Tests ws;
+    private static StoryGrammar storyGrammar;
 
     @BeforeClass
-    public void setup() throws IOException {
+    public static void setup() throws IOException {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
         // HTTP Server
         ws = new WebServer4Tests(HTTP_PORT);
@@ -32,7 +32,7 @@ public class SocketCollectorTest extends AbstractJmxServerTestStarter {
     }
 
     @AfterClass
-    public void done() throws Exception {
+    public static void done() throws Exception {
         ws.close();
     }
 
