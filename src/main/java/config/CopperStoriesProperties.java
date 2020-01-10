@@ -1,6 +1,5 @@
 package config;
 
-import oracle.ucp.proxy.annotation.Post;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import javax.annotation.PostConstruct;

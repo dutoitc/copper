@@ -39,7 +39,8 @@ angular.module('copperApp.story', ['ngRoute'])
                     console.log("validationHTML", $scope.validationHTML);
                 },
                 function(data, status) {
-                    $scope.errors="Cannot validate: " + data;
+                    console.log("Error", data);
+                    $scope.errors="An error occured while validating. Error #" + data.status + " " + data.data.error + ": " + data.data.message;
                 });
         };
 
@@ -117,7 +118,7 @@ angular.module('copperApp.story', ['ngRoute'])
                     }
                 },
                 function(data, status) {
-                    $scope.errors="Cannot save story: " + data.data;
+                    $scope.errors="Cannot save story: " + data.data.message;
                     console.log("Cannot save story", data);
                 });
     };
