@@ -1,9 +1,6 @@
 package ch.mno.copper;
 
-import config.CopperMailProperties;
-import config.CopperScreensProperties;
-import config.CopperServicesConfig;
-import config.CopperStoriesProperties;
+import config.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
@@ -17,6 +14,7 @@ import java.io.IOException;
 
 @SpringBootApplication
 @Import({
+        DataSourceConfig.class,
         CopperServicesConfig.class,
         CopperMailProperties.class,
         CopperStoriesProperties.class,
