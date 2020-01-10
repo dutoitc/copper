@@ -21,7 +21,7 @@ public class DataSourceConfig {
     public DataSource getDataSource(
             @Value("${spring.datasource.url}") String datasourceURL,
             @Value("${spring.datasource.username}") String datasourceUsername,
-            @Value("${spring.datasource.username}") String datasourcePassword
+            @Value("${spring.datasource.password}") String datasourcePassword
             ) {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.h2.Driver");
