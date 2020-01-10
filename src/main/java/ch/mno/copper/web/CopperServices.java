@@ -22,12 +22,10 @@ import com.google.gson.GsonBuilder;
 import io.swagger.annotations.ApiOperation;
 import org.jfree.chart.JFreeChart;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
@@ -245,27 +243,23 @@ public class CopperServices {
     }
 
 
-    @GetMapping(value = "value/{valueName}", produces = MediaType.TEXT_PLAIN)
+    @GetMapping(value = "value/{valueName}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Retrieve a single value",
             notes = "")
-    public String getValue(@PathVariable("valueName") String valueName) {
+    public ResponseEntity<StoreValue> getValue(@PathVariable("valueName") String valueName) {
         StoreValue storeValue = valuesStore.getValues().get(valueName);
+
         if (storeValue == null) {
-            throw new RuntimeException("Value not found: " + valueName);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Value " + valueName + " not found");
         }
-        return storeValue.getValue();
+        return new ResponseEntity(storeValue.getValue(), HttpStatus.OK);
     }
 
 
-    @PostMapping(value = "value/{valueName}", produces = MediaType.TEXT_PLAIN)
-    public String posttValue(@PathVariable("valueName") String valueName, String message) {
+    @PostMapping(value = "value/{valueName}", produces = MediaType.APPLICATION_JSON)
+    public ResponseEntity<StoreValue> postValue(@PathVariable("valueName") String valueName, @RequestBody String message) {
         valuesStore.put(valueName, message);
-        StoreValue storeValue = valuesStore.getValues().get(valueName);
-
-        if (storeValue == null) {
-            throw new RuntimeException("Value not found: " + valueName);
-        }
-        return storeValue.getValue();
+        return getValue(valueName);
     }
 
 
