@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -35,8 +34,11 @@ public class DataSourceConfig {
             conn.prepareCall("UPDATE DATABASECHANGELOGLOCK SET LOCKED=FALSE, LOCKGRANTED=null, LOCKEDBY=null where ID=1");
             LOG.info("Liquibase lock cleaned");
         } catch (SQLException e) {
-            LOG.warn("Error while cleaning liquibase lock; continuing", e.getMessage());
-            e.printStackTrace();
+            if (!e.getMessage().contains("Table \"DATABASECHANGELOGLOCK\" not found")) {
+                // No database = no need to clean, ignoring error
+                LOG.warn("Error while cleaning liquibase lock; continuing", e.getMessage());
+                e.printStackTrace();
+            }
         }
 
         return ds;

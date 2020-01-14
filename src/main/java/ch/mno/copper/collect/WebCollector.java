@@ -63,7 +63,7 @@ public class WebCollector {
 
             results = extractValues(data, valuesKept);
         } catch (Exception e) {
-            System.err.println("Connector exception (server " + url+ "): " + e.getMessage());
+            LOG.error("Connector exception (server {}): {}", url, e.getMessage());
             if (LOG.isTraceEnabled()) {
                 e.printStackTrace();
             }
@@ -122,7 +122,7 @@ public class WebCollector {
                         results.add(o.toString());
                     }
                 } catch (PathNotFoundException e) {
-                    LOG.error("Path not  found: " + key);
+                    LOG.error("JsonPath not found: " + key);
                     results.add("?");
                 }
             }
