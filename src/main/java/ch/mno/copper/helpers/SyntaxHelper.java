@@ -1,6 +1,8 @@
 package ch.mno.copper.helpers;
 
 import ch.mno.copper.stories.data.StoryGrammar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,13 +13,14 @@ import java.util.regex.PatternSyntaxException;
  */
 public class SyntaxHelper {
 
+    private static Logger LOG = LoggerFactory.getLogger(SyntaxHelper.class);
 
     public static String checkSyntax(StoryGrammar grammar, String pattern, String value) {
         Matcher matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(value);
         if (matcher.matches()) {
             matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(value);
             if (!matcher.find()) {
-                System.err.println("Match error for " + value);
+                LOG.error("Match error for {}", value);
             }
             return matcher.group(0);
         }

@@ -151,14 +151,15 @@ class DataManager {
             }).done(function(data) {
                 dataManager.copperValues = JSON.parse(data);
                 dataManager.copperStatus='OK';
-                window.document.body.style='border-top: 1px solid green; margin: 1px'
                 if (!this.editable) {
                     dataManager.refreshUI();
                 }
             }).fail(function() {
                 dataManager.copperStatus='KO';
-                window.document.body.style='border-top: 10px solid red; margin: 0px'
                 console.log("ERROR: Copper values /ws/values read failed.");
+                if (!this.editable) {
+                    dataManager.refreshUI(); // Refresh with old values but with copperStatus KO
+                }
             });
         }
 

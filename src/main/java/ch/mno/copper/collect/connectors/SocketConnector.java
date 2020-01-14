@@ -1,5 +1,8 @@
 package ch.mno.copper.collect.connectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.*;
 
@@ -7,6 +10,8 @@ import java.net.*;
  * Created by dutoitc on 30.01.2016.
  */
 public class SocketConnector extends AbstractConnector {
+
+    private static Logger LOG = LoggerFactory.getLogger(SocketConnector.class);
 
     private String host;
     private int port;
@@ -46,7 +51,7 @@ public class SocketConnector extends AbstractConnector {
             return CONNECTION_CHECK.UNKNOWN_HOST;
         } catch (IOException e) {
             lastException = e;
-            System.err.println("IOException connecting to " + host + ": " + port + ", resolved to " + (inteAddress==null?"null":inteAddress.getHostName()));
+            LOG.error("IOException connecting to {}: {}, resolved to {}", host, port, (inteAddress==null?"null":inteAddress.getHostName()));
             return CONNECTION_CHECK.IO_EXCEPTION;
         } finally {
             if (socket!=null) {

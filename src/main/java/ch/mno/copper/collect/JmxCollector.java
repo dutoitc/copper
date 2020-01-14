@@ -2,6 +2,8 @@ package ch.mno.copper.collect;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.collect.connectors.JmxConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -16,6 +18,8 @@ import java.util.List;
  * Created by dutoitc on 29.01.2016.
  */
 public class JmxCollector {
+
+    private static Logger LOG = LoggerFactory.getLogger(JmxCollector.class);
 
     public String read(JmxConnector jmxConnector, String objectName, String attribute) throws IOException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException {
         return jmxConnector.getObject(objectName, attribute);
@@ -36,12 +40,12 @@ public class JmxCollector {
                 try {
                     results.add(new JmxCollector().read(conn, aQuery.objectName, aQuery.value));
                 } catch (Exception e) {
-                    System.err.println("Connector exception (server " + serverUrl + "): " + e.getMessage());
+                    LOG.error("JmxCollector exception#1 (server {}): {}", serverUrl, e.getMessage());
                     results.add("ERR");
                 }
             }
         } catch (Exception e) {
-            System.err.println("Connector exception (server " + serverUrl + "): " + e.getMessage());
+            LOG.error("JmxCollector exception#2 (server {}): {}", serverUrl, e.getMessage());
             for (int i=results.size(); i<queries.size(); i++) {
                 results.add("");
             }
