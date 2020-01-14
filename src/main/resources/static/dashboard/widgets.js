@@ -97,6 +97,7 @@ class UIWidgetRunnable extends UIWidget {
             return {"id":-1,"key":"UNKNOWN","value":"?","timestampFrom":"1980-01-01T00:00:00","timestampTo":"3000-12-31T01:00:00","nbValues":1};
         }
         var widget = this.widget;
+        var copperStatus = dataManager.copperStatus;
 
 		try {
 			return eval(expression);
