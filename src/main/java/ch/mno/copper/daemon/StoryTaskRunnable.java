@@ -23,9 +23,9 @@ public class StoryTaskRunnable implements Runnable {
         long t0 = System.currentTimeMillis();
         task.markAsRunning();
 
-        String taskName = task.getTaskId() + "[" + task.getTitle() + "]";
+        String taskName = task.getTaskId() + " [" + task.getTitle() + "]";
         try {
-            LOG.info("Running task " + task.getTaskId());
+            LOG.info("Task {} running", taskName);
             task.getRunnable().run();
         } catch (NullPointerException e) {
             LOG.error("Task {} execution error: {}", taskName, e.getMessage());
