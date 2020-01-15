@@ -1,19 +1,22 @@
 package ch.mno.copper.collect;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.store.MapValuesStore;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.StoryTaskBuilder;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by dutoitc on 16.02.2016.
@@ -24,21 +27,21 @@ public class StoryTaskTest {
     private static StoryGrammar grammar;
 
     @BeforeClass
-    public static void init() throws FileNotFoundException {
+    public static void init() {
         grammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
 
     @Test
     public void testCronMinute() {
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         StoryTask ct = new StoryTaskImpl(null, ()->values.add("1"), "* * * * *");
         Assert.assertTrue(Math.abs(ct.getNextRun()-System.currentTimeMillis())<=60000);
     }
 
     @Test
     public void testCronMinute2() {
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         StoryTask ct = new StoryTaskImpl(null, ()->values.add("1"), "0 * * * *");
         Assert.assertTrue(Math.abs(ct.getNextRun()-System.currentTimeMillis())<=60*60*1000);
     }
@@ -48,15 +51,15 @@ public class StoryTaskTest {
         Story story = new Story(grammar, "StoryName", "RUN ON CRON 0 8,13 * * *\nGIVEN STORED VALUES\nTHEN\nSTORE VALUES");
         story.setCollectorWrapper4Tests(new AbstractCollectorWrapper() {
             @Override
-            public Map<String, String> execute() throws ConnectorException {
-                Map<String, String> map = new HashMap();
+            public Map<String, String> execute() {
+                Map<String, String> map = new HashMap<>();
                 map.put("KEY1", "VALUE1");
                 map.put("KEY2", "VALUE2");
                 return map;
             }
 
             @Override
-            public List<List<String>> execute2D() throws ConnectorException {
+            public List<List<String>> execute2D() {
                 return null;
             }
         });
@@ -79,7 +82,7 @@ public class StoryTaskTest {
             }
 
             @Override
-            public List<List<String>> execute2D() throws ConnectorException {
+            public List<List<String>> execute2D() {
                 return null;
             }
 
@@ -111,7 +114,7 @@ public class StoryTaskTest {
             }
 
             @Override
-            public List<List<String>> execute2D() throws ConnectorException {
+            public List<List<String>> execute2D() {
                 return null;
             }
 

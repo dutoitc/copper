@@ -1,13 +1,12 @@
 package ch.mno.copper.report;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
+import java.util.Date;
+import java.util.Map;
+
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.HtmlEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Date;
-import java.util.Map;
 
 /**
  * Created by dutoitc on 31.01.2016.
@@ -37,7 +36,7 @@ public class MailReporter implements AbstractReporter {
     }
 
     @Override
-    public void report(String message, Map<String, String> values) throws ConnectorException {
+    public void report(String message, Map<String, String> values) {
         int currHour = new Date().getHours();
         if (currHour==hour) {
             if (nbMessageInHour> MAX_MESSAGE_PER_HOUR) {

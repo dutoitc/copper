@@ -1,5 +1,9 @@
 package ch.mno.copper.stories;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
+
 import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.store.ValuesStore;
@@ -7,17 +11,12 @@ import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.stories.data.StoryValidationResult;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-
 public interface StoriesFacade {
     StoryGrammar getGrammar();
 
     List<Story> getStories(boolean shouldRefreshFromDisk);
 
-    Story buildStory(FileInputStream fileInputStream, String storyName) throws IOException, ConnectorException;
+    Story buildStory(FileInputStream fileInputStream, String storyName) throws IOException;
 
     StoryTask buildStoryTask(Story story, ValuesStore valuesStore);
 

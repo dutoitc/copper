@@ -1,19 +1,12 @@
 package ch.mno.copper.collect.connectors;
 
-import ch.mno.copper.AbstractWebPortSpringTest;
-import ch.mno.copper.CopperApplication;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import ch.mno.copper.AbstractWebPortSpringTest;
 
 public class HttpConnectorTest extends AbstractWebPortSpringTest {
 
@@ -26,7 +19,7 @@ public class HttpConnectorTest extends AbstractWebPortSpringTest {
     }
 
     @Test
-    public void test2() throws ConnectorException {
+    public void test2() {
         // Port non ouvert + 10
         try (HttpConnector conn = new HttpConnector("localhost", port + 10, "http")) {
             String res = conn.get("/something");

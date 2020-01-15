@@ -1,18 +1,22 @@
 package ch.mno.copper.stories;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.mno.copper.collect.AbstractCollectorWrapper;
 import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.collect.StoryTaskImpl;
 import ch.mno.copper.report.AbstractReporterWrapper;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 public class StoryTaskBuilder {
 
@@ -42,7 +46,7 @@ public class StoryTaskBuilder {
             // Report
             AbstractReporterWrapper reporter = story.getReporterWrapper();
             if (reporter == null) {
-                values.forEach((key, value) -> valuesStore.put(key, value));
+                values.forEach(valuesStore::put);
             } else {
                 reporter.execute(values, valuesStore);
             }
@@ -52,9 +56,7 @@ public class StoryTaskBuilder {
     private static Map<String, String> collect(Story story, ValuesStore valuesStore) {
         AbstractCollectorWrapper collectorWrapper = story.getCollectorWrapper();
         if (collectorWrapper == null) { // Null means to readInstant value store
-            Map<String, String> values = new HashMap<>();
-            values.putAll(valuesStore.getValuesMapString());
-            return values;
+            return new HashMap<>(valuesStore.getValuesMapString());
         }
 
         // Execute with timeout

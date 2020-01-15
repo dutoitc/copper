@@ -1,14 +1,13 @@
 package ch.mno.copper;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.data.Story;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Stories and values provider with cache.
@@ -24,11 +23,6 @@ public class DataProviderImpl implements DataProvider {
         this.storiesFacade = storiesFacade;
         this.valuesStore = valuesStore;
         refreshStoryTasks();
-    }
-
-    @Override
-    public Set<Map.Entry<String, StoryTask>> getStoryTasks() {
-        return cachedStoryTasks.entrySet();
     }
 
     @Override

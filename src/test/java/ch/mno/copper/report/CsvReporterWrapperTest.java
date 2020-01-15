@@ -1,21 +1,22 @@
 package ch.mno.copper.report;
 
-import ch.mno.copper.store.MapValuesStore;
-import ch.mno.copper.store.ValuesStore;
-import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.stories.data.StoryGrammar;
 import config.CopperMailProperties;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import ch.mno.copper.store.MapValuesStore;
+import ch.mno.copper.store.ValuesStore;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 
 /**
  * Created by dutoitc on 26.04.2019.
@@ -25,7 +26,7 @@ public class CsvReporterWrapperTest {
     private StoryGrammar storyGrammar;
 
     @Before
-    public void init() throws FileNotFoundException {
+    public void init() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
@@ -46,7 +47,7 @@ public class CsvReporterWrapperTest {
         CsvReporterWrapper wrapper = new ReporterWrapperFactory(props).buildReporterWrapper(storyGrammar, story);
 
         // Run
-        Map<String, String> values = new HashMap();
+        Map<String, String> values = new HashMap<>();
         values.put("value1", "123");
         values.put("value2", "456");
         values.put("value3", "789");
@@ -57,7 +58,7 @@ public class CsvReporterWrapperTest {
         Assert.assertEquals("my header1;my header2;my header3\r\n123;456;789\r\n", res);
 
         // Run
-        values = new HashMap();
+        values = new HashMap<>();
         values.put("value1", "aaa");
         values.put("value3", "ccc");
         wrapper.execute(values, valuesStore);

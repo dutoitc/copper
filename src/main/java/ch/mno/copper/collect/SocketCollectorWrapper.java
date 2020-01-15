@@ -1,13 +1,16 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import ch.mno.copper.collect.connectors.SocketConnector;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.data.StoryGrammar;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by dutoitc on 07.02.2016.
@@ -34,9 +37,11 @@ public class SocketCollectorWrapper extends AbstractCollectorWrapper {
 
 
     @Override
-    public Map<String, String> execute() throws ConnectorException {
-        SocketConnector sc = new SocketConnector(host, port, timeout_ms);
-        SocketConnector.CONNECTION_CHECK status = sc.checkConnection();
+    public Map<String, String> execute() {
+        SocketConnector.CONNECTION_CHECK status;
+        try (SocketConnector sc = new SocketConnector(host, port, timeout_ms)) {
+            status = sc.checkConnection();
+        }
 
         Map<String, String> map = new HashMap<>(2);
         map.put(as.get(0), status.toString());
@@ -44,9 +49,11 @@ public class SocketCollectorWrapper extends AbstractCollectorWrapper {
     }
 
     @Override
-    public List<List<String>> execute2D() throws ConnectorException {
-        SocketConnector sc = new SocketConnector(host, port, timeout_ms);
-        SocketConnector.CONNECTION_CHECK status = sc.checkConnection();
+    public List<List<String>> execute2D() {
+        SocketConnector.CONNECTION_CHECK status;
+        try (SocketConnector sc = new SocketConnector(host, port, timeout_ms)) {
+            status = sc.checkConnection();
+        }
 
         List<List<String>> lst = new ArrayList<>();
         List<String> values = new ArrayList<>();

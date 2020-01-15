@@ -1,12 +1,5 @@
 package ch.mno.copper.store.db;
 
-import ch.mno.copper.store.StoreValue;
-import ch.mno.copper.store.data.InstantValue;
-import ch.mno.copper.store.data.InstantValues;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +9,15 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.mno.copper.store.StoreValue;
+import ch.mno.copper.store.data.InstantValue;
+import ch.mno.copper.store.data.InstantValues;
 
 /**
  * Helper to readInstant-write store to a local H2 Database. The DB is automatically created if not existent.
@@ -65,7 +67,7 @@ public class DBServer implements AutoCloseable {
     /**
      * Insert a value at given instant. Actuve value will be finished at the same instant. no store is inserted if current value is the same value
      */
-    public void insert(String key, String value, Instant instant) throws SQLException {
+    public void insert(String key, String value, Instant instant) {
         String sqlInsert = "INSERT INTO valuestore ( idvaluestore, key, value, datefrom, dateto) VALUES (?,?,?,?,?)";
         String sqlUpdatePrevious = "update valuestore set dateto=? where idvaluestore=?";
 
@@ -84,7 +86,9 @@ public class DBServer implements AutoCloseable {
                     }
                 }
             }
-            if (value==null ) value="";
+            if (value==null ) {
+                value="";
+            }
 
             long id = nextSequence();
             stmt.setLong(1, id);
@@ -119,7 +123,7 @@ public class DBServer implements AutoCloseable {
     /**
      * Read the 'key' value at given instant
      */
-    public StoreValue read(String key, Instant timestamp) throws SQLException {
+    public StoreValue read(String key, Instant timestamp) {
         String sql = "SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where key=? and datefrom<=? and dateto>? order by datefrom";
         try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -134,7 +138,7 @@ public class DBServer implements AutoCloseable {
                 }
             }
 
-            if (values.size() == 0) {
+            if (values.isEmpty()) {
                 return null;
             }
             if (values.size() == 1) {
@@ -148,7 +152,7 @@ public class DBServer implements AutoCloseable {
         throw new RuntimeException("Too much value for key=" + key + ", instant=" + timestamp.getEpochSecond());
     }
 
-    public  List<InstantValues> readInstant(List<String> keys, Instant timestampFrom, Instant timestampTo, long intervalSeconds, int maxValues) throws SQLException {
+    public  List<InstantValues> readInstant(List<String> keys, Instant timestampFrom, Instant timestampTo, long intervalSeconds, int maxValues) {
         String sql = "select * from (" +
                 "select ts,c1, value, idValueStore, key from ( " +
                 "select ts, c1 from ( " +
@@ -199,7 +203,7 @@ public class DBServer implements AutoCloseable {
     /**
      * Read all values for a given key active between from, to. (could have been inserted before and finish after)
      */
-    public List<StoreValue> read(String key, Instant timestampFrom, Instant timestampTo, int maxValues) throws SQLException {
+    public List<StoreValue> read(String key, Instant timestampFrom, Instant timestampTo, int maxValues) {
         if (timestampTo.isAfter(Instant.now())) {
             timestampTo = Instant.now();
         }
@@ -234,7 +238,7 @@ public class DBServer implements AutoCloseable {
     /**
      * Read the latest value of a key)
      */
-    public  StoreValue readLatest(String key) throws SQLException {
+    public  StoreValue readLatest(String key) {
         try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where key=? and dateto=?")) {
             stmt.setString(1, key);
@@ -251,7 +255,7 @@ public class DBServer implements AutoCloseable {
     /**
      * Read all latest values
      */
-    public  List<StoreValue> readLatest() throws SQLException {
+    public  List<StoreValue> readLatest() {
         List<StoreValue> values = new ArrayList<>();
         try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto,\n" +

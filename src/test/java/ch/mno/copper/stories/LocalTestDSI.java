@@ -1,17 +1,17 @@
 package ch.mno.copper.stories;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.stories.data.StoryGrammar;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 
 /**
  * Created by xsicdt on 11/02/16.
@@ -27,34 +27,34 @@ public class LocalTestDSI {
     }
 
     @Test
-    public void testLocalJmx() throws IOException, ConnectorException {
+    public void testLocalJmx() throws IOException {
         Path path = Paths.get("dsi/RCFACEINCollectByJmx.txt");
         new Story(grammar, new FileInputStream(path.toFile()), "RCFACEINCollectByJmx.txt");
     }
 
     @Test
-    public void testLocalIn() throws IOException, ConnectorException {
+    public void testLocalIn() throws IOException {
         Path path = Paths.get("dsi/RCFACEINDbCollector.txt");
         new Story(grammar, new FileInputStream(path.toFile()), "RCFACEINDbCollector.txt");
     }
 
 
     @Test
-    public void testLocalVa() throws IOException, ConnectorException {
+    public void testLocalVa() throws IOException {
         Path path = Paths.get("dsi/RCFACEVADbCollector.txt");
         new Story(grammar, new FileInputStream(path.toFile()), "RCFACEVADbCollector.txt");
     }
 
 
     @Test
-    public void testLocalPP() throws IOException, ConnectorException {
+    public void testLocalPP() throws IOException {
         Path path = Paths.get("dsi/RCFACEPPDbCollector.txt");
         new Story(grammar, new FileInputStream(path.toFile()), "RCFACEPPDbCollector.txt");
     }
 
 
     @Test
-    public void testLocalPr() throws IOException, ConnectorException {
+    public void testLocalPr() throws IOException {
         Path path = Paths.get("dsi/RCFACEPRDbCollector.txt");
         new Story(grammar, new FileInputStream(path.toFile()), "RCFACEPRDbCollector.txt");
     }
@@ -94,7 +94,7 @@ public class LocalTestDSI {
 //    }
 
     @Test
-    public void testLocalRep() throws IOException, ConnectorException {
+    public void testLocalRep() throws IOException {
         Path path = Paths.get("dsi/RCFACEDbReportByPushover.txt");
         new Story(grammar, new FileInputStream(path.toFile()), "RCFACEDbReportByPushover.txt");
     }

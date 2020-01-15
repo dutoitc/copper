@@ -1,5 +1,15 @@
 package ch.mno.copper;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Test;
+
 import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.store.MapValuesStore;
@@ -8,16 +18,6 @@ import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.stories.data.StoryValidationResult;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class DataProviderTest {
 
@@ -52,7 +52,7 @@ public class DataProviderTest {
     }
 
 
-    private class StoriesFacadeMock implements StoriesFacade {
+    private static class StoriesFacadeMock implements StoriesFacade {
 
         Map<String, Story> stories = new HashMap<>();
 
@@ -67,7 +67,7 @@ public class DataProviderTest {
         }
 
         @Override
-        public Story buildStory(FileInputStream fileInputStream, String storyName) throws IOException, ConnectorException {
+        public Story buildStory(FileInputStream fileInputStream, String storyName) {
             return null;
         }
 
@@ -77,12 +77,12 @@ public class DataProviderTest {
         }
 
         @Override
-        public String saveNewStory(String storyName, String storyText) throws IOException, ConnectorException {
+        public String saveNewStory(String storyName, String storyText) {
             return null;
         }
 
         @Override
-        public String updateStory(String originalStoryName, String storyName, String storyText) throws IOException, ConnectorException {
+        public String updateStory(String originalStoryName, String storyName, String storyText) {
             return null;
         }
 

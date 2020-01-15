@@ -1,7 +1,5 @@
 package ch.mno.copper.collect.connectors;
 
-import org.apache.http.Header;
-
 /**
  * Created by xsicdt on 12/10/17.
  */

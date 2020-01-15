@@ -1,14 +1,15 @@
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by xsicdt on 07/11/17.
  */
 public class SandboxMain {
 
-    public static String convert(String s) throws UnsupportedEncodingException {
-        byte[] bytes = s.getBytes("UTF-8");
-        for (int i=0; i<bytes.length; i++) {
-            System.out.println((int)bytes[i]);
+    public static String convert(String s) {
+        byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
+        for (final byte aByte : bytes) {
+            System.out.println((int) aByte);
         }
 
         return "";

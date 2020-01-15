@@ -1,15 +1,5 @@
 package ch.mno.copper.stories.data;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.store.data.InstantValues;
-import ch.mno.copper.store.StoreValue;
-import ch.mno.copper.store.ValuesStore;
-import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.stories.data.StoryGrammar;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,6 +8,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.store.StoreValue;
+import ch.mno.copper.store.ValuesStore;
+import ch.mno.copper.store.data.InstantValues;
 
 /**
  * Created by xsicdt on 19/01/18.
@@ -96,12 +95,12 @@ public class StoryTest {
             }
 
             @Override
-            public void load() throws IOException {
+            public void load() {
 
             }
 
             @Override
-            public void save() throws IOException {
+            public void save() {
 
             }
 

@@ -1,17 +1,13 @@
 package ch.mno.copper.report;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.store.ValuesStore;
-import ch.mno.copper.stories.data.StoryGrammar;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by dutoitc on 07.02.2016.
- */
+import ch.mno.copper.store.ValuesStore;
+import ch.mno.copper.stories.data.StoryGrammar;
+
 public class CsvReporterWrapper extends AbstractReporterWrapper {
 
     private StoryGrammar grammar;
@@ -49,12 +45,7 @@ public class CsvReporterWrapper extends AbstractReporterWrapper {
         reporterValues.put(CsvReporter.PARAMETERS.HEADERS.toString(),headers);
         reporterValues.put(CsvReporter.PARAMETERS.LINE.toString(), message);
 
-
-        try {
-            reporter.report(message, reporterValues);
-        } catch (ConnectorException e) {
-            e.printStackTrace();
-        }
+        reporter.report(message, reporterValues);
     }
 
 }

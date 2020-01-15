@@ -1,12 +1,11 @@
 package ch.mno.copper.store;
 
-import ch.mno.copper.store.data.InstantValues;
-
-import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import ch.mno.copper.store.data.InstantValues;
 
 /**
  * Created by xsicdt on 25/08/17.
@@ -31,9 +30,9 @@ public interface ValuesStore {
 
     List<InstantValues> queryValues(Instant from, Instant to, long intervalSecond, List<String> columns, int maxValues);
 
-    void load() throws IOException;
+    void load();
 
-    void save() throws IOException;
+    void save();
 
     @Deprecated // Use getValues()
     Map<String,String> getValuesMapString();

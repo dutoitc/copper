@@ -1,16 +1,15 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.helpers.NotImplementedException;
-import ch.mno.copper.helpers.SyntaxHelper;
-import ch.mno.copper.stories.data.StoryGrammar;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import ch.mno.copper.helpers.NotImplementedException;
+import ch.mno.copper.helpers.SyntaxHelper;
+import ch.mno.copper.stories.data.StoryGrammar;
 
 /**
  * Created by dutoitc on 07.02.2016.
@@ -36,9 +35,9 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
     }
 
     @Override
-    public Map<String, String> execute() throws ConnectorException {
+    public Map<String, String> execute() {
         List<String> values = JmxCollector.jmxQueryWithCreds(url, username, password, jmxQueries);
-        Map<String, String> map = new HashMap();
+        Map<String, String> map = new HashMap<>();
         if (values.size()!=as.size()) {
             throw new RuntimeException("Wrong values number, expected " + as.size() + ", got " + values.size());
         }
@@ -49,7 +48,7 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
     }
 
     @Override
-    public List<List<String>> execute2D() throws ConnectorException {
+    public List<List<String>> execute2D() {
         throw new NotImplementedException();
     }
 

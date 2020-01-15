@@ -1,13 +1,16 @@
 package ch.mno.copper.store;
 
-import ch.mno.copper.helpers.NotImplementedException;
-import ch.mno.copper.store.data.InstantValues;
-
-import java.io.IOException;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import ch.mno.copper.helpers.NotImplementedException;
+import ch.mno.copper.store.data.InstantValues;
 
 /** Map value store without date (only last values are kept) */
 public class MapValuesStore implements ValuesStore {
@@ -57,12 +60,12 @@ public class MapValuesStore implements ValuesStore {
     }
 
     @Override
-    public void load() throws IOException {
+    public void load() {
         throw new NotImplementedException();
     }
 
     @Override
-    public void save() throws IOException {
+    public void save() {
         throw new NotImplementedException();
     }
 
@@ -70,7 +73,7 @@ public class MapValuesStore implements ValuesStore {
     public Map<String, String> getValuesMapString() {
         return map.values()
                 .stream()
-                .collect(Collectors.toMap(a->a.getKey(), b->b.getValue()));
+                .collect(Collectors.toMap(StoreValue::getKey, StoreValue::getValue));
     }
 
     @Override

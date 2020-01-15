@@ -1,18 +1,19 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.collect.connectors.JmxConnector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.mno.copper.collect.connectors.JmxConnector;
 
 /**
  * Created by dutoitc on 29.01.2016.
@@ -26,8 +27,8 @@ public class JmxCollector {
     }
 
 
-    public static List<String> jmxQueryWithCreds(String serverUrl, String username, String password, List<JmxQuery> queries) throws ConnectorException {
-        List<String> results = new ArrayList(queries.size());
+    public static List<String> jmxQueryWithCreds(String serverUrl, String username, String password, List<JmxQuery> queries) {
+        List<String> results = new ArrayList<>(queries.size());
         JmxConnector conn = null;
         try {
             if (username==null) {
@@ -55,10 +56,6 @@ public class JmxCollector {
             }
         }
         return results;
-    }
-
-    public static List<String> jmxQuery(String serverUrl, List<JmxQuery> queries) throws ConnectorException {
-        return jmxQueryWithCreds(serverUrl, null, null, queries);
     }
 
     public static class JmxQuery {

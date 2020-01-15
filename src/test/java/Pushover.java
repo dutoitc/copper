@@ -1,3 +1,4 @@
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,7 +7,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -106,7 +106,8 @@ public class Pushover {
      * @throws IOException
      */
     public String sendMessageHighPriority(String message, String title) throws UnsupportedEncodingException, IOException {
-        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, "UTF-8") + "&title=" + URLEncoder.encode(title, "UTF-8") + "&priority=1");
+        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, UTF_8) + "&title=" + URLEncoder.encode(title,
+                                                                                                                                                              UTF_8) + "&priority=1");
     }
 
     /**
@@ -117,7 +118,7 @@ public class Pushover {
      * @throws IOException
      */
     public String sendMessageHighPriority(String message) throws UnsupportedEncodingException, IOException {
-        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, "UTF-8") + "&priority=1");
+        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, UTF_8) + "&priority=1");
     }
 
     /**
@@ -131,8 +132,10 @@ public class Pushover {
      * @throws IOException
      */
     public String sendMessageHighPriority(String message, String title, String url, String urlTitle) throws UnsupportedEncodingException, IOException {
-        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, "UTF-8") + "&title=" + URLEncoder.encode(title, "UTF-8") + "&url=" + URLEncoder.encode(url, "UTF-8")
-                + "&url_title=" + URLEncoder.encode(urlTitle, "UTF-8") + "&priority=1");
+        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, UTF_8) + "&title=" + URLEncoder.encode(title,
+                                                                                                                                                              UTF_8) + "&url=" + URLEncoder.encode(url,
+                                                                                                                                                                                                     UTF_8)
+                + "&url_title=" + URLEncoder.encode(urlTitle, UTF_8) + "&priority=1");
     }
 
     /**
@@ -145,7 +148,9 @@ public class Pushover {
      * @throws IOException
      */
     public String sendMessageHighPriority(String message, String title, String url) throws UnsupportedEncodingException, IOException {
-        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, "UTF-8") + "&title=" + URLEncoder.encode(title, "UTF-8") + "&url=" + URLEncoder.encode(url, "UTF-8") + "&priority=1");
+        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, UTF_8) + "&title=" + URLEncoder.encode(title,
+                                                                                                                                                              UTF_8) + "&url=" + URLEncoder.encode(url,
+                                                                                                                                                                                                     UTF_8) + "&priority=1");
     }
 
     /**
@@ -159,8 +164,10 @@ public class Pushover {
      * @throws IOException
      */
     public String sendMessage(String message, String title, String url, String urlTitle) throws UnsupportedEncodingException, IOException {
-        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, "UTF-8") + "&title=" + URLEncoder.encode(title, "UTF-8") + "&url=" + URLEncoder.encode(url, "UTF-8")
-                + "&url_title=" + URLEncoder.encode(urlTitle, "UTF-8"));
+        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, UTF_8) + "&title=" + URLEncoder.encode(title,
+                                                                                                                                                              UTF_8) + "&url=" + URLEncoder.encode(url,
+                                                                                                                                                                                                     UTF_8)
+                + "&url_title=" + URLEncoder.encode(urlTitle, UTF_8));
     }
 
     /**
@@ -173,7 +180,9 @@ public class Pushover {
      * @throws IOException
      */
     public String sendMessage(String message, String title, String url) throws UnsupportedEncodingException, IOException {
-        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, "UTF-8") + "&title=" + URLEncoder.encode(title, "UTF-8") + "&url=" + URLEncoder.encode(url, "UTF-8"));
+        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, UTF_8) + "&title=" + URLEncoder.encode(title,
+                                                                                                                                                              UTF_8) + "&url=" + URLEncoder.encode(url,
+                                                                                                                                                                                                     UTF_8));
     }
 
     /**
@@ -185,7 +194,8 @@ public class Pushover {
      * @throws IOException
      */
     public String sendMessage(String message, String title) throws UnsupportedEncodingException, IOException {
-        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, "UTF-8") + "&title=" + URLEncoder.encode(title, "UTF-8"));
+        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, UTF_8) + "&title=" + URLEncoder.encode(title,
+                                                                                                                                                              UTF_8));
     }
 
     /**
@@ -196,18 +206,17 @@ public class Pushover {
      * @throws IOException
      */
     public String sendMessage(String message) throws UnsupportedEncodingException, IOException {
-        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, "UTF-8"));
+        return sendToPushoverRaw(getAuthenticationTokens() + "&message=" + URLEncoder.encode(message, UTF_8));
     }
 
     /**
      * Gets a string with the auth tokens already made.
      * @return String of auth tokens
-     * @throws UnsupportedEncodingException
      */
-    private String getAuthenticationTokens() throws UnsupportedEncodingException{
+    private String getAuthenticationTokens() {
 
         if (device != null) {
-            if (!(device.trim() == "")) {
+            if (!(device.trim().equals(""))) {
                 return "token=" + getAppToken() + "&user=" + getUserToken() + "&device=" + getDevice();
             }
         }
@@ -229,18 +238,18 @@ public class Pushover {
         connection.setDoInput(true);
 
         OutputStream outputStream = connection.getOutputStream();
-        outputStream.write(rawMessage.getBytes(Charset.forName("UTF-8")));
+        outputStream.write(rawMessage.getBytes(UTF_8));
         outputStream.close();
 
         BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-        String output = "";
+        StringBuilder output = new StringBuilder();
         String outputCache = "";
         while ((outputCache = br.readLine()) != null) {
-            output += outputCache;
+            output.append(outputCache);
         }
         br.close();
-        return output;
+        return output.toString();
     }
 
     public static void main(String[] args) throws IOException {

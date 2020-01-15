@@ -1,20 +1,7 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.collect.connectors.HttpConnector;
-import ch.mno.copper.collect.connectors.HttpResponseData;
-import ch.mno.copper.collect.connectors.JmxConnector;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.PathNotFoundException;
 import net.minidev.json.JSONArray;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MalformedObjectNameException;
-import javax.management.ReflectionException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,9 +10,23 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by dutoitc on 29.01.2016.
- */
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ReflectionException;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
+
+import ch.mno.copper.collect.connectors.HttpConnector;
+import ch.mno.copper.collect.connectors.HttpResponseData;
+import ch.mno.copper.collect.connectors.JmxConnector;
+
 public class WebCollector {
 
     private static Logger LOG = LoggerFactory.getLogger(WebCollector.class);
@@ -82,7 +83,7 @@ public class WebCollector {
     }
 
     static List<String> extractValues(HttpResponseData<String> data, List<Pair<String, String>> valuesKept) {
-        List<String> results = new ArrayList(valuesKept.size());
+        List<String> results = new ArrayList<>(valuesKept.size());
         for (Pair<String, String> value: valuesKept) {
             String key = value.getKey();
             if ("responseCode".equals(key)) {

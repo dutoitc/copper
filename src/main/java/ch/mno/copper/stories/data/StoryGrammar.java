@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class StoryGrammar {
    private Map<String, String> values = new HashMap<>();
 
     public StoryGrammar(InputStream source) {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(source, "UTF-8"))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(source, StandardCharsets.UTF_8))) {
             String line;
             int noLine = 0;
             while ((line = br.readLine()) != null) {

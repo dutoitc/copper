@@ -1,15 +1,16 @@
 package ch.mno.copper.web.adapters;
 
-import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.web.dto.StoryWEBDTO;
+import java.io.IOException;
+
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-import java.io.IOException;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.web.dto.StoryWEBDTO;
 
 public class JsonStoryAdapter<T extends StoryWEBDTO> extends TypeAdapter<StoryWEBDTO> {
-        public StoryWEBDTO read(JsonReader reader) throws IOException {
+        public StoryWEBDTO read(JsonReader reader) {
             return null;
         }
 

@@ -1,13 +1,14 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.collect.connectors.HttpResponseData;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import ch.mno.copper.collect.connectors.HttpResponseData;
 
 /**
  * Created by xsicdt on 25/08/17.
@@ -138,9 +139,9 @@ public class WebCollectorTest {
                 "}}}";
 
         List<Pair<String, String>> valuesKept = new ArrayList<>();
-        valuesKept.add(new ImmutablePair("regexp:WS_Chose_V3.(?<capture>\\d+\\.\\d+\\.\\d+)", "value"));
+        valuesKept.add(new ImmutablePair<>("regexp:WS_Chose_V3.(?<capture>\\d+\\.\\d+\\.\\d+)", "value"));
         //valuesKept.add(new ImmutablePair("$..*[?(@.Name=='WS_Chose_V3')].Version", "value2"));
-        valuesKept.add(new ImmutablePair("regexp:WS_Bidule_V3..?(?<capture>\\[123]d\\.\\d+\\.\\d+)", "value3"));
+        valuesKept.add(new ImmutablePair<>("regexp:WS_Bidule_V3..?(?<capture>\\[123]d\\.\\d+\\.\\d+)", "value3"));
 
 
 

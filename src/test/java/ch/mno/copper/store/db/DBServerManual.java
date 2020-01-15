@@ -1,16 +1,16 @@
 package ch.mno.copper.store.db;
 
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.h2.tools.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.h2.jdbcx.JdbcConnectionPool;
+import org.h2.tools.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DBServerManual extends DBServer implements AutoCloseable {
     private static Logger LOG = LoggerFactory.getLogger(DBServerManual.class);
@@ -75,7 +75,7 @@ public class DBServerManual extends DBServer implements AutoCloseable {
         Thread.sleep(100);
     }
 
-    private void createDatabaseIfNeeded() throws SQLException {
+    private void createDatabaseIfNeeded() {
         LOG.info("Checking Database...");
         try (Connection con = cp.getConnection();
              Statement stmt = con.createStatement()) {
@@ -111,7 +111,7 @@ public class DBServerManual extends DBServer implements AutoCloseable {
         LOG.info("Database checked");
     }
 
-    private void fixSnapshots() throws SQLException {
+    private void fixSnapshots() {
         LOG.info("Checking Database...");
         try (Connection con = cp.getConnection();
              Statement stmt = con.createStatement()) {
