@@ -1,13 +1,7 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.collect.connectors.BinaryConnector;
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.helpers.SyntaxHelper;
-import ch.mno.copper.stories.data.StoryGrammar;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,9 +9,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/**
- * Created by dutoitc on 07.02.2016.
- */
+import ch.mno.copper.collect.connectors.BinaryConnector;
+import ch.mno.copper.helpers.SyntaxHelper;
+import ch.mno.copper.stories.data.StoryGrammar;
+
 public class BinaryCollectorWrapper extends AbstractCollectorWrapper {
 
     private final List<CheckElement> checkElements;
@@ -28,13 +23,14 @@ public class BinaryCollectorWrapper extends AbstractCollectorWrapper {
         results = new HashMap<>(checkElements.size()*4/3+1);
     }
 
+    @Override
     public List<String> getAs() {
         return checkElements.stream().map(e->e.as).collect(Collectors.toList());
     }
 
 
     @Override
-    public Map<String, String> execute() throws ConnectorException {
+    public Map<String, String> execute() {
         for (CheckElement el: checkElements) {
             boolean status;
             switch (el.cmd) {
@@ -57,11 +53,11 @@ public class BinaryCollectorWrapper extends AbstractCollectorWrapper {
 
 
     @Override
-    public List<List<String>> execute2D() throws ConnectorException {
+    public List<List<String>> execute2D() {
         Map<String, String> map = execute();
         List<List<String>> lst = new ArrayList<>();
         for (CheckElement entry: checkElements) {
-            lst.add(Arrays.asList(map.get(entry.as)));
+            lst.add(List.of(map.get(entry.as)));
         }
         return lst;
     }

@@ -1,7 +1,5 @@
 package ch.mno.copper;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -12,7 +10,7 @@ import java.util.regex.Pattern;
  */
 public class LocalTestDSI {
 
-    public static void main(String[] args) throws ConnectorException {
+    public static void main(String[] args) {
        /* Map<String, String> values = new HashMap<>();
         values.put(MailReporter.PARAMETERS.TO.toString(), "cedric.dutoit@vd.ch");
         values.put(MailReporter.PARAMETERS.TITLE.toString(), "RCFACE Copper test");
@@ -186,7 +184,7 @@ public class LocalTestDSI {
                 if (tag.charAt(0)=='/') {
                     // Closing tag
                     prefix = prefixByLevels.get(noLevel);
-                    sb.append("</"+prefix+":" + tag.substring(1) + ">");
+                    sb.append("</").append(prefix).append(":").append(tag.substring(1)).append(">");
                     noLevel--;
                 } else {
                     noLevel++;
@@ -205,7 +203,7 @@ public class LocalTestDSI {
                         }
                     }
                     prefixByLevels.put(noLevel, prefix); // (also copy default if not found)
-                    sb.append("<"+prefix +":" + tag + ">");
+                    sb.append("<").append(prefix).append(":").append(tag).append(">");
                     if (tag.endsWith("/")) noLevel--;
                 }
             } else if (inTag) {

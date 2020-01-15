@@ -1,5 +1,11 @@
 package ch.mno.copper.collect.connectors;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
@@ -15,12 +21,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by dutoitc on 30.01.2016.
@@ -60,7 +60,7 @@ public class HttpConnector extends AbstractConnector {
 
 
         HttpPost post = new HttpPost(uri);
-        final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        final List<NameValuePair> nvps = new ArrayList<>();
         for (Map.Entry<String, String> entry : values.entrySet()) {
             nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }
@@ -123,6 +123,7 @@ public class HttpConnector extends AbstractConnector {
         }
     }
 
+    @Override
     public void close() {
         try {
             httpclient.close();

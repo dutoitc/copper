@@ -1,5 +1,13 @@
 package ch.mno.copper.stories;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxException;
@@ -8,17 +16,7 @@ import ch.mno.copper.stories.data.StoriesHolder;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.stories.data.StoryValidationResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * Created by dutoitc on 23.02.2016.
- */
 public class StoriesFacadeImpl implements StoriesFacade {
     private Logger LOG = LoggerFactory.getLogger(StoriesFacadeImpl.class);
 
@@ -43,7 +41,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
     }
 
     @Override
-    public Story buildStory(FileInputStream fileInputStream, String storyName) throws IOException, ConnectorException {
+    public Story buildStory(FileInputStream fileInputStream, String storyName) throws IOException {
         return new Story(grammar, fileInputStream, storyName);
     }
 
@@ -118,8 +116,6 @@ public class StoriesFacadeImpl implements StoriesFacade {
             } catch (SyntaxException e) {
                 storiesHolder.markAsError(storyName);
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ConnectorException e) {
                 e.printStackTrace();
             } catch (RuntimeException e) {
                 //e.printStackTrace();

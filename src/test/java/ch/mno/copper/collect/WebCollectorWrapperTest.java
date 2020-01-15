@@ -1,15 +1,16 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.stories.data.StoryGrammar;
-import com.jayway.jsonpath.JsonPath;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
-import java.util.Map;
+import com.jayway.jsonpath.JsonPath;
+
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 
 /**
  * Created by xsicdt on 29/02/16.
@@ -19,7 +20,7 @@ public class WebCollectorWrapperTest {
     private StoryGrammar storyGrammar;
 
     @Before
-    public void init() throws FileNotFoundException {
+    public void init() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
@@ -52,7 +53,7 @@ public class WebCollectorWrapperTest {
 
 
     @Test
-    public void test2() throws Exception {
+    public void test2() {
         String jmx = "GIVEN COLLECTOR WEB WITH url=http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list\n" +
                 "    KEEP $.value[?(/value.WS_Services$/.test(@.Name))].Version AS value_VERSION\n" +
                 "THEN STORE VALUES";

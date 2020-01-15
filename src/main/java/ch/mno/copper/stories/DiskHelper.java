@@ -2,7 +2,6 @@ package ch.mno.copper.stories;
 
 import config.CopperScreensProperties;
 import config.CopperStoriesProperties;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,6 +18,8 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
 
 public class DiskHelper {
 
@@ -90,8 +91,12 @@ public class DiskHelper {
 
     public void ensureStoriesFolderExists() {
         File fstoriesFolder = new File(storiesFolder);
-        if (fstoriesFolder.isFile()) throw new RuntimeException("stories should be a folder, not a file");
-        if (!fstoriesFolder.exists()) fstoriesFolder.mkdir();
+        if (fstoriesFolder.isFile()) {
+            throw new RuntimeException("stories should be a folder, not a file");
+        }
+        if (!fstoriesFolder.exists()) {
+            fstoriesFolder.mkdir();
+        }
     }
 
     public FileInputStream getStoryAsStream(String storyName) throws FileNotFoundException {
@@ -103,7 +108,7 @@ public class DiskHelper {
         if (new File(screensFolder).exists()) {
             try {
                 Files.list(Path.of(screensFolder))
-                        .sorted(Comparator.comparing(a -> a.getFileName()))
+                        .sorted(Comparator.comparing(Path::getFileName))
                         .filter(a->a.getFileName().toString().endsWith(".json"))
                         .forEach(a-> {
                             try {

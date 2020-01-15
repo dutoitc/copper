@@ -1,13 +1,12 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.stories.data.StoryGrammar;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 
 /**
  * Created by xsicdt on 29/02/16.
@@ -17,7 +16,7 @@ public class JmxCollectorWrapperTest {
     private StoryGrammar storyGrammar;
 
     @Before
-    public void init() throws FileNotFoundException {
+    public void init() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 

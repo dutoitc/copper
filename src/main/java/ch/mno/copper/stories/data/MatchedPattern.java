@@ -1,6 +1,7 @@
 package ch.mno.copper.stories.data;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Created by dutoitc on 27.04.2019.
@@ -50,9 +51,9 @@ public class MatchedPattern implements Serializable {
 
         if (start != that.start) return false;
         if (end != that.end) return false;
-        if (patternName != null ? !patternName.equals(that.patternName) : that.patternName != null) return false;
-        if (patternShort != null ? !patternShort.equals(that.patternShort) : that.patternShort != null) return false;
-        return patternFull != null ? patternFull.equals(that.patternFull) : that.patternFull == null;
+        if (!Objects.equals(patternName, that.patternName)) return false;
+        if (!Objects.equals(patternShort, that.patternShort)) return false;
+        return Objects.equals(patternFull, that.patternFull);
     }
 
     @Override

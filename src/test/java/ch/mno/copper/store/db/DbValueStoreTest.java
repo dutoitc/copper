@@ -1,23 +1,19 @@
 package ch.mno.copper.store.db;
 
-import org.junit.*;
-
 import java.sql.SQLException;
 import java.time.Instant;
 
-/**
- * Created by dutoitc on 29.09.2017.
- */
-@Ignore
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 public class DbValueStoreTest {
 
-    Instant i3 = Instant.parse("2015-10-21T07:27:48.00Z");
     Instant i4 = Instant.parse("2015-10-21T07:27:49.00Z");
     Instant i5 = Instant.parse("2015-10-21T07:28:00.00Z");
     Instant i6 = Instant.parse("2015-10-21T07:28:01.00Z");
     Instant i7 = Instant.parse("2015-10-21T07:28:02.00Z");
-    Instant i8 = Instant.parse("2015-10-21T07:28:03.00Z");
-    Instant i9 = Instant.parse("2045-10-21T07:28:00.00Z");
 
     private DBValuesStore store;
     private DBServer server;
@@ -25,7 +21,7 @@ public class DbValueStoreTest {
     @Before
     public void init() throws SQLException {
         DBServerManual.DBURL= "jdbc:h2:./copperdbtst";
-        server = new DBServerManual(false, 12345);
+        server = new DBServerManual(false, 12346);
         store = new DBValuesStore(server);
         store.clearAllData();
         store.put("key1", "value10", i5);

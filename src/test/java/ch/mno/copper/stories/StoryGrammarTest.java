@@ -1,17 +1,6 @@
 package ch.mno.copper.stories;
 
-import ch.mno.copper.collect.JdbcCollectorWrapper;
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.helpers.SyntaxHelper;
-import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.stories.data.StoryGrammar;
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -19,6 +8,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import ch.mno.copper.collect.JdbcCollectorWrapper;
+import ch.mno.copper.helpers.SyntaxHelper;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 
 /**
  * Created by dutoitc on 07.02.2016.
@@ -28,7 +27,7 @@ public class StoryGrammarTest {
     private StoryGrammar storyGrammar;
 
     @Before
-    public void init() throws FileNotFoundException {
+    public void init() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
@@ -257,7 +256,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testJdbcStory() throws IOException, ConnectorException, URISyntaxException {
+    public void testJdbcStory() throws IOException, URISyntaxException {
         String pattern = storyGrammar.getPatternFull("MAIN");
 //        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
         URL resource = getClass().getResource("/OracleStory1.txt");
@@ -279,7 +278,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testJdbcStory2() throws IOException, ConnectorException, URISyntaxException {
+    public void testJdbcStory2() throws IOException, URISyntaxException {
         String pattern = storyGrammar.getPatternFull("MAIN");
 //        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
         URL resource = getClass().getResource("/OracleStory2.txt");

@@ -1,8 +1,12 @@
 package ch.mno.copper.stories;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.stories.data.StoryGrammar;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.experimental.theories.DataPoints;
@@ -10,13 +14,8 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 
 /**
  * Created by dutoitc on 10.02.2016.
@@ -28,12 +27,12 @@ public class LocalTest {
     private static StoryGrammar grammar;
 
     @BeforeClass
-    public static void init() throws FileNotFoundException {
+    public static void init() {
         grammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
     @Theory
-    public void checkStory(File file) throws IOException, ConnectorException {
+    public void checkStory(File file) throws IOException {
         System.out.println("Checking " + file.getName());
         new Story(grammar, new FileInputStream(file), file.getName());
     }
@@ -41,7 +40,7 @@ public class LocalTest {
     public static @DataPoints File[] candidates;
     static {
         try {
-            candidates = Files.walk(Paths.get("local/dsi")).filter(Files::isRegularFile).map(Path::toFile).toArray(s-> new File[s]);
+            candidates = Files.walk(Paths.get("local/dsi")).filter(Files::isRegularFile).map(Path::toFile).toArray(File[]::new);
         } catch (IOException e) {
             e.printStackTrace();
         }

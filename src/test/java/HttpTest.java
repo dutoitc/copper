@@ -1,6 +1,10 @@
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.collect.connectors.HttpConnector;
-import ch.mno.copper.report.PushoverReporter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -11,12 +15,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import ch.mno.copper.collect.connectors.ConnectorException;
 
 /**
  * Created by xsicdt on 17/02/16.
@@ -31,7 +30,7 @@ public class HttpTest {
 
 
         HttpPost post = new HttpPost(uri);
-        final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        final List<NameValuePair> nvps = new ArrayList<>();
         for (Map.Entry<String, String> entry: values.entrySet()) {
             nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }

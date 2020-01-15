@@ -1,12 +1,13 @@
 package ch.mno.copper.helpers;
 
-import ch.mno.copper.stories.data.StoryGrammar;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.mno.copper.stories.data.StoryGrammar;
 
 /**
  * Created by xsicdt on 09/02/16.
@@ -31,8 +32,8 @@ public class SyntaxHelper {
 //            System.out.println("DBG1>> " + key + ": " + Pattern.compile(grammar.getPattern(key), Pattern.DOTALL).matcher(value).find());
 //        }
 
-        StringBuffer sb = new StringBuffer();
-        sb.append("Pattern \n   >>>" + pattern + "\n does not match\n   >>>" + value + "\n");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Pattern \n   >>>").append(pattern).append("\n does not match\n   >>>").append(value).append("\n");
         if (sbM.length()>0) {
             sb.append("But it matches the following patterns parts: [");
             sb.append(sbM.toString().substring(0, sbM.length()-1));
@@ -49,7 +50,7 @@ public class SyntaxHelper {
                 for (int j = value.length()-1; j>1; j--) {
                     String valuePart = value.substring(0, j);
                     if (currPatternCompiled.matcher(valuePart).matches()) {
-                        sb.append("Pattern start \n   >>>" + currPattern + "\nmatches\n   >>>" + valuePart+"\n\n");
+                        sb.append("Pattern start \n   >>>").append(currPattern).append("\nmatches\n   >>>").append(valuePart).append("\n\n");
                         throw new SyntaxException(sb.toString());
                     }
                 }

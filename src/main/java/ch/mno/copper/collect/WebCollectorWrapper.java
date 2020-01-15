@@ -1,18 +1,18 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.helpers.NotImplementedException;
-import ch.mno.copper.helpers.SyntaxHelper;
-import ch.mno.copper.stories.data.StoryGrammar;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import ch.mno.copper.helpers.NotImplementedException;
+import ch.mno.copper.helpers.SyntaxHelper;
+import ch.mno.copper.stories.data.StoryGrammar;
 
 /**
  * Created by dutoitc on 07.02.2016.
@@ -37,14 +37,15 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
         }
     }
 
+    @Override
     public List<String> getAs() {
         return as;
     }
 
     @Override
-    public Map<String, String> execute() throws ConnectorException {
+    public Map<String, String> execute() {
         List<String> values = WebCollector.query(url, username, password, valuesKept);
-        Map<String, String> map = new HashMap();
+        Map<String, String> map = new HashMap<>();
         if (values.size()!=valuesKept.size()) {
             throw new RuntimeException("Wrong values number, expected " + valuesKept.size() + ", got " + values.size());
         }
@@ -55,7 +56,7 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
     }
 
     @Override
-    public List<List<String>> execute2D() throws ConnectorException {
+    public List<List<String>> execute2D() {
         throw new NotImplementedException();
     }
 
@@ -100,7 +101,7 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
         while (matcher3.find()) {
             String name1 = matcher3.group(1);
             String name2 = matcher3.group(2);
-            valuesKept.add(new ImmutablePair(name1, name2));
+            valuesKept.add(new ImmutablePair<>(name1, name2));
         }
         return new WebCollectorWrapper(url, username, password, valuesKept);
     }

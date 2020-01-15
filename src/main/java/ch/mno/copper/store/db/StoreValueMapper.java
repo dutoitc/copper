@@ -1,11 +1,10 @@
 package ch.mno.copper.store.db;
 
-import ch.mno.copper.store.StoreValue;
-import org.h2.jdbc.JdbcSQLException;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
+
+import ch.mno.copper.store.StoreValue;
 
 public class StoreValueMapper {
 

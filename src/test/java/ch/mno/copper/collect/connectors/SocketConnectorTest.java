@@ -1,13 +1,12 @@
 package ch.mno.copper.collect.connectors;
 
-import ch.mno.copper.AbstractJmxServerTestStarter;
-import ch.mno.copper.test.WebServer4Tests;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
+import ch.mno.copper.AbstractJmxServerTestStarter;
+import ch.mno.copper.test.WebServer4Tests;
 
 public class SocketConnectorTest extends AbstractJmxServerTestStarter {
 
@@ -15,7 +14,7 @@ public class SocketConnectorTest extends AbstractJmxServerTestStarter {
     private static WebServer4Tests ws;
 
     @BeforeClass
-    public static void setup() throws IOException, InterruptedException {
+    public static void setup() throws InterruptedException {
         // HTTP Server
         ws = new WebServer4Tests(HTTP_PORT);
         ws.start();

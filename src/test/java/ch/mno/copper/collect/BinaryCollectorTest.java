@@ -1,14 +1,14 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.stories.data.StoryGrammar;
+import java.io.File;
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
+import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 
 public class BinaryCollectorTest {
 
@@ -16,13 +16,13 @@ public class BinaryCollectorTest {
     private StoryGrammar storyGrammar;
 
     @Before
-    public void setup() throws IOException {
+    public void setup() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
 
     @Test
-    public void testCheckByPathOnInexistant() throws ConnectorException {
+    public void testCheckByPathOnInexistant() {
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
                 "BINARY_CHECK\nCHECK_BY_PATH dummy AS DUMMY_AVAILABLE\n");
         Assert.assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
@@ -31,7 +31,7 @@ public class BinaryCollectorTest {
     }
 
     @Test
-    public void testCheckByPathOnExistant() throws ConnectorException, IOException {
+    public void testCheckByPathOnExistant() throws IOException {
         File f = File.createTempFile("dummy","tmp");
         f.deleteOnExit();
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
@@ -42,7 +42,7 @@ public class BinaryCollectorTest {
     }
 
     @Test
-    public void testWhichOnInexistant() throws ConnectorException {
+    public void testWhichOnInexistant() {
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
                 "BINARY_CHECK\nCHECK_BY_WHICH dummy123 AS DUMMY_AVAILABLE\n");
         Assert.assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
@@ -51,7 +51,7 @@ public class BinaryCollectorTest {
     }
 
     @Test
-    public void testWhichOnExistant() throws ConnectorException {
+    public void testWhichOnExistant() {
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
                 "BINARY_CHECK\nCHECK_BY_WHICH ls AS DUMMY_AVAILABLE\n");
         Assert.assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
