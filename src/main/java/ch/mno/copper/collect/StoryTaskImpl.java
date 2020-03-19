@@ -11,15 +11,14 @@ import org.slf4j.LoggerFactory;
  * Created by dutoitc on 02.02.2016.
  */
 public class StoryTaskImpl implements StoryTask {
-    private Logger LOG = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(StoryTaskImpl.class);
 
     private Runnable runnable;
-    private long lastRun=-1;
     private static long nextId=1;
     private long taskId = nextId++;
     private Story story;
     private boolean running = false;
-    private CronData cronData = null;
+    private CronData cronData;
 
     private class CronData {
         private long nextRun;
@@ -32,11 +31,11 @@ public class StoryTaskImpl implements StoryTask {
 
         private void computeNextRun() {
             if (cronExpression==null) {
-                LOG.error("Null Cron Expression for story " + story.getName());
+                LOG.error("Null Cron Expression for story {}", story.getName());
             }
             Predictor p = new Predictor(cronExpression);
             nextRun = p.nextMatchingTime();
-            LOG.info("Task {}: scheduled next run in {}", taskId + (story==null?"":("[" + story.getName() + "]")), computeTime(nextRun-System.currentTimeMillis()));
+            LOG.info("Task {}{}: scheduled next run in {}", taskId, (story==null?"":("[" + story.getName() + "]")), computeTime(nextRun-System.currentTimeMillis()));
         }
 
         public boolean shouldRun() {
@@ -104,7 +103,6 @@ public class StoryTaskImpl implements StoryTask {
 
     @Override
     public void markAsRun() {
-        lastRun = System.currentTimeMillis();
         if (cronData!=null) cronData.computeNextRun();
         running = false;
     }
@@ -134,7 +132,6 @@ public class StoryTaskImpl implements StoryTask {
             int sec = (int)(millis/1000);
             if (sb.length()>0) sb.append(", ");
             sb.append(sec).append(" seconds");
-            millis-=sec*1000;
         }
         return sb.toString();
     }

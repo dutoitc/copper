@@ -1,7 +1,6 @@
 package ch.mno.copper.web.filters;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import javax.servlet.*;
 import java.io.IOException;

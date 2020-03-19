@@ -11,13 +11,16 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class StoryTaskBuilder {
 
     public static final int TIMEOUT_SEC = 10;
-    private static Logger LOG = LoggerFactory.getLogger(StoryTaskBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StoryTaskBuilder.class);
 
     public static StoryTask build(Story story, ValuesStore valuesStore) {
         return new StoryTaskImpl(story, () -> {
@@ -35,7 +38,7 @@ public class StoryTaskBuilder {
 
             // Should never happen
             if (values == null) {
-                LOG.warn("Story " + story.getName() + " returned null values; trying to continue with valuesStore...");
+                LOG.warn("Story {} returned null values; trying to continue with valuesStore...", story.getName());
                 values = valuesStore.getValuesMapString();
             }
 

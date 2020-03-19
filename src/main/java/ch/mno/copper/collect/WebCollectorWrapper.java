@@ -37,6 +37,7 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
         }
     }
 
+    @Override
     public List<String> getAs() {
         return as;
     }

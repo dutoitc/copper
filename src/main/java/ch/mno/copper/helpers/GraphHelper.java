@@ -12,9 +12,7 @@ import org.jfree.data.xy.XYDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Date;
@@ -23,7 +21,7 @@ import java.util.List;
 // c.f. https://stackoverflow.com/questions/26556268/jfree-chart-scatter-plot-date-against-time
 public class GraphHelper {
 
-    public static Logger LOG = LoggerFactory.getLogger(GraphHelper.class);
+    public static final Logger LOG = LoggerFactory.getLogger(GraphHelper.class);
 
     public static JFreeChart createChart(List<StoreValue> values, String title, String yLabel) {
         XYDataset dataset = createDataset(values);

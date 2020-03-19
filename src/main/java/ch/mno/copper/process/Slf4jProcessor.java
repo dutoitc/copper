@@ -1,8 +1,8 @@
 package ch.mno.copper.process;
 
-import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.report.Slf4jReporter;
+import ch.mno.copper.store.ValuesStore;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +21,7 @@ public class Slf4jProcessor extends AbstractProcessor {
 
     @Override
     public void trig(ValuesStore valueStore, Collection<String> changedValueKeys) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("Values changed: ");
         changedValueKeys.forEach(key -> {
                 if (sb.length() > 16) sb.append(',');

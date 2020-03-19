@@ -211,7 +211,7 @@ public class CopperServices {
         Gson gson = new GsonBuilder().registerTypeAdapter(StoryWEBDTO.class, new JsonStoryAdapter<>()).create();
 
         List<StoryWEBDTO> stories = getStoriesFacade().getStories(true).stream()
-                .map(s -> new StoryWEBDTO(s))
+                .map(StoryWEBDTO::new)
                 .collect(Collectors.toList());
         return gson.toJson(stories);
     }

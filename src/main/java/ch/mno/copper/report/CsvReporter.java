@@ -27,7 +27,6 @@ public class CsvReporter implements AbstractReporter  {
             try (FileWriter fw = new FileWriter(file, true)) {
                 fw.append(line).append("\r\n");
                 fw.flush();
-                fw.close();
             }  catch (IOException e) {
                 e.printStackTrace();
             }
@@ -36,7 +35,6 @@ public class CsvReporter implements AbstractReporter  {
                 fw.append(header).append("\r\n");
                 fw.append(line).append("\r\n");
                 fw.flush();
-                fw.close();
             }  catch (IOException e) {
                 e.printStackTrace();
             }

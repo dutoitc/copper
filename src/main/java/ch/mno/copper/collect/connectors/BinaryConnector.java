@@ -1,6 +1,5 @@
 package ch.mno.copper.collect.connectors;
 
-import ch.mno.copper.collect.BinaryCollectorWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +13,7 @@ import java.util.function.Consumer;
 
 public class BinaryConnector {
 
-    private static Logger LOG = LoggerFactory.getLogger(BinaryCollectorWrapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BinaryConnector.class);
 
     public static String executeCommand(String cmd){
         ensureNotHavingCommandInjection(cmd);
@@ -22,10 +21,10 @@ public class BinaryConnector {
             Process process = Runtime.getRuntime().exec(String.format(cmd));
             StringBuilder sb = new StringBuilder();
             StringBuilder sbErr = new StringBuilder();
-            Consumer<String> consumer = (s->sb.append(s));
-            Consumer<String> consumerErr = (s->sbErr.append(s));
+            Consumer<String> consumer = (sb::append);
+            Consumer<String> consumerErr = (sbErr::append);
             StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), consumer);
-            StreamGobbler streamGobblerErr = new StreamGobbler(process.getErrorStream(), consumer);
+            StreamGobbler streamGobblerErr = new StreamGobbler(process.getErrorStream(), consumerErr);
             ExecutorService executorService = Executors.newFixedThreadPool(2);
             executorService.submit(streamGobbler);
             executorService.submit(streamGobblerErr);

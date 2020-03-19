@@ -30,6 +30,7 @@ public class JdbcCollectorWrapper extends AbstractCollectorWrapper {
         this.setQuery(query);
     }
 
+    @Override
     public List<String> getAs() {
         return as;
     }

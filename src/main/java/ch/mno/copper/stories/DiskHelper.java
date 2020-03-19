@@ -4,21 +4,9 @@ import config.CopperScreensProperties;
 import config.CopperStoriesProperties;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.AccessDeniedException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileSystemException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 public class DiskHelper {
 
@@ -103,7 +91,7 @@ public class DiskHelper {
         if (new File(screensFolder).exists()) {
             try {
                 Files.list(Path.of(screensFolder))
-                        .sorted(Comparator.comparing(a -> a.getFileName()))
+                        .sorted(Comparator.comparing(Path::getFileName))
                         .filter(a->a.getFileName().toString().endsWith(".json"))
                         .forEach(a-> {
                             try {

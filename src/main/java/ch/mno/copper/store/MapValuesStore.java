@@ -70,7 +70,7 @@ public class MapValuesStore implements ValuesStore {
     public Map<String, String> getValuesMapString() {
         return map.values()
                 .stream()
-                .collect(Collectors.toMap(a->a.getKey(), b->b.getValue()));
+                .collect(Collectors.toMap(StoreValue::getKey, StoreValue::getValue));
     }
 
     @Override

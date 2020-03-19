@@ -7,11 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +24,7 @@ import java.util.List;
  */
 public class DBServer implements AutoCloseable {
 
-    private static Logger LOG = LoggerFactory.getLogger(DBServer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DBServer.class);
     public static final Instant INSTANT_MAX = Instant.parse("3000-12-31T00:00:00.00Z");
     protected DataSource cp;
 
@@ -44,7 +40,7 @@ public class DBServer implements AutoCloseable {
             try (PreparedStatement ps = con.prepareStatement(sql)) {
                 nbRows = ps.executeUpdate();
             }
-            LOG.info("Deleted " + nbRows + " lines");
+            LOG.info("Deleted {} lines", nbRows);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -162,11 +158,13 @@ public class DBServer implements AutoCloseable {
                 "order by ts desc, key desc" +
                 " FETCH FIRST " + maxValues + " ROWS ONLY " +
                 ") order by ts, key";
-        String s = "?";
+
+        StringBuilder s = new StringBuilder();
+        s.append('?');
         for (int i = 1; i < keys.size(); i++) {
-            s += "),(?";
+            s.append("),(?");
         }
-        sql = sql.replace("XXX", s);
+        sql = sql.replace("XXX", s.toString());
         try (Connection con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setTimestamp(1, Timestamp.from(timestampFrom));

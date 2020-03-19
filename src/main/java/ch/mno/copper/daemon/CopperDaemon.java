@@ -27,10 +27,10 @@ import java.util.concurrent.Executors;
 public class CopperDaemon implements Runnable, ApplicationListener<ContextRefreshedEvent>, AutoCloseable {
 
     private final DataProvider dataProvider;
-    private Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
 
     public static final int N_THREADS = 10;
-    public static int TASK_CHEK_INTERVAL = 1000 * 3; // don't overload processors !
+    public static final int TASK_CHEK_INTERVAL = 1000 * 3; // don't overload processors !
     private final List<AbstractProcessor> processors = new ArrayList<>();
     //    private final ValuesStore valuesStore;
     private boolean shouldRun = true;

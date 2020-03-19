@@ -1,14 +1,11 @@
 package ch.mno.copper.collect.connectors;
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import oracle.jdbc.OracleDriver;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import oracle.jdbc.OracleDriver;
 
 /**
  * Created by dutoitc on 31.01.2016.
@@ -79,7 +76,13 @@ public class JdbcConnector implements AutoCloseable {
     }
 
     public static void main(String[] args) throws ConnectorException {
-        new JdbcConnector("jdbc:oracle:thin:@my-defcon:1521:myinstance", "auser", "apass").query("select 1 from dual");
+        try (
+                JdbcConnector conn = new JdbcConnector("jdbc:oracle:thin:@my-defcon:1521:myinstance", "auser", "apass")
+        ) {
+            conn.query("select 1 from dual");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -10,11 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MalformedObjectNameException;
-import javax.management.ReflectionException;
+import javax.management.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,7 +24,7 @@ import java.util.regex.Pattern;
  */
 public class WebCollector {
 
-    private static Logger LOG = LoggerFactory.getLogger(WebCollector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebCollector.class);
 
     public String read(JmxConnector jmxConnector, String objectName, String attribute) throws IOException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException {
         return jmxConnector.getObject(objectName, attribute);
@@ -98,36 +94,39 @@ public class WebCollector {
                 if (matcher.find()) {
                     results.add(matcher.group("capture"));
                 } else {
-                    //System.out.println("Not found " + key.substring((7)) + " in " + store.getData());
                     results.add("?");
                 }
             } else {
-                try {
-                    Object o = JsonPath.read(data.getData(), key);
-                    if (o instanceof JSONArray) {
-                        net.minidev.json.JSONArray res = (JSONArray) o;
-                        if (res == null || res.size() == 0) {
-                            LOG.info("Warning: jsonpath " + key + " not found in " + data);
-                            results.add("ERR_NOT_FOUND");
-                        } else if (res.size() > 1) {
-                            results.add("TOO_MUCH_VALUES_FOUND");
-                        } else {
-                            results.add(res.get(0).toString());
-                        }
-                    } else if (o instanceof String) {
-                        results.add((String) o);
-                    } else if (o==null) {
-                        results.add("null");
-                    } else {
-                        results.add(o.toString());
-                    }
-                } catch (PathNotFoundException e) {
-                    LOG.error("JsonPath not found: " + key);
-                    results.add("?");
-                }
+                addOtherToResult(data, results, key);
             }
         }
         return results;
+    }
+
+    private static void addOtherToResult(HttpResponseData<String> data, List<String> results, String key) {
+        try {
+            Object o = JsonPath.read(data.getData(), key);
+            if (o instanceof JSONArray) {
+                JSONArray res = (JSONArray) o;
+                if (res == null || res.isEmpty()) {
+                    LOG.info("Warning: jsonpath {} not found in {}", key, data);
+                    results.add("ERR_NOT_FOUND");
+                } else if (res.size() > 1) {
+                    results.add("TOO_MUCH_VALUES_FOUND");
+                } else {
+                    results.add(res.get(0).toString());
+                }
+            } else if (o instanceof String) {
+                results.add((String) o);
+            } else if (o==null) {
+                results.add("null");
+            } else {
+                results.add(o.toString());
+            }
+        } catch (PathNotFoundException e) {
+            LOG.error("JsonPath not found: {}", key);
+            results.add("?");
+        }
     }
 
 }

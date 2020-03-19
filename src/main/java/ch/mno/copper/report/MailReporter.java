@@ -13,13 +13,13 @@ import java.util.Map;
  * Created by dutoitc on 31.01.2016.
  */
 public class MailReporter implements AbstractReporter {
-    private Logger LOG = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MailReporter.class);
 
     public enum PARAMETERS {TO, TITLE, BODY}
 
     private static long nbMessageInHour=0;
     private static long hour = -1;
-    private static int MAX_MESSAGE_PER_HOUR = 10;
+    private static final int MAX_MESSAGE_PER_HOUR = 10;
     private String server;
     private String serverUsername;
     private String serverPassword;
@@ -39,16 +39,16 @@ public class MailReporter implements AbstractReporter {
     @Override
     public void report(String message, Map<String, String> values) throws ConnectorException {
         int currHour = new Date().getHours();
-        if (currHour==hour) {
-            if (nbMessageInHour> MAX_MESSAGE_PER_HOUR) {
-                LOG.warn("Too much message for this hour, skipping message: " + message);
+        if (currHour==MailReporter.hour) {
+            if (MailReporter.nbMessageInHour> MAX_MESSAGE_PER_HOUR) {
+                LOG.warn("Too much message for this hour, skipping message: {}", message);
                 return;
             }
         } else {
-            hour = currHour;
-            nbMessageInHour=0;
+            MailReporter.hour = currHour;
+            MailReporter.nbMessageInHour=0;
         }
-        nbMessageInHour++;
+        MailReporter.nbMessageInHour++;
 
         try {
             HtmlEmail email = buildHtmlEmail();
@@ -83,7 +83,7 @@ public class MailReporter implements AbstractReporter {
 
             // send the email
             String d = email.send();
-            LOG.info("Mail sent to " + to + ": " + email.getSubject() + ", response=" + d);
+            LOG.info("Mail sent to {}: {}, reponse={}", to, email.getSubject(), d);
         }catch (Exception e) {
             LOG.error("Cannot send mail: " + e.getMessage(), e);
         }

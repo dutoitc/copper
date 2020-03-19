@@ -14,8 +14,6 @@ import java.util.regex.Pattern;
  */
 public class PushoverReporterWrapper extends AbstractReporterWrapper {
 
-    private StoryGrammar grammar;
-    private String storyGiven;
     private String applicationToken;
     private String dest;
     private String title;
@@ -23,8 +21,6 @@ public class PushoverReporterWrapper extends AbstractReporterWrapper {
     private PushoverReporter reporter;
 
     public PushoverReporterWrapper(StoryGrammar grammar, String storyGiven) {
-        this.grammar = grammar;
-        this.storyGiven = storyGiven;
 
         // PUSHOVER::=REPORT BY PUSHOVER to ".*?"¦SPACE_EOL¦+WITH token=".*?"¦SPACE_EOL¦+WITH title=".*?"¦SPACE_EOL¦+WITH message=".*?"
         String spaceEol =  grammar.getPatternFull("SPACE_EOL");

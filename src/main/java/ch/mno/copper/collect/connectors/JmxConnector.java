@@ -1,12 +1,6 @@
 package ch.mno.copper.collect.connectors;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServerConnection;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
+import javax.management.*;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
@@ -30,7 +24,7 @@ public class JmxConnector extends AbstractConnector {
         String[] creds = {username, password};
         env.put(JMXConnector.CREDENTIALS, creds);
         try {
-            jmxc = connectWithTimeout(jmxServiceURL, env, 1000*5);
+            jmxc = connectWithTimeout(jmxServiceURL, env, 1000l*5l);
         } catch (InterruptedException e) {
             throw new IOException("JMX connection interrupted");
         } catch (ExecutionException e) {

@@ -15,17 +15,12 @@ import java.util.regex.Pattern;
  */
 public class MailReporterWrapper extends AbstractReporterWrapper {
 
-    private StoryGrammar grammar;
-    private String storyGiven;
     private String dest;
     private String title;
     private String messageTemplate;
     private MailReporter reporter;
 
     public MailReporterWrapper(StoryGrammar grammar, String storyGiven, String server, String serverUsername, String serverPassword, int serverPort, String from, String replyTo) {
-        this.grammar = grammar;
-        this.storyGiven = storyGiven;
-
         // Mail::=REPORT BY Mail to ".*?"¦SPACE_EOL¦+WITH token=".*?"¦SPACE_EOL¦+WITH title=".*?"¦SPACE_EOL¦+WITH message=".*?"
         String spaceEol =  grammar.getPatternFull("SPACE_EOL");
         String pattern="REPORT BY MAIL to \"(.*?)\""+spaceEol+"+WITH title=\"(.*?)\""+spaceEol+"+WITH message=\"(.*?)\"";

@@ -6,11 +6,7 @@ import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.data.StoryGrammar;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -28,6 +24,7 @@ public class BinaryCollectorWrapper extends AbstractCollectorWrapper {
         results = new HashMap<>(checkElements.size()*4/3+1);
     }
 
+    @Override
     public List<String> getAs() {
         return checkElements.stream().map(e->e.as).collect(Collectors.toList());
     }

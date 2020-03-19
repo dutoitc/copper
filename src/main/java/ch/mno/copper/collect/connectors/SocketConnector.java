@@ -11,7 +11,7 @@ import java.net.*;
  */
 public class SocketConnector extends AbstractConnector {
 
-    private static Logger LOG = LoggerFactory.getLogger(SocketConnector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SocketConnector.class);
 
     private String host;
     private int port;

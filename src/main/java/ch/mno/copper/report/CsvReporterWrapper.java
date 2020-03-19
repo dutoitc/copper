@@ -14,17 +14,12 @@ import java.util.regex.Pattern;
  */
 public class CsvReporterWrapper extends AbstractReporterWrapper {
 
-    private StoryGrammar grammar;
-    private String storyGiven;
     private String filename;
     private String headers;
     private String line;
     private CsvReporter reporter;
 
     private CsvReporterWrapper(StoryGrammar grammar, String storyGiven) {
-        this.grammar = grammar;
-        this.storyGiven = storyGiven;
-
         String spaceEol =  grammar.getPatternFull("SPACE_EOL");
         String pattern= "REPORT BY CSV to \"(.*?)\"" + spaceEol + "+WITH headers=\"(.*?)\"" + spaceEol + "+WITH line=\"(.*?)\"";
         Matcher matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(storyGiven);

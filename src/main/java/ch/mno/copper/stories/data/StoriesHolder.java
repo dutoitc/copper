@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class StoriesHolder {
 
-    private Logger LOG = LoggerFactory.getLogger(StoriesHolder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StoriesHolder.class);
 
     private List<Story> stories = new ArrayList<>();
     private Set<String> storiesInError = new HashSet<>();

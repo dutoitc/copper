@@ -13,14 +13,14 @@ import java.util.Map;
  * Created by dutoitc on 31.01.2016.
  */
 public class PushoverReporter implements AbstractReporter  {
-    private Logger LOG = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(PushoverReporter.class);
 
     private static final String URL = "https://api.pushover.net/1/messages.json";
     public enum PARAMETERS {APPLICATION_TOKEN, DEST, TITLE, HTML};
 
     private static long nbMessageInHour=0;
     private static long hour = -1;
-    private static int MAX_MESSAGE_PER_HOUR = 5;
+    private static final int MAX_MESSAGE_PER_HOUR = 5;
 
 
     @Override

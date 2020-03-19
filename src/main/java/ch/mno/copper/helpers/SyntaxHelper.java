@@ -13,7 +13,7 @@ import java.util.regex.PatternSyntaxException;
  */
 public class SyntaxHelper {
 
-    private static Logger LOG = LoggerFactory.getLogger(SyntaxHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SyntaxHelper.class);
 
     public static String checkSyntax(StoryGrammar grammar, String pattern, String value) {
         Matcher matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(value);
@@ -25,13 +25,10 @@ public class SyntaxHelper {
             return matcher.group(0);
         }
 
-        StringBuffer sbM = new StringBuffer();
+        StringBuilder sbM = new StringBuilder();
         grammar.getKeys().stream().filter(p->Pattern.compile(p, Pattern.DOTALL).matcher(value).find()).forEach(v->sbM.insert(0,v + ','));
-//        for (String key: grammar.getKeys()) {
-//            System.out.println("DBG1>> " + key + ": " + Pattern.compile(grammar.getPattern(key), Pattern.DOTALL).matcher(value).find());
-//        }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("Pattern \n   >>>" + pattern + "\n does not match\n   >>>" + value + "\n");
         if (sbM.length()>0) {
             sb.append("But it matches the following patterns parts: [");

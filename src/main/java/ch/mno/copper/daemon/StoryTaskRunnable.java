@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  */
 public class StoryTaskRunnable implements Runnable {
 
-    private Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StoryTaskRunnable.class);
     private final StoryTask task;
 
     public StoryTaskRunnable(StoryTask task) {
@@ -29,11 +29,11 @@ public class StoryTaskRunnable implements Runnable {
             task.getRunnable().run();
         } catch (NullPointerException e) {
             LOG.error("Task {} execution error: {}", taskName, e.getMessage());
-            LOG.error("Error NPE ", e.getMessage());
+            LOG.error("Error NPE {}", e.getMessage());
             e.printStackTrace();
-            LOG.error("Error NPE ", e.getCause().getMessage());
+            LOG.error("Error NPE {}", e.getCause().getMessage());
             for (StackTraceElement s: e.getStackTrace()) {
-                LOG.error("  " + s.getClass() + "."+s.getMethodName()+":"+s.getLineNumber());
+                LOG.error("  {}.{}:{}", s.getClass(), s.getMethodName(),s.getLineNumber());
             }
         } catch (Exception e) {
             LOG.error("Task {} execution error: {}", taskName, e.getMessage());

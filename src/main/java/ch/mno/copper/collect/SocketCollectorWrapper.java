@@ -15,19 +15,19 @@ import java.util.regex.Pattern;
 // TODO: parse query and store "AS xxx " values in 'as'
 public class SocketCollectorWrapper extends AbstractCollectorWrapper {
 
-    private String host;
-    private int port;
-    private int timeout_ms;
-    private String query;
-    private List<String> as;
+    private final String host;
+    private final int port;
+    private final int timeoutMS;
+    private final List<String> as;
 
-    public SocketCollectorWrapper(String host, int port, int timeout_ms, String as) {
+    public SocketCollectorWrapper(String host, int port, int timeoutMs, String as) {
         this.host = host;
         this.port =port;
-        this.timeout_ms = timeout_ms;
+        this.timeoutMS = timeoutMs;
         this.as = Arrays.asList(as);
     }
 
+    @Override
     public List<String> getAs() {
         return as;
     }
@@ -35,24 +35,30 @@ public class SocketCollectorWrapper extends AbstractCollectorWrapper {
 
     @Override
     public Map<String, String> execute() throws ConnectorException {
-        SocketConnector sc = new SocketConnector(host, port, timeout_ms);
-        SocketConnector.CONNECTION_CHECK status = sc.checkConnection();
+        try (
+                SocketConnector sc = new SocketConnector(host, port, timeoutMS);
+        ) {
+            SocketConnector.CONNECTION_CHECK status = sc.checkConnection();
 
-        Map<String, String> map = new HashMap<>(2);
-        map.put(as.get(0), status.toString());
-        return map;
+            Map<String, String> map = new HashMap<>(2);
+            map.put(as.get(0), status.toString());
+            return map;
+        }
     }
 
     @Override
     public List<List<String>> execute2D() throws ConnectorException {
-        SocketConnector sc = new SocketConnector(host, port, timeout_ms);
-        SocketConnector.CONNECTION_CHECK status = sc.checkConnection();
+        try (
+                SocketConnector sc = new SocketConnector(host, port, timeoutMS);
+        ) {
+            SocketConnector.CONNECTION_CHECK status = sc.checkConnection();
 
-        List<List<String>> lst = new ArrayList<>();
-        List<String> values = new ArrayList<>();
-        values.add(status.toString());
-        lst.add(values);
-        return lst;
+            List<List<String>> lst = new ArrayList<>();
+            List<String> values = new ArrayList<>();
+            values.add(status.toString());
+            lst.add(values);
+            return lst;
+        }
     }
 
     public static SocketCollectorWrapper buildCollector(StoryGrammar grammar, String storyGiven) {
@@ -79,9 +85,9 @@ public class SocketCollectorWrapper extends AbstractCollectorWrapper {
     private static SocketCollectorWrapper buildWrapper(Matcher matcher2) {
         String host = matcher2.group(1);
         int port = Integer.parseInt(matcher2.group(2));
-        int timeout_ms = Integer.parseInt(matcher2.group(3));
+        int timeoutMS = Integer.parseInt(matcher2.group(3));
         String query = matcher2.group(4);
-        return new SocketCollectorWrapper(host, port, timeout_ms, query);
+        return new SocketCollectorWrapper(host, port, timeoutMS, query);
     }
 
 }

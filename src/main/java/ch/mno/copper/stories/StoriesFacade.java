@@ -9,7 +9,6 @@ import ch.mno.copper.stories.data.StoryValidationResult;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 
 public interface StoriesFacade {
