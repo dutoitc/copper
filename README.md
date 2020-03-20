@@ -160,5 +160,4 @@ Some JVM arguments could be set:
   
   [Travis-CI](https://travis-ci.com/github/dutoitc/copper)  
   ![Build Status](https://api.travis-ci.org/dutoitc/copper.svg?branch=master)
-
-  
+(update march 2020: travis-ci and sonarcloud configuration seems broken)  

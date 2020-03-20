@@ -1,5 +1,6 @@
 # Dev
 See CI: https://travis-ci.org/github/dutoitc/copper
+(update march 2020: travis-ci and sonarcloud configuration seems broken)
 
 # Releasing to Maven central
 (add this to ~/m2/settings)
