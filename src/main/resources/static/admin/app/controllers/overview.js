@@ -12,7 +12,7 @@ angular.module('copperApp.overview', ['ngRoute'])
     var scope = $scope;
     var self=this;
 
-     $http.get('../ws/overview')
+     $http.get('../ws/admin/overview')
             .then(function(response) {
                 $scope.overview=response.data;
             });

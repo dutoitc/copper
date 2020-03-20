@@ -52,7 +52,7 @@ angular.module('copperApp.values', ['ngRoute'])
 
     $scope.deleteValuesOlderThanOneMonth = function() {
         if ( window.confirm("Delete values older than one month ?") ) {
-            $http.delete('../ws/values/olderThanOneMonth')
+            $http.delete('../ws/admin/values/olderThanOneMonth')
                 .then(function(response) {
                     alert(response.data);
                     $scope.refresh();
@@ -62,7 +62,7 @@ angular.module('copperApp.values', ['ngRoute'])
 
     $scope.deleteValuesOlderThanThreeMonth = function() {
         if ( window.confirm("Delete values older than three month ?") ) {
-            $http.delete('../ws/values/olderThanThreeMonth')
+            $http.delete('../ws/admin/values/olderThanThreeMonth')
                 .then(function(response) {
                     alert(response.data);
                     $scope.refresh();
@@ -73,7 +73,7 @@ angular.module('copperApp.values', ['ngRoute'])
 
     $scope.deleteValuesOfKey = function(key) {
         if ( window.confirm("Delete all values of key " + key + " ?") ) {
-            $http.delete('../ws/values/bykey/' + key)
+            $http.delete('../ws/admin/values/bykey/' + key)
                 .then(function(response) {
                     alert(response.data);
                     $scope.refresh();
@@ -99,21 +99,5 @@ angular.module('copperApp.values', ['ngRoute'])
         return filteredObject;
     };
 
-
-
-/*
-
-    $http.get('data/routes.json')
-        .success(function(data) {
-            $scope.routes=data["routes"];
-    });
-    $http.get('data/processes.json')
-        .success(function(data) {
-            $scope.processes=data["processes"];
-    });
-    $http.get('data/services.json')
-        .success(function(data) {
-            $scope.services=data["services"];
-    });*/
 
 }]);

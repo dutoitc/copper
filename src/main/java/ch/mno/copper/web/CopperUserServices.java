@@ -1,6 +1,5 @@
 package ch.mno.copper.web;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.daemon.CopperDaemon;
 import ch.mno.copper.helpers.GraphHelper;
 import ch.mno.copper.store.StoreValue;
@@ -8,14 +7,7 @@ import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.store.data.InstantValues;
 import ch.mno.copper.stories.DiskHelper;
 import ch.mno.copper.stories.StoriesFacade;
-import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.stories.data.StoryValidationResult;
 import ch.mno.copper.web.adapters.JsonInstantAdapter;
-import ch.mno.copper.web.adapters.JsonStoryAdapter;
-import ch.mno.copper.web.dto.OverviewDTO;
-import ch.mno.copper.web.dto.OverviewStoryDTO;
-import ch.mno.copper.web.dto.StoryPostDTO;
-import ch.mno.copper.web.dto.StoryWEBDTO;
 import ch.mno.copper.web.helpers.InstantHelper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -35,12 +27,14 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/ws", produces = MediaType.APPLICATION_JSON, consumes = MediaType.WILDCARD)
-public class CopperServices {
+public class CopperUserServices {
 
     private final ValuesStore valuesStore;
     private final StoriesFacade storiesFacade;
@@ -49,7 +43,7 @@ public class CopperServices {
     @Autowired
     private DiskHelper diskHelper;
 
-    public CopperServices(ValuesStore valuesStore, final StoriesFacade storiesFacade, final CopperDaemon daemon) {
+    public CopperUserServices(ValuesStore valuesStore, final StoriesFacade storiesFacade, final CopperDaemon daemon) {
         this.valuesStore = valuesStore;
         this.storiesFacade = storiesFacade;
         this.daemon = daemon;
@@ -75,45 +69,6 @@ public class CopperServices {
         return diskHelper.findScreens();
     }
 
-
-    @PostMapping("validation/story")
-    @ApiOperation(value = "Validation of a posted story",
-            notes = "Post a story to this service, and validate it without saving it")
-    public StoryValidationResult postStory(@RequestBody String story) {
-        return getStoriesFacade().validate(story);
-    }
-
-
-    @PostMapping(value = "story/{storyName}", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Method to create a new story",
-            notes = "Use this to store a story. If originalStoryName='new', a new story is saved and 'Ok' is returned. otherwise the story will be updated by storyName (originalStoryName)")
-    public ResponseEntity<String> postStory(@PathVariable("storyName") String storyName, @RequestBody StoryPostDTO post) throws IOException, ConnectorException {
-        StoriesFacade sf = getStoriesFacade();
-
-        // Create
-        if (post.isNew()) {
-            try {
-                String ret = sf.saveNewStory(post.getStoryName(), post.getStoryText());
-                return ResponseEntity.of(Optional.of(ret));
-            } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-            }
-        }
-
-        // Update
-        Story story = sf.getStoryByName(storyName);
-        if (story == null) {
-            throw new RuntimeException("Story " + storyName + " was not found");
-        } else {
-            try {
-                String msg = sf.updateStory(post.getOriginalStoryName(), post.getStoryName(), post.getStoryText());
-                return ResponseEntity.of(Optional.of(msg));
-            } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-            }
-        }
-    }
-
     @GetMapping(value = "values", produces = MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Convenience way to retrieve all valid values from Copper",
             notes = "Use this to extract many values, example for remote webservice, angular service, ...")
@@ -134,35 +89,14 @@ public class CopperServices {
         return valuesStore.getValuesAlerts();
     }
 
-    @DeleteMapping(value = "values/olderThanOneMonth", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
-    public String deleteValuesOlderThanOneMonth() {
-        return valuesStore.deleteValuesOlderThanXDays(30);
-    }
-
-
-    @DeleteMapping(value = "values/olderThanThreeMonth", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
-    public String deleteValuesOlderThanThreeMonth() {
-        return valuesStore.deleteValuesOlderThanXDays(90);
-    }
-
-
-
-    @DeleteMapping(value = "values/bykey/{key}", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
-    public String deleteValuesOfKey(@PathVariable String key) {
-        return valuesStore.deleteValuesOfKey(key);
-    }
-
 
     @GetMapping(value = "values/query")
     @ApiOperation(value = "Retrieve values between date",
             notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
     public ResponseEntity getValues(@QueryParam("from") String dateFrom,
-                              @QueryParam("to") String dateTo,
-                              @QueryParam("columns") String columns,
-                              @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues) {
+                                    @QueryParam("to") String dateTo,
+                                    @QueryParam("columns") String columns,
+                                    @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues) {
         if (columns == null) {
             return new ResponseEntity("Missing 'columns'", HttpStatus.NOT_ACCEPTABLE);
         }
@@ -183,12 +117,12 @@ public class CopperServices {
     @ApiOperation(value = "Retrieve values between date",
             notes = "")
     public ResponseEntity getValues(@QueryParam("from") String dateFrom,
-                              @QueryParam("to") String dateTo,
-                              @QueryParam("columns") String columns,
-                              @QueryParam("intervalSeconds") long intervalSeconds,
-                              @QueryParam("maxvalues") Integer maxValues) {
+                                    @QueryParam("to") String dateTo,
+                                    @QueryParam("columns") String columns,
+                                    @QueryParam("intervalSeconds") long intervalSeconds,
+                                    @QueryParam("maxvalues") Integer maxValues) {
 
-        maxValues = maxValues==null?100:maxValues;
+        maxValues = maxValues == null ? 100 : maxValues;
 
         Instant from = InstantHelper.findInstant(dateFrom, InstantHelper.INSTANT_2000, true);
         Instant to = InstantHelper.findInstant(dateTo, Instant.now(), false);
@@ -200,49 +134,6 @@ public class CopperServices {
         } catch (RuntimeException e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }
-
-
-    @GetMapping("stories")
-    @ApiOperation(value = "Retrieve all stories",
-            notes = "")
-    public String getStories() {
-        Gson gson = new GsonBuilder().registerTypeAdapter(StoryWEBDTO.class, new JsonStoryAdapter<>()).create();
-
-        List<StoryWEBDTO> stories = getStoriesFacade().getStories(true).stream()
-                .map(StoryWEBDTO::new)
-                .collect(Collectors.toList());
-        return gson.toJson(stories);
-    }
-
-
-    @GetMapping(value = "story/{storyName}/run", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Ask to run a story",
-            notes = "Story is run before 3''")
-    public String getStoryRun(@PathVariable("storyName") String storyName) {
-        daemon.runStory(storyName);
-        return "Story " + storyName + " marked for execution";
-    }
-
-    @GetMapping(value = "story/{storyName}/delete", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Delete story by name",
-            notes = "")
-    public String getStoryDelete(@PathVariable("storyName") String storyName) {
-        getStoriesFacade().deleteStory(storyName);
-        return "Story " + storyName + " deleted.";
-    }
-
-    @GetMapping(value = "/story/{storyName}")
-    @ApiOperation(value = "Retrieve story by name",
-            notes = "")
-    public String getStory(@PathVariable("storyName") String storyName) {
-        Story story = getStoriesFacade().getStoryByName(storyName);
-        if (story == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sory " + storyName + " not found");
-        } else {
-            Gson gson = new GsonBuilder().registerTypeAdapter(StoryWEBDTO.class, new JsonStoryAdapter()).create();
-            return gson.toJson(new StoryWEBDTO(story));
         }
     }
 
@@ -267,13 +158,6 @@ public class CopperServices {
     }
 
 
-    @GetMapping("overview")
-    @ApiOperation(value = "View stories name and next run",
-            notes = "")
-    public String getOverview() {
-        return buildGson().toJson(buildOverview());
-    }
-
 
     @GetMapping(value = "values/query/png", produces = MediaType.APPLICATION_OCTET_STREAM)
     @ApiOperation(value = "Retrieve values between date",
@@ -289,9 +173,9 @@ public class CopperServices {
         if (columns == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Missing 'columns'");
         }
-        maxValues=maxValues==null?100:maxValues;
-        width=width==null?600:width;
-        height=height==null?400:height;
+        maxValues = maxValues == null ? 100 : maxValues;
+        width = width == null ? 600 : width;
+        height = height == null ? 400 : height;
 
         Instant from = InstantHelper.findInstant(dateFrom, InstantHelper.INSTANT_2000, true);
         Instant to = InstantHelper.findInstant(dateTo, Instant.now(), false);
@@ -315,14 +199,6 @@ public class CopperServices {
     }
 
 
-    private OverviewDTO buildOverview() {
-        OverviewDTO overview = new OverviewDTO();
-        List<Story> stories = getStoriesFacade().getStories(true);
-        overview.overviewStories = new ArrayList<>(stories.size());
-        stories.forEach(s -> overview.overviewStories.add(new OverviewStoryDTO(s)));
-        return overview;
-    }
-
 
     private Gson buildGson() {
         GsonBuilder builder = new GsonBuilder();
@@ -330,7 +206,4 @@ public class CopperServices {
         return builder.create();
     }
 
-    public StoriesFacade getStoriesFacade() {
-        return storiesFacade;
-    }
 }
