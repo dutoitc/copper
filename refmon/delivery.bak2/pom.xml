@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.refmon</groupId>
+    <artifactId>refmon-delivery</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+
+    <properties>
+        <devex-maven-plugin.version>1.0.19</devex-maven-plugin.version>
+        <devex.configTag>master</devex.configTag>
+        <devex.releaseVersion>${project.version}</devex.releaseVersion>
+        <devex.deployUnit>refmon</devex.deployUnit>
+        <devex.deployTarget>refmon</devex.deployTarget>
+        <xfile.url>http://outils-xweb-ws.etat-de-vaud.ch/outils/xweb/api</xfile.url>
+        <xfile.group>PSMet-Réf</xfile.group> <!-- dsi_pee par exemple -->
+        <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>
+        <cei-maven-plugin.version>1.1.0</cei-maven-plugin.version>
+        <assembly.finalName>refmon-${project.version}</assembly.finalName>
+    </properties>
+    <profiles>
+        <profile>
+            <!-- Pour faire la livraison dans XFile -->
+            <id>xfile</id>
+            <properties>
+                <!-- pour ne pas deployer dans Nexus -->
+                <maven.deploy.skip>true</maven.deploy.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Pour générer le fichier pour le CEI -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>release.xml</descriptor>
+                            </descriptors>
+                            <finalName>${assembly.finalName}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>posix</tarLongFileMode>
+                            <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>cei.aew.web</groupId>
+                        <artifactId>cei-maven-plugin</artifactId>
+                        <version>${cei-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>upload</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <webresourceurl>${xfile.url}</webresourceurl>
+                            <filetoupload>target/${assembly.finalName}.tar.gz</filetoupload>
+                            <!-- TO BE CHANGED -->
+                            <from>${xfile.group}</from>
+                            <to>WEB</to>
+                            <warprojectonly>false</warprojectonly>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <!-- Création de la Release dans DevEx -->
+            <id>devex.release</id>
+            <properties>
+                <!-- pour ne pas deployer dans Nexus -->
+                <maven.deploy.skip>true</maven.deploy.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <configuration>
+                            <deployUnit>${devex.deployUnit}</deployUnit>
+                            <deployTarget>${devex.deployTarget}</deployTarget>
+                            <configTag>${devex.configTag}</configTag>
+                            <!--
+                            <warProjectOnly>true</warProjectOnly>
+                            -->
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>release</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.docker</id>
+            <properties>
+                <devex.deployTarget>Docker</devex.deployTarget>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Déploiement de la Release dans DevEx -->
+            <id>devex.in</id>
+            <properties>
+                <!-- pour ne pas deployer dans Nexus -->
+                <maven.deploy.skip>true</maven.deploy.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <configuration>
+                            <deployUnit>${devex.deployUnit}</deployUnit>
+                            <deployTarget>${devex.deployTarget}</deployTarget>
+                            <configTag>${devex.configTag}</configTag>
+                            <!--
+                            <warProjectOnly>true</warProjectOnly>
+                            -->
+                            <environment>IN</environment>
+                            <releaseVersion>${devex.releaseVersion}</releaseVersion>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
