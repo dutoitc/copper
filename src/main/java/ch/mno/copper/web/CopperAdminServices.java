@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/ws/admin", produces = MediaType.APPLICATION_JSON, consumes = MediaType.WILDCARD)
+//@PreAuthorize("hasRole('ADMIN')")
 public class CopperAdminServices {
 
     private final ValuesStore valuesStore;

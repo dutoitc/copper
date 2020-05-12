@@ -1,5 +1,6 @@
 package ch.mno.copper;
 
+import ch.mno.copper.web.security.WebSecurity;
 import config.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,7 +19,9 @@ import java.io.IOException;
         CopperServicesConfig.class,
         CopperMailProperties.class,
         CopperStoriesProperties.class,
-        CopperScreensProperties.class
+        CopperScreensProperties.class,
+        CopperProperties.class,
+        WebSecurity.class
 })
 @PropertySources(value = {
         @PropertySource(value = "file:copper.properties", ignoreResourceNotFound = true),
