@@ -21,16 +21,14 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/ws", produces = MediaType.APPLICATION_JSON, consumes = MediaType.WILDCARD)
@@ -53,6 +51,18 @@ public class CopperUserServices {
     public String root() {
         // See https://stackoverflow.com/questions/32184175/how-to-use-spring-redirect-if-controller-method-returns-responseentity
         return "redirect:swagger.json";
+    }
+
+
+    @GetMapping(value = "infos/headers", produces = MediaType.TEXT_PLAIN)
+    public String getInfoHeaders(HttpServletRequest request) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("HTTP HEADERS:\n");
+        for (Iterator<String> it = request.getHeaderNames().asIterator(); it.hasNext(); ) {
+            String header = it.next();
+            sb.append(header).append("=").append(request.getHeader(header)).append('\n');
+        }
+        return sb.toString();
     }
 
     @GetMapping(value = "/ping", produces = MediaType.TEXT_PLAIN)
