@@ -21,7 +21,7 @@
 		<file>
 			<source>log4j2.xml</source>
 			<outputDirectory>refmon-${version}/deployment</outputDirectory>
-			<destName>log4j2.xml</destName>
+			<destName>logback.xml</destName>
 			<fileMode>644</fileMode>
 		</file>
 	</files>
