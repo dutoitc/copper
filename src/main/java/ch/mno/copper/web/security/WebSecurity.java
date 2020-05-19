@@ -12,10 +12,10 @@ import org.springframework.security.web.context.SecurityContextPersistenceFilter
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
 
-    @Value("${copper.security.adminHeader}")
+    @Value("${copper.security.adminHeader:null}")
     private String adminHeader;
 
-    @Value("${copper.security.adminRegex}")
+    @Value("${copper.security.adminRegex:null}")
     private String adminRegex;
 
 
