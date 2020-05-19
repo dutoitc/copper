@@ -1,5 +1,6 @@
 package ch.mno.copper.web.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -10,11 +11,19 @@ import org.springframework.security.web.context.SecurityContextPersistenceFilter
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
+
+    @Value("${copper.security.adminHeader}")
+    private String adminHeader;
+
+    @Value("${copper.security.adminRegex}")
+    private String adminRegex;
+
+
     // Delegate to CustomAuthenticationFilter
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .addFilterAfter(new CustomAuthenticationFilter(), SecurityContextPersistenceFilter.class)
+                .addFilterAfter(new CustomAuthenticationFilter(adminHeader, adminRegex), SecurityContextPersistenceFilter.class)
                 .authorizeRequests()
                 .anyRequest().permitAll();
     }
