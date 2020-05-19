@@ -8,7 +8,7 @@ cp applications/refmon/config/environment.properties applications/refmon/config/
 cat applications/refmon/config/credentials.properties >> applications/refmon/config/refmon.properties
 
 JMX="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=43479 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
-LOGBACK="-Dlogging.config=logback.xml"
+LOGBACK="-Dlogging.config=applications/refmon/deployment/logback.xml"
 APP="-Dcopper.properties=applications/refmon/config/refmon.properties"
 OPTIONS="$APP $JMX -classpath . $LOGBACK"
 

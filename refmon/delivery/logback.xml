@@ -22,11 +22,23 @@
     </appender>
 
 
-    <!--
     <appender name="auditLogger" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+      <evaluator>
+        <matcher>
+          <Name>odd</Name>
+          <!-- filter out odd numbered statements -->
+          <regex>.*ws.values.*</regex>
+        </matcher>
+
+        <expression>odd.matches(formattedMessage)</expression>
+      </evaluator>
+      <OnMismatch>ACCEPT</OnMismatch>
+      <OnMatch>DENY</OnMatch>
+    </filter>
             <file>${LOG_DIR}/refmon-audit.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <fileNamePattern>${LOG_DIR}/refmon-%d{yyyy-MM-dd}.log</fileNamePattern>
+                    <fileNamePattern>${LOG_DIR}/refmon-audit-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>366</maxHistory>
             <totalSizeCap>10GB</totalSizeCap>
         </rollingPolicy>
@@ -34,17 +46,7 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %m%n</pattern>
         </encoder>
         </appender>
-    -->
 
-	<RollingFile name="auditLogger" fileName="${LOG_DIR}/audit.log" filePattern="${LOG_DIR}/audit-%d{yyyy-MM-dd}.log">
-            <RegexFilter regex=".*ws.values.*" onMatch="DENY" onMismatch="ACCEPT"/>
-            <PatternLayout>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %h | %msg%n</pattern>
-            </PatternLayout>
-            <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
-            </Policies>
-        </RollingFile>
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
