@@ -20,10 +20,10 @@ import java.util.regex.Pattern;
  */
 public class CustomAuthenticationFilter extends GenericFilterBean {
 
-    @Value("copper.security.adminHeader")
+    @Value("${copper.security.adminHeader}")
     private String adminHeader;
 
-    @Value("copper.security.adminRegex")
+    @Value("${copper.security.adminRegex}")
     private String adminRegex;
 
     @Override
