@@ -10,6 +10,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -50,6 +52,18 @@ public class HttpConnector extends AbstractConnector {
                     = new UsernamePasswordCredentials(username, password);
             provider.setCredentials(AuthScope.ANY, credentials);
             httpClientBuilder.setDefaultCredentialsProvider(provider);
+        }
+
+        // Trust all certificate, as Copper do only read values
+        try {
+            SSLContextBuilder builder = new SSLContextBuilder();
+            builder.loadTrustMaterial(null, (x509Certificates, s) -> {
+                return true; // Trust everyone
+            });
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build());
+            httpClientBuilder.setSSLSocketFactory(sslsf);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
 
         httpclient = httpClientBuilder.build();
