@@ -8,7 +8,7 @@
 
     <groupId>ch.vd.refmon</groupId>
     <artifactId>refmon</artifactId>
-    <version>1.11.2</version>
+    <version>1.11.3</version>
     <packaging>pom</packaging>
 
     <modules>

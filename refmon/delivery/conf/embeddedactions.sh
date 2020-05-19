@@ -3,9 +3,13 @@ CLASS=ch.mno.copper.CopperApplication
 LOG=app/refmon/logs/console.log
 PID=0
 
+#Yet only one file is allowed
+cp applications/refmon/config/environment.properties applications/refmon/config/refmon.properties
+cp applications/refmon/config/credentials.properties applications/refmon/config/refmon.properties
+
 
 JMX="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=43479 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
-APP="-Dcopper.properties=applications/refmon/config/environment.properties"
+APP="-Dcopper.properties=applications/refmon/config/refmon.properties"
 OPTIONS="$APP $JMX -classpath ."
 
 ################################################################################
