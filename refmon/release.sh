@@ -1,6 +1,7 @@
 # release (version)
 echo "Mettez la bonne version dans le pom"
-gvim refmon/pom.xml refmon/delivery/pom.xml
+gvim pom.xml delivery/pom.xml
+read -n 1 -p "Appuyez sur une touch epour poursuivre"
 git add refmon/pom.xml refmon/delivery/pom.xml
 git commit -m "Release $1"
 git push
