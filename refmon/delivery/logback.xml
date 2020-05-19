@@ -1,0 +1,55 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="LOGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_DIR}/refmon.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${LOG_DIR}/refmon-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>366</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] -%-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <!--
+    <appender name="auditLogger" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_DIR}/refmon-audit.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${LOG_DIR}/refmon-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>366</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %m%n</pattern>
+        </encoder>
+        </appender>
+    -->
+
+	<RollingFile name="auditLogger" fileName="${LOG_DIR}/audit.log" filePattern="${LOG_DIR}/audit-%d{yyyy-MM-dd}.log">
+            <RegexFilter regex=".*ws.values.*" onMatch="DENY" onMismatch="ACCEPT"/>
+            <PatternLayout>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %h | %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOGFILE" />
+        <appender-ref ref="auditLogger" />
+    </root>
+</configuration>
+
