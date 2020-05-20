@@ -37,11 +37,13 @@ public class WebCollector {
         String host;
         int port;
         String path;
+        String scheme=null;
         try {
             URL urlObj = new URL(url);
             host = urlObj.getHost();
             port = urlObj.getPort();
             path = url.substring(url.indexOf(urlObj.getPath())); // Hack to have path, query and hash
+            scheme = urlObj.getProtocol();
         } catch (MalformedURLException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -49,13 +51,12 @@ public class WebCollector {
         List<String> results=null;
         try {
             if (username==null) {
-                conn = new HttpConnector(host, port, null);
+                conn = new HttpConnector(host, port, scheme);
             } else {
-                conn = new HttpConnector(host, port, username, password);
+                conn = new HttpConnector(host, port, scheme, username, password);
             }
 
-
-            HttpResponseData<String> data = conn.get2(path);
+            HttpResponseData<String> data = conn.get2(url);
 
             results = extractValues(data, valuesKept);
         } catch (Exception e) {
