@@ -10,9 +10,9 @@
     </appender>
 
     <appender name="LOGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOG_DIR}/refmon.log</file>
+        <file>${LOG_DIR}/refmon.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <fileNamePattern>${LOG_DIR}/refmon-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/refmon-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>366</maxHistory>
             <totalSizeCap>10GB</totalSizeCap>
         </rollingPolicy>
@@ -22,36 +22,38 @@
     </appender>
 
 
+    <!--
+    TODO: does not work, and stop initialization without log
     <appender name="auditLogger" class="ch.qos.logback.core.rolling.RollingFileAppender">
-	    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-      <evaluator>
-        <matcher>
-          <Name>odd</Name>
-          <!-- filter out odd numbered statements -->
-          <regex>.*ws.values.*</regex>
-        </matcher>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator>
+                <matcher>
+                    <Name>odd</Name>
+                    <regex>.*ws.values.*</regex>
+                </matcher>
 
-        <expression>odd.matches(formattedMessage)</expression>
-      </evaluator>
-      <OnMismatch>ACCEPT</OnMismatch>
-      <OnMatch>DENY</OnMatch>
-    </filter>
-            <file>${LOG_DIR}/refmon-audit.log</file>
+                <expression>odd.matches(formattedMessage)</expression>
+            </evaluator>
+            <OnMismatch>ACCEPT</OnMismatch>
+            <OnMatch>DENY</OnMatch>
+        </filter>
+        <file>${LOG_DIR}/refmon-audit.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <fileNamePattern>${LOG_DIR}/refmon-audit-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/refmon-audit-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>366</maxHistory>
             <totalSizeCap>10GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %m%n</pattern>
         </encoder>
-        </appender>
+    </appender>
+    -->
 
 
     <root level="INFO">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="LOGFILE" />
-        <appender-ref ref="auditLogger" />
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="LOGFILE"/>
+<!--        <appender-ref ref="auditLogger"/>-->
     </root>
 </configuration>
 

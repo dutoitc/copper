@@ -4,7 +4,7 @@
 
     <groupId>ch.vd.refmon</groupId>
     <artifactId>refmon-delivery</artifactId>
-    <version>1.11.14</version>
+    <version>1.11.15</version>
     <packaging>pom</packaging>
 
 
