@@ -34,15 +34,19 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-//        LOG.info("Auth filter for " + httpServletRequest.getRequestURI() + ", adminHeader=["+adminHeader+"], adminRegex=["+adminRegex+"]");
+        LOG.debug("Auth filter for " + httpServletRequest.getRequestURI() + ", adminHeader=["+adminHeader+"], adminRegex=["+adminRegex+"]");
         if (httpServletRequest.getRequestURI().contains("/admin/")) {
             if (adminHeader==null || adminHeader.isEmpty() || headerOk(httpServletRequest)) {
+                LOG.info("auth filter: access ok");
+//                Authentication auth = new PreAuthenticatedAuthenticationToken(httpServletRequest.getHeader(adminHeader), "admin header auth");
+//                SecurityContextHolder.setContext(new SecurityContextImpl(auth));
                 filterChain.doFilter(request, response);
             } else {
                 LOG.info("Auth filter access denied for " + httpServletRequest.getRequestURI() + ", adminHeader=["+adminHeader+"], adminRegex=["+adminRegex+"]");
                 ((HttpServletResponse)response).sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied to admin resource without valid authentication");
             }
         } else {
+            LOG.debug("auth filter: access ok (no /admin/)");
             filterChain.doFilter(request, response);
         }
     }
