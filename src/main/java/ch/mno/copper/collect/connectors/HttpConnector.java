@@ -36,6 +36,12 @@ public class HttpConnector extends AbstractConnector {
         this(hostname, port, scheme, null, -1, null, null, null);
     }
 
+
+    public HttpConnector(String hostname, int port, String scheme, String username, String password) {
+        this(hostname, port, scheme, null, -1, null, username, password);
+    }
+
+    @Deprecated // plz specify scheme
     public HttpConnector(String hostname, int port, String username, String password) {
         this(hostname, port, null, null, -1, null, username, password);
     }
@@ -133,6 +139,7 @@ public class HttpConnector extends AbstractConnector {
 
             return data;
         } catch (IOException e) {
+            e.printStackTrace();
             throw new ConnectorException("Exception: " + e.getMessage(), e);
         }
     }
