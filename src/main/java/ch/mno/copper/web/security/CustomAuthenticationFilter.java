@@ -2,10 +2,6 @@ package ch.mno.copper.web.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -38,19 +34,19 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        LOG.info("Auth filter for " + httpServletRequest.getRequestURI() + ", adminHeader=["+adminHeader+"], adminRegex=["+adminRegex+"]");
+        LOG.debug("Auth filter for " + httpServletRequest.getRequestURI() + ", adminHeader=["+adminHeader+"], adminRegex=["+adminRegex+"]");
         if (httpServletRequest.getRequestURI().contains("/admin/")) {
             if (adminHeader==null || adminHeader.isEmpty() || headerOk(httpServletRequest)) {
                 LOG.info("auth filter: access ok");
-                Authentication auth = new PreAuthenticatedAuthenticationToken(httpServletRequest.getHeader(adminHeader), "admin header auth");
-                SecurityContextHolder.setContext(new SecurityContextImpl(auth));
+//                Authentication auth = new PreAuthenticatedAuthenticationToken(httpServletRequest.getHeader(adminHeader), "admin header auth");
+//                SecurityContextHolder.setContext(new SecurityContextImpl(auth));
                 filterChain.doFilter(request, response);
             } else {
                 LOG.info("Auth filter access denied for " + httpServletRequest.getRequestURI() + ", adminHeader=["+adminHeader+"], adminRegex=["+adminRegex+"]");
                 ((HttpServletResponse)response).sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied to admin resource without valid authentication");
             }
         } else {
-            LOG.info("auth filter: access ok (no /admin/)");
+            LOG.debug("auth filter: access ok (no /admin/)");
             filterChain.doFilter(request, response);
         }
     }

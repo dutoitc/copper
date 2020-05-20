@@ -21,8 +21,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     // Delegate to CustomAuthenticationFilter
     @Override
-    protected void configure(HttpSecurity http) {
-        http.addFilterAfter(new CustomAuthenticationFilter(adminHeader, adminRegex), WebAsyncManagerIntegrationFilter.class);
+    protected void configure(HttpSecurity http) throws Exception {
+        //http.csrf().disable();
+        http.addFilterAfter(new CustomAuthenticationFilter(adminHeader, adminRegex), WebAsyncManagerIntegrationFilter.class)
+                .csrf().disable();
     }
 
 }
