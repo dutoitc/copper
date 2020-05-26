@@ -30,5 +30,9 @@
             <directory>conf</directory>
 			<outputDirectory>refmon-${version}/</outputDirectory>
         </fileSet>
+        <fileSet>
+		<directory>screens</directory>
+			<outputDirectory>refmon-${version}/deployment</outputDirectory>
+        </fileSet>
     </fileSets>
 </assembly>
