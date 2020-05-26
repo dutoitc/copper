@@ -17,6 +17,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -29,8 +31,11 @@ import java.util.Map;
  */
 public class HttpConnector extends AbstractConnector {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HttpConnector.class);
+
     private CloseableHttpClient httpclient;
     private HttpHost target;
+    private final String connInfo;
 
     public HttpConnector(String hostname, int port, String scheme) {
         this(hostname, port, scheme, null, -1, null, null, null);
@@ -47,6 +52,8 @@ public class HttpConnector extends AbstractConnector {
     }
 
     public HttpConnector(String hostname, int port, String scheme, String proxyHostname, int proxyPort, String proxyScheme, String username, String password) {
+        connInfo = String.format("{} {} {} / {} {} {} / {} {}...", hostname, port, scheme, proxyHostname, proxyPort, proxyScheme, username, password.subSequence(0,3));
+
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         if (proxyHostname != null) {
             HttpHost proxy = new HttpHost(proxyHostname, proxyPort, proxyScheme);
@@ -104,11 +111,21 @@ public class HttpConnector extends AbstractConnector {
 
         try (CloseableHttpResponse response = httpclient.execute(target, request)) {
             if (response.getStatusLine().getStatusCode() != 200) {
+                logErrorResponse(uri, response);
                 return  "Error " + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase();
             }
             return EntityUtils.toString(response.getEntity()).trim();
         } catch (IOException e) {
             throw new ConnectorException("Exception: " + e.getMessage(), e);
+        }
+    }
+
+    private void logErrorResponse(String uri, CloseableHttpResponse response) throws IOException {
+        LOG.error("Error reading get on {}: {} {}", uri, response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
+        LOG.error(EntityUtils.toString(response.getEntity()));
+        LOG.error("  - connInfo {}", connInfo);
+        for (Header header: response.getAllHeaders()) {
+            LOG.error("  - {} {}", header.getName(), header.getValue());
         }
     }
 
@@ -120,6 +137,7 @@ public class HttpConnector extends AbstractConnector {
 
             HttpResponseData<String> data = new HttpResponseData<>();
             if (response.getStatusLine().getStatusCode() != 200) {
+                logErrorResponse(uri, response);
                 data.setData("Error " + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase());
             } else {
                 data.setData(EntityUtils.toString(response.getEntity()).trim());
