@@ -52,7 +52,7 @@ public class HttpConnector extends AbstractConnector {
     }
 
     public HttpConnector(String hostname, int port, String scheme, String proxyHostname, int proxyPort, String proxyScheme, String username, String password) {
-        connInfo = String.format("{} {} {} / {} {} {} / {} {}...", hostname, port, scheme, proxyHostname, proxyPort, proxyScheme, username, password.subSequence(0,3));
+        connInfo = String.format("%s %s %s / %s %s %s / %s %s...", hostname, port, scheme, proxyHostname, proxyPort, proxyScheme, username, password.subSequence(0,3));
 
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         if (proxyHostname != null) {
