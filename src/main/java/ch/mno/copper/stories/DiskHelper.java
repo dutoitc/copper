@@ -3,12 +3,16 @@ package ch.mno.copper.stories;
 import config.CopperScreensProperties;
 import config.CopperStoriesProperties;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
 public class DiskHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DiskHelper.class);
 
     public final CopperStoriesProperties copperStoriesProperties;
     private final CopperScreensProperties copperScreensProperties;
@@ -88,6 +92,7 @@ public class DiskHelper {
 
     public Map<String, String> findScreens() {
         Map<String, String> screens = new LinkedHashMap<>();
+        LOG.info("Searching screens in " + new File(screensFolder).getAbsolutePath());
         if (new File(screensFolder).exists()) {
             try {
                 Files.list(Path.of(screensFolder))
@@ -103,6 +108,7 @@ public class DiskHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            LOG.info("Found " + screens.size() + " json screens.");
         }
         return screens;
     }

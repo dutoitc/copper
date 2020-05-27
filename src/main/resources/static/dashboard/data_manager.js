@@ -33,13 +33,25 @@ class DataManager {
     chooseAndImportScreen(jsonScreens) {
         var screens = jsonScreens;
         $( function() {
+            var buttons = {};
+            for (var screenName in screens) {
+                console.log("DBG1 ", screenName);
+                buttons[screenName] = function() {
+                    dataManager.defineScreenJsonObject(JSON.parse(screens[screenName]));
+                    $( this ).dialog( "close" );
+                }
+            }
+            console.log("DBG2", buttons);
+
+            $( "#dialog-screenchoice" ).visibility='visible';
             $( "#dialog-screenchoice" ).dialog({
               resizable: false,
               height: "auto",
               width: 400,
               modal: true,
               style: 'visibility: visible',
-              buttons: {
+              buttons: buttons
+              /*{
                 "Ecran 1": function() {
                     dataManager.defineScreenJsonObject(JSON.parse(dataManager.jsonScreens['myScreen1']));
                     $( this ).dialog( "close" );
@@ -47,8 +59,8 @@ class DataManager {
                 "Ecran 2": function() {
                     dataManager.defineScreenJsonObject(JSON.parse(dataManager.jsonScreens['myScreen2']));
                     $( this ).dialog( "close" );
-                }
-              }
+                }*/
+                //}
             });
           } );
     }
