@@ -35,13 +35,12 @@ class DataManager {
         $( function() {
             var buttons = {};
             for (var screenName in screens) {
-                console.log("DBG1 ", screenName);
                 buttons[screenName] = function() {
-                    dataManager.defineScreenJsonObject(JSON.parse(screens[screenName]));
+                    var localScreenName = screenName;
+                    dataManager.defineScreenJsonObject(JSON.parse(screens[localScreenName]));
                     $( this ).dialog( "close" );
                 }
             }
-            console.log("DBG2", buttons);
 
             $( "#dialog-screenchoice" ).visibility='visible';
             $( "#dialog-screenchoice" ).dialog({
