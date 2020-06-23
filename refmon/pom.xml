@@ -11,6 +11,11 @@
     <version>1.14.0</version>
     <packaging>pom</packaging>
 
+<scm>
+	<connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/referentiels/refmon.git</connection>
+	<url>ssh://git@bitbucket.etat-de-vaud.ch/referentiels/refmon.git</url>
+</scm>
+
     <modules>
         <module>..</module>
         <module>delivery</module>
