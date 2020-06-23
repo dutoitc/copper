@@ -8,8 +8,13 @@
 
     <groupId>ch.vd.refmon</groupId>
     <artifactId>refmon</artifactId>
-    <version>1.13.0</version>
+    <version>1.16.0</version>
     <packaging>pom</packaging>
+
+<scm>
+	<connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/referentiels/refmon.git</connection>
+	<url>ssh://git@bitbucket.etat-de-vaud.ch/referentiels/refmon.git</url>
+</scm>
 
     <modules>
         <module>..</module>

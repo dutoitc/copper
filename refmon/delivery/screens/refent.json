@@ -56,9 +56,9 @@
 {"id":"w1", "x":380, "y":640,"width":150,"height":80,"title":"SB","body":"{{buildEnv(cv, widget, 'RCENT_SB')}}","classes":"env"},
 {"id":"w5", "x":540, "y":640,"width":150,"height":80,"title":"TE","body":"{{buildEnv(cv, widget, 'RCENT_TE')}}","classes":"env"},
 {"id":"w6", "x":700, "y":640,"width":150,"height":80,"title":"I2","body":"{{buildEnv(cv, widget, 'RCENT_I2')}}","classes":"env"},
-{"id":"w7", "x":860, "y":640,"width":150,"height":80,"title":"VA2","body":"{{buildEnv(cv, widget, 'RCENT_VA')}}","classes":"env"},
-{"id":"w9", "x":1020, "y":640,"width":150,"height":80,"title":"PP2","body":"{{buildEnv(cv, widget, 'RCENT_PP2')}}","classes":"env"},
-{"id":"w10","x":1180,"y":640,"width":150,"height":80,"title":"PR2","body":"{{buildEnv(cv, widget, 'RCENT_PR2')}}","classes":"env"},
+{"id":"w7", "x":860, "y":640,"width":150,"height":80,"title":"VA","body":"{{buildEnv(cv, widget, 'RCENT_VA')}}","classes":"env"},
+{"id":"w9", "x":1020, "y":640,"width":150,"height":80,"title":"PP","body":"{{buildEnv(cv, widget, 'RCENT_PP')}}","classes":"env"},
+{"id":"w10","x":1180,"y":640,"width":150,"height":80,"title":"PR","body":"{{buildEnv(cv, widget, 'RCENT_PR')}}","classes":"env"},
 
 
 {"id":"w27","x":10,  "y":730,"width":200,"height":80,"title":"Transverse","body":"","classes":"title"},
