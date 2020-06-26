@@ -75,6 +75,24 @@
                 </plugins>
             </build>
         </profile>
+		<profile>
+			<id>oss</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.8</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
     </profiles>
 
 
@@ -88,17 +106,6 @@
                     <!-- Tests were already ran during release:prepare phase -->
                     <releaseProfiles>not,gpgsign</releaseProfiles>
                     <tagNameFormat>@{project.version}</tagNameFormat>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.8</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
             <plugin>
@@ -343,6 +350,7 @@
             <id>maven.oracle.com</id>
             <url>https://maven.oracle.com</url>
         </pluginRepository>
-    </pluginRepositories>
+</pluginRepositories>
+
 
 </project>
