@@ -4,6 +4,7 @@ import ch.mno.copper.store.data.InstantValue;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 public class InstantValueMapper {
@@ -18,7 +19,8 @@ public class InstantValueMapper {
         String dbKey = rs.getString("c1");
         String value = rs.getString("value");
         if (value == null) value = "";
-        Instant ts = rs.getTimestamp("ts").toInstant();
+        Timestamp ts1 = rs.getTimestamp("ts");
+        Instant ts = ts1==null?null:ts1.toInstant();
         return new InstantValue(idValueStore, dbKey, value, ts);
     }
 
