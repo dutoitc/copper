@@ -1,13 +1,16 @@
 package ch.mno.copper.store.db;
 
 import ch.mno.copper.store.StoreValue;
-import org.h2.jdbc.JdbcSQLException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 
 public class StoreValueMapper {
+
+    private StoreValueMapper() {
+
+    }
 
     static StoreValue map(ResultSet rs, boolean wantNbValues) throws SQLException {
         long idValueStore = rs.getLong("idValueStore");

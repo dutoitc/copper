@@ -1,18 +1,18 @@
 package ch.mno.copper.web;
 
-import ch.mno.copper.daemon.CopperDaemon;
 import ch.mno.copper.helpers.GraphHelper;
 import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.store.data.InstantValues;
 import ch.mno.copper.stories.DiskHelper;
-import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.web.adapters.JsonInstantAdapter;
 import ch.mno.copper.web.helpers.InstantHelper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.swagger.annotations.ApiOperation;
 import org.jfree.chart.JFreeChart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -34,17 +34,14 @@ import java.util.*;
 @RequestMapping(value = "/ws", produces = MediaType.APPLICATION_JSON, consumes = MediaType.WILDCARD)
 public class CopperUserServices {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CopperUserServices.class);
     private final ValuesStore valuesStore;
-    private final StoriesFacade storiesFacade;
-    private final CopperDaemon daemon;
 
     @Autowired
     private DiskHelper diskHelper;
 
-    public CopperUserServices(ValuesStore valuesStore, final StoriesFacade storiesFacade, final CopperDaemon daemon) {
+    public CopperUserServices(ValuesStore valuesStore) {
         this.valuesStore = valuesStore;
-        this.storiesFacade = storiesFacade;
-        this.daemon = daemon;
     }
 
     @GetMapping(value = "/")
@@ -85,10 +82,9 @@ public class CopperUserServices {
     public String getValues() {
         try {
             Map<String, StoreValue> values = valuesStore.getValues();
-            String json = buildGson().toJson(values);
-            return json;
+            return buildGson().toJson(values);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
             throw e;
         }
     }
@@ -142,7 +138,7 @@ public class CopperUserServices {
             String ret = buildGson().toJson(values);
             return ResponseEntity.of(Optional.of(ret));
         } catch (RuntimeException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -166,7 +162,6 @@ public class CopperUserServices {
         valuesStore.put(valueName, message);
         return getValue(valueName);
     }
-
 
 
     @GetMapping(value = "values/query/png", produces = MediaType.APPLICATION_OCTET_STREAM)
@@ -203,11 +198,10 @@ public class CopperUserServices {
             StreamUtils.copy(png, response.getOutputStream());
             return new ResponseEntity(HttpStatus.OK);
         } catch (RuntimeException | IOException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-
 
 
     private Gson buildGson() {

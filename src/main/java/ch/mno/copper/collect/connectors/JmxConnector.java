@@ -26,6 +26,7 @@ public class JmxConnector extends AbstractConnector {
         try {
             jmxc = connectWithTimeout(jmxServiceURL, env, 1000l*5l);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new IOException("JMX connection interrupted");
         } catch (ExecutionException e) {
             throw new IOException("JMX connection error: " + e.getMessage());

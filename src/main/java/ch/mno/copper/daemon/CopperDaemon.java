@@ -32,7 +32,6 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
     public static final int N_THREADS = 10;
     public static final int TASK_CHEK_INTERVAL = 1000 * 3; // don't overload processors !
     private final List<AbstractProcessor> processors = new ArrayList<>();
-    //    private final ValuesStore valuesStore;
     private boolean shouldRun = true;
     private List<String> storiesToRun = new ArrayList<>();
     private LocalDateTime lastQueryTime = LocalDateTime.MIN;
@@ -110,6 +109,7 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
             try {
                 Thread.sleep(TASK_CHEK_INTERVAL);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 // OK
             }
         }

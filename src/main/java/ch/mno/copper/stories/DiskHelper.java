@@ -9,19 +9,18 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class DiskHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(DiskHelper.class);
 
     public final CopperStoriesProperties copperStoriesProperties;
-    private final CopperScreensProperties copperScreensProperties;
     public final String storiesFolder;
     private final String screensFolder;
 
     public DiskHelper(CopperStoriesProperties copperStoriesProperties, CopperScreensProperties copperScreensProperties) {
         this.copperStoriesProperties = copperStoriesProperties;
-        this.copperScreensProperties = copperScreensProperties;
 
         this.storiesFolder = copperStoriesProperties.getFolder();
         this.screensFolder = copperScreensProperties.getFolder();
@@ -64,11 +63,15 @@ public class DiskHelper {
     }
 
     public boolean storyExists(String storyName) {
-        return new File(storiesFolder + "/" + storyName).exists();
+        return new File(storiesFolder + File.separatorChar + storyName).exists();
     }
 
     public void deleteStory(String storyName) {
-        new File(storiesFolder + "/" + storyName).delete();
+        try {
+            Files.delete(Path.of(storiesFolder + File.separatorChar + storyName));
+        } catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
     }
 
     public List<String> findStoryNames() {
@@ -92,23 +95,23 @@ public class DiskHelper {
 
     public Map<String, String> findScreens() {
         Map<String, String> screens = new LinkedHashMap<>();
-        LOG.info("Searching screens in " + new File(screensFolder).getAbsolutePath());
+        LOG.info("Searching screens in {}", new File(screensFolder).getAbsolutePath());
         if (new File(screensFolder).exists()) {
-            try {
-                Files.list(Path.of(screensFolder))
-                        .sorted(Comparator.comparing(Path::getFileName))
-                        .filter(a->a.getFileName().toString().endsWith(".json"))
-                        .forEach(a-> {
-                            try {
-                                screens.put(a.getFileName().toString().replace(".json", ""), FileUtils.readFileToString(a.toFile()));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        });
+            try (Stream<Path> list = Files.list(Path.of(screensFolder))) {
+                list
+                    .sorted(Comparator.comparing(Path::getFileName))
+                    .filter(a -> a.getFileName().toString().endsWith(".json"))
+                    .forEach(a -> {
+                        try {
+                            screens.put(a.getFileName().toString().replace(".json", ""), FileUtils.readFileToString(a.toFile()));
+                        } catch (IOException e) {
+                            LOG.error(e.getMessage(), e);
+                        }
+                    });
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
-            LOG.info("Found " + screens.size() + " json screens.");
+            LOG.info("Found {} json screens.", screens.size());
         }
         return screens;
     }

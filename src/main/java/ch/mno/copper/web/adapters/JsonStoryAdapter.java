@@ -20,10 +20,8 @@ public class JsonStoryAdapter<T extends StoryWEBDTO> extends TypeAdapter<StoryWE
             }
             Story story = storyWebDTO.getStory();
 
-//            writer.name("story");
             writer.beginObject();
 
-//            writer.beginArray();
             writer.name("name");
             writer.value(story.getName());
             writer.name("cron");
@@ -36,7 +34,6 @@ public class JsonStoryAdapter<T extends StoryWEBDTO> extends TypeAdapter<StoryWE
             writer.value(story.getError());
             writer.name("nextRun");
             writer.value(storyWebDTO.getNextRun());
-//            writer.endArray();
 
             writer.endObject();
         }

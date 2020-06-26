@@ -31,8 +31,12 @@ public class BinaryConnector {
             int exitCode = process.waitFor();
             Thread.sleep(100);
             executorService.shutdown();
-            return sb.toString() + sbErr.toString() + (exitCode==0?"":"EXIT_"+exitCode);
-        } catch (IOException | InterruptedException e) {
+            return sb.toString() + sbErr.toString() + (exitCode == 0 ? "" : "EXIT_" + exitCode);
+        } catch (InterruptedException e) {
+            LOG.trace("Exception: " + e.getMessage(), e);
+            Thread.currentThread().interrupt();
+            return "Exception: " + e.getMessage();
+        } catch (IOException e) {
             LOG.trace("Exception: " + e.getMessage(), e);
             return "Exception: " + e.getMessage();
         }
