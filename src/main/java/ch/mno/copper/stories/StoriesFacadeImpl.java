@@ -20,7 +20,7 @@ import java.util.List;
  * Created by dutoitc on 23.02.2016.
  */
 public class StoriesFacadeImpl implements StoriesFacade {
-    private Logger LOG = LoggerFactory.getLogger(StoriesFacadeImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StoriesFacadeImpl.class);
 
     private final StoriesHolder storiesHolder = new StoriesHolder();
     private final StoryGrammar grammar;
@@ -75,7 +75,6 @@ public class StoriesFacadeImpl implements StoriesFacade {
 
         // TODO: update listeneres
         if (!originalStoryName.equals(storyName)) diskHelper.deleteStory(originalStoryName);
-        ;
         return "Ok";
     }
 
@@ -108,7 +107,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
 
                 // New
                 if (holderStory == null) {
-                    LOG.info("Adding story: " + diskStory.getName());
+                    LOG.info("Adding story: {}", diskStory.getName());
                     storiesHolder.add(diskStory);
                 } else if (!holderStory.getStoryText().equals(diskStory.getStoryText())) {
                     // Reload if changed
@@ -117,12 +116,9 @@ public class StoriesFacadeImpl implements StoriesFacade {
                 }
             } catch (SyntaxException e) {
                 storiesHolder.markAsError(storyName);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ConnectorException e) {
-                e.printStackTrace();
+            } catch (IOException | ConnectorException e) {
+                LOG.error(e.getMessage(), e);
             } catch (RuntimeException e) {
-                //e.printStackTrace();
                 // Too verbose yet: invalid stories log errors on each story refresh, every second or so
             }
         }
@@ -130,7 +126,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
         // Evict stories from memory if not present on disk
         for (Story story : new ArrayList<>(this.storiesHolder.getStories())) {
             if (!diskHelper.storyExists(story.getName())) {
-                LOG.info("Removing story from memory, no longer on disk: " + story.getName());
+                LOG.info("Removing story from memory, no longer on disk: {}", story.getName());
                 this.storiesHolder.remove(story);
             }
         }

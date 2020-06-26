@@ -1,11 +1,7 @@
 package ch.mno.copper.web.helpers;
 
 import javax.ws.rs.QueryParam;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
@@ -13,6 +9,9 @@ public class InstantHelper {
 
     public static final Instant INSTANT_2000 = Instant.parse("2000-01-01T00:00:00.00Z");
 
+    private InstantHelper() {
+
+    }
 
     public static Instant findInstant(@QueryParam("from") String dateFrom, Instant defaultValue, boolean b) {
         Instant from;
@@ -35,6 +34,7 @@ public class InstantHelper {
                 if (am) return LocalDateTime.of(ld, LocalTime.of(0, 0)).toInstant(ZoneOffset.UTC);
                 return LocalDateTime.of(ld, LocalTime.of(23, 59, 59)).toInstant(ZoneOffset.UTC);
             } catch (DateTimeParseException e) {
+                // Nothing yet
             }
         }
 
@@ -45,7 +45,7 @@ public class InstantHelper {
                 //return (LocalDateTime)formatter.parse(date);
                 return LocalDateTime.parse(date, formatter).toInstant(ZoneOffset.UTC);
             } catch (DateTimeParseException e) {
-
+                // Nothing yet
             }
         }
         throw new RuntimeException("Cannot parse '" + date + "'");

@@ -87,7 +87,7 @@ public class HttpConnector extends AbstractConnector {
 
 
         HttpPost post = new HttpPost(uri);
-        final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        final List<NameValuePair> nvps = new ArrayList<>();
         for (Map.Entry<String, String> entry : values.entrySet()) {
             nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }
@@ -157,15 +157,17 @@ public class HttpConnector extends AbstractConnector {
 
             return data;
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Exception: " + e.getMessage(), e);
             throw new ConnectorException("Exception: " + e.getMessage(), e);
         }
     }
 
+    @Override
     public void close() {
         try {
             httpclient.close();
         } catch (IOException e) {
+            // Nothing yet
         }
     }
 

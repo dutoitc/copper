@@ -15,6 +15,10 @@ public class SyntaxHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(SyntaxHelper.class);
 
+    private SyntaxHelper() {
+
+    }
+
     public static String checkSyntax(StoryGrammar grammar, String pattern, String value) {
         Matcher matcher = Pattern.compile(pattern, Pattern.DOTALL).matcher(value);
         if (matcher.matches()) {

@@ -23,12 +23,16 @@ public class GraphHelper {
 
     public static final Logger LOG = LoggerFactory.getLogger(GraphHelper.class);
 
+    private GraphHelper() {
+
+    }
+
     public static JFreeChart createChart(List<StoreValue> values, String title, String yLabel) {
         XYDataset dataset = createDataset(values);
 
 
 
-        JFreeChart chart = ChartFactory.createTimeSeriesChart("Values",
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(title,
                 "Time",                // store
                 yLabel,                   // include legend
                 dataset,
@@ -53,7 +57,7 @@ public class GraphHelper {
             try {
                 ts.add(new Second(Date.from(value.getTimestampFrom())), Float.parseFloat(value.getValue()));
             } catch (NumberFormatException e) {
-                LOG.warn("Skipping invalid value '" + value.getValue() + "' for key '" + value.getKey() + "'");
+                LOG.warn("Skipping invalid value '{}' for key '{}'", value.getValue(), value.getKey());
             }
         }
         TimeSeriesCollection dataset = new TimeSeriesCollection();

@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  */
 public class CustomAuthenticationFilter extends GenericFilterBean {
 
-    private static Logger LOG = LoggerFactory.getLogger(CustomAuthenticationFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CustomAuthenticationFilter.class);
 
     private String adminHeader;
     private String adminRegex;
@@ -34,7 +34,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        LOG.debug("Auth filter for " + httpServletRequest.getRequestURI() + ", adminHeader=["+adminHeader+"], adminRegex=["+adminRegex+"]");
+        LOG.debug("Auth filter for {}, adminHeader=[{}], adminRegex=[{}]", httpServletRequest.getRequestURI(), adminHeader, adminRegex);
         if (httpServletRequest.getRequestURI().contains("/admin/")) {
             if (adminHeader==null || adminHeader.isEmpty() || headerOk(httpServletRequest)) {
                 LOG.info("auth filter: access ok");
@@ -42,7 +42,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 //                SecurityContextHolder.setContext(new SecurityContextImpl(auth));
                 filterChain.doFilter(request, response);
             } else {
-                LOG.info("Auth filter access denied for " + httpServletRequest.getRequestURI() + ", adminHeader=["+adminHeader+"], adminRegex=["+adminRegex+"]");
+                LOG.info("Auth filter access denied for {}, adminHeader=[{}], adminRegex=[{}]", httpServletRequest.getRequestURI(), adminHeader, adminRegex);
                 ((HttpServletResponse)response).sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied to admin resource without valid authentication");
             }
         } else {

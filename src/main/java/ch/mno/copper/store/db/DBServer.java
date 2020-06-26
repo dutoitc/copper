@@ -315,6 +315,7 @@ public class DBServer implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
+        // Nothing to close yet
     }
 
     public int deleteValuesOlderThanXDays(int nbDays) {

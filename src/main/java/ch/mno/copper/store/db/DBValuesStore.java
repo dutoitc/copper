@@ -63,7 +63,7 @@ public class DBValuesStore implements ValuesStore {
     public Map<String, StoreValue> getValues() {
         try {
             return server.readLatest().stream()
-                    .collect(Collectors.toMap(x -> x.getKey(), x -> x, (a,b)->b)); // Ignoring duplicate, keep last
+                    .collect(Collectors.toMap(StoreValue::getKey, x -> x, (a, b)->b)); // Ignoring duplicate, keep last
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
         }
@@ -98,19 +98,19 @@ public class DBValuesStore implements ValuesStore {
 
     @Override
     public void load() throws IOException {
-
+        // Nothing yet
     }
 
     @Override
     public void save() throws IOException {
-
+        // Nothing yet
     }
 
     @Override
     public Map<String, String> getValuesMapString() {
         try {
             return server.readLatest().stream()
-                    .collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
+                    .collect(Collectors.toMap(StoreValue::getKey, StoreValue::getValue));
         } catch (SQLException e) {
             throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
         }

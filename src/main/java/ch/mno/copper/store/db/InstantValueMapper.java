@@ -8,6 +8,10 @@ import java.time.Instant;
 
 public class InstantValueMapper {
 
+    private InstantValueMapper() {
+
+    }
+
     static InstantValue map(ResultSet rs) throws SQLException {
         long idValueStore = rs.getLong("idValueStore");
         if (idValueStore == 0) idValueStore = -1; // TODO: check if id is null, not zero

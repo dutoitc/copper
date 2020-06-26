@@ -36,8 +36,7 @@ public class DataSourceConfig {
         } catch (SQLException e) {
             if (!e.getMessage().contains("Table \"DATABASECHANGELOGLOCK\" not found")) {
                 // No database = no need to clean, ignoring error
-                LOG.warn("Error while cleaning liquibase lock; continuing {}", e.getMessage());
-                e.printStackTrace();
+                LOG.warn("Error while cleaning liquibase lock; continuing {}",e.getMessage(), e);
             }
         }
 

@@ -6,7 +6,7 @@ package ch.mno.copper.collect.connectors;
 public class AbstractConnector implements AutoCloseable {
 
     public void close() {
-
+        // Nothing by default
     }
 
 }

@@ -22,6 +22,10 @@ public class StoryTaskBuilder {
     public static final int TIMEOUT_SEC = 10;
     private static final Logger LOG = LoggerFactory.getLogger(StoryTaskBuilder.class);
 
+    private StoryTaskBuilder() {
+
+    }
+
     public static StoryTask build(Story story, ValuesStore valuesStore) {
         return new StoryTaskImpl(story, () -> {
             // This code execute at every trigger (cron, ...) for the given story
@@ -45,7 +49,7 @@ public class StoryTaskBuilder {
             // Report
             AbstractReporterWrapper reporter = story.getReporterWrapper();
             if (reporter == null) {
-                values.forEach((key, value) -> valuesStore.put(key, value));
+                values.forEach(valuesStore::put);
             } else {
                 reporter.execute(values, valuesStore);
             }
@@ -73,7 +77,7 @@ public class StoryTaskBuilder {
             return future.get(TIMEOUT_SEC, TimeUnit.SECONDS);
         } catch (Exception e) {
             // Log and set values as ERR
-            LOG.warn("Collector of story " + story.getName() + " error: " + e.getMessage());
+            LOG.warn("Collector of story {} error: {}", story.getName(), e.getMessage());
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Exception", e);
             }

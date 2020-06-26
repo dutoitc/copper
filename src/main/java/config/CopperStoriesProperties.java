@@ -10,9 +10,9 @@ public class CopperStoriesProperties {
 
     @PostConstruct
     public void init() {
-        String folder = System.getProperty("copper.stories.folder");
-        if (folder!=null) {
-            this.folder = folder;
+        String folderProperty = System.getProperty("copper.stories.folder");
+        if (folderProperty != null) {
+            this.folder = folderProperty;
         }
     }
 
