@@ -80,9 +80,9 @@
 {"id":"w17","x":1340,"y":720,"width":334,"height":250,"title":"Menu","body":"{{buildMenu(cv)}}","classes":"whitebox menu notitle"},
 
 {"id":"w57","x":220,"y":820,"width":340,"height":70,"title":"RCEnt/DB PR2","body":"<table><tr><th>Dernier eve traité:</th><td>{{cv('RCENT_PR_LAST_TRAITE').value}}</td></tr><tr><th>Dernier eve en erreur:</th><td>{{cv('RCENT_PR_LAST_EN_ERREUR').value}}</td></tr></table>","classes":"whitebox"},
-{"id":"w58","x":570,"y":820,"width":340,"height":70,"title":"RCEnt/Refact/Env-TE","body":"{{buildRefact(cv,'RCENT')}}","classes":"whitebox refact"},
-{"id":"w58","x":570,"y":900,"width":340,"height":70,"title":"RCEnt/RCEnt-acceptance-tests/Env-I2","body":"{{buildRefact(cv,'RCENT2')}}","classes":"whitebox refact"},
-{"id":"w58","x":920,"y":820,"width":340,"height":70,"title":"Siti/Siti-acceptance-tests/Env-IN","body":"{{buildRefact(cv,'SITI2')}}","classes":"whitebox refact"},
+{"id":"w58","x":570,"y":820,"width":340,"height":70,"title":"RCEnt/Refact/Env-TE","body":"{{buildRefact(cv,'RCENT_TE')}}","classes":"whitebox refact"},
+{"id":"w58","x":570,"y":900,"width":340,"height":70,"title":"RCEnt/RCEnt-acceptance-tests/Env-I2","body":"{{buildRefact(cv,'RCENT_I2')}}","classes":"whitebox refact"},
+{"id":"w58","x":920,"y":820,"width":340,"height":70,"title":"Siti/Siti-acceptance-tests/Env-IN","body":"{{buildRefact(cv,'SITI')}}","classes":"whitebox refact"},
 
 {"id":"w59","x":220,"y":900,"width":340,"height":80,"title":"Server","body":"{{buildCopperStatus(cv, widget, copperStatus)}}","classes":"env"}
 
