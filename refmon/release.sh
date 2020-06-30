@@ -5,7 +5,7 @@ gvim pom.xml delivery/pom.xml
 read -n 1 -p "Appuyez sur une touch epour poursuivre"
 git add pom.xml delivery/pom.xml
 git commit -m "Release $1"
-git push
+git push upstream master
 git tag $1
-git push origin $1
+git push upstream $1
 
