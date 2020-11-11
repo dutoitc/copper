@@ -28,11 +28,11 @@
     {"id":"w9", "x":1070, "y":280,"width":150,"height":80,"title":"PP2","body":"{{buildEnv(cv, widget, 'RCENT_PP2')}}","classes":"env"},
     {"id":"w10","x":1230,"y":280,"width":150,"height":80,"title":"PR2","body":"{{buildEnv(cv, widget, 'RCENT_PR2')}}","classes":"env"},
 
-    {"id":"w23","x":10,  "y":370,"width":250,"height":80,"title":"Ref-SEC","body":"","classes":"title"},
-    {"id":"w44","x":750, "y":370,"width":150,"height":80,"title":"IN","body":"{{buildEnv(cv, widget, 'REFSEC_IN')}}","classes":"env"},
-    {"id":"w45","x":910, "y":370,"width":150,"height":80,"title":"VA","body":"{{buildEnv(cv, widget, 'REFSEC_VA')}}","classes":"env"},
-    {"id":"w46","x":1070,"y":370,"width":150,"height":80,"title":"PP","body":"{{buildEnv(cv, widget, 'REFSEC_PP')}}","classes":"env"},
-    {"id":"w47","x":1230,"y":370,"width":150,"height":80,"title":"PR","body":"{{buildEnv(cv, widget, 'REFSEC_PR')}}","classes":"env"},
+    {"id":"w23","x":10,  "y":370,"width":250,"height":80,"title":"Ref-Inf","body":"","classes":"title"},
+    {"id":"w44","x":750, "y":370,"width":150,"height":80,"title":"IN","body":"{{buildEnv(cv, widget, 'REFINF_IN')}}","classes":"env"},
+    {"id":"w45","x":910, "y":370,"width":150,"height":80,"title":"VA","body":"{{buildEnv(cv, widget, 'REFINF_VA')}}","classes":"env"},
+    {"id":"w46","x":1070,"y":370,"width":150,"height":80,"title":"PP","body":"{{buildEnv(cv, widget, 'REFINF_PP')}}","classes":"env"},
+    {"id":"w47","x":1230,"y":370,"width":150,"height":80,"title":"PR","body":"{{buildEnv(cv, widget, 'REFINF_PR')}}","classes":"env"},
 
     {"id":"w23","x":10,  "y":460,"width":250,"height":80,"title":"Ref-SEC v2","body":"","classes":"title"},
     {"id":"w37","x":750, "y":460,"width":150,"height":80,"title":"IN","body":"{{buildEnv(cv, widget, 'REFSECV2_IN')}}","classes":"env"},
