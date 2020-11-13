@@ -21,7 +21,7 @@ class DataManager {
             // Screen by param: screen=xxx
             var parameters = window.location.search.substring(1).split('&');
             for (var i=0; i<parameters.length; i++) {
-                var spl = patameters[i].split('=');
+                var spl = parameters[i].split('=');
                 if (spl[0]=='screen') {
                     var localScreenName=spl[1];
                     dataManager.defineScreenJsonObject(JSON.parse(screens[localScreenName]));
