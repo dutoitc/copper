@@ -151,16 +151,16 @@ class DataManager {
         this.editable=false;
 
         // Style link
-        if (typeof this.stylelinks !== 'undefined' && this.styleLinks!=null) {
+        if (typeof this.styleLinks !== 'undefined' && this.styleLinks!=null) {
             for (var i=0; i<this.styleLinks.length; i++) {
-                $('head').append('<link rel="stylesheet" href="' + this.styleLinks[i] + '" type="text/css" />');
+                $('head').append('<link rel="stylesheet" href="../ws/screens/css/' + this.styleLinks[i] + '" type="text/css" />');
             }
         }
 
         // Script link
         if (typeof this.scriptLinks !== 'undefined' && this.scriptLinks!=null) {
             for (var j = 0; j < this.scriptLinks.length; j++) {
-                $('head').append('<script src="' + this.scriptLinks[j] + '"></script>');
+                $('head').append('<script src="../ws/screens/js/' + this.scriptLinks[j] + '"></script>');
             }
         }
 

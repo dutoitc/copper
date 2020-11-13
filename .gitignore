@@ -44,3 +44,9 @@ Sandbox*.java
 refent*
 local
 *.bak
+real1
+/screens/siti.json
+/t
+/stories/test1
+/stories/RCENT_I2_STATUSByWeb
+/pom.xml.releaseBackup

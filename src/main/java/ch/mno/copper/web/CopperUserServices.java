@@ -76,10 +76,24 @@ public class CopperUserServices {
         return diskHelper.findScreens();
     }
 
-    @GetMapping(value = "/screens/{filename}")
+    // Note: two methods to differ by return media type
+    @GetMapping(value = "/screens/js/{filename}", produces = "application/javascript")
     @ApiOperation(value = "Get data from screens folder",
             notes = "A way to get the embedded screens data")
-    public ResponseEntity<String>  getScreenData(@PathVariable("filename") String filename)  {
+    public ResponseEntity<String>  getScreenJson(@PathVariable("filename") String filename)  {
+        try {
+            String data = diskHelper.findScreenData(filename);
+            return new ResponseEntity(data, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Note: two methods to differ by return media type
+    @GetMapping(value = "/screens/css/{filename}", produces = "text/css")
+    @ApiOperation(value = "Get data from screens folder",
+            notes = "A way to get the embedded screens data")
+    public ResponseEntity<String> getScreenCss(@PathVariable("filename") String filename)  {
         try {
             String data = diskHelper.findScreenData(filename);
             return new ResponseEntity(data, HttpStatus.OK);
