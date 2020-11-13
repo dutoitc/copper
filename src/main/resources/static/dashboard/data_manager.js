@@ -20,25 +20,29 @@ class DataManager {
 
             // Screen by param: screen=xxx
             var parameters = window.location.search.substring(1).split('&');
+            var screenLoaded=false;
             for (var i=0; i<parameters.length; i++) {
                 var spl = parameters[i].split('=');
                 if (spl[0]=='screen') {
                     var localScreenName=spl[1];
                     dataManager.defineScreenJsonObject(JSON.parse(jsonScreens[localScreenName]));
+                    screenLoaded = true;
                     break;
                 }
             }
 
             //
-            var nb = Object.getOwnPropertyNames(jsonScreens).length;
-            if (nb==0) {
-                // Load JSON from local storage
-                var json = localStorage.getItem("copperJson");
-                if (json!=null && confirm("Use last dashboard ?")) dataManager.importJSON(JSON.parse(json));
-            } else if (nb==1) {
-                dataManager.defineScreenJsonObject(jsonScreens[0].data);
-            } else if (nb>1) {
-                dataManager.chooseAndImportScreen(jsonScreens);
+            if (!screenLoaded) {
+                var nb = Object.getOwnPropertyNames(jsonScreens).length;
+                if (nb == 0) {
+                    // Load JSON from local storage
+                    var json = localStorage.getItem("copperJson");
+                    if (json != null && confirm("Use last dashboard ?")) dataManager.importJSON(JSON.parse(json));
+                } else if (nb == 1) {
+                    dataManager.defineScreenJsonObject(jsonScreens[0].data);
+                } else if (nb > 1) {
+                    dataManager.chooseAndImportScreen(jsonScreens);
+                }
             }
         });
     }
