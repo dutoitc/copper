@@ -1,4 +1,3 @@
-
 class DataManager {
     constructor() {
         this.widgets=[];
@@ -24,8 +23,7 @@ class DataManager {
             for (var i=0; i<parameters.length; i++) {
                 var spl = parameters[i].split('=');
                 if (spl[0]=='screen') {
-                    var localScreenName=spl[1];
-                    dataManager.defineScreenJsonObject(JSON.parse(jsonScreens[localScreenName]));
+                    dataManager.defineScreenJsonObject(JSON.parse(jsonScreens[spl[1]]));
                     screenLoaded = true;
                     break;
                 }
@@ -151,6 +149,21 @@ class DataManager {
         if (this.style==null) this.style=[];
         if (this.script==null) this.script=[];
         this.editable=false;
+
+        // Style link
+        if (typeof this.stylelinks !== 'undefined' && this.styleLinks!=null) {
+            for (var i=0; i<this.styleLinks.length; i++) {
+                $('head').append('<link rel="stylesheet" href="' + this.styleLinks[i] + '" type="text/css" />');
+            }
+        }
+
+        // Script link
+        if (typeof this.scriptLinks !== 'undefined' && this.scriptLinks!=null) {
+            for (var j = 0; j < this.scriptLinks.length; j++) {
+                $('head').append('<script src="' + this.scriptLinks[j] + '"></script>');
+            }
+        }
+
         this.handleMessage("refresh");
     }
 
@@ -168,8 +181,8 @@ class DataManager {
 
         // Date and reschedule
         if (verb=="updateDate") {
-            var now = new Date();
-            var sdate=(now.getDate()<10?"0":"") + now.getDate() + "." + (now.getMonth()<9?"0":"") + (now.getMonth()+1) + "." + now.getFullYear();
+            var now2 = new Date();
+            var sdate=(now2.getDate()<10?"0":"") + now2.getDate() + "." + (now2.getMonth()<9?"0":"") + (now2.getMonth()+1) + "." + now2.getFullYear();
             $("#"+spl[1]).text(sdate);
             setTimeout(function() { dataManager.handleMessage(msg); }, 1000);
         }
@@ -198,6 +211,7 @@ class DataManager {
 
     // TODO: diff old and new dom, replace only new elements
     refreshUI() {
+        console.log("refreshUI");
         // Build dom in a disconnected div
         var content = $("<div></div>");
 
@@ -208,14 +222,6 @@ class DataManager {
         }
         style+="</style>\n";
         content.append($(style));
-
-        // Style link
-        if (typeof this.stylelinks !== 'undefined' && this.styleLinks!=null) {
-            for (var i=0; i<this.styleLinks.length; i++) {
-                var style="<link rel='stylesheet' href=\"" + this.styleLinks[i]+"\">\n";
-                content.append($(style));
-            }
-        }
 
         // Widgets
         for (var j=0; j<this.widgets.length; j++) {
@@ -231,14 +237,6 @@ class DataManager {
         }
         script+="</script>\n";
         content.append($(script));
-
-        // Script link
-        if (typeof this.scriptLinks !== 'undefined' && this.scriptLinks!=null) {
-            for (var i = 0; this.scriptLinks != null && i < this.scriptLinks.length; i++) {
-                var script = "<script src=\"" + this.styleLinks[i] + "\"></script>\n";
-                content.append($(script));
-            }
-        }
 
         // Replace data by built dom
         $("#data").empty();

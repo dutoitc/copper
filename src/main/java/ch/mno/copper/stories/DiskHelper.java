@@ -3,6 +3,7 @@ package ch.mno.copper.stories;
 import config.CopperScreensProperties;
 import config.CopperStoriesProperties;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,4 +117,7 @@ public class DiskHelper {
         return screens;
     }
 
+    public String findScreenData(String filename) throws IOException {
+        return IOUtils.toString(new FileReader(screensFolder+File.separatorChar + filename));
+    }
 }

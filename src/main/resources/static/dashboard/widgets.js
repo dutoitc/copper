@@ -65,10 +65,10 @@ class UIWidgetRunnable extends UIWidget {
 
         // #DATE#
         if (bodyHTML.indexOf("#DATE#")>-1) {
-            var id = this.widgetBodyId+"-date";
-            bodyHTML = bodyHTML.replace("#DATE#", "<span id='" + id + "'></span>");
+            var id2 = this.widgetBodyId+"-date";
+            bodyHTML = bodyHTML.replace("#DATE#", "<span id='" + id2 + "'></span>");
             //setTimeout(function(id){ function() { dataManager.handleMessage("updateDate/" + id); }}(id), 1000);
-            setTimeout("dataManager.handleMessage('updateDate/"+id+"');", 1000);
+            setTimeout("dataManager.handleMessage('updateDate/"+id2+"');", 1000);
         }
 
         // {{a_copper_value}} -> the_value

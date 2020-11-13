@@ -76,6 +76,19 @@ public class CopperUserServices {
         return diskHelper.findScreens();
     }
 
+    @GetMapping(value = "/screens/{filename}")
+    @ApiOperation(value = "Get data from screens folder",
+            notes = "A way to get the embedded screens data")
+    public ResponseEntity<String>  getScreenData(@PathVariable("filename") String filename)  {
+        try {
+            String data = diskHelper.findScreenData(filename);
+            return new ResponseEntity(data, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
     @GetMapping(value = "values", produces = MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Convenience way to retrieve all valid values from Copper",
             notes = "Use this to extract many values, example for remote webservice, angular service, ...")
