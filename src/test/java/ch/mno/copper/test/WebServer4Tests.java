@@ -16,119 +16,138 @@ import java.util.UUID;
  * err404 -> return error 404
  */
 // Miniserver from http://www.java2s.com/Code/Java/Network-Protocol/ASimpleWebServer.htm
-    public class WebServer4Tests implements Runnable, AutoCloseable {
-        ServerSocket s;
-        Thread thread;
-        boolean stopAsked = false;
-        boolean running = false;
-        int port;
-        String uuid = UUID.randomUUID().toString();
+public class WebServer4Tests implements Runnable, AutoCloseable {
+    ServerSocket s;
+    Thread thread;
+    boolean stopAsked = false;
+    boolean running = false;
+    int port;
+    String uuid = UUID.randomUUID().toString();
 
+    /**
+     * Port 0 means dynamic port. use getPort()
+     */
     public WebServer4Tests(int port) {
         this.port = port;
     }
 
-        public void start() {
-            thread = new Thread(this);
-            thread.start();
-        }
-
-        @Override
-        public void run() {
-//            System.out.println("Webserver starting up on port " + PORT);
-            int nbRetry=5;
-            boolean ok = false;
-            while (!ok && nbRetry-->0) {
-                try {
-                    // create the main server socket
-                    s = new ServerSocket(port);
-                    ok = true;
-                } catch (Exception e) {
-                    if (e.getMessage().contains("Address already in use")) {
-                        System.out.println("[WebServer4Tests " + uuid + "]: Address already in use, waiting some time and retrying");
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException ex) {
-                            ex.printStackTrace();
-                        }
-                    } else {
-                        System.err.println("[WebServer4Tests " + uuid + "]: Error: " + e + ", retrying");
-                    }
-                }
-            }
-            if (!ok) {
-                System.err.println("[WebServer4Tests " + uuid + "]: Error: Cannot bind to " + port);
-                return;
-            }
-            System.out.println("[WebServer4Tests " + uuid + "]: Successfully bound to " + port);
-
-//            System.out.println("Waiting for connection");
-            running = true;
-            while (!stopAsked) {
-                try {
-                    // wait for a connection
-                    Socket remote = s.accept();
-
-                    BufferedReader in = new BufferedReader(new InputStreamReader(remote.getInputStream()));
-                    PrintWriter out = new PrintWriter(remote.getOutputStream());
-
-                    // Read until blank line (end of HTTP Header)
-                    String str = ".";
-                    String sent = "";
-                    while (str!=null && !str.equals("")) {
-                        str = in.readLine();
-                        sent += str + "\r\n";
-                    }
-
-                    if (sent.contains("err404")) {
-                        out.println("HTTP/1.0 404 Not Found");
-                        out.println("Content-Type: text/html");
-                        out.println("Server: Bot");
-                        out.println(""); // End of headers
-                    } else {
-                        // Send the response
-                        out.println("HTTP/1.0 200 OK");
-                        out.println("Content-Type: text/html");
-                        out.println("Server: Bot");
-                        out.println(""); // End of headers
-
-                        // Send the HTML page
-                        if (sent.contains("ping1")) {
-                            out.println("pong1");
-                        } else if (sent.contains("ping2")) {
-                            out.println("pong2");
-                        } else if (sent.contains("repeat")) {
-                            out.println(sent);
-                        } else {
-                            out.println("Unknown query: " + sent);
-                        }
-                    }
-                    out.flush();
-                    remote.close();
-                } catch (Exception e) {
-                    System.out.println("Error: " + e);
-                }
-            }
-            running = false;
-
-            System.out.println("[WebServer4Tests" + uuid + "]: Stopping...");
+    public void start() {
+        thread = new Thread(this);
+        thread.start();
+        for (int i=0; i<5 && port==0; i++) {
             try {
-                s.close();
-            } catch (IOException e) {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("[WebServer4Tests" + uuid + "]: Stopped");
         }
-
-
-        @Override
-        public void close() throws Exception {
-            stopAsked = true;
-            running = false;
-            Thread.sleep(10);
-            thread.interrupt();
-            System.out.println("[WebServer4Tests" + uuid + "]: Webserver at port " + port + ": close");
+        if (port==0) {
+            throw new RuntimeException("Cannot get HTTP Port dynamic in 500ms");
         }
+    }
+
+    @Override
+    public void run() {
+//            System.out.println("Webserver starting up on port " + PORT);
+        int nbRetry = 5;
+        boolean ok = false;
+        while (!ok && nbRetry-- > 0) {
+            try {
+                // create the main server socket
+                s = new ServerSocket(port);
+                if (port == 0) {
+                    port = s.getLocalPort();
+                }
+                ok = true;
+            } catch (Exception e) {
+                if (e.getMessage().contains("Address already in use")) {
+                    System.out.println("[WebServer4Tests " + uuid + "]: Address already in use, waiting some time and retrying");
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    System.err.println("[WebServer4Tests " + uuid + "]: Error: " + e + ", retrying");
+                }
+            }
+        }
+        if (!ok) {
+            System.err.println("[WebServer4Tests " + uuid + "]: Error: Cannot bind to " + port);
+            return;
+        }
+        System.out.println("[WebServer4Tests " + uuid + "]: Successfully bound to " + port);
+
+//            System.out.println("Waiting for connection");
+        running = true;
+        while (!stopAsked) {
+            try {
+                // wait for a connection
+                Socket remote = s.accept();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(remote.getInputStream()));
+                PrintWriter out = new PrintWriter(remote.getOutputStream());
+
+                // Read until blank line (end of HTTP Header)
+                String str = ".";
+                String sent = "";
+                while (str != null && !str.equals("")) {
+                    str = in.readLine();
+                    sent += str + "\r\n";
+                }
+
+                if (sent.contains("err404")) {
+                    out.println("HTTP/1.0 404 Not Found");
+                    out.println("Content-Type: text/html");
+                    out.println("Server: Bot");
+                    out.println(""); // End of headers
+                } else {
+                    // Send the response
+                    out.println("HTTP/1.0 200 OK");
+                    out.println("Content-Type: text/html");
+                    out.println("Server: Bot");
+                    out.println(""); // End of headers
+
+                    // Send the HTML page
+                    if (sent.contains("ping1")) {
+                        out.println("pong1");
+                    } else if (sent.contains("ping2")) {
+                        out.println("pong2");
+                    } else if (sent.contains("repeat")) {
+                        out.println(sent);
+                    } else {
+                        out.println("Unknown query: " + sent);
+                    }
+                }
+                out.flush();
+                remote.close();
+            } catch (Exception e) {
+                System.out.println("Error: " + e);
+            }
+        }
+        running = false;
+
+        System.out.println("[WebServer4Tests" + uuid + "]: Stopping...");
+        try {
+            s.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("[WebServer4Tests" + uuid + "]: Stopped");
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    @Override
+    public void close() throws Exception {
+        stopAsked = true;
+        running = false;
+        Thread.sleep(10);
+        thread.interrupt();
+        System.out.println("[WebServer4Tests" + uuid + "]: Webserver at port " + port + ": close");
+    }
 
     public boolean isRunning() {
         return running;

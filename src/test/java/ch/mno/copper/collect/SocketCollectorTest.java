@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 public class SocketCollectorTest extends AbstractJmxServerTestStarter {
 
-    final static int HTTP_PORT = 35743;
+    static int httpPort = 0;
 
     private static WebServer4Tests ws;
     private static StoryGrammar storyGrammar;
@@ -27,8 +27,9 @@ public class SocketCollectorTest extends AbstractJmxServerTestStarter {
     public static void setup() throws IOException {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
         // HTTP Server
-        ws = new WebServer4Tests(HTTP_PORT);
+        ws = new WebServer4Tests(httpPort);
         ws.start();
+        httpPort = ws.getPort();
     }
 
     @AfterClass
@@ -53,17 +54,9 @@ public class SocketCollectorTest extends AbstractJmxServerTestStarter {
 
     @Test
     public void testCheckConnectionOnRealServerHTTP() throws ConnectorException {
-        try (
-                // HTTP Server
-                WebServer4Tests ws = new WebServer4Tests(HTTP_PORT);
-        ) {
-            ws.start();
-            SocketCollectorWrapper collector = SocketCollectorWrapper.buildCollector(storyGrammar, "SOCKET WITH host=127.0.0.1,port=" + HTTP_PORT + ",timeout_ms=5000\nKEEP status AS myStatus\n");
-            Assert.assertEquals("OK", collector.execute2D().get(0).get(0));
-            Assert.assertEquals("OK", collector.execute().get("myStatus"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SocketCollectorWrapper collector = SocketCollectorWrapper.buildCollector(storyGrammar, "SOCKET WITH host=127.0.0.1,port=" + httpPort + ",timeout_ms=5000\nKEEP status AS myStatus\n");
+        Assert.assertEquals("OK", collector.execute2D().get(0).get(0));
+        Assert.assertEquals("OK", collector.execute().get("myStatus"));
     }
 
 

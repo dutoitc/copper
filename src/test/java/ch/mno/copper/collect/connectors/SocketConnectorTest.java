@@ -11,14 +11,15 @@ import java.io.IOException;
 
 public class SocketConnectorTest extends AbstractJmxServerTestStarter {
 
-    final static int HTTP_PORT = 35742;
+    static int httpPort = 35742;
     private static WebServer4Tests ws;
 
     @BeforeClass
     public static void setup() throws IOException, InterruptedException {
         // HTTP Server
-        ws = new WebServer4Tests(HTTP_PORT);
+        ws = new WebServer4Tests(httpPort);
         ws.start();
+        httpPort=ws.getPort();
         int nbTries=30;
         while (!ws.isRunning() && nbTries-->0) {
             Thread.sleep(100);
@@ -47,7 +48,7 @@ public class SocketConnectorTest extends AbstractJmxServerTestStarter {
 
     @Test
     public void testCheckConnectionOnRealServerHTTP() {
-        SocketConnector connector = new SocketConnector("localhost", HTTP_PORT, 10000);
+        SocketConnector connector = new SocketConnector("localhost", httpPort, 10000);
         SocketConnector.CONNECTION_CHECK status = connector.checkConnection();
         try {
             Assert.assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
