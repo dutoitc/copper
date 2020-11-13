@@ -6,3 +6,6 @@ Copper embed a Jetty webserver. It exposes:
 - /ws: a Webservice REST API (check /ws/values)
 - /swagger.json: the generated documentation for webservices
 - /ext: a WEB folder, empty but where you can store your own website
+
+Data in 'screens' folder are proposed on dashboard.
+css and scripts can be included in screen json (better to upload only one file) on linked (need redeploy).
