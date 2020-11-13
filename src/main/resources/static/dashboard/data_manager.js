@@ -145,7 +145,9 @@ class DataManager {
         console.log("Importing JSON", json);
         this.widgets=json["widgets"];
         this.style=json["css"];
+        this.styleLinks=json["cssLinks"];
         this.script=json["script"];
+        this.scriptLinks=json["scriptLinks"];
         if (this.style==null) this.style=[];
         if (this.script==null) this.script=[];
         this.editable=false;
@@ -207,6 +209,12 @@ class DataManager {
         style+="</style>\n";
         content.append($(style));
 
+        // Style link
+        for (var i=0; i<this.styleLinks!=null && this.styleLinks.length; i++) {
+            var style="<link rel='stylesheet' href=\"" + this.styleLinks[i]+"\">\n";
+            content.append($(style));
+        }
+
         // Widgets
         for (var j=0; j<this.widgets.length; j++) {
             var widget = this.widgets[j];
@@ -221,6 +229,12 @@ class DataManager {
         }
         script+="</script>\n";
         content.append($(script));
+
+        // Script link
+        for (var i=0; this.scriptLinks!=null && i<this.scriptLinks.length; i++) {
+            var script="<script src=\"" + this.styleLinks[i]+"\"></script>\n";
+            content.append($(script));
+        }
 
         // Replace data by built dom
         $("#data").empty();
