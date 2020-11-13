@@ -210,9 +210,11 @@ class DataManager {
         content.append($(style));
 
         // Style link
-        for (var i=0; i<this.styleLinks!=null && this.styleLinks.length; i++) {
-            var style="<link rel='stylesheet' href=\"" + this.styleLinks[i]+"\">\n";
-            content.append($(style));
+        if (typeof this.stylelinks !== 'undefined' && this.styleLinks!=null) {
+            for (var i=0; i<this.styleLinks.length; i++) {
+                var style="<link rel='stylesheet' href=\"" + this.styleLinks[i]+"\">\n";
+                content.append($(style));
+            }
         }
 
         // Widgets
@@ -231,9 +233,11 @@ class DataManager {
         content.append($(script));
 
         // Script link
-        for (var i=0; this.scriptLinks!=null && i<this.scriptLinks.length; i++) {
-            var script="<script src=\"" + this.styleLinks[i]+"\"></script>\n";
-            content.append($(script));
+        if (typeof this.scriptLinks !== 'undefined' && this.scriptLinks!=null) {
+            for (var i = 0; this.scriptLinks != null && i < this.scriptLinks.length; i++) {
+                var script = "<script src=\"" + this.styleLinks[i] + "\"></script>\n";
+                content.append($(script));
+            }
         }
 
         // Replace data by built dom
