@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+    options { timestamps () }
+    tools {
+       // Jenkins référentiels: JDK11-OPEN, JDK8-ORACLE, JDK8-ORACLE-WINDOWS
+       jdk "JDK11-OPEN"
+    }
+    stages {
+        stage('Preparation') {
+            steps {
+                git url: 'ssh://git@bitbucket.etat-de-vaud.ch/referentiels/refmon.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn -U clean install -DskipTests'
+            }
+        }
+        stage('Tests UT') {
+            steps {
+                sh 'mvn -Dmaven.test.failure.ignore org.jacoco:jacoco-maven-plugin:prepare-agent test'
+                
+            }
+        }
+        stage('Sonar') {
+            environment {
+                scannerHome = tool 'SonarQubeScanner'
+            }
+            steps {
+                withSonarQubeEnv('Sonar cc-ref/entreprises') {
+                    //sh "${scannerHome}/bin/sonar-scanner"
+                    sh 'mvn sonar:sonar'
+                }
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+    }
+    post {
+        always {
+            junit '**/target/surefire-reports/*.xml'
+        }
+    }
+}
