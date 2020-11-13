@@ -24,7 +24,7 @@ class DataManager {
                 var spl = parameters[i].split('=');
                 if (spl[0]=='screen') {
                     var localScreenName=spl[1];
-                    dataManager.defineScreenJsonObject(JSON.parse(screens[localScreenName]));
+                    dataManager.defineScreenJsonObject(JSON.parse(jsonScreens[localScreenName]));
                     break;
                 }
             }
