@@ -1,7 +1,6 @@
 package ch.mno.copper.store.db;
 
 import ch.mno.copper.store.StoreValue;
-import ch.mno.copper.store.data.InstantValues;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.*;
 
@@ -87,20 +86,20 @@ public class DbValueStoreTest {
     }
 
 
-    @Test
-    @Ignore // FIXME comprehension problem or bug ?
-    public void testQueryValues3() {
-        List<InstantValues> values = store.queryValues(Instant.parse("2015-10-21T07:27:50.00Z"), Instant.parse("2015-10-21T07:28:07.99Z"), 1, Arrays.asList("key2"), 7);
-        Assert.assertEquals(4, values.size());
-        Assert.assertEquals("key4", values.get(0).getValues().size());
-        Assert.assertEquals("value40", values.get(0).getValues().get(0).getValue());
-        Assert.assertEquals("key4", values.get(1).getValues().size());
-        Assert.assertEquals("value41", values.get(1).getValues().get(0).getValue());
-        Assert.assertEquals("key4", values.get(2).getValues().size());
-        Assert.assertEquals("value42", values.get(2).getValues().get(0).getValue());
-        Assert.assertEquals("key4", values.get(3).getValues().size());
-        Assert.assertEquals("value42", values.get(3).getValues().get(0).getValue());
-    }
+//    @Test
+//    @Ignore // FIXME comprehension problem or bug ?
+//    public void testQueryValues3() {
+//        List<InstantValues> values = store.queryValues(Instant.parse("2015-10-21T07:27:50.00Z"), Instant.parse("2015-10-21T07:28:07.99Z"), 1, Arrays.asList("key2"), 7);
+//        Assert.assertEquals(4, values.size());
+//        Assert.assertEquals("key4", values.get(0).getValues().size());
+//        Assert.assertEquals("value40", values.get(0).getValues().get(0).getValue());
+//        Assert.assertEquals("key4", values.get(1).getValues().size());
+//        Assert.assertEquals("value41", values.get(1).getValues().get(0).getValue());
+//        Assert.assertEquals("key4", values.get(2).getValues().size());
+//        Assert.assertEquals("value42", values.get(2).getValues().get(0).getValue());
+//        Assert.assertEquals("key4", values.get(3).getValues().size());
+//        Assert.assertEquals("value42", values.get(3).getValues().get(0).getValue());
+//    }
 
 
 }

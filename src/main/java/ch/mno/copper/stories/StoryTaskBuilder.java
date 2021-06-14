@@ -81,6 +81,8 @@ public class StoryTaskBuilder {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Exception", e);
             }
+            Thread.currentThread().interrupt();
+
             // Put all values as error
             return buildValuesMapAsError(collectorWrapper);
         }
