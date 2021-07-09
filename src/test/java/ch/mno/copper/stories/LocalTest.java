@@ -3,49 +3,41 @@ package ch.mno.copper.stories;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
-import org.junit.BeforeClass;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Created by dutoitc on 10.02.2016.
  */
-@RunWith(Theories.class)
 @Disabled
 public class LocalTest {
 
     private static StoryGrammar grammar;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() throws FileNotFoundException {
         grammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
-    @Theory
+    //@Theory
     public void checkStory(File file) throws IOException, ConnectorException {
         System.out.println("Checking " + file.getName());
         new Story(grammar, new FileInputStream(file), file.getName());
     }
 
-    public static @DataPoints File[] candidates;
-    static {
-        try {
-            candidates = Files.walk(Paths.get("local/dsi")).filter(Files::isRegularFile).map(Path::toFile).toArray(s-> new File[s]);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static @DataPoints File[] candidates;
+//    static {
+//        try {
+//            candidates = Files.walk(Paths.get("local/dsi")).filter(Files::isRegularFile).map(Path::toFile).toArray(s-> new File[s]);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
 //    @Test

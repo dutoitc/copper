@@ -1,6 +1,5 @@
 package ch.mno.copper.collect.connectors;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
@@ -8,6 +7,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by dutoitc on 15.02.2016.
@@ -31,10 +32,10 @@ public class JdbcConnectorTest {
 
         JdbcConnector conn1 = new JdbcConnector("jdbc:derby:memory:sampleDB", null, null);
         List<List<String>> res = conn1.query("select * from test_table");
-        Assert.assertEquals(2, res.size());
-        Assert.assertEquals(1, res.get(0).size());
-        Assert.assertEquals("VALUE", res.get(0).get(0));
-        Assert.assertEquals("42", res.get(1).get(0));
+        assertEquals(2, res.size());
+        assertEquals(1, res.get(0).size());
+        assertEquals("VALUE", res.get(0).get(0));
+        assertEquals("42", res.get(1).get(0));
         conn1.close();
     }
 

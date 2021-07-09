@@ -1,7 +1,6 @@
 package ch.mno.copper.collect;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
@@ -9,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -26,8 +26,7 @@ public class JdbcCollectorTest {
         Statement stmnt = conn.createStatement();
         try {
             stmnt.executeUpdate("drop table test_table");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // OK
         }
         stmnt.executeUpdate("create table test_table(value int)");
@@ -35,15 +34,15 @@ public class JdbcCollectorTest {
 
         JdbcCollector coll = new JdbcCollector();
         List<List<String>> res = coll.query("jdbc:derby:memory:sampleDB", null, null, "select * from test_table");
-        Assert.assertEquals(2, res.size());
-        Assert.assertEquals(1, res.get(0).size());
-        Assert.assertEquals("VALUE", res.get(0).get(0));
-        Assert.assertEquals("42", res.get(1).get(0));
+        assertEquals(2, res.size());
+        assertEquals(1, res.get(0).size());
+        assertEquals("VALUE", res.get(0).get(0));
+        assertEquals("42", res.get(1).get(0));
     }
 
     @Test
-    public void testErr()  {
-        assertThrows(ConnectorException.class, ()-> {
+    public void testErr() {
+        assertThrows(ConnectorException.class, () -> {
             JdbcCollector coll = new JdbcCollector();
             coll.query("jdbc:dummy", null, null, "select * from test_table");
         });

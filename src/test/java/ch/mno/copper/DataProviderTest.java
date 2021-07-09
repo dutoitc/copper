@@ -8,7 +8,6 @@ import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.stories.data.StoryValidationResult;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
@@ -17,6 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataProviderTest {
 
@@ -28,17 +30,17 @@ public class DataProviderTest {
         StoryGrammar storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
 
         // Initial: zero stories
-        Assert.assertEquals(0,dataprovider.getStories().size());
+        assertEquals(0, dataprovider.getStories().size());
 
         // Add one story
         storiesFacade.stories.put("story1", new Story(storyGrammar, "MyStory1Name", "RUN ON CRON */5 * * * *\n" +
                 "GIVEN COLLECTOR WEB WITH url=https://localhost/temp1\n" +
                 "    KEEP body AS ELDORA_MENU_VALUES\n" +
                 "THEN STORE VALUES"));
-        Assert.assertEquals(1,dataprovider.getStories().size());
+        assertEquals(1, dataprovider.getStories().size());
 
         // Get story
-        Assert.assertTrue(dataprovider.getStories().get(0).getStoryText().contains("temp1"));
+        assertTrue(dataprovider.getStories().get(0).getStoryText().contains("temp1"));
 
         // Update story
         storiesFacade.stories.put("story1", new Story(storyGrammar, "MyStory1Name", "RUN ON CRON */5 * * * *\n" +
@@ -47,7 +49,7 @@ public class DataProviderTest {
                 "THEN STORE VALUES"));
 
         // Get story new
-        Assert.assertTrue(dataprovider.getStories().get(0).getStoryText().contains("temp2"));
+        assertTrue(dataprovider.getStories().get(0).getStoryText().contains("temp2"));
     }
 
 

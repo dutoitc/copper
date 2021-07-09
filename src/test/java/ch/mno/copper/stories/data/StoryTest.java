@@ -4,8 +4,7 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.store.data.InstantValues;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
@@ -17,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Created by xsicdt on 19/01/18.
  */
@@ -24,31 +26,31 @@ public class StoryTest {
     StoryGrammar grammar;
 
 
-    @Before
+    @BeforeEach
     public void init() throws FileNotFoundException {
         grammar = new StoryGrammar(new FileInputStream("src/main/resources/StoryGrammar.txt"));
     }
 
     @Test
     public void testMatchWhen() {
-        Assert.assertFalse(Story.matchWhen("17", ">", "18"));
-        Assert.assertFalse(Story.matchWhen("18", ">", "18"));
-        Assert.assertTrue(Story.matchWhen("19", ">", "18"));
-        Assert.assertFalse(Story.matchWhen("19", "<", "18"));
-        Assert.assertFalse(Story.matchWhen("18", "<", "18"));
-        Assert.assertTrue(Story.matchWhen("17", "<", "18"));
-        Assert.assertTrue(Story.matchWhen("17", "=", "17"));
+        assertFalse(Story.matchWhen("17", ">", "18"));
+        assertFalse(Story.matchWhen("18", ">", "18"));
+        assertTrue(Story.matchWhen("19", ">", "18"));
+        assertFalse(Story.matchWhen("19", "<", "18"));
+        assertFalse(Story.matchWhen("18", "<", "18"));
+        assertTrue(Story.matchWhen("17", "<", "18"));
+        assertTrue(Story.matchWhen("17", "=", "17"));
     }
 
     @Test
     public void testMatchWhen2() {
-        Assert.assertFalse(Story.matchWhen("17.1", ">", "18.1"));
-        Assert.assertFalse(Story.matchWhen("18.1", ">", "18.1"));
-        Assert.assertTrue(Story.matchWhen("19.1", ">", "18.1"));
-        Assert.assertFalse(Story.matchWhen("19.1", "<", "18.1"));
-        Assert.assertFalse(Story.matchWhen("18.1", "<", "18.1"));
-        Assert.assertTrue(Story.matchWhen("17.1", "<", "18.1"));
-        Assert.assertTrue(Story.matchWhen("17.1", "=", "17.1"));
+        assertFalse(Story.matchWhen("17.1", ">", "18.1"));
+        assertFalse(Story.matchWhen("18.1", ">", "18.1"));
+        assertTrue(Story.matchWhen("19.1", ">", "18.1"));
+        assertFalse(Story.matchWhen("19.1", "<", "18.1"));
+        assertFalse(Story.matchWhen("18.1", "<", "18.1"));
+        assertTrue(Story.matchWhen("17.1", "<", "18.1"));
+        assertTrue(Story.matchWhen("17.1", "=", "17.1"));
     }
 
     @Test
@@ -63,6 +65,7 @@ public class StoryTest {
         values.put("AAA", "42");
         ValuesStore store = new ValuesStore() {
             Map<String, String> localStore = new HashMap<>();
+
             @Override
             public void put(String key, String value) {
                 localStore.put(key, value);
@@ -94,7 +97,7 @@ public class StoryTest {
             }
 
             @Override
-            public void load()  {
+            public void load() {
 
             }
 
@@ -104,6 +107,7 @@ public class StoryTest {
             }
 
             @Override
+            @Deprecated
             public Map<String, String> getValuesMapString() {
                 return null;
             }
@@ -123,9 +127,9 @@ public class StoryTest {
                 return null;
             }
         };
-        Assert.assertTrue(story.matchWhen(values, store));
+        assertTrue(story.matchWhen(values, store));
         values.put("AAA", "0");
-        Assert.assertFalse(story.matchWhen(values, store));
+        assertFalse(story.matchWhen(values, store));
     }
 
 }

@@ -3,11 +3,12 @@ package ch.mno.copper.collect;
 import ch.mno.copper.collect.connectors.HttpResponseData;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by xsicdt on 25/08/17.
@@ -18,58 +19,58 @@ public class WebCollectorTest {
     public void test() {
         String json =
                 "{\n" +
-                "  \"_class\": \"hudson.model.ListView\",\n" +
-                "  \"description\": null,\n" +
-                "  \"jobs\": [\n" +
-                "    {\n" +
-                "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
-                "      \"name\": \"BLOCK1-compile\",\n" +
-                "      \"url\": \"http://sisyphe:1234/job/BLOCK1-compile/\",\n" +
-                "      \"color\": \"blue\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
-                "      \"name\": \"BLOCK1-defcon\",\n" +
-                "      \"url\": \"http://sisyphe:1234/job/BLOCK1-defcon/\",\n" +
-                "      \"color\": \"blue\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
-                "      \"name\": \"BLOCK1-DeliverToCEI\",\n" +
-                "      \"url\": \"http://sisyphe:1234/job/BLOCK1-DeliverToCEI/\",\n" +
-                "      \"color\": \"blue\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
-                "      \"name\": \"BLOCK1-IN\",\n" +
-                "      \"url\": \"http://sisyphe:1234/job/BLOCK1-IN/\",\n" +
-                "      \"color\": \"blue\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
-                "      \"name\": \"BLOCK1-Sonar\",\n" +
-                "      \"url\": \"http://sisyphe:1234/job/BLOCK1-Sonar/\",\n" +
-                "      \"color\": \"blue\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
-                "      \"name\": \"BLOCK1-Tests\",\n" +
-                "      \"url\": \"http://sisyphe:1234/job/BLOCK1-Tests/\",\n" +
-                "      \"color\": \"blue\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
-                "      \"name\": \"BLOCK1-UT\",\n" +
-                "      \"url\": \"http://sisyphe:1234/job/BLOCK1-UT/\",\n" +
-                "      \"color\": \"blue\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"name\": \"BLOCK1\",\n" +
-                "  \"property\": [\n" +
-                "    \n" +
-                "  ],\n" +
-                "  \"url\": \"http://sisyphe:1234/view/BLOCK1/\"\n" +
-                "}";
+                        "  \"_class\": \"hudson.model.ListView\",\n" +
+                        "  \"description\": null,\n" +
+                        "  \"jobs\": [\n" +
+                        "    {\n" +
+                        "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
+                        "      \"name\": \"BLOCK1-compile\",\n" +
+                        "      \"url\": \"http://sisyphe:1234/job/BLOCK1-compile/\",\n" +
+                        "      \"color\": \"blue\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
+                        "      \"name\": \"BLOCK1-defcon\",\n" +
+                        "      \"url\": \"http://sisyphe:1234/job/BLOCK1-defcon/\",\n" +
+                        "      \"color\": \"blue\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
+                        "      \"name\": \"BLOCK1-DeliverToCEI\",\n" +
+                        "      \"url\": \"http://sisyphe:1234/job/BLOCK1-DeliverToCEI/\",\n" +
+                        "      \"color\": \"blue\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
+                        "      \"name\": \"BLOCK1-IN\",\n" +
+                        "      \"url\": \"http://sisyphe:1234/job/BLOCK1-IN/\",\n" +
+                        "      \"color\": \"blue\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
+                        "      \"name\": \"BLOCK1-Sonar\",\n" +
+                        "      \"url\": \"http://sisyphe:1234/job/BLOCK1-Sonar/\",\n" +
+                        "      \"color\": \"blue\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
+                        "      \"name\": \"BLOCK1-Tests\",\n" +
+                        "      \"url\": \"http://sisyphe:1234/job/BLOCK1-Tests/\",\n" +
+                        "      \"color\": \"blue\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"_class\": \"hudson.maven.MavenModuleSet\",\n" +
+                        "      \"name\": \"BLOCK1-UT\",\n" +
+                        "      \"url\": \"http://sisyphe:1234/job/BLOCK1-UT/\",\n" +
+                        "      \"color\": \"blue\"\n" +
+                        "    }\n" +
+                        "  ],\n" +
+                        "  \"name\": \"BLOCK1\",\n" +
+                        "  \"property\": [\n" +
+                        "    \n" +
+                        "  ],\n" +
+                        "  \"url\": \"http://sisyphe:1234/view/BLOCK1/\"\n" +
+                        "}";
 
 //        net.minidev.json.JSONArray res2 = JsonPath.readInstant(json, "$['jobs'][?(@['name']=='ATEV-compile')]");
 //        net.minidev.json.JSONArray res2 = JsonPath.readInstant(json, "");
@@ -89,16 +90,16 @@ public class WebCollectorTest {
         d.setContentLength("123");
 
         List<String> res = WebCollector.extractValues(d, valuesKept);
-        Assert.assertEquals(4, res.size());
-        Assert.assertEquals("blue", res.get(0));
-        Assert.assertEquals("200", res.get(1));
-        Assert.assertEquals("text/plain", res.get(2));
-        Assert.assertEquals("123", res.get(3));
+        assertEquals(4, res.size());
+        assertEquals("blue", res.get(0));
+        assertEquals("200", res.get(1));
+        assertEquals("text/plain", res.get(2));
+        assertEquals("123", res.get(3));
     }
 
     @Test
     public void testRegexp() {
-        String json="{\"a\":{\"b\":{\n" +
+        String json = "{\"a\":{\"b\":{\n" +
                 "      \"485\": {\n" +
                 "        \"Version\": \"18.11.0\",\n" +
                 "        \"State\": \"Active\",\n" +
@@ -143,7 +144,6 @@ public class WebCollectorTest {
         valuesKept.add(new ImmutablePair("regexp:WS_Bidule_V3..?(?<capture>\\[123]d\\.\\d+\\.\\d+)", "value3"));
 
 
-
         HttpResponseData<String> d = new HttpResponseData<>();
         d.setData(json);
         d.setResponseCode(200);
@@ -151,13 +151,12 @@ public class WebCollectorTest {
         d.setContentLength("123");
 
         List<String> res = WebCollector.extractValues(d, valuesKept);
-        Assert.assertEquals(2, res.size());
-        Assert.assertEquals("18.11.5", res.get(0));
-       // Assert.assertEquals("18.11.5", res.get(1));
-        Assert.assertEquals("?", res.get(1));
+        assertEquals(2, res.size());
+        assertEquals("18.11.5", res.get(0));
+        // assertEquals("18.11.5", res.get(1));
+        assertEquals("?", res.get(1));
 
     }
-
 
 
 }

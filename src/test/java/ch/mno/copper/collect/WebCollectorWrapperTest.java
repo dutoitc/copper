@@ -4,13 +4,13 @@ import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileNotFoundException;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by xsicdt on 29/02/16.
@@ -19,8 +19,8 @@ public class WebCollectorWrapperTest {
 
     private StoryGrammar storyGrammar;
 
-    @Before
-    public void init() throws FileNotFoundException {
+    @BeforeEach
+    public void init() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
@@ -32,12 +32,12 @@ public class WebCollectorWrapperTest {
                 "WHEN CRON */5 7-18 * * 1-5\n" +
                 "THEN STORE VALUES\n";
         WebCollectorWrapper wrapper = WebCollectorWrapper.buildCollector(storyGrammar, jmx);
-        Assert.assertEquals(2, wrapper.valuesKept.size());
-        Assert.assertEquals("status", wrapper.valuesKept.get(0).getKey());
-        Assert.assertEquals("WEB_STATUS", wrapper.valuesKept.get(0).getValue());
-        Assert.assertEquals("lastReload", wrapper.valuesKept.get(1).getKey());
-        Assert.assertEquals("WEB_LAST_RELOAD", wrapper.valuesKept.get(1).getValue());
-        Assert.assertEquals("[status, lastReload]", StringUtils.join(wrapper.getAs()));
+        assertEquals(2, wrapper.valuesKept.size());
+        assertEquals("status", wrapper.valuesKept.get(0).getKey());
+        assertEquals("WEB_STATUS", wrapper.valuesKept.get(0).getValue());
+        assertEquals("lastReload", wrapper.valuesKept.get(1).getKey());
+        assertEquals("WEB_LAST_RELOAD", wrapper.valuesKept.get(1).getValue());
+        assertEquals("[status, lastReload]", StringUtils.join(wrapper.getAs()));
 
         /*
         // Local wrapper test

@@ -6,12 +6,10 @@ import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -20,6 +18,8 @@ import java.nio.file.Paths;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Created by dutoitc on 07.02.2016.
  */
@@ -27,8 +27,8 @@ public class StoryGrammarTest {
 
     private StoryGrammar storyGrammar;
 
-    @Before
-    public void init() throws FileNotFoundException {
+    @BeforeEach
+    public void init() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
@@ -36,38 +36,38 @@ public class StoryGrammarTest {
     public void testSPACE() {
         String pattern = storyGrammar.getPattern("SPACE");
         Pattern pattern1 = Pattern.compile(pattern);
-        Assert.assertTrue(pattern1.matcher(" ").matches());
-        Assert.assertTrue(pattern1.matcher("\r\n").matches());
-        Assert.assertTrue(pattern1.matcher("\t").matches());
-        Assert.assertTrue(pattern1.matcher(" \t \r\n").matches());
-        Assert.assertFalse(pattern1.matcher("yop").matches());
+        assertTrue(pattern1.matcher(" ").matches());
+        assertTrue(pattern1.matcher("\r\n").matches());
+        assertTrue(pattern1.matcher("\t").matches());
+        assertTrue(pattern1.matcher(" \t \r\n").matches());
+        assertFalse(pattern1.matcher("yop").matches());
     }
 
     @Test
     public void testEOL() {
         String pattern = storyGrammar.getPattern("EOL");
         Pattern pattern1 = Pattern.compile(pattern);
-        Assert.assertFalse(pattern1.matcher("\r").matches());
-        Assert.assertTrue(pattern1.matcher("\r\n").matches());
-        Assert.assertTrue(pattern1.matcher("\n").matches());
-        Assert.assertFalse(pattern1.matcher(" ").matches());
-        Assert.assertFalse(pattern1.matcher("\t").matches());
+        assertFalse(pattern1.matcher("\r").matches());
+        assertTrue(pattern1.matcher("\r\n").matches());
+        assertTrue(pattern1.matcher("\n").matches());
+        assertFalse(pattern1.matcher(" ").matches());
+        assertFalse(pattern1.matcher("\t").matches());
     }
 
 //    @Test
 //    public void testDEFINE() {
 //        String pattern = storyGrammar.getPatternFull("DEFINE");
 //        Pattern pattern1 = Pattern.compile(pattern);
-//        Assert.assertTrue(pattern1.matcher("DEFINE key1 value1\n").matches());
-//        Assert.assertFalse(pattern1.matcher("DEFINE key1").matches());
+//        assertTrue(pattern1.matcher("DEFINE key1 value1\n").matches());
+//        assertFalse(pattern1.matcher("DEFINE key1").matches());
 //    }
 
     @Test
     public void testJDBC_URL() {
         String pattern = storyGrammar.getPatternFull("JDBC_URL");
         Pattern pattern1 = Pattern.compile(pattern);
-        Assert.assertTrue(pattern1.matcher("jdbc:oracle:thin:@//myhost:1521/orcl").matches());
-        Assert.assertTrue(pattern1.matcher("jdbc:oracle:oci:@myhost:1521:orcl").matches());
+        assertTrue(pattern1.matcher("jdbc:oracle:thin:@//myhost:1521/orcl").matches());
+        assertTrue(pattern1.matcher("jdbc:oracle:oci:@myhost:1521:orcl").matches());
     }
 
     @Test
@@ -102,8 +102,8 @@ public class StoryGrammarTest {
                 "             password=aPass\n" +
                 "        QUERY java.lang:type=Runtime FOR SpecName       AS JMX_LOCAL_RUNTIME_SPECNAME\n" +
                 "        QUERY java.lang:type=Runtime FOR SpecVersion    AS JMX_LOCAL_RUNTIME_SPECVERSION\n");
-//        Assert.assertTrue(pattern1.matcher("JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass QUERY name attribute AS something\n").matches());
-//        Assert.assertTrue(pattern1.matcher("JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,\n   user=aUser,\n   password=aPass QUERY name FOR attribute AS something\n").matches());
+//        assertTrue(pattern1.matcher("JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass QUERY name attribute AS something\n").matches());
+//        assertTrue(pattern1.matcher("JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,\n   user=aUser,\n   password=aPass QUERY name FOR attribute AS something\n").matches());
     }
 
 
@@ -114,7 +114,7 @@ public class StoryGrammarTest {
                 "    QUERY java.lang:type=Runtime FOR SpecName    AS JMX_LOCAL_RUNTIME_SPECNAME\n" +
                 "    QUERY java.lang:type=Runtime FOR SpecVersion AS JMX_LOCAL_RUNTIME_SPECVERSION\n";
         String s = SyntaxHelper.checkSyntax(storyGrammar, pattern, jmx);
-        Assert.assertEquals(jmx, s);
+        assertEquals(jmx, s);
         // TODO: vérifier qu'il y a bien les deux queries
     }
 
@@ -145,7 +145,7 @@ public class StoryGrammarTest {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
         //pattern="COLLECTOR[\\s+\\r\\n]+(ORACLE[\\s+\\r\\n]+WITH[\\s+\\r\\n]+//url=jdbc[:\\w@/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?[\\s+\\r\\n]QUERY ((\\\".*?\\\")|.*)\\r?\\n|JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=\\S+?[\\s+\\r\\n]\\s*(QUERY .*? FOR .*?\\s+AS .*?[\\s+\\r\\n])+)";
         Pattern pattern1 = Pattern.compile(pattern);
-        //Assert.assertTrue(pattern1.matcher("COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass\n").matches());
+        //assertTrue(pattern1.matcher("COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass\n").matches());
         testPattern(pattern, "COLLECTOR JDBC WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass QUERY select 1 from dual\n");
     }
 
@@ -171,7 +171,7 @@ public class StoryGrammarTest {
     public void testCOLLECTOR4() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
         Pattern pattern1 = Pattern.compile(pattern);
-        Assert.assertFalse(pattern1.matcher("JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass\n").matches());
+        assertFalse(pattern1.matcher("JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass\n").matches());
     }
 
     @Test
@@ -191,9 +191,9 @@ public class StoryGrammarTest {
     public void testCRON_STD() {
         String pattern = storyGrammar.getPatternFull("CRON_STD");
         Pattern pattern1 = Pattern.compile(pattern);
-        Assert.assertTrue(pattern1.matcher("* * * * *").matches());
-        Assert.assertTrue(pattern1.matcher("1 1 1 1 1").matches());
-        Assert.assertTrue(pattern1.matcher("*/5 7-18 * * 1-5").matches());
+        assertTrue(pattern1.matcher("* * * * *").matches());
+        assertTrue(pattern1.matcher("1 1 1 1 1").matches());
+        assertTrue(pattern1.matcher("*/5 7-18 * * 1-5").matches());
 
     }
 
@@ -201,10 +201,10 @@ public class StoryGrammarTest {
     public void testRUN_ON() {
         String pattern = storyGrammar.getPatternFull("RUN_ON");
         Pattern pattern1 = Pattern.compile(pattern);
-        Assert.assertTrue(pattern1.matcher("RUN ON CRON * * * * *\n").matches());
-        Assert.assertTrue(pattern1.matcher("RUN ON CRON 1 1 1 1 1\n").matches());
-        Assert.assertTrue(pattern1.matcher("RUN DAILY at 0600\n").matches());
-        Assert.assertTrue(pattern1.matcher("RUN ON CRON 24,56 * * * *\n").matches());
+        assertTrue(pattern1.matcher("RUN ON CRON * * * * *\n").matches());
+        assertTrue(pattern1.matcher("RUN ON CRON 1 1 1 1 1\n").matches());
+        assertTrue(pattern1.matcher("RUN DAILY at 0600\n").matches());
+        assertTrue(pattern1.matcher("RUN ON CRON 24,56 * * * *\n").matches());
     }
 
     @Test
@@ -220,7 +220,7 @@ public class StoryGrammarTest {
 
        /* String pattern = storyGrammar.getPatternFull("PUSHOVER");
         Pattern pattern1 = Pattern.compile(pattern);
-        Assert.assertTrue(pattern1.matcher(txt).matches());*/
+        assertTrue(pattern1.matcher(txt).matches());*/
         SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("PUSHOVER"), txt);
     }
 
@@ -262,7 +262,7 @@ public class StoryGrammarTest {
 //        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
         URL resource = getClass().getResource("/OracleStory1.txt");
         String storyText = IOUtils.toString(resource);
-//        Assert.assertTrue(pattern1.matcher(story).matches());
+//        assertTrue(pattern1.matcher(story).matches());
 //        testPattern(pattern, story);
         SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"), storyText);
 
@@ -270,10 +270,10 @@ public class StoryGrammarTest {
         Path path = Paths.get(resource.toURI());
         Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), "OracleStory1.txt");
         JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) story.getCollectorWrapper();
-        Assert.assertEquals("jdbc:oracle:thin:@//myhost:1521/orcl", wrapper.getUrl());
-        Assert.assertEquals("aUser", wrapper.getUsername());
+        assertEquals("jdbc:oracle:thin:@//myhost:1521/orcl", wrapper.getUrl());
+        assertEquals("aUser", wrapper.getUsername());
         String query = wrapper.getQuery().replaceAll("\r", "");
-        Assert.assertEquals("select 1 from dual,\n" +
+        assertEquals("select 1 from dual,\n" +
                 "                      2 from trial", query);
     }
 
@@ -284,7 +284,7 @@ public class StoryGrammarTest {
 //        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
         URL resource = getClass().getResource("/OracleStory2.txt");
         String storyText = IOUtils.toString(resource);
-//        Assert.assertTrue(pattern1.matcher(story).matches());
+//        assertTrue(pattern1.matcher(story).matches());
 //        testPattern(pattern, story);
         SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"), storyText);
 
@@ -292,8 +292,8 @@ public class StoryGrammarTest {
         Path path = Paths.get(resource.toURI());
         Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), "OracleStory2.txt");
         JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) story.getCollectorWrapper();
-        Assert.assertEquals("jdbc:oracle:thin:@host:port/instance", wrapper.getUrl());
-        Assert.assertEquals("myuser", wrapper.getUsername());
+        assertEquals("jdbc:oracle:thin:@host:port/instance", wrapper.getUrl());
+        assertEquals("myuser", wrapper.getUsername());
     }
 
     @Test
@@ -328,7 +328,7 @@ public class StoryGrammarTest {
 
     @Test
     public void testSOCKET() {
-        String txt="SOCKET WITH host=myhost,port=80,timeout_ms=1000\n" +
+        String txt = "SOCKET WITH host=myhost,port=80,timeout_ms=1000\n" +
                 "   KEEP status AS SOCKET_MY1\n";
 
         SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("COLLECTOR_SOCKET"), txt);
@@ -336,13 +336,12 @@ public class StoryGrammarTest {
 
     @Test
     public void testBINARY() {
-        String txt="BINARY_CHECK\n" +
+        String txt = "BINARY_CHECK\n" +
                 "   CHECK_BY_WHICH find AS FIND_AVAILABLE\n" +
                 "   CHECK_BY_PATH /usr/bin/ls AS LS_AVAILABLE\n";
 
         SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("COLLECTOR_BINARY"), txt);
     }
-
 
 
 //    @Test
@@ -356,8 +355,8 @@ public class StoryGrammarTest {
 //                "WHEN\n" +
 //                "    CRON DAILY at 0605\n" +
 //                "";
-//        Assert.assertTrue(Pattern.compile(pat, Pattern.DOTALL+Pattern.MULTILINE).matcher(dst).matches());
-//        //Assert.assertTrue(Pattern.compile("WHEN[\\s+\\r\\n]+CRON[\\s+\\r\\n]+((DAILY at \\d{4})|(\\S \\S \\S \\S \\S))",Pattern.DOTALL).matcher("WHEN\n   CRON DAILY at 0605").matches());
+//        assertTrue(Pattern.compile(pat, Pattern.DOTALL+Pattern.MULTILINE).matcher(dst).matches());
+//        //assertTrue(Pattern.compile("WHEN[\\s+\\r\\n]+CRON[\\s+\\r\\n]+((DAILY at \\d{4})|(\\S \\S \\S \\S \\S))",Pattern.DOTALL).matcher("WHEN\n   CRON DAILY at 0605").matches());
 //    }
 
 //    @Test
@@ -381,7 +380,7 @@ public class StoryGrammarTest {
                 for (int j = value.length() - 1; j > 1; j--) {
                     String valuePart = value.substring(0, j);
                     if (currPatternCompiled.matcher(valuePart).matches()) {
-                        Assert.fail("Pattern \n   >>>" + pattern + "\n does not match\n   >>>" + value + "\n but pattern start \n   >>>" + currPattern + "\nmatches\n   >>>" + valuePart);
+                        fail("Pattern \n   >>>" + pattern + "\n does not match\n   >>>" + value + "\n but pattern start \n   >>>" + currPattern + "\nmatches\n   >>>" + valuePart);
                     }
                 }
             } catch (PatternSyntaxException e) {

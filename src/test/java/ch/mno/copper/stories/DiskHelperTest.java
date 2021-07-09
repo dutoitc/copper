@@ -2,11 +2,12 @@ package ch.mno.copper.stories;
 
 import config.CopperScreensProperties;
 import config.CopperStoriesProperties;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DiskHelperTest {
 
@@ -18,16 +19,16 @@ public class DiskHelperTest {
 
         // Run
         Map<String, String> screens = dh.findScreens();
-        Assert.assertEquals(2, screens.size());
+        assertEquals(2, screens.size());
 
         // Check names
         Iterator<String> iterator = screens.keySet().iterator();
-        Assert.assertEquals("myScreen1", iterator.next());
-        Assert.assertEquals("myScreen2", iterator.next());
+        assertEquals("myScreen1", iterator.next());
+        assertEquals("myScreen2", iterator.next());
 
         // Check content
-        Assert.assertEquals("Body of screen 1", screens.get("myScreen1"));
-        Assert.assertEquals("Body of screen 2", screens.get("myScreen2"));
+        assertEquals("Body of screen 1", screens.get("myScreen1"));
+        assertEquals("Body of screen 2", screens.get("myScreen2"));
     }
 
 }

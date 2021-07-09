@@ -3,7 +3,7 @@ package ch.mno.copper.stories;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ public class LocalTestDSI {
     StoryGrammar grammar;
 
 
-    @Before
+    @BeforeEach
     public void init() throws FileNotFoundException {
         grammar = new StoryGrammar(new FileInputStream("src/main/resources/StoryGrammar.txt"));
     }

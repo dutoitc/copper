@@ -3,19 +3,20 @@ package ch.mno.copper.collect;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BinaryCollectorTest {
 
 
     private StoryGrammar storyGrammar;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
@@ -25,38 +26,38 @@ public class BinaryCollectorTest {
     public void testCheckByPathOnInexistant() throws ConnectorException {
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
                 "BINARY_CHECK\nCHECK_BY_PATH dummy AS DUMMY_AVAILABLE\n");
-        Assert.assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
-        Assert.assertEquals("KO", collector.execute2D().get(0).get(0));
-        Assert.assertEquals("KO", collector.execute().get("DUMMY_AVAILABLE"));
+        assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
+        assertEquals("KO", collector.execute2D().get(0).get(0));
+        assertEquals("KO", collector.execute().get("DUMMY_AVAILABLE"));
     }
 
     @Test
     public void testCheckByPathOnExistant() throws ConnectorException, IOException {
-        File f = File.createTempFile("dummy","tmp");
+        File f = File.createTempFile("dummy", "tmp");
         f.deleteOnExit();
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
                 "BINARY_CHECK\nCHECK_BY_PATH " + f.getAbsolutePath() + " AS DUMMY_AVAILABLE\n");
-        Assert.assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
-        Assert.assertEquals("OK", collector.execute2D().get(0).get(0));
-        Assert.assertEquals("OK", collector.execute().get("DUMMY_AVAILABLE"));
+        assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
+        assertEquals("OK", collector.execute2D().get(0).get(0));
+        assertEquals("OK", collector.execute().get("DUMMY_AVAILABLE"));
     }
 
     @Test
     public void testWhichOnInexistant() throws ConnectorException {
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
                 "BINARY_CHECK\nCHECK_BY_WHICH dummy123 AS DUMMY_AVAILABLE\n");
-        Assert.assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
-        Assert.assertEquals("KO", collector.execute2D().get(0).get(0));
-        Assert.assertEquals("KO", collector.execute().get("DUMMY_AVAILABLE"));
+        assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
+        assertEquals("KO", collector.execute2D().get(0).get(0));
+        assertEquals("KO", collector.execute().get("DUMMY_AVAILABLE"));
     }
 
     @Test
     public void testWhichOnExistant() throws ConnectorException {
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
                 "BINARY_CHECK\nCHECK_BY_WHICH ls AS DUMMY_AVAILABLE\n");
-        Assert.assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
-        Assert.assertEquals("OK", collector.execute2D().get(0).get(0));
-        Assert.assertEquals("OK", collector.execute().get("DUMMY_AVAILABLE"));
+        assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
+        assertEquals("OK", collector.execute2D().get(0).get(0));
+        assertEquals("OK", collector.execute().get("DUMMY_AVAILABLE"));
     }
 
 }

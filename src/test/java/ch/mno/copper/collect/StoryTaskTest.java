@@ -6,13 +6,14 @@ import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.StoryTaskBuilder;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
-import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Created by dutoitc on 16.02.2016.
@@ -22,8 +23,8 @@ public class StoryTaskTest {
 
     private static StoryGrammar grammar;
 
-    @BeforeClass
-    public static void init() throws FileNotFoundException {
+    @BeforeEach
+    public static void init() {
         grammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
@@ -31,15 +32,15 @@ public class StoryTaskTest {
     @Test
     public void testCronMinute() {
         List<String> values = new ArrayList<String>();
-        StoryTask ct = new StoryTaskImpl(null, ()->values.add("1"), "* * * * *");
-        Assert.assertTrue(Math.abs(ct.getNextRun()-System.currentTimeMillis())<=60000);
+        StoryTask ct = new StoryTaskImpl(null, () -> values.add("1"), "* * * * *");
+        assertTrue(Math.abs(ct.getNextRun() - System.currentTimeMillis()) <= 60000);
     }
 
     @Test
     public void testCronMinute2() {
         List<String> values = new ArrayList<String>();
-        StoryTask ct = new StoryTaskImpl(null, ()->values.add("1"), "0 * * * *");
-        Assert.assertTrue(Math.abs(ct.getNextRun()-System.currentTimeMillis())<=60*60*1000);
+        StoryTask ct = new StoryTaskImpl(null, () -> values.add("1"), "0 * * * *");
+        assertTrue(Math.abs(ct.getNextRun() - System.currentTimeMillis()) <= 60 * 60 * 1000);
     }
 
     @Test
@@ -64,7 +65,7 @@ public class StoryTaskTest {
         StoryTask storyTask = StoryTaskBuilder.build(story, vs);
         storyTask.getRunnable().run();
         String str = ((MapValuesStore) vs).getValuesAsString();
-        Assert.assertEquals("[KEY1=VALUE1][KEY2=VALUE2]", str);
+        assertEquals("[KEY1=VALUE1][KEY2=VALUE2]", str);
     }
 
 
@@ -74,7 +75,7 @@ public class StoryTaskTest {
         story.setCollectorWrapper4Tests(new AbstractCollectorWrapper() {
             @Override
             public Map<String, String> execute() throws ConnectorException {
-               throw new ConnectorException("Timeout", null);
+                throw new ConnectorException("Timeout", null);
             }
 
             @Override
@@ -91,7 +92,7 @@ public class StoryTaskTest {
         StoryTask storyTask = StoryTaskBuilder.build(story, vs);
         storyTask.getRunnable().run();
         String str = ((MapValuesStore) vs).getValuesAsString();
-        Assert.assertEquals("[KEY1=ERR][KEY2=ERR]", str);
+        assertEquals("[KEY1=ERR][KEY2=ERR]", str);
     }
 
 
@@ -102,7 +103,7 @@ public class StoryTaskTest {
             @Override
             public Map<String, String> execute() throws ConnectorException {
                 try {
-                    Thread.sleep(1000*StoryTaskBuilder.TIMEOUT_SEC + 1000);
+                    Thread.sleep(1000 * StoryTaskBuilder.TIMEOUT_SEC + 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -123,7 +124,7 @@ public class StoryTaskTest {
         StoryTask storyTask = StoryTaskBuilder.build(story, vs);
         storyTask.getRunnable().run();
         String str = ((MapValuesStore) vs).getValuesAsString();
-        Assert.assertEquals("[KEY1=ERR][KEY2=ERR]", str);
+        assertEquals("[KEY1=ERR][KEY2=ERR]", str);
     }
 
 

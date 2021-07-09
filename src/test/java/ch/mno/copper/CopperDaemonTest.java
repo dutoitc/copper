@@ -45,33 +45,33 @@ public class CopperDaemonTest {
 //        while (coll1.nbRuns==0 && nb++<20) {
 //            Thread.sleep(CopperDaemon.TASK_CHEK_INTERVAL / 4);
 //        }
-//        Assert.assertEquals("Check1", 1, coll1.nbRuns);
-//        Assert.assertEquals("Check2", 1, coll1.nbMark);
+//        assertEquals("Check1", 1, coll1.nbRuns);
+//        assertEquals("Check2", 1, coll1.nbMark);
 //        nb=0;
 //        while (coll1.nbRuns==1 && nb++<20) {
 //            Thread.sleep(CopperDaemon.TASK_CHEK_INTERVAL / 4);
 //        }
-//        Assert.assertEquals("Check3", 2, coll1.nbRuns);
-//        Assert.assertEquals("Check4", 2, coll1.nbMark);
+//        assertEquals("Check3", 2, coll1.nbRuns);
+//        assertEquals("Check4", 2, coll1.nbMark);
 //
 //        // Test processors
-//        Assert.assertEquals("Check5", 0, proc1.nbTrig);
-//        Assert.assertEquals("Check6", 0, proc2.nbTrig);
+//        assertEquals("Check5", 0, proc1.nbTrig);
+//        assertEquals("Check6", 0, proc2.nbTrig);
 //        valueStore.put("key1", "value1");
 //        nb=0;
 //        while (proc1.nbTrig==0 && nb++<400) {
 ////            System.out.println(nb+" sleeping " + CopperDaemon.TASK_CHEK_INTERVAL / 4);
 //            Thread.sleep(CopperDaemon.TASK_CHEK_INTERVAL / 4);
 //        }
-//        Assert.assertEquals("Check7-nb=" + nb, 1, proc1.nbTrig);
-//        Assert.assertEquals("Check8", 0, proc2.nbTrig);
+//        assertEquals("Check7-nb=" + nb, 1, proc1.nbTrig);
+//        assertEquals("Check8", 0, proc2.nbTrig);
 //        valueStore.put("key2", "value2");
 //        nb=0;
 //        while (proc2.nbTrig==0 && nb++<20) {
 //            Thread.sleep(CopperDaemon.TASK_CHEK_INTERVAL / 4);
 //        }
-//        Assert.assertEquals("Check9", 1, proc1.nbTrig);
-//        Assert.assertEquals("Check10", 1, proc2.nbTrig);
+//        assertEquals("Check9", 1, proc1.nbTrig);
+//        assertEquals("Check10", 1, proc2.nbTrig);
 //
 //        daemon.stop();
 //        Thread.sleep(CopperDaemon.TASK_CHEK_INTERVAL+100);
