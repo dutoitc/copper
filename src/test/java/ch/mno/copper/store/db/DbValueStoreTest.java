@@ -2,7 +2,11 @@ package ch.mno.copper.store.db;
 
 import ch.mno.copper.store.StoreValue;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 
 import java.sql.SQLException;
 import java.time.Instant;
@@ -14,7 +18,7 @@ import java.util.Map;
 /**
  * Created by dutoitc on 29.09.2017.
  */
-@Ignore // FIXME problem of port already taken while executing on server
+@Disabled // FIXME problem of port already taken while executing on server
 public class DbValueStoreTest {
 
     Instant i3 = Instant.parse("2015-10-21T07:27:48.00Z");
@@ -87,7 +91,7 @@ public class DbValueStoreTest {
 
 
 //    @Test
-//    @Ignore // FIXME comprehension problem or bug ?
+//    @Disabled // FIXME comprehension problem or bug ?
 //    public void testQueryValues3() {
 //        List<InstantValues> values = store.queryValues(Instant.parse("2015-10-21T07:27:50.00Z"), Instant.parse("2015-10-21T07:28:07.99Z"), 1, Arrays.asList("key2"), 7);
 //        Assert.assertEquals(4, values.size());

@@ -4,8 +4,8 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 /**
  * Created by xsicdt on 11/02/16.
  */
-@Ignore
+@Disabled
 public class LocalTestDSI {
     StoryGrammar grammar;
 

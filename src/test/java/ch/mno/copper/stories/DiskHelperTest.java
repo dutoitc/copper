@@ -3,7 +3,7 @@ package ch.mno.copper.stories;
 import config.CopperScreensProperties;
 import config.CopperStoriesProperties;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.Map;

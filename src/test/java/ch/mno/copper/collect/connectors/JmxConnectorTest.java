@@ -2,7 +2,7 @@ package ch.mno.copper.collect.connectors;
 
 import ch.mno.copper.AbstractJmxServerTestStarter;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.management.*;
 import java.io.IOException;

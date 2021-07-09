@@ -2,12 +2,14 @@ package ch.mno.copper.collect;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Created by dutoitc on 26.03.2016.
@@ -39,10 +41,12 @@ public class JdbcCollectorTest {
         Assert.assertEquals("42", res.get(1).get(0));
     }
 
-    @Test(expected= ConnectorException.class)
-    public void testErr() throws ConnectorException {
-        JdbcCollector coll = new JdbcCollector();
-        coll.query("jdbc:dummy", null, null, "select * from test_table");
+    @Test
+    public void testErr()  {
+        assertThrows(ConnectorException.class, ()-> {
+            JdbcCollector coll = new JdbcCollector();
+            coll.query("jdbc:dummy", null, null, "select * from test_table");
+        });
     }
 
 }

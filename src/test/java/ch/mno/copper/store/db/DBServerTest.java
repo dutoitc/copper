@@ -3,7 +3,12 @@ package ch.mno.copper.store.db;
 import ch.mno.copper.CopperApplication;
 import ch.mno.copper.store.StoreValue;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -151,8 +156,9 @@ public class DBServerTest {
     // 1000->17s/23ms/22ms
     // 10000->428s/60ms/58ms
     @Test
-    @Ignore
+    @Disabled("to be reworked")
     public void testPerformance() throws SQLException {
+        long tstart = System.currentTimeMillis();
         server.clearAllData();
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
@@ -167,6 +173,9 @@ public class DBServerTest {
         t0 = System.currentTimeMillis();
         server.readLatest();
         System.out.println("Read latest took " + (System.currentTimeMillis() - t0) + "ms");
+
+        long dt = System.currentTimeMillis()-tstart;
+        Assertions.assertTrue(dt<20*1000, "Too long: " + dt/1000 + "s");
     }
 
 

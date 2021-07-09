@@ -6,7 +6,8 @@ import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.util.Map;
@@ -52,6 +53,7 @@ public class WebCollectorWrapperTest {
 
 
     @Test
+    @Disabled("to be reworked")
     public void test2() throws Exception {
         String jmx = "GIVEN COLLECTOR WEB WITH url=http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list\n" +
                 "    KEEP $.value[?(/value.WS_Services$/.test(@.Name))].Version AS value_VERSION\n" +
@@ -65,6 +67,7 @@ public class WebCollectorWrapperTest {
     }
 
     @Test
+    @Disabled("to be reworked")
     public void testTemp() {
 //        String jsonPath = "$.value[?(/app.WS_Services$/.test(@.Name))].Version";
 //        String jsonPath = "$['value'][?(@['Name']=='app.WS_Services')].Version";

@@ -1,8 +1,9 @@
 package ch.mno.copper;
 
 import ch.mno.copper.collect.StoryTask;
-import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.process.AbstractProcessor;
+import ch.mno.copper.store.ValuesStore;
+import org.junit.jupiter.api.Disabled;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * Created by dutoitc on 17.02.2016.
  */
+@Disabled("to be reworked")
 public class CopperDaemonTest {
 
 //    @Test

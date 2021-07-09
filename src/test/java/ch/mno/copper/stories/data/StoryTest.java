@@ -1,14 +1,12 @@
 package ch.mno.copper.stories.data;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.store.data.InstantValues;
 import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.ValuesStore;
-import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.stories.data.StoryGrammar;
+import ch.mno.copper.store.data.InstantValues;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -96,12 +94,12 @@ public class StoryTest {
             }
 
             @Override
-            public void load() throws IOException {
+            public void load()  {
 
             }
 
             @Override
-            public void save() throws IOException {
+            public void save() {
 
             }
 

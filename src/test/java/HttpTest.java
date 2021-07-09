@@ -1,6 +1,4 @@
 import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.collect.connectors.HttpConnector;
-import ch.mno.copper.report.PushoverReporter;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -10,6 +8,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.junit.jupiter.api.Disabled;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -21,6 +20,7 @@ import java.util.Map;
 /**
  * Created by xsicdt on 17/02/16.
  */
+@Disabled
 public class HttpTest {
 
 

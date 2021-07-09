@@ -4,10 +4,10 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
+import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -22,7 +22,7 @@ import java.nio.file.Paths;
  * Created by dutoitc on 10.02.2016.
  */
 @RunWith(Theories.class)
-@Ignore
+@Disabled
 public class LocalTest {
 
     private static StoryGrammar grammar;

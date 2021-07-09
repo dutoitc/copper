@@ -3,7 +3,7 @@ package ch.mno.copper.report;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -66,16 +66,6 @@ class DataManager {
               modal: true,
               style: 'visibility: visible',
               buttons: buttons
-              /*{
-                "Ecran 1": function() {
-                    dataManager.defineScreenJsonObject(JSON.parse(dataManager.jsonScreens['myScreen1']));
-                    $( this ).dialog( "close" );
-                },
-                "Ecran 2": function() {
-                    dataManager.defineScreenJsonObject(JSON.parse(dataManager.jsonScreens['myScreen2']));
-                    $( this ).dialog( "close" );
-                }*/
-                //}
             });
           } );
     }

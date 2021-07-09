@@ -1,7 +1,7 @@
 package ch.mno.copper.collect.connectors;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

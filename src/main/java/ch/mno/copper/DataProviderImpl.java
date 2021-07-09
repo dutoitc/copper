@@ -33,8 +33,7 @@ public class DataProviderImpl implements DataProvider {
 
     @Override
     public List<Story> getStories() {
-        List<Story> stories = refreshStoryTasks();
-        return stories;
+        return refreshStoryTasks();
     }
 
     private List<Story> refreshStoryTasks() {
