@@ -409,7 +409,7 @@
 
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-email.version>1.5</commons-email.version>
-        <commons-io.version>2.4</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <cron4j.version>2.2.5</cron4j.version>
         <derby.version>10.8.2.2</derby.version>
