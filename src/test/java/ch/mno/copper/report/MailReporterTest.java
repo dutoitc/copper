@@ -49,7 +49,7 @@ public class MailReporterTest {
         }
     }
 
-    private class TestableMailReporter extends MailReporter {
+    private static class TestableMailReporter extends MailReporter {
 /*
         HtmlEmail mock = Mockito.mock(HtmlEmail.class);
         {

@@ -77,7 +77,7 @@ public class WebCollectorTest {
 
         // TODO: json ko here, but ok in http://jsonpath.com/
         List<Pair<String, String>> valuesKept = new ArrayList<>();
-        valuesKept.add(new ImmutablePair(".jobs[?(@.name=='BLOCK1-compile')].color", "ATEV_compile"));
+        valuesKept.add(new ImmutablePair<>(".jobs[?(@.name=='BLOCK1-compile')].color", "ATEV_compile"));
         valuesKept.add(new ImmutablePair<>("responseCode", "code"));
         valuesKept.add(new ImmutablePair<>("contentType", "contentType"));
         valuesKept.add(new ImmutablePair<>("contentLength", "contentLength"));
@@ -139,9 +139,9 @@ public class WebCollectorTest {
                 "}}}";
 
         List<Pair<String, String>> valuesKept = new ArrayList<>();
-        valuesKept.add(new ImmutablePair("regexp:WS_Chose_V3.(?<capture>\\d+\\.\\d+\\.\\d+)", "value"));
+        valuesKept.add(new ImmutablePair<>("regexp:WS_Chose_V3.(?<capture>\\d+\\.\\d+\\.\\d+)", "value"));
         //valuesKept.add(new ImmutablePair("$..*[?(@.Name=='WS_Chose_V3')].Version", "value2"));
-        valuesKept.add(new ImmutablePair("regexp:WS_Bidule_V3..?(?<capture>\\[123]d\\.\\d+\\.\\d+)", "value3"));
+        valuesKept.add(new ImmutablePair<>("regexp:WS_Bidule_V3..?(?<capture>\\[123]d\\.\\d+\\.\\d+)", "value3"));
 
 
         HttpResponseData<String> d = new HttpResponseData<>();

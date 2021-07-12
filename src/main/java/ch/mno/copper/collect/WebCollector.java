@@ -36,13 +36,12 @@ public class WebCollector {
 
         String host;
         int port;
-        String path;
-        String scheme=null;
+        String scheme;
         try {
             URL urlObj = new URL(url);
             host = urlObj.getHost();
             port = urlObj.getPort();
-            path = url.substring(url.indexOf(urlObj.getPath())); // Hack to have path, query and hash
+//            path = url.substring(url.indexOf(urlObj.getPath())); // Hack to have path, query and hash
             scheme = urlObj.getProtocol();
         } catch (MalformedURLException e) {
             throw new RuntimeException(e.getMessage());
@@ -79,7 +78,7 @@ public class WebCollector {
     }
 
     static List<String> extractValues(HttpResponseData<String> data, List<Pair<String, String>> valuesKept) {
-        List<String> results = new ArrayList(valuesKept.size());
+        List<String> results = new ArrayList<>(valuesKept.size());
         for (Pair<String, String> value: valuesKept) {
             String key = value.getKey();
             if ("responseCode".equals(key)) {

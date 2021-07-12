@@ -17,9 +17,11 @@
         <label>Search: <input ng-model="searchText"></label>
         <table class="table-striped" style="width: 80%; margin: auto; border: 1px outset silver">
             <thead>
-                <th style="text-align:right;padding: 5px">Timestamp</th>
-                <th style="text-align:right;padding: 5px">Key</th>
-                <th style="text-align:left; padding-left: 10px">Value</th>
+                <tr>
+                    <th style="text-align:right;padding: 5px">Timestamp</th>
+                    <th style="text-align:right;padding: 5px">Key</th>
+                    <th style="text-align:left; padding-left: 10px">Value</th>
+                </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="v in history | filter:searchText | orderBy:'-timestamp.seconds'">

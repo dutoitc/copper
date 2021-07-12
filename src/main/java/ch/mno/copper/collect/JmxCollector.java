@@ -5,11 +5,7 @@ import ch.mno.copper.collect.connectors.JmxConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MalformedObjectNameException;
-import javax.management.ReflectionException;
+import javax.management.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +23,7 @@ public class JmxCollector {
 
 
     public static List<String> jmxQueryWithCreds(String serverUrl, String username, String password, List<JmxQuery> queries) throws ConnectorException {
-        List<String> results = new ArrayList(queries.size());
+        List<String> results = new ArrayList<>(queries.size());
         JmxConnector conn = null;
         try {
             if (username==null) {

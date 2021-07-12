@@ -31,14 +31,14 @@ public class StoryTaskTest {
 
     @Test
     public void testCronMinute() {
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         StoryTask ct = new StoryTaskImpl(null, () -> values.add("1"), "* * * * *");
         assertTrue(Math.abs(ct.getNextRun() - System.currentTimeMillis()) <= 60000);
     }
 
     @Test
     public void testCronMinute2() {
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         StoryTask ct = new StoryTaskImpl(null, () -> values.add("1"), "0 * * * *");
         assertTrue(Math.abs(ct.getNextRun() - System.currentTimeMillis()) <= 60 * 60 * 1000);
     }
@@ -48,8 +48,8 @@ public class StoryTaskTest {
         Story story = new Story(grammar, "StoryName", "RUN ON CRON 0 8,13 * * *\nGIVEN STORED VALUES\nTHEN\nSTORE VALUES");
         story.setCollectorWrapper4Tests(new AbstractCollectorWrapper() {
             @Override
-            public Map<String, String> execute() throws ConnectorException {
-                Map<String, String> map = new HashMap();
+            public Map<String, String> execute() {
+                Map<String, String> map = new HashMap<>();
                 map.put("KEY1", "VALUE1");
                 map.put("KEY2", "VALUE2");
                 return map;

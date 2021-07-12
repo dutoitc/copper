@@ -1,14 +1,8 @@
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class Pushover {
 
@@ -204,10 +198,10 @@ public class Pushover {
      * @return String of auth tokens
      * @throws UnsupportedEncodingException
      */
-    private String getAuthenticationTokens() throws UnsupportedEncodingException{
+    private String getAuthenticationTokens() {
 
         if (device != null) {
-            if (!(device.trim() == "")) {
+            if (!(device.trim().equals(""))) {
                 return "token=" + getAppToken() + "&user=" + getUserToken() + "&device=" + getDevice();
             }
         }
@@ -234,13 +228,13 @@ public class Pushover {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-        String output = "";
-        String outputCache = "";
+        StringBuilder output = new StringBuilder();
+        String outputCache;
         while ((outputCache = br.readLine()) != null) {
-            output += outputCache;
+            output.append(outputCache);
         }
         br.close();
-        return output;
+        return output.toString();
     }
 
     public static void main(String[] args) throws IOException {

@@ -25,7 +25,7 @@ public class CsvReporterTest {
         file.deleteOnExit();
 
         // Some values
-        Map<String, String> values = new HashMap();
+        Map<String, String> values = new HashMap<>();
         values.put(CsvReporter.PARAMETERS.FILENAME.name(), file.getAbsolutePath());
         values.put(CsvReporter.PARAMETERS.HEADERS.name(), "value1;value2;value3");
         values.put(CsvReporter.PARAMETERS.LINE.name(), "aValue;anotherValue;lastValue");
@@ -37,7 +37,7 @@ public class CsvReporterTest {
         assertEquals("value1;value2;value3\r\naValue;anotherValue;lastValue\r\n", res);
 
         // More values
-        values = new HashMap();
+        values = new HashMap<>();
         values.put(CsvReporter.PARAMETERS.FILENAME.name(), file.getAbsolutePath());
         values.put(CsvReporter.PARAMETERS.HEADERS.name(), "value1;value2;value3");
         values.put(CsvReporter.PARAMETERS.LINE.name(), "123;456;789");

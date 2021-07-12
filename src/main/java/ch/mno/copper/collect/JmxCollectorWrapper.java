@@ -38,7 +38,7 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
     @Override
     public Map<String, String> execute() throws ConnectorException {
         List<String> values = JmxCollector.jmxQueryWithCreds(url, username, password, jmxQueries);
-        Map<String, String> map = new HashMap();
+        Map<String, String> map = new HashMap<>();
         if (values.size()!=as.size()) {
             throw new RuntimeException("Wrong values number, expected " + as.size() + ", got " + values.size());
         }

@@ -1,12 +1,12 @@
 package ch.mno.copper.stories.data;
 
-import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.collect.AbstractCollectorWrapper;
 import ch.mno.copper.collect.CollectorWrapperFactory;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.report.AbstractReporterWrapper;
+import ch.mno.copper.store.ValuesStore;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,7 +156,7 @@ public class Story {
                 case ">":
                     return a > b;
                 case "=":
-                    return Math.abs(a.floatValue() - b.floatValue()) < Math.abs(a.floatValue() / 25);
+                    return Math.abs(a - b) < Math.abs(a / 25);
                 default:
                     throw new RuntimeException("Unsuppported operator " + operator);
             }
@@ -181,7 +181,7 @@ public class Story {
     }
 
 
-    private class When {
+    private static class When {
         private final String variable;
         private final String operator;
         private final String value;

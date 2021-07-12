@@ -8,11 +8,13 @@
 <label>Search: <input ng-model="searchText"></label>
 <table class="table-striped table-bordered" style="width: 100%; border: 1px outset silver">
     <thead>
-    <th style="text-align:right;padding: 5px;"><a ng-click="triggerSort('story.name')">Name</a></th>
-    <th>Notes</th>
-    <th style="text-align:left; padding-left: 10px">Cron</a></th>
-    <th style="text-align:left; padding-left: 10px"><a ng-click="triggerSort('story.nextRun')">Next run</a></th>
-    <th style="text-align:left; padding-left: 10px">Actions</th>
+        <tr>
+            <th style="text-align:right;padding: 5px;"><a ng-click="triggerSort('story.name')">Name</a></th>
+            <th>Notes</th>
+            <th style="text-align:left; padding-left: 10px">Cron</a></th>
+            <th style="text-align:left; padding-left: 10px"><a ng-click="triggerSort('story.nextRun')">Next run</a></th>
+            <th style="text-align:left; padding-left: 10px">Actions</th>
+        </tr>
     </thead>
     <tbody>
     <tr ng-repeat="story in stories | filter:searchText | orderBy:sortBy:sortReverse">

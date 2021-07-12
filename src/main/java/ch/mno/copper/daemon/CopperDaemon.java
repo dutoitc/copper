@@ -1,9 +1,7 @@
 package ch.mno.copper.daemon;
 
 import ch.mno.copper.DataProvider;
-import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.process.AbstractProcessor;
-import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +24,10 @@ import java.util.concurrent.Executors;
 // Optimisations: sleep until next task run (compute on task addition). Log next task run.
 public class CopperDaemon implements Runnable, ApplicationListener<ContextRefreshedEvent>, AutoCloseable {
 
-    private final DataProvider dataProvider;
-    private static final Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
-
     public static final int N_THREADS = 10;
     public static final int TASK_CHEK_INTERVAL = 1000 * 3; // don't overload processors !
+    private static final Logger LOG = LoggerFactory.getLogger(CopperDaemon.class);
+    private final DataProvider dataProvider;
     private final List<AbstractProcessor> processors = new ArrayList<>();
     private boolean shouldRun = true;
     private List<String> storiesToRun = new ArrayList<>();
@@ -55,7 +52,7 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         shouldRun = false;
         threadDaemon.interrupt();
     }
@@ -65,11 +62,11 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
         List<Story> stories = dataProvider.getStories(); // With refresh
 
         //
-        ValuesStore valuesStore = dataProvider.getValuesStore();
+        var valuesStore = dataProvider.getValuesStore();
 
         for (Story story : stories) {
             // Run story ?
-            StoryTask task = dataProvider.getStoryTask(story);
+            var task = dataProvider.getStoryTask(story);
             if (storiesToRun.contains(story.getName()) || (task != null && task.shouldRun())) {
                 storiesToRun.remove(story.getName());
                 executorService.submit(new StoryTaskRunnable(task));
@@ -77,7 +74,7 @@ public class CopperDaemon implements Runnable, ApplicationListener<ContextRefres
         }
 
         // Processors
-        LocalDateTime queryTime = LocalDateTime.now(); // Keep time, so that next run will have store between query time assignation and valueStore readInstant time
+        var queryTime = LocalDateTime.now(); // Keep time, so that next run will have store between query time assignation and valueStore readInstant time
         Collection<String> changedValues = valuesStore.queryValues(lastQueryTime.toInstant(ZoneOffset.UTC), Instant.MAX);
         lastQueryTime = queryTime;
         processors.forEach(p -> {

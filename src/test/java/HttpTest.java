@@ -31,7 +31,7 @@ public class HttpTest {
 
 
         HttpPost post = new HttpPost(uri);
-        final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        final List<NameValuePair> nvps = new ArrayList<>();
         for (Map.Entry<String, String> entry: values.entrySet()) {
             nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }

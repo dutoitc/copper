@@ -98,12 +98,7 @@ public class CopperDaemonTest {
 
         @Override
         public Runnable getRunnable() {
-            return new Runnable() {
-                @Override
-                public void run() {
-                    nbRuns++;
-                }
-            };
+            return () -> nbRuns++;
         }
 
         @Override

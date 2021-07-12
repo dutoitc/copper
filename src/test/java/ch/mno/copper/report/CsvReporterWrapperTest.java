@@ -46,7 +46,7 @@ public class CsvReporterWrapperTest {
         CsvReporterWrapper wrapper = new ReporterWrapperFactory(props).buildReporterWrapper(storyGrammar, story);
 
         // Run
-        Map<String, String> values = new HashMap();
+        Map<String, String> values = new HashMap<>();
         values.put("value1", "123");
         values.put("value2", "456");
         values.put("value3", "789");
@@ -57,7 +57,7 @@ public class CsvReporterWrapperTest {
         assertEquals("my header1;my header2;my header3\r\n123;456;789\r\n", res);
 
         // Run
-        values = new HashMap();
+        values = new HashMap<>();
         values.put("value1", "aaa");
         values.put("value3", "ccc");
         wrapper.execute(values, valuesStore);

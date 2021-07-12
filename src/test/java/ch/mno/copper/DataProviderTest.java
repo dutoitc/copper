@@ -53,7 +53,7 @@ public class DataProviderTest {
     }
 
 
-    private class StoriesFacadeMock implements StoriesFacade {
+    private static class StoriesFacadeMock implements StoriesFacade {
 
         Map<String, Story> stories = new HashMap<>();
 

@@ -18,7 +18,7 @@ public class StoreValueMapper {
         String value = rs.getString("value");
         Instant from = rs.getTimestamp("datefrom").toInstant();
         Instant to = rs.getTimestamp("dateto").toInstant();
-        Long nbValues = -1l;
+        long nbValues = -1;
         if (wantNbValues) {
             nbValues = rs.getLong("nbValues");
         }

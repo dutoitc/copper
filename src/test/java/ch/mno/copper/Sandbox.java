@@ -1,17 +1,10 @@
 package ch.mno.copper;
 
 import ch.mno.copper.collect.WebCollector;
-import ch.mno.copper.collect.WebCollectorWrapper;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

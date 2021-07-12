@@ -59,8 +59,7 @@ public class StoryTaskBuilder {
     private static Map<String, String> collect(Story story, ValuesStore valuesStore) {
         AbstractCollectorWrapper collectorWrapper = story.getCollectorWrapper();
         if (collectorWrapper == null) { // Null means to readInstant value store
-            Map<String, String> values = new HashMap<>();
-            values.putAll(valuesStore.getValuesMapString());
+            Map<String, String> values = new HashMap<>(valuesStore.getValuesMapString());
             return values;
         }
 

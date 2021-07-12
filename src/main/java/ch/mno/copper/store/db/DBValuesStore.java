@@ -47,7 +47,7 @@ public class DBValuesStore implements ValuesStore {
 
     @Override
     public String getValue(String key) {
-        StoreValue storeValue = null;
+        StoreValue storeValue;
         try {
             storeValue = server.readLatest(key);
         } catch (SQLException e) {

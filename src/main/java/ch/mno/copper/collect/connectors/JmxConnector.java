@@ -24,7 +24,7 @@ public class JmxConnector extends AbstractConnector {
         String[] creds = {username, password};
         env.put(JMXConnector.CREDENTIALS, creds);
         try {
-            jmxc = connectWithTimeout(jmxServiceURL, env, 1000l*5l);
+            jmxc = connectWithTimeout(jmxServiceURL, env, 1000*5);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IOException("JMX connection interrupted");

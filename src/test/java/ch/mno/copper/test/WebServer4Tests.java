@@ -90,12 +90,13 @@ public class WebServer4Tests implements Runnable, AutoCloseable {
 
                 // Read until blank line (end of HTTP Header)
                 String str = ".";
-                String sent = "";
+                StringBuilder sentSB = new StringBuilder();
                 while (str != null && !str.equals("")) {
                     str = in.readLine();
-                    sent += str + "\r\n";
+                    sentSB.append(str).append("\r\n");
                 }
 
+                String sent = sentSB.toString();
                 if (sent.contains("err404")) {
                     out.println("HTTP/1.0 404 Not Found");
                     out.println("Content-Type: text/html");
