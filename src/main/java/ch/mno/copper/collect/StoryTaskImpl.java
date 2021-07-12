@@ -18,7 +18,11 @@ public class StoryTaskImpl implements StoryTask {
     private long taskId = nextId++;
     private Story story;
     private boolean running = false;
-    private CronData cronData;
+    CronData cronData;
+
+    public void setCronData4Test(CronData o) {
+        cronData = o;
+    }
 
     private class CronData {
         private long nextRun;
@@ -32,6 +36,7 @@ public class StoryTaskImpl implements StoryTask {
         private void computeNextRun() {
             if (cronExpression==null) {
                 LOG.error("Null Cron Expression for story {}", story.getName());
+                return;
             }
             Predictor p = new Predictor(cronExpression);
             nextRun = p.nextMatchingTime();

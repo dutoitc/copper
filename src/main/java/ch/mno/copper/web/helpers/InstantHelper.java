@@ -29,7 +29,6 @@ public class InstantHelper {
         String[] formats = new String[]{"dd.MM.yyyy", "yyyy-MM-dd"};
         for (String format : formats) {
             try {
-//                System.out.println("Parsing '"+date+"' with '"+format+"'");
                 LocalDate ld = LocalDate.parse(date, DateTimeFormatter.ofPattern(format));
                 if (am) return LocalDateTime.of(ld, LocalTime.of(0, 0)).toInstant(ZoneOffset.UTC);
                 return LocalDateTime.of(ld, LocalTime.of(23, 59, 59)).toInstant(ZoneOffset.UTC);
@@ -42,7 +41,6 @@ public class InstantHelper {
         for (String format : formats) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
             try {
-                //return (LocalDateTime)formatter.parse(date);
                 return LocalDateTime.parse(date, formatter).toInstant(ZoneOffset.UTC);
             } catch (DateTimeParseException e) {
                 // Nothing yet

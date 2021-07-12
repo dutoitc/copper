@@ -180,6 +180,10 @@ public class Story {
         return error;
     }
 
+    public void setCronData4Test(String cronData) {
+        this.cron = cronData;
+    }
+
 
     private static class When {
         private final String variable;
