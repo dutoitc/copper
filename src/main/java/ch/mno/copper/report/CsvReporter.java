@@ -1,7 +1,5 @@
 package ch.mno.copper.report;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,7 +14,7 @@ public class CsvReporter implements AbstractReporter  {
 
 
     @Override
-    public void report(String message, Map<String, String> values) throws ConnectorException {
+    public void report(String message, Map<String, String> values)  {
         String filename = values.get(CsvReporter.PARAMETERS.FILENAME.toString());
         String header = values.get(CsvReporter.PARAMETERS.HEADERS.toString());
         String line = values.get(CsvReporter.PARAMETERS.LINE.toString());

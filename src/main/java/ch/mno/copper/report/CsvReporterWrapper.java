@@ -1,6 +1,5 @@
 package ch.mno.copper.report;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.StoryGrammar;
 
@@ -45,11 +44,7 @@ public class CsvReporterWrapper extends AbstractReporterWrapper {
         reporterValues.put(CsvReporter.PARAMETERS.LINE.toString(), message);
 
 
-        try {
-            reporter.report(message, reporterValues);
-        } catch (ConnectorException e) {
-            e.printStackTrace();
-        }
+        reporter.report(message, reporterValues);
     }
 
 }

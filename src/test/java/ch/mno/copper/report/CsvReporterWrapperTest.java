@@ -20,17 +20,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by dutoitc on 26.04.2019.
  */
-public class CsvReporterWrapperTest {
+class CsvReporterWrapperTest {
 
     private StoryGrammar storyGrammar;
 
     @BeforeEach
-    public void init() {
+    void init() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
     @Test
-    public void test() throws IOException {
+    void test() throws IOException {
         ValuesStore valuesStore = new MapValuesStore();
 
         CopperMailProperties props = new CopperMailProperties();

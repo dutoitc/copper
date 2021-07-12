@@ -10,11 +10,11 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
-public class HttpConnectorTest extends AbstractWebPortSpringTest {
+class HttpConnectorTest extends AbstractWebPortSpringTest {
 
     @Test
     @Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
-    public void ping1() throws Exception {
+    void ping1() throws Exception {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             String value = conn.get("/ping1");
             assertEquals("pong1", value);
@@ -23,7 +23,7 @@ public class HttpConnectorTest extends AbstractWebPortSpringTest {
 
     @Test
     @Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
-    public void test2() throws ConnectorException {
+    void test2() throws ConnectorException {
         // Port non ouvert + 10
         try (HttpConnector conn = new HttpConnector("localhost", port + 10, "http")) {
             String res = conn.get("/something");
@@ -36,7 +36,7 @@ public class HttpConnectorTest extends AbstractWebPortSpringTest {
 
     @Test
     @Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
-    public void test3() throws ConnectorException {
+    void test3() throws ConnectorException {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             Map<String, String> nvs = new HashMap<>();
             nvs.put("key1", "value3");
@@ -48,7 +48,7 @@ public class HttpConnectorTest extends AbstractWebPortSpringTest {
 
     @Test
     @Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
-    public void testErr() throws ConnectorException {
+    void testErr() throws ConnectorException {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             String res = conn.get("/err404");
             assertEquals("Error 404:", res);
@@ -57,7 +57,7 @@ public class HttpConnectorTest extends AbstractWebPortSpringTest {
 
     @Test
     @Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
-    public void testErrPost() throws ConnectorException {
+    void testErrPost() throws ConnectorException {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             Map<String, String> nvs = new HashMap<>();
             nvs.put("key1", "value1");

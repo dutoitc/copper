@@ -16,11 +16,14 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
+
 /**
  * Created by dutoitc on 29.09.2017.
  */
-@Disabled // FIXME problem of port already taken while executing on server
-public class DbValueStoreTest {
+@Disabled
+        // FIXME problem of port already taken while executing on server
+class DbValueStoreTest {
 
     Instant i3 = Instant.parse("2015-10-21T07:27:48.00Z");
     Instant i4 = Instant.parse("2015-10-21T07:27:49.00Z");
@@ -34,7 +37,7 @@ public class DbValueStoreTest {
     private DBServer server;
 
     @BeforeEach
-    public void init() throws SQLException {
+    void init() throws SQLException {
         DBServerManual.DBURL = "jdbc:h2:./copperdbtst";
         server = new DBServerManual(false, 12345);
         store = new DBValuesStore(server);
@@ -50,23 +53,23 @@ public class DbValueStoreTest {
     }
 
     @AfterEach
-    public void done() throws Exception {
+    void done() throws Exception {
         server.close();
     }
 
 
     @Test
-    public void testGetValue() {
+    void testGetValue() {
         assertEquals("value42", store.getValue("key4"));
     }
 
     @Test
-    public void testGetValues() {
+    void testGetValues() {
         assertEquals(5, store.getValues().size());
     }
 
     @Test
-    public void testGetValuesMapString() {
+    void testGetValuesMapString() {
         Map<String, String> map = store.getValuesMapString();
         StringBuilder sb = new StringBuilder();
         map.forEach((key, value) -> sb.append(key).append('=').append(value).append('\n'));
@@ -78,13 +81,13 @@ public class DbValueStoreTest {
     }
 
     @Test
-    public void testQueryValues() {
+    void testQueryValues() {
         Collection<String> values = store.queryValues(Instant.parse("2015-10-21T07:27:59.99Z"), Instant.parse("2015-10-21T07:28:00.99Z"));
         assertEquals("[key1, key2, key4]", StringUtils.join(values));
     }
 
     @Test
-    public void testQueryValues2() {
+    void testQueryValues2() {
         List<StoreValue> values = store.queryValues(Instant.parse("2015-10-21T07:27:59.99Z"), Instant.parse("2015-10-21T07:28:00.99Z"), Arrays.asList("key2"), 7);
         assertEquals(1, values.size());
         assertEquals("key2", values.get(0).getKey());
@@ -93,7 +96,7 @@ public class DbValueStoreTest {
 
 //    @Test
 //    @Disabled // FIXME comprehension problem or bug ?
-//    public void testQueryValues3() {
+//    void testQueryValues3() {
 //        List<InstantValues> values = store.queryValues(Instant.parse("2015-10-21T07:27:50.00Z"), Instant.parse("2015-10-21T07:28:07.99Z"), 1, Arrays.asList("key2"), 7);
 //        assertEquals(4, values.size());
 //        assertEquals("key4", values.get(0).getValues().size());

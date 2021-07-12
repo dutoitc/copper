@@ -9,10 +9,10 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DiskHelperTest {
+class DiskHelperTest {
 
     @Test
-    public void testFindJSON() {
+    void testFindJSON() {
         CopperScreensProperties screensProperties = new CopperScreensProperties();
         screensProperties.setFolder("src/test/resources/DiskHelperTestsScreens");
         DiskHelper dh = new DiskHelper(new CopperStoriesProperties(), screensProperties);

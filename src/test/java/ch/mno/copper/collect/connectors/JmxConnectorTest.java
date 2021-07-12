@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Created by dutoitc on 15.02.2016.
  */
-public class JmxConnectorTest extends AbstractJmxServerTestStarter {
+class JmxConnectorTest extends AbstractJmxServerTestStarter {
 
     @Test
-    public void testX() throws IOException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException, InterruptedException {
+    void testX() throws IOException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException, InterruptedException {
         JmxConnector conn = new JmxConnector("service:jmx:rmi:///jndi/rmi://localhost:" + JMX_PORT + "/server");
         String aValue = conn.getObject("java.lang:type=Runtime", "SpecName");
         assertTrue(aValue.contains("Java"));

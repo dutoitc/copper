@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by dutoitc on 26.03.2016.
  */
-public class SocketCollectorTest extends AbstractJmxServerTestStarter {
+class SocketCollectorTest extends AbstractJmxServerTestStarter {
 
     static int httpPort = 0;
 
@@ -38,7 +38,7 @@ public class SocketCollectorTest extends AbstractJmxServerTestStarter {
     }
 
     @Test
-    public void testCheckConnectionOnDummyServer() throws ConnectorException {
+    void testCheckConnectionOnDummyServer() throws ConnectorException {
         SocketCollectorWrapper collector = SocketCollectorWrapper.buildCollector(storyGrammar, "SOCKET WITH host=localhost,port=1,timeout_ms=1000\nKEEP status AS myStatus\n");
         assertEquals("myStatus", collector.getAs().get(0));
         assertEquals("IO_EXCEPTION", collector.execute2D().get(0).get(0));
@@ -46,14 +46,14 @@ public class SocketCollectorTest extends AbstractJmxServerTestStarter {
     }
 
     @Test
-    public void testCheckConnectionOnRealServerJMX() throws ConnectorException {
+    void testCheckConnectionOnRealServerJMX() throws ConnectorException {
         SocketCollectorWrapper collector = SocketCollectorWrapper.buildCollector(storyGrammar, "SOCKET WITH host=localhost,port=" + JMX_PORT + ",timeout_ms=1000\nKEEP status AS myStatus\n");
         assertEquals("OK", collector.execute2D().get(0).get(0));
         assertEquals("OK", collector.execute().get("myStatus"));
     }
 
     @Test
-    public void testCheckConnectionOnRealServerHTTP() throws ConnectorException {
+    void testCheckConnectionOnRealServerHTTP() throws ConnectorException {
         SocketCollectorWrapper collector = SocketCollectorWrapper.buildCollector(storyGrammar, "SOCKET WITH host=127.0.0.1,port=" + httpPort + ",timeout_ms=5000\nKEEP status AS myStatus\n");
         assertEquals("OK", collector.execute2D().get(0).get(0));
         assertEquals("OK", collector.execute().get("myStatus"));

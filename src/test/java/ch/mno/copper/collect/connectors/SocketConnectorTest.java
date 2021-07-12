@@ -10,7 +10,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SocketConnectorTest extends AbstractJmxServerTestStarter {
+class SocketConnectorTest extends AbstractJmxServerTestStarter {
 
     static int httpPort = 35742;
     private static WebServer4Tests ws;
@@ -36,19 +36,19 @@ public class SocketConnectorTest extends AbstractJmxServerTestStarter {
     }
 
     @Test
-    public void testCheckConnectionOnDummyServer() {
+    void testCheckConnectionOnDummyServer() {
         SocketConnector.CONNECTION_CHECK status = new SocketConnector("localhost", 1, 1000).checkConnection();
         assertEquals(SocketConnector.CONNECTION_CHECK.IO_EXCEPTION, status);
     }
 
     @Test
-    public void testCheckConnectionOnRealServerJMX() {
+    void testCheckConnectionOnRealServerJMX() {
         SocketConnector.CONNECTION_CHECK status = new SocketConnector("localhost", JMX_PORT, 1000).checkConnection();
         assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
     }
 
     @Test
-    public void testCheckConnectionOnRealServerHTTP() {
+    void testCheckConnectionOnRealServerHTTP() {
         SocketConnector connector = new SocketConnector("localhost", httpPort, 10000);
         SocketConnector.CONNECTION_CHECK status = connector.checkConnection();
         try {

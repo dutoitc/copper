@@ -15,17 +15,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by xsicdt on 29/02/16.
  */
-public class WebCollectorWrapperTest {
+class WebCollectorWrapperTest {
 
     private StoryGrammar storyGrammar;
 
     @BeforeEach
-    public void init() {
+    void init() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
     @Test
-    public void test() {
+    void test() {
         String jmx = "GIVEN COLLECTOR WEB WITH url=http://localhost:1530/ws/infra/status\n" +
                 "    KEEP status AS WEB_STATUS\n" +
                 "    KEEP lastReload AS WEB_LAST_RELOAD\n" +
@@ -54,7 +54,7 @@ public class WebCollectorWrapperTest {
 
     @Test
     @Disabled("to be reworked")
-    public void test2() throws Exception {
+    void test2() throws Exception {
         String jmx = "GIVEN COLLECTOR WEB WITH url=http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list\n" +
                 "    KEEP $.value[?(/value.WS_Services$/.test(@.Name))].Version AS value_VERSION\n" +
                 "THEN STORE VALUES";
@@ -68,7 +68,7 @@ public class WebCollectorWrapperTest {
 
     @Test
     @Disabled("to be reworked")
-    public void testTemp() {
+    void testTemp() {
 //        String jsonPath = "$.value[?(/app.WS_Services$/.test(@.Name))].Version";
 //        String jsonPath = "$['value'][?(@['Name']=='app.WS_Services')].Version";
         String jsonPath = "$.value.*.[?(@['Name']=='app.WS_Services')].Version";

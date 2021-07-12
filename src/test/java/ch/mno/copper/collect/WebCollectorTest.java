@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by xsicdt on 25/08/17.
  */
-public class WebCollectorTest {
+class WebCollectorTest {
 
     @Test
-    public void test() {
+    void test() {
         String json =
                 "{\n" +
                         "  \"_class\": \"hudson.model.ListView\",\n" +
@@ -98,7 +98,7 @@ public class WebCollectorTest {
     }
 
     @Test
-    public void testRegexp() {
+    void testRegexp() {
         String json = "{\"a\":{\"b\":{\n" +
                 "      \"485\": {\n" +
                 "        \"Version\": \"18.11.0\",\n" +

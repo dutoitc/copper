@@ -23,17 +23,17 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Created by dutoitc on 07.02.2016.
  */
-public class StoryGrammarTest {
+class StoryGrammarTest {
 
     private StoryGrammar storyGrammar;
 
     @BeforeEach
-    public void init() {
+    void init() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
     @Test
-    public void testSPACE() {
+    void testSPACE() {
         String pattern = storyGrammar.getPattern("SPACE");
         Pattern pattern1 = Pattern.compile(pattern);
         assertTrue(pattern1.matcher(" ").matches());
@@ -44,7 +44,7 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testEOL() {
+    void testEOL() {
         String pattern = storyGrammar.getPattern("EOL");
         Pattern pattern1 = Pattern.compile(pattern);
         assertFalse(pattern1.matcher("\r").matches());
@@ -55,7 +55,7 @@ public class StoryGrammarTest {
     }
 
 //    @Test
-//    public void testDEFINE() {
+//    void testDEFINE() {
 //        String pattern = storyGrammar.getPatternFull("DEFINE");
 //        Pattern pattern1 = Pattern.compile(pattern);
 //        assertTrue(pattern1.matcher("DEFINE key1 value1\n").matches());
@@ -63,7 +63,7 @@ public class StoryGrammarTest {
 //    }
 
     @Test
-    public void testJDBC_URL() {
+    void testJDBC_URL() {
         String pattern = storyGrammar.getPatternFull("JDBC_URL");
         Pattern pattern1 = Pattern.compile(pattern);
         assertTrue(pattern1.matcher("jdbc:oracle:thin:@//myhost:1521/orcl").matches());
@@ -71,7 +71,7 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testCOLLECTOR_JDBC() {
+    void testCOLLECTOR_JDBC() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_JDBC");
         testPattern(pattern, "JDBC WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass  QUERY select 1 from dual\n");
         testPattern(pattern, "JDBC WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n   user=aUser,\n   password=aPass\n QUERY \"select something as chose\"\n");
@@ -79,13 +79,13 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testCOLLECTOR_JMX() {
+    void testCOLLECTOR_JMX() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_JMX");
         testPattern(pattern, "JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass QUERY name FOR attribute AS something\n");
     }
 
     @Test
-    public void testCOLLECTOR_JMX1() {
+    void testCOLLECTOR_JMX1() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_JMX");
         //String pattern="JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d\\.\\-]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=\\S+?[\\s+\\r\\n]\\s*QUERY.*? FOR .*?\\s+AS .*";
         testPattern(pattern, "JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,\n   user=aUser,\n   password=aPass QUERY name FOR attribute AS something\n");
@@ -94,7 +94,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testCOLLECTOR_JMX2() {
+    void testCOLLECTOR_JMX2() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_JMX");
         testPattern(pattern, "JMX\n" +
                 "        WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,\n" +
@@ -108,7 +108,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testCOLLECTOR_JMX3() {
+    void testCOLLECTOR_JMX3() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_JMX");
         String jmx = "JMX WITH url=service:jmx:rmi://src2737v.myhost:44444/jndi/rmi://src2737v.myhost:1099/karaf-trun,user=tadmin,password=tadmin\n" +
                 "    QUERY java.lang:type=Runtime FOR SpecName    AS JMX_LOCAL_RUNTIME_SPECNAME\n" +
@@ -120,7 +120,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testCOLLECTOR_WEB() {
+    void testCOLLECTOR_WEB() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_WEB");
         testPattern(pattern, "WEB\n" +
                 "        WITH url=http://int-block.myhost/ws/ping,\n" +
@@ -131,7 +131,7 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testCOLLECTOR_WEB2() {
+    void testCOLLECTOR_WEB2() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR_WEB");
         testPattern(pattern, "WEB\n" +
                 "        WITH url=http://int-block.myhost/ws/ping\n" +
@@ -141,7 +141,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testCOLLECTOR1() {
+    void testCOLLECTOR1() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
         //pattern="COLLECTOR[\\s+\\r\\n]+(ORACLE[\\s+\\r\\n]+WITH[\\s+\\r\\n]+//url=jdbc[:\\w@/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?[\\s+\\r\\n]QUERY ((\\\".*?\\\")|.*)\\r?\\n|JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=\\S+?[\\s+\\r\\n]\\s*(QUERY .*? FOR .*?\\s+AS .*?[\\s+\\r\\n])+)";
         Pattern pattern1 = Pattern.compile(pattern);
@@ -150,14 +150,14 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testCOLLECTOR2() {
+    void testCOLLECTOR2() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
         Pattern pattern1 = Pattern.compile(pattern);
         testPattern(pattern, "COLLECTOR JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass QUERY oname FOR att AS att1\n");
     }
 
     @Test
-    public void testCOLLECTOR3() {
+    void testCOLLECTOR3() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
         Pattern pattern1 = Pattern.compile(pattern);
         testPattern(pattern, "COLLECTOR JDBC\n" +
@@ -168,14 +168,14 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testCOLLECTOR4() {
+    void testCOLLECTOR4() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
         Pattern pattern1 = Pattern.compile(pattern);
         assertFalse(pattern1.matcher("JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass\n").matches());
     }
 
     @Test
-    public void testWHEN() {
+    void testWHEN() {
         String pattern = storyGrammar.getPatternFull("WHEN");
         testPattern(pattern, "WHEN aaa>1711");
         testPattern(pattern, "WHEN aaa<172");
@@ -188,7 +188,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testCRON_STD() {
+    void testCRON_STD() {
         String pattern = storyGrammar.getPatternFull("CRON_STD");
         Pattern pattern1 = Pattern.compile(pattern);
         assertTrue(pattern1.matcher("* * * * *").matches());
@@ -198,7 +198,7 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testRUN_ON() {
+    void testRUN_ON() {
         String pattern = storyGrammar.getPatternFull("RUN_ON");
         Pattern pattern1 = Pattern.compile(pattern);
         assertTrue(pattern1.matcher("RUN ON CRON * * * * *\n").matches());
@@ -208,7 +208,7 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testPushover() {
+    void testPushover() {
         String txt = "REPORT BY PUSHOVER to \"dest\"\n" +
                 "     WITH token=\"xxx\"\n" +
                 "     WITH title=\"Status RCFACE\"\n" +
@@ -225,7 +225,7 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testCSV() {
+    void testCSV() {
         String txt = "REPORT BY CSV to \"filename.csv\" WITH headers=\"my header1;my header2;my header3\"\n" +
                 "    WITH line=\"{{value1}};{{value2}};{{value3}}\"";
 
@@ -234,7 +234,7 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testCSV2() {
+    void testCSV2() {
 //        String txt="RUN ON CRON 0 * * * *\n" +
 //                "GIVEN STORED VALUES\n" +
 //                "THEN REPORT BY CSV to \"store.csv\"\n" +
@@ -257,7 +257,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testJdbcStory() throws IOException, ConnectorException, URISyntaxException {
+    void testJdbcStory() throws IOException, ConnectorException, URISyntaxException {
         String pattern = storyGrammar.getPatternFull("MAIN");
 //        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
         URL resource = getClass().getResource("/OracleStory1.txt");
@@ -279,7 +279,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testJdbcStory2() throws IOException, ConnectorException, URISyntaxException {
+    void testJdbcStory2() throws IOException, ConnectorException, URISyntaxException {
         String pattern = storyGrammar.getPatternFull("MAIN");
 //        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
         URL resource = getClass().getResource("/OracleStory2.txt");
@@ -297,21 +297,21 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testJmxStory1() throws IOException {
+    void testJmxStory1() throws IOException {
         String pattern = storyGrammar.getPatternFull("MAIN");
         String story = IOUtils.toString(getClass().getResource("/JmxStory1.txt"));
         testPattern(pattern, story);
     }
 
     @Test
-    public void testJmxStory2() throws IOException {
+    void testJmxStory2() throws IOException {
         String pattern = storyGrammar.getPatternFull("MAIN");
         String story = IOUtils.toString(getClass().getResource("/JmxStory2.txt"));
         testPattern(pattern, story);
     }
 
     @Test
-    public void testMailStory() throws IOException {
+    void testMailStory() throws IOException {
         String pattern = storyGrammar.getPatternFull("MAIL");
         String story = IOUtils.toString(getClass().getResource("/MailStory.txt"));
         testPattern(pattern, story);
@@ -319,7 +319,7 @@ public class StoryGrammarTest {
 
 
     @Test
-    public void testWEBCollector() {
+    void testWEBCollector() {
         String txt = "WEB WITH url=http://server:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list " +
                 " KEEP a AS b ";
 
@@ -327,7 +327,7 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testSOCKET() {
+    void testSOCKET() {
         String txt = "SOCKET WITH host=myhost,port=80,timeout_ms=1000\n" +
                 "   KEEP status AS SOCKET_MY1\n";
 
@@ -335,7 +335,7 @@ public class StoryGrammarTest {
     }
 
     @Test
-    public void testBINARY() {
+    void testBINARY() {
         String txt = "BINARY_CHECK\n" +
                 "   CHECK_BY_WHICH find AS FIND_AVAILABLE\n" +
                 "   CHECK_BY_PATH /usr/bin/ls AS LS_AVAILABLE\n";
@@ -345,7 +345,7 @@ public class StoryGrammarTest {
 
 
 //    @Test
-//    public void testTemp() {
+//    void testTemp() {
 //        String pat="GIVEN[\\s+\\r\\n]+COLLECTOR[\\s+\\r\\n]+(ORACLE[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=jdbc[:\\w@/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?\\r?\\n|JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?\\r?\\n)[\\s+\\r\\n]*WHEN[\\s+\\r\\n]+CRON[\\s+\\r\\n]+(DAILY at \\d{4})\\r?\\n";
 //        String dst="GIVEN\n" +
 //                "    COLLECTOR JMX\n" +
@@ -360,7 +360,7 @@ public class StoryGrammarTest {
 //    }
 
 //    @Test
-//    public void testX() {
+//    void testX() {
 //        testPattern("JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=\\S+?[\\s+\\r\\n]\\s*(QUERY .*? FOR .*?\\s+AS .*?[\\s+\\r\\n])+", "JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass\n" +
 //                "    QUERY java.lang:type=Runtime FOR SpecName    AS JMX_LOCAL_RUNTIME_SPECNAME\n");
 //    }

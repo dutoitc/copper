@@ -12,10 +12,10 @@ import java.util.List;
  * Created by dutoitc on 17.02.2016.
  */
 @Disabled("to be reworked")
-public class CopperDaemonTest {
+class CopperDaemonTest {
 
 //    @Test
-//    public void testAll() throws InterruptedException {
+//    void testAll() throws InterruptedException {
 //        SimpleStoryTask coll1 = new SimpleStoryTask();
 //        SimpleProcessor proc1 = new SimpleProcessor(Arrays.asList("key1"));
 //        SimpleProcessor proc2 = new SimpleProcessor(Arrays.asList("key2"));

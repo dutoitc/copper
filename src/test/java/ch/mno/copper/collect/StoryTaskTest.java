@@ -6,7 +6,7 @@ import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.StoryTaskBuilder;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -18,33 +18,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Created by dutoitc on 16.02.2016.
  */
-public class StoryTaskTest {
+class StoryTaskTest {
 
 
     private static StoryGrammar grammar;
 
-    @BeforeEach
+    @BeforeAll
     public static void init() {
         grammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
 
     @Test
-    public void testCronMinute() {
+    void testCronMinute() {
         List<String> values = new ArrayList<>();
         StoryTask ct = new StoryTaskImpl(null, () -> values.add("1"), "* * * * *");
         assertTrue(Math.abs(ct.getNextRun() - System.currentTimeMillis()) <= 60000);
     }
 
     @Test
-    public void testCronMinute2() {
+    void testCronMinute2() {
         List<String> values = new ArrayList<>();
         StoryTask ct = new StoryTaskImpl(null, () -> values.add("1"), "0 * * * *");
         assertTrue(Math.abs(ct.getNextRun() - System.currentTimeMillis()) <= 60 * 60 * 1000);
     }
 
     @Test
-    public void testBuildAndRunOk() throws IOException, ConnectorException {
+    void testBuildAndRunOk() throws IOException, ConnectorException {
         Story story = new Story(grammar, "StoryName", "RUN ON CRON 0 8,13 * * *\nGIVEN STORED VALUES\nTHEN\nSTORE VALUES");
         story.setCollectorWrapper4Tests(new AbstractCollectorWrapper() {
             @Override
@@ -70,7 +70,7 @@ public class StoryTaskTest {
 
 
     @Test
-    public void testBuildAndRunForErrorShouldStoreEntriesAsError() throws IOException, ConnectorException {
+    void testBuildAndRunForErrorShouldStoreEntriesAsError() throws IOException, ConnectorException {
         Story story = new Story(grammar, "StoryName", "RUN ON CRON 0 8,13 * * *\nGIVEN STORED VALUES\nTHEN\nSTORE VALUES");
         story.setCollectorWrapper4Tests(new AbstractCollectorWrapper() {
             @Override
@@ -97,7 +97,7 @@ public class StoryTaskTest {
 
 
     @Test
-    public void testBuildAndRunForTimeoutShouldStoreEntriesAsError() throws IOException, ConnectorException {
+    void testBuildAndRunForTimeoutShouldStoreEntriesAsError() throws IOException, ConnectorException {
         Story story = new Story(grammar, "StoryName", "RUN ON CRON 0 8,13 * * *\nGIVEN STORED VALUES\nTHEN\nSTORE VALUES");
         story.setCollectorWrapper4Tests(new AbstractCollectorWrapper() {
             @Override

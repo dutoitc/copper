@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
         CopperApplication.class
 }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class DBServerTest {
+class DBServerTest {
 
     Instant i3 = Instant.parse("2015-10-21T07:27:58.00Z");
     Instant i4 = Instant.parse("2015-10-21T07:27:59.00Z");
@@ -37,7 +37,7 @@ public class DBServerTest {
     }
 
     @BeforeEach
-    public void init() throws SQLException {
+    void init() throws SQLException {
         server.clearAllData();
         server.insert("key1", "value10", i5);
         server.insert("key2", "value20", i5);
@@ -49,27 +49,27 @@ public class DBServerTest {
     }
 
     @Test
-    public void testReadLatestForOneValue() throws SQLException {
+    void testReadLatestForOneValue() throws SQLException {
         StoreValue readSV = server.readLatest("key1");
         assertEquals("value10", readSV.getValue());
     }
 
 
     @Test
-    public void testReadLatestForTwoValues() throws SQLException {
+    void testReadLatestForTwoValues() throws SQLException {
         StoreValue readSV = server.readLatest("key3");
         assertEquals("value31", readSV.getValue());
     }
 
     @Test
-    public void testReadLatestForThreeValues() throws SQLException {
+    void testReadLatestForThreeValues() throws SQLException {
         StoreValue readSV = server.readLatest("key4");
         assertEquals("value42", readSV.getValue());
     }
 
 
     @Test
-    public void testReadAtTimestampForOneValue() throws SQLException {
+    void testReadAtTimestampForOneValue() throws SQLException {
         assertNull(server.read("key1", i3));
         assertNull(server.read("key1", i4));
         assertEquals("value10", server.read("key1", i5).getValue());
@@ -80,7 +80,7 @@ public class DBServerTest {
     }
 
     @Test
-    public void testReadAtTimestampForTwoValues() throws SQLException {
+    void testReadAtTimestampForTwoValues() throws SQLException {
         assertNull(server.read("key3", i3));
         assertEquals("value30", server.read("key3", i4).getValue());
         assertEquals("value30", server.read("key3", i5).getValue());
@@ -91,7 +91,7 @@ public class DBServerTest {
     }
 
     @Test
-    public void testReadAtTimestampForThreeValues() throws SQLException {
+    void testReadAtTimestampForThreeValues() throws SQLException {
         assertNull(server.read("key4", i3));
         assertEquals("value40", server.read("key4", i4).getValue());
         assertEquals("value41", server.read("key4", i5).getValue());
@@ -102,7 +102,7 @@ public class DBServerTest {
     }
 
     @Test
-    public void testReadHistorizedForOneValue() throws SQLException {
+    void testReadHistorizedForOneValue() throws SQLException {
         assertTrue(server.read("key1", i3, i4, 100).isEmpty());
         assertTrue(server.read("key1", i4, i5, 100).isEmpty());
         assertOneValue(server.read("key1", i5, i6, 100), "value10");
@@ -112,7 +112,7 @@ public class DBServerTest {
     }
 
     @Test
-    public void testReadHistorizedForTwoValues() throws SQLException {
+    void testReadHistorizedForTwoValues() throws SQLException {
         assertTrue(server.read("key3", i3, i4, 100).isEmpty());
         assertOneValue(server.read("key3", i4, i5, 100), "value30");
         assertOneValue(server.read("key3", i5, i6, 100), "value30");
@@ -125,14 +125,14 @@ public class DBServerTest {
     }
 
     //@Test
-    /*public void testReadInstantValues() throws SQLException {
+    /*void testReadInstantValues() throws SQLException {
         List<InstantValues> iv = server.readInstant(Arrays.asList("key4"), i3, i8, 2);
         assertEquals(4, iv.size());
         // TODO: continue
     }*/
 
     @Test
-    public void testReadUpdatedKeys() throws SQLException {
+    void testReadUpdatedKeys() throws SQLException {
         assertEquals("", StringUtils.join(server.readUpdatedKeys(i3, i4), ','));
         assertEquals("key3,key4", StringUtils.join(server.readUpdatedKeys(i4, i5), ','));
         assertEquals("key1,key2,key4", StringUtils.join(server.readUpdatedKeys(i5, i6), ','));
@@ -143,7 +143,7 @@ public class DBServerTest {
     }
 
     @Test
-    public void testReadLatest() throws SQLException {
+    void testReadLatest() throws SQLException {
         StringBuilder sb = new StringBuilder();
         server.readLatest().forEach(v -> sb.append(v.getKey()).append(':').append(v.getValue()).append(';'));
         assertEquals("key1:value10;key2:value20;key3:value31;key4:value42;", sb.toString());
@@ -153,7 +153,7 @@ public class DBServerTest {
     // 10000->428s/60ms/58ms
     @Test
     @Disabled("to be reworked")
-    public void testPerformance() throws SQLException {
+    void testPerformance() throws SQLException {
         long tstart = System.currentTimeMillis();
         server.clearAllData();
         long t0 = System.currentTimeMillis();
@@ -192,7 +192,7 @@ public class DBServerTest {
 
 /*
     @Test
-    public void testAll() throws SQLException {
+    void testAll() throws SQLException {
         DbHelper.clearAllData();
 
         // Create

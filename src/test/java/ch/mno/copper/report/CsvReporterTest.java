@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by dutoitc on 26.04.2019.
  */
-public class CsvReporterTest {
+class CsvReporterTest {
 
     @Test
-    public void testOne() throws IOException, ConnectorException {
+    void testOne() throws IOException, ConnectorException {
         // New file
         File file = File.createTempFile("copper", "tmp");
         file.delete();

@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Created by dutoitc on 26.04.2019.
  */
-public class MailReporterTest {
+class MailReporterTest {
 
     @Test
-    public void testAll() throws ConnectorException, MessagingException, IOException {
+    void testAll() throws ConnectorException, MessagingException, IOException {
         MailReporter reporter = new TestableMailReporter("dummyServer", "aUser", "aPass", 6666, "from@dummy.xxx", "to@dummy.xxx");
         Map<String, String> values = new HashMap<>();
         values.put(MailReporter.PARAMETERS.TO.name(), "to2@dummy.xxx");

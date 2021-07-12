@@ -11,19 +11,19 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BinaryCollectorTest {
+class BinaryCollectorTest {
 
 
     private StoryGrammar storyGrammar;
 
     @BeforeEach
-    public void setup() throws IOException {
+    void setup() throws IOException {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
 
     @Test
-    public void testCheckByPathOnInexistant() throws ConnectorException {
+    void testCheckByPathOnInexistant() throws ConnectorException {
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
                 "BINARY_CHECK\nCHECK_BY_PATH dummy AS DUMMY_AVAILABLE\n");
         assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
@@ -32,7 +32,7 @@ public class BinaryCollectorTest {
     }
 
     @Test
-    public void testCheckByPathOnExistant() throws ConnectorException, IOException {
+    void testCheckByPathOnExistant() throws ConnectorException, IOException {
         File f = File.createTempFile("dummy", "tmp");
         f.deleteOnExit();
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
@@ -43,7 +43,7 @@ public class BinaryCollectorTest {
     }
 
     @Test
-    public void testWhichOnInexistant() throws ConnectorException {
+    void testWhichOnInexistant() throws ConnectorException {
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
                 "BINARY_CHECK\nCHECK_BY_WHICH dummy123 AS DUMMY_AVAILABLE\n");
         assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));
@@ -52,7 +52,7 @@ public class BinaryCollectorTest {
     }
 
     @Test
-    public void testWhichOnExistant() throws ConnectorException {
+    void testWhichOnExistant() throws ConnectorException {
         BinaryCollectorWrapper collector = BinaryCollectorWrapper.buildCollector(storyGrammar,
                 "BINARY_CHECK\nCHECK_BY_WHICH ls AS DUMMY_AVAILABLE\n");
         assertEquals("DUMMY_AVAILABLE", collector.getAs().get(0));

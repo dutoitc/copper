@@ -21,7 +21,7 @@ import java.util.Map;
  * Created by xsicdt on 17/02/16.
  */
 @Disabled
-public class HttpTest {
+class HttpTest {
 
 
     public static String post(String uri, Map<String, String> values) throws ConnectorException {

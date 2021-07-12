@@ -22,17 +22,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Created by xsicdt on 19/01/18.
  */
-public class StoryTest {
+class StoryTest {
     StoryGrammar grammar;
 
 
     @BeforeEach
-    public void init() throws FileNotFoundException {
+    void init() throws FileNotFoundException {
         grammar = new StoryGrammar(new FileInputStream("src/main/resources/StoryGrammar.txt"));
     }
 
     @Test
-    public void testMatchWhen() {
+    void testMatchWhen() {
         assertFalse(Story.matchWhen("17", ">", "18"));
         assertFalse(Story.matchWhen("18", ">", "18"));
         assertTrue(Story.matchWhen("19", ">", "18"));
@@ -43,7 +43,7 @@ public class StoryTest {
     }
 
     @Test
-    public void testMatchWhen2() {
+    void testMatchWhen2() {
         assertFalse(Story.matchWhen("17.1", ">", "18.1"));
         assertFalse(Story.matchWhen("18.1", ">", "18.1"));
         assertTrue(Story.matchWhen("19.1", ">", "18.1"));
@@ -54,7 +54,7 @@ public class StoryTest {
     }
 
     @Test
-    public void testStory() throws IOException, ConnectorException {
+    void testStory() throws IOException, ConnectorException {
         Story story = new Story(grammar, "testStory", "RUN ON CRON 5 * * * *\n" +
                 "GIVEN STORED VALUES\n" +
                 "WHEN AAA>0\n" +

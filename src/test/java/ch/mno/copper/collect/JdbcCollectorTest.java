@@ -14,11 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Created by dutoitc on 26.03.2016.
  */
-public class JdbcCollectorTest {
+class JdbcCollectorTest {
 
 
     @Test
-    public void test1() throws Exception {
+    void test1() throws Exception {
         org.apache.derby.jdbc.EmbeddedDriver driver;
         Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
         String url = "jdbc:derby:memory:sampleDB;create=true";
@@ -41,7 +41,7 @@ public class JdbcCollectorTest {
     }
 
     @Test
-    public void testErr() {
+    void testErr() {
         assertThrows(ConnectorException.class, () -> {
             JdbcCollector coll = new JdbcCollector();
             coll.query("jdbc:dummy", null, null, "select * from test_table");

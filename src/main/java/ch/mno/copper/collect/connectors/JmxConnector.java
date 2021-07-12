@@ -19,12 +19,12 @@ public class JmxConnector extends AbstractConnector {
 
 
     public JmxConnector(String url, String username, String password) throws IOException {
-        JMXServiceURL jmxServiceURL = new JMXServiceURL(url);
+        var jmxServiceURL = new JMXServiceURL(url);
         Map<String, String[]> env = new HashMap<>();
         String[] creds = {username, password};
         env.put(JMXConnector.CREDENTIALS, creds);
         try {
-            jmxc = connectWithTimeout(jmxServiceURL, env, 1000*5);
+            jmxc = connectWithTimeout(jmxServiceURL, env, 1000*5l);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IOException("JMX connection interrupted");
@@ -44,13 +44,13 @@ public class JmxConnector extends AbstractConnector {
 
 
     public JmxConnector(String url) throws IOException {
-        JMXServiceURL jmxServiceURL = new JMXServiceURL(url);
+        var jmxServiceURL = new JMXServiceURL(url);
         jmxc = JMXConnectorFactory.connect(jmxServiceURL, null);
         mbsc = jmxc.getMBeanServerConnection();
     }
 
     public String getObject(String objectName, String attribute) throws MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException, IOException {
-        ObjectName objectName1 = new ObjectName(objectName);
+        var objectName1 = new ObjectName(objectName);
         Object value = mbsc.getAttribute(objectName1, attribute);
         return String.valueOf(value);
     }

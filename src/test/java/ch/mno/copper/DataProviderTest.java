@@ -20,10 +20,10 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DataProviderTest {
+class DataProviderTest {
 
     @Test
-    public void testAfterNewStory() throws IOException, ConnectorException {
+    void testAfterNewStory() throws IOException, ConnectorException {
         StoriesFacadeMock storiesFacade = new StoriesFacadeMock();
         MapValuesStore valuesStore = new MapValuesStore();
         DataProviderImpl dataprovider = new DataProviderImpl(storiesFacade, valuesStore);
