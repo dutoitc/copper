@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Disabled;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -20,7 +19,7 @@ class LocalTest {
     private static StoryGrammar grammar;
 
     @BeforeAll
-    public static void init() throws FileNotFoundException {
+    public static void init() {
         grammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 

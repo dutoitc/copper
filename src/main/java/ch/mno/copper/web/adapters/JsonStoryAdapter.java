@@ -9,7 +9,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 
 public class JsonStoryAdapter<T extends StoryWEBDTO> extends TypeAdapter<StoryWEBDTO> {
-        public StoryWEBDTO read(JsonReader reader) throws IOException {
+        public StoryWEBDTO read(JsonReader reader) {
             return null;
         }
 

@@ -55,7 +55,7 @@ public class DiskHelper {
     public void updateStory(String storyName, String storyText) throws IOException {
         File file = new File(storiesFolder + '/' + storyName);
         if (!file.exists()) {
-            throw new FileAlreadyExistsException("Error: the file " + file.getName() + " must already exists.");
+            throw new NoSuchFileException("Error: the file " + file.getName() + " must already exists.");
         }
         try (FileWriter fw = new FileWriter(file)) {
             fw.write(storyText);
@@ -117,7 +117,7 @@ public class DiskHelper {
         return screens;
     }
 
-    public String findScreenData(String filename) throws IOException {
-        return IOUtils.toString(new FileReader(screensFolder+File.separatorChar + filename));
+    public String findScreenData(String storyName) throws IOException {
+        return IOUtils.toString(new FileReader(screensFolder+File.separatorChar + storyName));
     }
 }
