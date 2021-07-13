@@ -13,10 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBServerManual extends DBServer implements AutoCloseable {
-    private static Logger LOG = LoggerFactory.getLogger(DBServerManual.class);
     static String DBURL = "jdbc:h2:./copperdb"; // static for tests
+    private static Logger LOG = LoggerFactory.getLogger(DBServerManual.class);
     private final String DBUSER = "";
     private final String DBPASS = "";
+    private final int port;
 
     private Server server;
     private JdbcConnectionPool pool;
@@ -26,8 +27,13 @@ public class DBServerManual extends DBServer implements AutoCloseable {
             DBURL = System.getProperty("copper.db.url");
         }
 
-        server = Server.createWebServer("-webAllowOthers", "-browser", "-webPort", "" + webPort);
+        if (webPort > 0) {
+            server = Server.createWebServer("-webAllowOthers", "-browser", "-webPort", "" + webPort);
+        } else {
+            server = Server.createWebServer("-webAllowOthers", "-browser");
+        }
         server.start();
+        port = server.getPort();
         LOG.info("Server DB started");
         pool = JdbcConnectionPool.create(DBURL, DBUSER, DBPASS);
         cp = pool;
@@ -148,5 +154,9 @@ public class DBServerManual extends DBServer implements AutoCloseable {
             throw new RuntimeException("An error occured while initializing DB: " + e2.getMessage(), e2);
         }
         LOG.info("Database checked");
+    }
+
+    public int getPort() {
+        return port;
     }
 }

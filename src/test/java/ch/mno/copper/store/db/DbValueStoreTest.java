@@ -35,7 +35,7 @@ class DbValueStoreTest {
     @BeforeEach
     void init() throws SQLException {
         DBServerManual.DBURL = "jdbc:h2:./copperdbtst";
-        server = new DBServerManual(false, 12345);
+        server = new DBServerManual(false, 0);
         store = new DBValuesStore(server);
         store.clearAllData();
         store.put("key1", "value10", i5);
