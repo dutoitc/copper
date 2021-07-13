@@ -3,7 +3,6 @@ package ch.mno.copper.store;
 import ch.mno.copper.helpers.NotImplementedException;
 import ch.mno.copper.store.data.InstantValues;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,7 +47,7 @@ public class MapValuesStore implements ValuesStore {
     public List<InstantValues> queryValues(Instant from, Instant to, long intervalSecond, List<String> columns, int maxValues) {
         List<InstantValues> values = new ArrayList<>();
         map.values().forEach(storeValue -> {
-            InstantValues instantValues = new InstantValues();
+            var instantValues = new InstantValues();
             instantValues.setTimestamp(storeValue.timestampFrom);
             instantValues.put(storeValue.getKey(), storeValue.toInstantValue());
             values.add(instantValues);
@@ -57,12 +56,12 @@ public class MapValuesStore implements ValuesStore {
     }
 
     @Override
-    public void load() throws IOException {
+    public void load() {
         throw new NotImplementedException();
     }
 
     @Override
-    public void save() throws IOException {
+    public void save() {
         throw new NotImplementedException();
     }
 
@@ -91,7 +90,7 @@ public class MapValuesStore implements ValuesStore {
 
     /** Values as string for tests */
     public String getValuesAsString() {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         map.values().stream().sorted(Comparator.comparing(StoreValue::getKey)).forEach(e->sb.append("[").append(e.getKey()).append("=").append(e.getValue()).append("]"));
         return sb.toString();
     }

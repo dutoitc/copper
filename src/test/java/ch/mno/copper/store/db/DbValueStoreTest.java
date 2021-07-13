@@ -4,7 +4,6 @@ import ch.mno.copper.store.StoreValue;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
@@ -21,10 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by dutoitc on 29.09.2017.
  */
-@Disabled
-        // FIXME problem of port already taken while executing on server
 class DbValueStoreTest {
-
     Instant i3 = Instant.parse("2015-10-21T07:27:48.00Z");
     Instant i4 = Instant.parse("2015-10-21T07:27:49.00Z");
     Instant i5 = Instant.parse("2015-10-21T07:28:00.00Z");

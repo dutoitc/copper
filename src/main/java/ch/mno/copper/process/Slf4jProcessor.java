@@ -1,6 +1,5 @@
 package ch.mno.copper.process;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.report.Slf4jReporter;
 import ch.mno.copper.store.ValuesStore;
 
@@ -12,7 +11,7 @@ import java.util.List;
  */
 public class Slf4jProcessor extends AbstractProcessor {
 
-    private Slf4jReporter reporter;
+    Slf4jReporter reporter;
 
     public Slf4jProcessor(String name, List<String> valuesTrigger) {
         super(valuesTrigger);
@@ -21,19 +20,18 @@ public class Slf4jProcessor extends AbstractProcessor {
 
     @Override
     public void trig(ValuesStore valueStore, Collection<String> changedValueKeys) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Values changed: ");
+        var sb = new StringBuilder();
+        var label = "Values changed: ";
+        sb.append(label);
         changedValueKeys.forEach(key -> {
-                if (sb.length() > 16) sb.append(',');
+                    if (sb.length() > label.length()) {
+                        sb.append(',');
+                    }
                     sb.append(key).append('=').append(valueStore.getValue(key));
                 }
         );
-        if (sb.length() > 16) {
-            try {
-                reporter.report(sb.toString(), null);
-            } catch (ConnectorException e) {
-                e.printStackTrace();
-            }
+        if (sb.length() > label.length()) {
+            reporter.report(sb.toString(), null);
         }
     }
 }

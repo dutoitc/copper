@@ -1,11 +1,13 @@
 package ch.mno.copper.collect;
 
+import ch.mno.copper.AbstractWebPortSpringTest;
 import ch.mno.copper.collect.connectors.HttpResponseData;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,7 +15,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by xsicdt on 25/08/17.
  */
-class WebCollectorTest {
+class WebCollectorTest extends AbstractWebPortSpringTest {
+
+    @Test
+    void test1() {
+        Pair<String, String> p1 = Pair.of("responseCode","def1");
+        Pair<String, String> p2 = Pair.of("contentLength","def2");
+        Pair<String, String> p3 = Pair.of("contentType","def2");
+        Pair<String, String> p4 = Pair.of("body","def2");
+        Pair<String, String> p5 = Pair.of("regexp:Lorem (?<capture>.*) ipsodec","def2");
+        List<Pair<String, String>> valuesKept = Arrays.asList(p1, p2, p3, p4, p5);
+        List<String> values = WebCollector.query("http://localhost:" + port + "/query1", "user", "pass", valuesKept);
+        assertEquals("[200, 19, text/plain;charset=UTF-8, Lorem ipsum ipsodec, ipsum]", values.toString());
+    }
+
+    @Test
+    void testExceptionMustReturnCorrectNumberOfValues() {
+        Pair<String, String> p1 = Pair.of("regexp:.*","def2"); // Missing capture group -> exception
+        Pair<String, String> p2 = Pair.of("body","def2");
+        List<Pair<String, String>> valuesKept = Arrays.asList(p1,p2);
+        List<String> values = WebCollector.query("http://localhost:" + port + "/query1", "user", "pass", valuesKept);
+        assertEquals("[, ]", values.toString());
+    }
+
+    @Test
+    void testRegexNoMatchMustReturnCorrectNumberOfValues() {
+        Pair<String, String> p1 = Pair.of("regexp:missing capture group","def2");
+        Pair<String, String> p2 = Pair.of("body","def2");
+        List<Pair<String, String>> valuesKept = Arrays.asList(p1,p2);
+        List<String> values = WebCollector.query("http://localhost:" + port + "/query1", "user", "pass", valuesKept);
+        assertEquals("[?, Lorem ipsum ipsodec]", values.toString());
+    }
 
     @Test
     void test() {

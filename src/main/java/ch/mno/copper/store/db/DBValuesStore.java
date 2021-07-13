@@ -4,7 +4,6 @@ import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.store.data.InstantValues;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -97,12 +96,12 @@ public class DBValuesStore implements ValuesStore {
     }
 
     @Override
-    public void load() throws IOException {
+    public void load() {
         // Nothing yet
     }
 
     @Override
-    public void save() throws IOException {
+    public void save() {
         // Nothing yet
     }
 

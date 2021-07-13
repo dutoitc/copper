@@ -32,6 +32,8 @@ import java.util.Map;
 public class HttpConnector extends AbstractConnector {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpConnector.class);
+    public static final String EXCEPTION = "Exception: ";
+    public static final String ERROR = "Error ";
 
     private CloseableHttpClient httpclient;
     private HttpHost target;
@@ -46,22 +48,17 @@ public class HttpConnector extends AbstractConnector {
         this(hostname, port, scheme, null, -1, null, username, password);
     }
 
-    @Deprecated // plz specify scheme
-    public HttpConnector(String hostname, int port, String username, String password) {
-        this(hostname, port, null, null, -1, null, username, password);
-    }
-
     public HttpConnector(String hostname, int port, String scheme, String proxyHostname, int proxyPort, String proxyScheme, String username, String password) {
         connInfo = String.format("%s %s %s / %s %s %s / %s %s...", hostname, port, scheme, proxyHostname, proxyPort, proxyScheme, username, password==null?"":password.subSequence(0,3));
 
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        var httpClientBuilder = HttpClientBuilder.create();
         if (proxyHostname != null) {
-            HttpHost proxy = new HttpHost(proxyHostname, proxyPort, proxyScheme);
+            var proxy = new HttpHost(proxyHostname, proxyPort, proxyScheme);
             httpClientBuilder.setProxy(proxy);
         }
         if (username != null) {
             CredentialsProvider provider = new BasicCredentialsProvider();
-            UsernamePasswordCredentials credentials
+            var credentials
                     = new UsernamePasswordCredentials(username, password);
             provider.setCredentials(AuthScope.ANY, credentials);
             httpClientBuilder.setDefaultCredentialsProvider(provider);
@@ -69,11 +66,9 @@ public class HttpConnector extends AbstractConnector {
 
         // Trust all certificate, as Copper do only read values
         try {
-            SSLContextBuilder builder = new SSLContextBuilder();
-            builder.loadTrustMaterial(null, (x509Certificates, s) -> {
-                return true; // Trust everyone
-            });
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build());
+            var builder = new SSLContextBuilder();
+            builder.loadTrustMaterial(null, (x509Certificates, s) -> true); // Trust everyone
+            var sslsf = new SSLConnectionSocketFactory(builder.build());
             httpClientBuilder.setSSLSocketFactory(sslsf);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -84,45 +79,44 @@ public class HttpConnector extends AbstractConnector {
     }
 
     public String post(String uri, Map<String, String> values) throws ConnectorException {
-
-
-        HttpPost post = new HttpPost(uri);
+        var post = new HttpPost(uri);
         final List<NameValuePair> nvps = new ArrayList<>();
         for (Map.Entry<String, String> entry : values.entrySet()) {
             nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }
 
         post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
-//        post.setConfig(config);
 
         try (CloseableHttpResponse response = httpclient.execute(target, post)) {
             if (response.getStatusLine().getStatusCode() != 200) {
-                return "Error " + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase();
+                return ERROR + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase();
             }
             return EntityUtils.toString(response.getEntity()).trim();
         } catch (IOException e) {
-            throw new ConnectorException("Exception: " + e.getMessage(), e);
+            throw new ConnectorException(EXCEPTION + e.getMessage(), e);
         }
     }
 
     public String get(String uri) throws ConnectorException {
 
-        HttpGet request = new HttpGet(uri);
+        var request = new HttpGet(uri);
 
         try (CloseableHttpResponse response = httpclient.execute(target, request)) {
             if (response.getStatusLine().getStatusCode() != 200) {
                 logErrorResponse(uri, response);
-                return  "Error " + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase();
+                return  ERROR + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase();
             }
             return EntityUtils.toString(response.getEntity()).trim();
         } catch (IOException e) {
-            throw new ConnectorException("Exception: " + e.getMessage(), e);
+            throw new ConnectorException(EXCEPTION + e.getMessage(), e);
         }
     }
 
     private void logErrorResponse(String uri, CloseableHttpResponse response) throws IOException {
         LOG.error("Error reading get on {}: {} {}", uri, response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
-        LOG.error(EntityUtils.toString(response.getEntity()));
+        if (LOG.isErrorEnabled()) {
+            LOG.error(EntityUtils.toString(response.getEntity()));
+        }
         LOG.error("  - connInfo {}", connInfo);
         for (Header header: response.getAllHeaders()) {
             LOG.error("  - {} {}", header.getName(), header.getValue());
@@ -131,34 +125,34 @@ public class HttpConnector extends AbstractConnector {
 
     public HttpResponseData<String> get2(String uri) throws ConnectorException {
 
-        HttpGet request = new HttpGet(uri);
+        var request = new HttpGet(uri);
 
         try (CloseableHttpResponse response = httpclient.execute(target, request)) {
 
             HttpResponseData<String> data = new HttpResponseData<>();
             if (response.getStatusLine().getStatusCode() != 200) {
                 logErrorResponse(uri, response);
-                data.setData("Error " + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase());
+                data.setData(ERROR + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase());
             } else {
                 data.setData(EntityUtils.toString(response.getEntity()).trim());
             }
             data.setResponseCode(response.getStatusLine().getStatusCode());
 
-            Header lastHeader = response.getLastHeader("Content-Length");
+            var lastHeader = response.getLastHeader("Content-Length");
             if (lastHeader != null) {
                 data.setContentLength(lastHeader.getValue());
             }
 
 
-            Header lastHeader1 = response.getLastHeader("Content-Type");
+            var lastHeader1 = response.getLastHeader("Content-Type");
             if (lastHeader1 != null) {
                 data.setContentType(lastHeader1.getValue());
             }
 
             return data;
         } catch (IOException e) {
-            LOG.error("Exception: " + e.getMessage(), e);
-            throw new ConnectorException("Exception: " + e.getMessage(), e);
+            LOG.error(EXCEPTION + e.getMessage(), e);
+            throw new ConnectorException(EXCEPTION + e.getMessage(), e);
         }
     }
 

@@ -1,7 +1,6 @@
 package ch.mno.copper.collect.connectors;
 
 import ch.mno.copper.AbstractWebPortSpringTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -9,11 +8,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
 class HttpConnectorTest extends AbstractWebPortSpringTest {
 
     @Test
-    @Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
     void ping1() throws Exception {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             String value = conn.get("/ping1");
@@ -22,8 +19,7 @@ class HttpConnectorTest extends AbstractWebPortSpringTest {
     }
 
     @Test
-    @Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
-    void test2() throws ConnectorException {
+    void test2() {
         // Port non ouvert + 10
         try (HttpConnector conn = new HttpConnector("localhost", port + 10, "http")) {
             String res = conn.get("/something");
@@ -35,7 +31,6 @@ class HttpConnectorTest extends AbstractWebPortSpringTest {
 
 
     @Test
-    @Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
     void test3() throws ConnectorException {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             Map<String, String> nvs = new HashMap<>();
@@ -47,7 +42,6 @@ class HttpConnectorTest extends AbstractWebPortSpringTest {
     }
 
     @Test
-    @Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
     void testErr() throws ConnectorException {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             String res = conn.get("/err404");
@@ -56,7 +50,6 @@ class HttpConnectorTest extends AbstractWebPortSpringTest {
     }
 
     @Test
-    @Disabled // FIXME unstable test on Jenkins (parallelization problem ?)
     void testErrPost() throws ConnectorException {
         try (HttpConnector conn = new HttpConnector("localhost", port, "http")) {
             Map<String, String> nvs = new HashMap<>();
