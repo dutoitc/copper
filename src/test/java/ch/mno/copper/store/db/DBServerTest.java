@@ -30,6 +30,7 @@ class DBServerTest {
     Instant i7 = Instant.parse("2015-10-21T07:28:02.00Z");
     Instant i8 = Instant.parse("2015-10-21T07:28:03.00Z");
     Instant i9 = Instant.parse("2045-10-21T07:28:00.00Z");
+
     @Autowired
     private DBServer server;
 
@@ -187,7 +188,6 @@ class DBServerTest {
         Instant from = Instant.parse("2020-10-21T00:09:59.00Z");
         Instant to = Instant.parse("2020-10-21T00:19:59.00Z");
 
-        Thread.sleep(1000*3600);
         assertEquals(10, server.readInstant(Arrays.asList("key187"), from, to, 60, 10000).size());
     }
 
