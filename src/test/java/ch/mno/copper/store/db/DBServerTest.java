@@ -11,6 +11,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.SQLException;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {
         CopperApplication.class
-}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) // NONE
 class DBServerTest {
 
     Instant i3 = Instant.parse("2015-10-21T07:27:58.00Z");
@@ -37,7 +39,7 @@ class DBServerTest {
     }
 
     @BeforeEach
-    void init() throws SQLException {
+    void init() {
         server.clearAllData();
         server.insert("key1", "value10", i5);
         server.insert("key2", "value20", i5);
@@ -148,6 +150,47 @@ class DBServerTest {
         server.readLatest().forEach(v -> sb.append(v.getKey()).append(':').append(v.getValue()).append(';'));
         assertEquals("key1:value10;key2:value20;key3:value31;key4:value42;", sb.toString());
     }
+
+    @Test
+    void testDeleteValuesOfKey() throws SQLException {
+        assertEquals("value31", server.readLatest("key3").getValue());
+        assertEquals("value42", server.readLatest("key4").getValue());
+        assertEquals(2, server.deleteValuesOfKey("key3"));
+        assertNull(server.readLatest("key3"));
+        assertEquals("value42", server.readLatest("key4").getValue());
+    }
+
+    @Test
+        // Note: need some improvments; do not delete when dateTo is specified (=last values)
+    void deleteValuesOlderThanXDays() throws SQLException {
+        assertEquals("value31", server.readLatest("key3").getValue());
+        assertEquals("value42", server.readLatest("key4").getValue());
+        assertEquals(3, server.deleteValuesOlderThanXDays(1));
+    }
+
+    @Test
+    void findAlerts() {
+        for (int i = 0; i < 100; i++) {
+            server.insert("key3", "value35-" + i, i7);
+            server.insert("key4", "value42-" + i, i6);
+        }
+        assertEquals("key4:103\n" +
+                "key3:102\n", server.findAlerts());
+    }
+
+    @Test
+    void testReadInstant() throws InterruptedException {
+        Instant instant = Instant.parse("2020-10-21T00:00:00.00Z");
+        for (int i = 0; i < 60; i++) {
+            server.insert("key187", "" + i, instant.plus(i, ChronoUnit.MINUTES));
+        }
+        Instant from = Instant.parse("2020-10-21T00:09:59.00Z");
+        Instant to = Instant.parse("2020-10-21T00:19:59.00Z");
+
+        Thread.sleep(1000*3600);
+        assertEquals(10, server.readInstant(Arrays.asList("key187"), from, to, 60, 10000).size());
+    }
+
 
     // 1000->17s/23ms/22ms
     // 10000->428s/60ms/58ms

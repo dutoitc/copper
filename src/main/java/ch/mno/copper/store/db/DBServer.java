@@ -1,13 +1,15 @@
 package ch.mno.copper.store.db;
 
 import ch.mno.copper.store.StoreValue;
-import ch.mno.copper.store.data.InstantValue;
 import ch.mno.copper.store.data.InstantValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,34 +26,36 @@ import java.util.List;
  */
 public class DBServer implements AutoCloseable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DBServer.class);
     public static final Instant INSTANT_MAX = Instant.parse("3000-12-31T00:00:00.00Z");
+    private static final Logger LOG = LoggerFactory.getLogger(DBServer.class);
+    public static final String AN_ERROR_OCCURED_WHILE_READING_VALUES = "An error occured while reading values";
+    public static final String AN_ERROR_OCCURED_WHILE_SAVING_VALUES = "An error occured while saving values";
     protected DataSource cp;
-
 
 
     /**
      * Delete all DB store
      */
     public void clearAllData() {
-        String sql = "delete from valuestore";
-        try (Connection con = cp.getConnection()) {
-            int nbRows;
+        var sql = "delete from valuestore";
+        try (var con = cp.getConnection()) {
             try (PreparedStatement ps = con.prepareStatement(sql)) {
-                nbRows = ps.executeUpdate();
+                int nbRows = ps.executeUpdate();
+                LOG.info("Deleted {} lines", nbRows);
             }
-            LOG.info("Deleted {} lines", nbRows);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Find next sequence number
+     */
     private long nextSequence() throws SQLException {
-        String sqlNextSequence = "select nextval('SEQ_VALUESTORE_ID')";
+        var sqlNextSequence = "select nextval('SEQ_VALUESTORE_ID')";
 
-        try (Connection con2 = cp.getConnection()) {
-            // Find next sequence number
-            try (ResultSet rs = con2.prepareCall(sqlNextSequence).executeQuery()) {
+        try (var con2 = cp.getConnection()) {
+            try (var rs = con2.prepareCall(sqlNextSequence).executeQuery()) {
                 if (!rs.next()) throw new RuntimeException("Sequence error");
                 return rs.getLong(1);
             }
@@ -61,26 +65,15 @@ public class DBServer implements AutoCloseable {
     /**
      * Insert a value at given instant. Actuve value will be finished at the same instant. no store is inserted if current value is the same value
      */
-    public void insert(String key, String value, Instant instant) throws SQLException {
-        String sqlInsert = "INSERT INTO valuestore ( idvaluestore, key, value, datefrom, dateto) VALUES (?,?,?,?,?)";
-        String sqlUpdatePrevious = "update valuestore set dateto=? where idvaluestore=?";
+    public void insert(String key, String value, Instant instant) {
+        var sqlInsert = "INSERT INTO valuestore ( idvaluestore, key, value, datefrom, dateto) VALUES (?,?,?,?,?)";
 
-        try (Connection con = cp.getConnection();
+        try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sqlInsert)) {
             // no store is inserted if current value is the same value
             StoreValue previousValue = readLatest(key);
-            if (previousValue != null) {
-                if (previousValue.getValue() == null) {
-                    if (value == null) {
-                        return; // No update
-                    }
-                } else {
-                    if (previousValue.getValue().equals(value)) {
-                        return; // No update
-                    }
-                }
-            }
-            if (value==null ) value="";
+            if (!needUpdate(value, previousValue)) return; // No update
+            if (value == null) value = "";
 
             long id = nextSequence();
             stmt.setLong(1, id);
@@ -99,52 +92,76 @@ public class DBServer implements AutoCloseable {
                     throw new RuntimeException("Cannot insert value in the past for key " + key + ", old.start=" + previousValue.getTimestampFrom() + ", new.start=" + instant);
                 }
 
-                try (PreparedStatement stmt2 = con.prepareStatement(sqlUpdatePrevious)) {
-                    stmt2.setTimestamp(1, Timestamp.from(instant));
-                    stmt2.setLong(2, previousValue.getId());
-                    stmt2.executeUpdate();
-                } catch (SQLException e) {
-                    throw new RuntimeException("Cannot update previous value: " + e.getMessage(), e);
-                }
+                update(instant, con, previousValue);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while saving values", e);
+            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
+        }
+    }
+
+    private boolean needUpdate(String value, StoreValue previousValue) {
+        if (previousValue != null) {
+            if (previousValue.getValue() == null) {
+                if (value == null) {
+                    return false;
+                }
+            } else {
+                if (previousValue.getValue().equals(value)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void update(Instant instant, Connection con, StoreValue previousValue) {
+        var sqlUpdatePrevious = "update valuestore set dateto=? where idvaluestore=?";
+        try (PreparedStatement stmt2 = con.prepareStatement(sqlUpdatePrevious)) {
+            stmt2.setTimestamp(1, Timestamp.from(instant));
+            stmt2.setLong(2, previousValue.getId());
+            stmt2.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Cannot update previous value: " + e.getMessage(), e);
         }
     }
 
     /**
      * Read the 'key' value at given instant
      */
-    public StoreValue read(String key, Instant timestamp) throws SQLException {
-        String sql = "SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where key=? and datefrom<=? and dateto>? order by datefrom";
-        try (Connection con = cp.getConnection();
+    public StoreValue read(String key, Instant timestamp) {
+        var sql = "SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where key=? and datefrom<=? and dateto>? order by datefrom";
+        try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, key);
             stmt.setTimestamp(2, Timestamp.from(timestamp));
             stmt.setTimestamp(3, Timestamp.from(timestamp));
             List<StoreValue> values;
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (var rs = stmt.executeQuery()) {
                 values = new ArrayList<>();
                 while (rs.next()) {
                     values.add(StoreValueMapper.map(rs, false));
                 }
             }
 
-            if (values.size() == 0) {
+            if (values.isEmpty()) {
                 return null;
             }
             if (values.size() == 1) {
                 return values.get(0);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while saving values", e);
+            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
 
 
         throw new RuntimeException("Too much value for key=" + key + ", instant=" + timestamp.getEpochSecond());
     }
 
-    public  List<InstantValues> readInstant(List<String> keys, Instant timestampFrom, Instant timestampTo, long intervalSeconds, int maxValues) throws SQLException {
+
+    /** Query some values at some interval of time, to plot graph */
+    // recursive not working with date, only char...
+    // TODO: virer recursive, générer les valeurs récursive ?
+    public List<InstantValues> readInstant(List<String> keys, Instant timestampFrom, Instant timestampTo, long intervalSeconds, int maxValues) {
         String sql = "select * from (" +
                 "select ts,c1, value, idValueStore, key from ( " +
                 "select ts, c1 from ( " +
@@ -159,26 +176,26 @@ public class DBServer implements AutoCloseable {
                 " FETCH FIRST " + maxValues + " ROWS ONLY " +
                 ") order by ts, key";
 
-        StringBuilder s = new StringBuilder();
+        var s = new StringBuilder();
         s.append('?');
-        for (int i = 1; i < keys.size(); i++) {
+        for (var i = 1; i < keys.size(); i++) {
             s.append("),(?");
         }
         sql = sql.replace("XXX", s.toString());
-        try (Connection con = cp.getConnection();
+        try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setTimestamp(1, Timestamp.from(timestampFrom));
             stmt.setLong(2, intervalSeconds);
             stmt.setTimestamp(3, Timestamp.from(timestampTo));
-            for (int i = 0; i < keys.size(); i++) {
+            for (var i = 0; i < keys.size(); i++) {
                 stmt.setString(4 + i, keys.get(i));
             }
             List<InstantValues> values;
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (var rs = stmt.executeQuery()) {
                 values = new ArrayList<>();
                 InstantValues last = null;
                 while (rs.next()) {
-                    InstantValue instantValue = InstantValueMapper.map(rs);
+                    var instantValue = InstantValueMapper.map(rs);
                     if (last == null || !instantValue.getTimestamp().equals(last.getTimestamp())) {
                         last = new InstantValues();
                         last.setTimestamp(instantValue.getTimestamp());
@@ -189,7 +206,7 @@ public class DBServer implements AutoCloseable {
             }
             return values;
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while reading values", e);
+            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
         }
     }
 
@@ -207,7 +224,7 @@ public class DBServer implements AutoCloseable {
                 "order by datefrom desc " +
                 " FETCH FIRST " + maxValues + " ROWS ONLY " +
                 ") order by datefrom";
-        try (Connection con = cp.getConnection();
+        try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, key);
             stmt.setTimestamp(2, Timestamp.from(timestampFrom));
@@ -217,7 +234,7 @@ public class DBServer implements AutoCloseable {
             stmt.setTimestamp(6, Timestamp.from(timestampFrom));
             stmt.setTimestamp(7, Timestamp.from(timestampTo));
             List<StoreValue> values;
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (var rs = stmt.executeQuery()) {
                 values = new ArrayList<>();
                 while (rs.next()) {
                     values.add(StoreValueMapper.map(rs, false));
@@ -225,61 +242,61 @@ public class DBServer implements AutoCloseable {
             }
             return values;
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while saving values", e);
+            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
     }
 
     /**
      * Read the latest value of a key)
      */
-    public  StoreValue readLatest(String key) throws SQLException {
-        try (Connection con = cp.getConnection();
+    public StoreValue readLatest(String key) {
+        try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto FROM valuestore where key=? and dateto=?")) {
             stmt.setString(1, key);
             stmt.setTimestamp(2, Timestamp.from(INSTANT_MAX));
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (var rs = stmt.executeQuery()) {
                 if (!rs.next()) return null;
                 return StoreValueMapper.map(rs, false);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while saving values", e);
+            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
     }
 
     /**
      * Read all latest values
      */
-    public  List<StoreValue> readLatest() throws SQLException {
+    public List<StoreValue> readLatest() {
         List<StoreValue> values = new ArrayList<>();
-        try (Connection con = cp.getConnection();
+        try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto,\n" +
                      "(select count(*) from valuestore vs2 where vs2.key = vs.key) as nbValues\n" +
                      "FROM valuestore vs\n" +
                      "where dateto=?")) {
             stmt.setTimestamp(1, Timestamp.from(INSTANT_MAX));
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (var rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     values.add(StoreValueMapper.map(rs, true));
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while saving values", e);
+            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
         return values;
     }
 
     public String findAlerts() {
-        String sql="\n" +
+        String sql = "\n" +
                 "        select key, count(*) as nb\n" +
                 "        from valuestore\n" +
                 "        group by key\n" +
                 "        having count(*)>100\n" +
                 "        order by count(*) desc";
 
-        StringBuilder sb = new StringBuilder();
-        try (Connection con = cp.getConnection();
+        var sb = new StringBuilder();
+        try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (var rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     sb.append(rs.getString("key"));
                     sb.append(':');
@@ -289,26 +306,26 @@ public class DBServer implements AutoCloseable {
                 return sb.toString();
             }
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while saving values", e);
+            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
     }
 
     /**
      * Read keys updated between from(inclusive) ant to(exclusive)
      */
-    public  Collection<String> readUpdatedKeys(Instant from, Instant to) {
+    public Collection<String> readUpdatedKeys(Instant from, Instant to) {
         List<String> values = new ArrayList<>();
-        try (Connection con = cp.getConnection();
-            PreparedStatement stmt = con.prepareStatement("SELECT distinct key FROM valuestore where datefrom>=? and datefrom<?")) {
+        try (var con = cp.getConnection();
+             PreparedStatement stmt = con.prepareStatement("SELECT distinct key FROM valuestore where datefrom>=? and datefrom<?")) {
             stmt.setTimestamp(1, Timestamp.from(from));
             stmt.setTimestamp(2, Timestamp.from(to));
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (var rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     values.add(rs.getString("key"));
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while reading values", e);
+            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
         }
         return values;
     }
@@ -319,11 +336,11 @@ public class DBServer implements AutoCloseable {
     }
 
     public int deleteValuesOlderThanXDays(int nbDays) {
-        try (Connection con = cp.getConnection();
+        try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement("DELETE from valuestore where dateto<DATEADD('DAY',-" + nbDays + ", CURRENT_DATE)")) {
             return stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while reading values", e);
+            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
         }
     }
 
@@ -331,11 +348,11 @@ public class DBServer implements AutoCloseable {
         if (key.contains(";")) {
             throw new RuntimeException("SQL Injection error"); // Really simple protection
         }
-        try (Connection con = cp.getConnection();
-             PreparedStatement stmt = con.prepareStatement("DELETE from valuestore where key='" + key + "'")) {
+        try (var con = cp.getConnection();
+             var stmt = con.prepareStatement("DELETE from valuestore where key='" + key + "'")) {
             return stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("An error occured while reading values", e);
+            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
         }
     }
 }

@@ -25,19 +25,11 @@ public class DBValuesStore implements ValuesStore {
 
     @Override
     public void put(String key, String value) {
-        try {
-            server.insert(key, value, Instant.now());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        server.insert(key, value, Instant.now());
     }
 
     public void put(String key, String value, Instant d) {
-        try {
-            server.insert(key, value, d);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        server.insert(key, value, d);
     }
 
     public void clearAllData() {
@@ -47,11 +39,7 @@ public class DBValuesStore implements ValuesStore {
     @Override
     public String getValue(String key) {
         StoreValue storeValue;
-        try {
-            storeValue = server.readLatest(key);
-        } catch (SQLException e) {
-            throw new RuntimeException("Cannot readInstant value " + key + ": " + e.getMessage());
-        }
+        storeValue = server.readLatest(key);
         if (storeValue == null) {
             return ""; // no store
         }
@@ -60,12 +48,9 @@ public class DBValuesStore implements ValuesStore {
 
     @Override
     public Map<String, StoreValue> getValues() {
-        try {
-            return server.readLatest().stream()
-                    .collect(Collectors.toMap(StoreValue::getKey, x -> x, (a, b)->b)); // Ignoring duplicate, keep last
-        } catch (SQLException e) {
-            throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
-        }
+        return server.readLatest().stream()
+                .collect(Collectors.toMap(StoreValue::getKey, x -> x, (a, b) -> b)); // Ignoring duplicate, keep last
+
     }
 
     @Override
@@ -88,11 +73,8 @@ public class DBValuesStore implements ValuesStore {
 
     @Override
     public List<InstantValues> queryValues(Instant from, Instant to, long intervalSecond, List<String> columns, int maxValues) {
-        try {
-            return server.readInstant(columns, from, to, intervalSecond, maxValues);
-        } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return server.readInstant(columns, from, to, intervalSecond, maxValues);
+
     }
 
     @Override
@@ -107,12 +89,9 @@ public class DBValuesStore implements ValuesStore {
 
     @Override
     public Map<String, String> getValuesMapString() {
-        try {
-            return server.readLatest().stream()
-                    .collect(Collectors.toMap(StoreValue::getKey, StoreValue::getValue));
-        } catch (SQLException e) {
-            throw new RuntimeException("Cannot readInstant values: " + e.getMessage(), e);
-        }
+        return server.readLatest().stream()
+                .collect(Collectors.toMap(StoreValue::getKey, StoreValue::getValue));
+
     }
 
     @Override
