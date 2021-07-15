@@ -5,6 +5,14 @@ public class StoryPostDTO {
         private String storyName;
         private String storyText;
 
+        public static StoryPostDTO of(String originalStoryName, String storyName, String storyText) {
+            StoryPostDTO dto = new StoryPostDTO();
+            dto.setOriginalStoryName(originalStoryName);
+            dto.setStoryName(storyName);
+            dto.setStoryText(storyText);
+            return dto;
+        }
+
         public String getOriginalStoryName() {
             return originalStoryName;
         }

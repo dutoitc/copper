@@ -3,7 +3,6 @@ package ch.mno.copper.web;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.daemon.CopperDaemon;
 import ch.mno.copper.store.ValuesStore;
-import ch.mno.copper.stories.DiskHelper;
 import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryValidationResult;
@@ -16,7 +15,6 @@ import ch.mno.copper.web.dto.StoryWEBDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +36,6 @@ public class CopperAdminServices {
     private final ValuesStore valuesStore;
     private final StoriesFacade storiesFacade;
     private final CopperDaemon daemon;
-
-    @Autowired
-    private DiskHelper diskHelper;
 
     public CopperAdminServices(ValuesStore valuesStore, final StoriesFacade storiesFacade, final CopperDaemon daemon) {
         this.valuesStore = valuesStore;
@@ -95,20 +90,17 @@ public class CopperAdminServices {
         return "Story " + storyName + " deleted.";
     }
 
-
     @DeleteMapping(value = "values/olderThanOneMonth", produces = MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
     public String deleteValuesOlderThanOneMonth() {
         return valuesStore.deleteValuesOlderThanXDays(30);
     }
 
-
     @DeleteMapping(value = "values/olderThanThreeMonth", produces = MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
     public String deleteValuesOlderThanThreeMonth() {
         return valuesStore.deleteValuesOlderThanXDays(90);
     }
-
 
     @DeleteMapping(value = "values/bykey/{key}", produces = MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
@@ -117,9 +109,7 @@ public class CopperAdminServices {
     }
 
     @GetMapping("stories")
-    @ApiOperation(value = "Retrieve all stories",
-            notes = "")
-
+    @ApiOperation(value = "Retrieve all stories", notes = "")
     public String getStories() {
         Gson gson = new GsonBuilder().registerTypeAdapter(StoryWEBDTO.class, new JsonStoryAdapter<>()).create();
 
@@ -128,7 +118,6 @@ public class CopperAdminServices {
                 .collect(Collectors.toList());
         return gson.toJson(stories);
     }
-
 
     @GetMapping(value = "story/{storyName}")
     @ApiOperation(value = "Retrieve story by name",
@@ -150,6 +139,13 @@ public class CopperAdminServices {
         return buildGson().toJson(buildOverview());
     }
 
+    @PostMapping(value = "value/{valueName}", produces = MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "Method to set or update a value",
+            notes = "")
+    public String postValue(@PathVariable("valueName") String valueName, @RequestBody String value) {
+        valuesStore.put(valueName, value);
+        return "OK";
+    }
 
     @PostMapping("validation/story")
     @ApiOperation(value = "Validation of a posted story",
@@ -157,8 +153,6 @@ public class CopperAdminServices {
     public StoryValidationResult validateStory(@RequestBody String story) {
         return storiesFacade.validate(story);
     }
-
-
 
     private OverviewDTO buildOverview() {
         OverviewDTO overview = new OverviewDTO();
