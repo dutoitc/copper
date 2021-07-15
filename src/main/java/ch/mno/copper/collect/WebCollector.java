@@ -16,7 +16,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -26,19 +25,12 @@ public class WebCollector {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebCollector.class);
 
-    public String read(JmxConnector jmxConnector, String objectName, String attribute) throws IOException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException {
-        return jmxConnector.getObject(objectName, attribute);
-    }
-
-
     public static List<String> query(String url, String username, String password, List<Pair<String, String>> valuesKept) {
-        HttpConnector conn = null;
-
         String host;
         int port;
         String scheme;
         try {
-            URL urlObj = new URL(url);
+            var urlObj = new URL(url);
             host = urlObj.getHost();
             port = urlObj.getPort();
 //            path = url.substring(url.indexOf(urlObj.getPath())); // Hack to have path, query and hash
@@ -47,14 +39,8 @@ public class WebCollector {
             throw new RuntimeException(e.getMessage());
         }
 
-        List<String> results=null;
-        try {
-            if (username==null) {
-                conn = new HttpConnector(host, port, scheme);
-            } else {
-                conn = new HttpConnector(host, port, scheme, username, password);
-            }
-
+        List<String> results = null;
+        try (var conn = buildHttpConnector(username, password, host, port, scheme)) {
             HttpResponseData<String> data = conn.get2(url);
 
             results = extractValues(data, valuesKept);
@@ -63,34 +49,37 @@ public class WebCollector {
             if (LOG.isTraceEnabled()) {
                 e.printStackTrace();
             }
-            if (results==null) {
+            if (results == null) {
                 results = new ArrayList<>(valuesKept.size());
             }
-            for (int i=results.size(); i<valuesKept.size(); i++) {
+            for (int i = results.size(); i < valuesKept.size(); i++) {
                 results.add("");
-            }
-        } finally {
-            if (conn!=null) {
-                conn.close();
             }
         }
         return results;
     }
 
+    private static HttpConnector buildHttpConnector(String username, String password, String host, int port, String scheme) {
+        if (username == null) {
+            return new HttpConnector(host, port, scheme);
+        }
+        return new HttpConnector(host, port, scheme, username, password);
+    }
+
     static List<String> extractValues(HttpResponseData<String> data, List<Pair<String, String>> valuesKept) {
         List<String> results = new ArrayList<>(valuesKept.size());
-        for (Pair<String, String> value: valuesKept) {
+        for (Pair<String, String> value : valuesKept) {
             String key = value.getKey();
             if ("responseCode".equals(key)) {
                 results.add(String.valueOf(data.getResponseCode()));
             } else if ("contentLength".equals(key)) {
-                results.add(String.valueOf(data.getContentLength()));}
-            else if ("contentType".equals(key)) {
+                results.add(String.valueOf(data.getContentLength()));
+            } else if ("contentType".equals(key)) {
                 results.add(String.valueOf(data.getContentType()));
             } else if ("*".equals(key) || "body".equals(key)) {
                 results.add(data.getData());
             } else if (key.startsWith("regexp:")) {
-                Matcher matcher = Pattern.compile(key.substring(7)).matcher(data.getData());
+                var matcher = Pattern.compile(key.substring(7)).matcher(data.getData());
                 if (matcher.find()) {
                     results.add(matcher.group("capture"));
                 } else {
@@ -118,7 +107,7 @@ public class WebCollector {
                 }
             } else if (o instanceof String) {
                 results.add((String) o);
-            } else if (o==null) {
+            } else if (o == null) {
                 results.add("null");
             } else {
                 results.add(o.toString());
@@ -127,6 +116,10 @@ public class WebCollector {
             LOG.error("JsonPath not found: {}", key);
             results.add("?");
         }
+    }
+
+    public String read(JmxConnector jmxConnector, String objectName, String attribute) throws IOException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException {
+        return jmxConnector.getObject(objectName, attribute);
     }
 
 }

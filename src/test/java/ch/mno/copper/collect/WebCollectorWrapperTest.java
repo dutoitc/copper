@@ -1,5 +1,6 @@
 package ch.mno.copper.collect;
 
+import ch.mno.copper.AbstractWebPortSpringTest;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import com.jayway.jsonpath.JsonPath;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by xsicdt on 29/02/16.
  */
-class WebCollectorWrapperTest {
+class WebCollectorWrapperTest extends AbstractWebPortSpringTest {
 
     private StoryGrammar storyGrammar;
 
@@ -53,18 +54,37 @@ class WebCollectorWrapperTest {
 
 
     @Test
-    @Disabled("to be reworked")
-    void test2() throws Exception {
+    void test2() {
         String jmx = "GIVEN COLLECTOR WEB WITH url=http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list\n" +
                 "    KEEP $.value[?(/value.WS_Services$/.test(@.Name))].Version AS value_VERSION\n" +
                 "THEN STORE VALUES";
         WebCollectorWrapper wrapper = WebCollectorWrapper.buildCollector(storyGrammar, jmx);
 
         // Local wrapper test
+        assertEquals("$.value[?(/value.WS_Services$/.test(@.Name))].Version", wrapper.valuesKept.get(0).getKey());
+        assertEquals("value_VERSION", wrapper.valuesKept.get(0).getValue());
+    }
+
+
+    @Test
+    void testLocal() {
+        String jmx = "GIVEN COLLECTOR WEB WITH url=http://localhost:" + port + "/ping1\n" +
+                "    KEEP responseCode AS WEB_STATUS\n" +
+                "    KEEP body AS BODY\n" +
+                "WHEN CRON */5 7-18 * * 1-5\n" +
+                "THEN STORE VALUES\n";
+        WebCollectorWrapper wrapper = WebCollectorWrapper.buildCollector(storyGrammar, jmx);
+
+
+        // Local wrapper test
         Map<String, String> res = wrapper.execute();
         String status = res.get("WEB_STATUS");
-        String lastReload = res.get("WEB_LAST_RELOAD");
+        String body = res.get("BODY");
+        System.out.println("Values: " + status + "," + body);
+        assertEquals("pong1", body);
+        assertEquals("200", status);
     }
+
 
     @Test
     @Disabled("to be reworked")

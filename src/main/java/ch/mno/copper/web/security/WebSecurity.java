@@ -12,10 +12,10 @@ import org.springframework.security.web.context.request.async.WebAsyncManagerInt
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
 
-    @Value("${copper.security.adminHeader:null}")
+    @Value("${copper.security.adminHeader:#{null}}")
     private String adminHeader;
 
-    @Value("${copper.security.adminRegex:null}")
+    @Value("${copper.security.adminRegex:#{null}}")
     private String adminRegex;
 
 

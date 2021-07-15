@@ -11,6 +11,8 @@ angular.module('copperApp.values', ['ngRoute'])
 .controller('ValuesCtrl', ['$http', '$scope', function($http, $scope) {
     var scope = $scope;
     var self=this;
+    var postValueKey="";
+    var postValue = "";
 
     $scope.sortBy='k';
     $scope.sortReverse=false;
@@ -98,6 +100,22 @@ angular.module('copperApp.values', ['ngRoute'])
 
         return filteredObject;
     };
+
+    $scope.doPostValue = function() {
+        $http.post('../ws/admin/value/'+$scope.postValueKey, $scope.postValue)
+            .then(
+                function(data, status) {
+                    if (data.data=="OK") {
+                        alert("Value posted !");
+                        $scope.refresh();
+                    } else {
+                        alert("Error: " + data.data);
+                    }
+                },
+                function(data, status) {
+                    alert("Exception: " + data.data);
+                });
+    }
 
 
 }]);

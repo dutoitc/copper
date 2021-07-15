@@ -28,4 +28,5 @@ public class HttpConnectorTestController {
     public String query1() {
         return "Lorem ipsum ipsodec";
     }
+
 }

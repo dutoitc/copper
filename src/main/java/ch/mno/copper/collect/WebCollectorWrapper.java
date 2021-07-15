@@ -1,6 +1,5 @@
 package ch.mno.copper.collect;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.NotImplementedException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.data.StoryGrammar;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -19,15 +17,15 @@ import java.util.regex.Pattern;
  */
 public class WebCollectorWrapper extends AbstractCollectorWrapper {
 
+    protected List<Pair<String, String>> valuesKept;
     private String url;
     private String username;
     private String password;
-    protected List<Pair<String, String>> valuesKept;
     private List<String> as;
 
-    public WebCollectorWrapper(String url, String username, String password, List<Pair<String, String>>  valuesKept) {
+    public WebCollectorWrapper(String url, String username, String password, List<Pair<String, String>> valuesKept) {
         this.url = url;
-        this.username =username;
+        this.username = username;
         this.password = password;
         this.valuesKept = valuesKept;
 
@@ -37,32 +35,9 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
         }
     }
 
-    @Override
-    public List<String> getAs() {
-        return as;
-    }
-
-    @Override
-    public Map<String, String> execute() {
-        List<String> values = WebCollector.query(url, username, password, valuesKept);
-        Map<String, String> map = new HashMap<>();
-        if (values.size()!=valuesKept.size()) {
-            throw new RuntimeException("Wrong values number, expected " + valuesKept.size() + ", got " + values.size());
-        }
-        for (int i=0; i<valuesKept.size(); i++) {
-            map.put(valuesKept.get(i).getValue(), values.get(i));
-        }
-        return map;
-    }
-
-    @Override
-    public List<List<String>> execute2D() throws ConnectorException {
-        throw new NotImplementedException();
-    }
-
     public static WebCollectorWrapper buildCollector(StoryGrammar grammar, String storyGiven) {
         String patternJMX = grammar.getPatternFull("COLLECTOR_WEB");
-        Matcher matcher = Pattern.compile(patternJMX, Pattern.DOTALL).matcher(storyGiven);
+        var matcher = Pattern.compile(patternJMX, Pattern.DOTALL).matcher(storyGiven);
         if (!matcher.find()) {
             int p = storyGiven.indexOf("COLLECTOR_WEB JMX");
             if (p > 0) {
@@ -76,10 +51,10 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
         String patSpace = grammar.getPatternFull("SPACE");
         String patEol = grammar.getPatternFull("EOL");
 
-        Matcher matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patEol + "(.*)", Pattern.DOTALL).matcher(collectorWebData);
+        var matcher2 = Pattern.compile("url=(.*),.*user=(.*?),.*password=(.*?)" + patEol + "(.*)", Pattern.DOTALL).matcher(collectorWebData);
         String queries;
         String url;
-        String username=null;
+        String username = null;
         String password = null;
         if (matcher2.find()) {
             url = matcher2.group(1);
@@ -96,7 +71,7 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
             }
         }
 
-        Matcher matcher3 = Pattern.compile("KEEP (.*?)" + patSpace + "AS (.*?)" + patSpaceEol).matcher(queries);
+        var matcher3 = Pattern.compile("KEEP (.*?)" + patSpace + "AS (.*?)" + patSpaceEol).matcher(queries);
         List<Pair<String, String>> valuesKept = new ArrayList<>();
         while (matcher3.find()) {
             String name1 = matcher3.group(1);
@@ -104,6 +79,29 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
             valuesKept.add(new ImmutablePair<>(name1, name2));
         }
         return new WebCollectorWrapper(url, username, password, valuesKept);
+    }
+
+    @Override
+    public List<String> getAs() {
+        return as;
+    }
+
+    @Override
+    public Map<String, String> execute() {
+        List<String> values = WebCollector.query(url, username, password, valuesKept);
+        Map<String, String> map = new HashMap<>();
+        if (values.size() != valuesKept.size()) {
+            throw new RuntimeException("Wrong values number, expected " + valuesKept.size() + ", got " + values.size());
+        }
+        for (var i = 0; i < valuesKept.size(); i++) {
+            map.put(valuesKept.get(i).getValue(), values.get(i));
+        }
+        return map;
+    }
+
+    @Override
+    public List<List<String>> execute2D() {
+        throw new NotImplementedException();
     }
 
 
