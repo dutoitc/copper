@@ -1,59 +1,23 @@
-package ch.mno.copper.collect;
+package ch.mno.copper.collect.builders;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
-import ch.mno.copper.helpers.NotImplementedException;
+import ch.mno.copper.collect.collectors.JmxCollector;
+import ch.mno.copper.collect.wrappers.JmxCollectorWrapper;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.data.StoryGrammar;
+import org.springframework.core.env.PropertyResolver;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by dutoitc on 07.02.2016.
- */
-public class JmxCollectorWrapper extends AbstractCollectorWrapper {
+public class JmxCollectorWrapperBuilder extends AbstractCollectorWrapperBuilder {
 
-    private String url;
-    private String username;
-    private String password;
-    protected List<JmxCollector.JmxQuery> jmxQueries;
-    protected List<String> as;
-
-    public JmxCollectorWrapper(String url, String username, String password, List<JmxCollector.JmxQuery> jmxQueries, List<String> as) {
-        this.url = url;
-        this.username =username;
-        this.password = password;
-        this.jmxQueries = jmxQueries;
-        this.as = as;
+    public JmxCollectorWrapperBuilder(StoryGrammar grammar, PropertyResolver propertyResolver) {
+        super(grammar, propertyResolver);
     }
 
-    public List<String> getAs() {
-        return as;
-    }
-
-    @Override
-    public Map<String, String> execute() throws ConnectorException {
-        List<String> values = JmxCollector.jmxQueryWithCreds(url, username, password, jmxQueries);
-        Map<String, String> map = new HashMap<>();
-        if (values.size()!=as.size()) {
-            throw new RuntimeException("Wrong values number, expected " + as.size() + ", got " + values.size());
-        }
-        for (int i=0; i<as.size(); i++) {
-            map.put(as.get(i), values.get(i));
-        }
-        return map;
-    }
-
-    @Override
-    public List<List<String>> execute2D() throws ConnectorException {
-        throw new NotImplementedException();
-    }
-
-    public static JmxCollectorWrapper buildCollector(StoryGrammar grammar, String storyGiven) {
+    public JmxCollectorWrapper buildCollector(String storyGiven) {
         // Temp: JMX
         String patternJMX = grammar.getPatternFull("COLLECTOR_JMX");
         Matcher matcher = Pattern.compile(patternJMX, Pattern.DOTALL).matcher(storyGiven);
@@ -86,10 +50,19 @@ public class JmxCollectorWrapper extends AbstractCollectorWrapper {
                 jmxQueries.add(new JmxCollector.JmxQuery(oName, att));
                 names.add(name);
             }
-            return new JmxCollectorWrapper(url, username, password, jmxQueries, names);
+            return buildInstance(url, username, password, jmxQueries, names);
         } else {
             throw new RuntimeException("Cannot readInstant COLLECTOR_JMX body in <" + collectorJmxData + ">");
         }
+    }
+
+    /**
+     * Build instance, with property conversion if present
+     */
+    private JmxCollectorWrapper buildInstance(String url, String username, String password, List<JmxCollector.JmxQuery> jmxQueries, List<String> names) {
+        username = resolveProperty(username);
+        password = resolveProperty(password);
+        return new JmxCollectorWrapper(url, username, password, jmxQueries, names);
     }
 
 }

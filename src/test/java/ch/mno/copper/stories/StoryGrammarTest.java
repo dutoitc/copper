@@ -1,13 +1,16 @@
 package ch.mno.copper.stories;
 
-import ch.mno.copper.collect.JdbcCollectorWrapper;
 import ch.mno.copper.collect.connectors.ConnectorException;
+import ch.mno.copper.collect.wrappers.CollectorWrapperFactory;
+import ch.mno.copper.collect.wrappers.JdbcCollectorWrapper;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.core.env.PropertyResolver;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -269,7 +272,8 @@ class StoryGrammarTest {
 
         Path path = Paths.get(resource.toURI());
         Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), "OracleStory1.txt");
-        JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) story.getCollectorWrapper();
+        CollectorWrapperFactory collectorWrapperFactory = new CollectorWrapperFactory(Mockito.mock(PropertyResolver.class), storyGrammar);
+        JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) collectorWrapperFactory.build(story.getGiven());
         assertEquals("jdbc:oracle:thin:@//myhost:1521/orcl", wrapper.getUrl());
         assertEquals("aUser", wrapper.getUsername());
         String query = wrapper.getQuery().replaceAll("\r", "");
@@ -291,7 +295,8 @@ class StoryGrammarTest {
 
         Path path = Paths.get(resource.toURI());
         Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), "OracleStory2.txt");
-        JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) story.getCollectorWrapper();
+        CollectorWrapperFactory collectorWrapperFactory = new CollectorWrapperFactory(Mockito.mock(PropertyResolver.class), storyGrammar);
+        JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) collectorWrapperFactory.build(story.getGiven());
         assertEquals("jdbc:oracle:thin:@host:port/instance", wrapper.getUrl());
         assertEquals("myuser", wrapper.getUsername());
     }

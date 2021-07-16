@@ -1,4 +1,4 @@
-package ch.mno.copper.collect;
+package ch.mno.copper.collect.collectors;
 
 import ch.mno.copper.collect.connectors.HttpConnector;
 import ch.mno.copper.collect.connectors.HttpResponseData;

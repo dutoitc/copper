@@ -10,6 +10,7 @@ import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.stories.data.StoryValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,16 +20,19 @@ import java.util.List;
 /**
  * Created by dutoitc on 23.02.2016.
  */
+@Component
 public class StoriesFacadeImpl implements StoriesFacade {
     private static final Logger LOG = LoggerFactory.getLogger(StoriesFacadeImpl.class);
 
     private final StoriesHolder storiesHolder = new StoriesHolder();
     private final StoryGrammar grammar;
     private final DiskHelper diskHelper;
+    private final StoryTaskBuilder storyTaskBuilder;
 
-    public StoriesFacadeImpl(DiskHelper diskHelper) {
+    public StoriesFacadeImpl(DiskHelper diskHelper, StoryTaskBuilder storyTaskBuilder, StoryGrammar grammar) {
         this.diskHelper = diskHelper;
-        grammar = new StoryGrammar(StoriesFacadeImpl.class.getResourceAsStream("/StoryGrammar.txt"));
+        this.storyTaskBuilder = storyTaskBuilder;
+        this.grammar = grammar;
     }
 
     @Override
@@ -49,7 +53,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
 
     @Override
     public StoryTask buildStoryTask(Story story, ValuesStore valuesStore) {
-        return StoryTaskBuilder.build(story, valuesStore);
+        return storyTaskBuilder.build(story, valuesStore);
     }
 
     @Override

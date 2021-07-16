@@ -4,6 +4,7 @@ import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.data.Story;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Set;
  * Stories and values provider with cache.
  * At each call, it will load newer stories from disk, remove older from cache
  */
+@Component
 public class DataProviderImpl implements DataProvider {
 
     private final StoriesFacade storiesFacade;

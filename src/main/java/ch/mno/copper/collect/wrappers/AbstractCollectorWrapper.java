@@ -1,4 +1,4 @@
-package ch.mno.copper.collect;
+package ch.mno.copper.collect.wrappers;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
 

@@ -137,6 +137,7 @@ Here is a little wishlist. Add yours (report to dutoitc@shimbawa.ch)
 # Customization
 Some JVM arguments could be set:
 * -Dcopper.properties=config/my.properties : use this properties file
+* -Dcustom.properties=... : additional properties file
 * -Dstories.folder=data/stories : use data/stories for stories folder (default: 'stories')
 * -Dserver.port=12345 : listen on port 12345 (default: 8080)
 * -Dserver.servlet.context-path=/mycontext/env-blah : use /mycontext/env-blah as WEB context (default: '/')

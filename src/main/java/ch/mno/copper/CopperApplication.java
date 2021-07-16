@@ -26,6 +26,7 @@ import java.io.IOException;
 @PropertySources(value = {
         @PropertySource(value = "file:copper.properties", ignoreResourceNotFound = true),
         @PropertySource(value = "file:${copper.properties}", ignoreResourceNotFound = true),
+        @PropertySource(value = "file:${custom.properties}", ignoreResourceNotFound = true),
         @PropertySource(value = "file:src/test/resources/copper.properties", ignoreResourceNotFound = true), // FIXME: better way to do this ? test configuration profile ?
 })
 public class CopperApplication {

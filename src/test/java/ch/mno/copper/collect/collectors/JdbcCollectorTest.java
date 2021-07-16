@@ -1,4 +1,4 @@
-package ch.mno.copper.collect;
+package ch.mno.copper.collect.collectors;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
 import org.junit.jupiter.api.Test;
@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class JdbcCollectorTest {
 
+    // TODO: builder test
 
     @Test
     void test1() throws Exception {

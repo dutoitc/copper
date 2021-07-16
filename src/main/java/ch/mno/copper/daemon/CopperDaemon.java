@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -22,6 +23,7 @@ import java.util.concurrent.Executors;
  * Created by dutoitc on 02.02.2016.
  */
 // Optimisations: sleep until next task run (compute on task addition). Log next task run.
+@Component
 public class CopperDaemon implements Runnable, ApplicationListener<ContextRefreshedEvent>, AutoCloseable {
 
     public static final int N_THREADS = 10;

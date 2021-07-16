@@ -1,6 +1,6 @@
 package ch.mno.copper;
 
-import ch.mno.copper.collect.WebCollector;
+import ch.mno.copper.collect.collectors.WebCollector;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 

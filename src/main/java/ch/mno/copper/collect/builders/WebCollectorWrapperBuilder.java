@@ -1,41 +1,23 @@
-package ch.mno.copper.collect;
+package ch.mno.copper.collect.builders;
 
-import ch.mno.copper.helpers.NotImplementedException;
+import ch.mno.copper.collect.wrappers.WebCollectorWrapper;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.data.StoryGrammar;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.core.env.PropertyResolver;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
-/**
- * Created by dutoitc on 07.02.2016.
- */
-public class WebCollectorWrapper extends AbstractCollectorWrapper {
+public class WebCollectorWrapperBuilder extends AbstractCollectorWrapperBuilder {
 
-    protected List<Pair<String, String>> valuesKept;
-    private String url;
-    private String username;
-    private String password;
-    private List<String> as;
-
-    public WebCollectorWrapper(String url, String username, String password, List<Pair<String, String>> valuesKept) {
-        this.url = url;
-        this.username = username;
-        this.password = password;
-        this.valuesKept = valuesKept;
-
-        this.as = new ArrayList<>();
-        for (Pair<String, String> pair : valuesKept) {
-            as.add(pair.getKey());
-        }
+    public WebCollectorWrapperBuilder(StoryGrammar grammar, PropertyResolver propertyResolver) {
+        super(grammar, propertyResolver);
     }
 
-    public static WebCollectorWrapper buildCollector(StoryGrammar grammar, String storyGiven) {
+    public WebCollectorWrapper buildCollector(String storyGiven) {
         String patternJMX = grammar.getPatternFull("COLLECTOR_WEB");
         var matcher = Pattern.compile(patternJMX, Pattern.DOTALL).matcher(storyGiven);
         if (!matcher.find()) {
@@ -78,31 +60,7 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
             String name2 = matcher3.group(2);
             valuesKept.add(new ImmutablePair<>(name1, name2));
         }
-        return new WebCollectorWrapper(url, username, password, valuesKept);
+        return new WebCollectorWrapper(url, resolveProperty(username), resolveProperty(password), valuesKept);
     }
-
-    @Override
-    public List<String> getAs() {
-        return as;
-    }
-
-    @Override
-    public Map<String, String> execute() {
-        List<String> values = WebCollector.query(url, username, password, valuesKept);
-        Map<String, String> map = new HashMap<>();
-        if (values.size() != valuesKept.size()) {
-            throw new RuntimeException("Wrong values number, expected " + valuesKept.size() + ", got " + values.size());
-        }
-        for (var i = 0; i < valuesKept.size(); i++) {
-            map.put(valuesKept.get(i).getValue(), values.get(i));
-        }
-        return map;
-    }
-
-    @Override
-    public List<List<String>> execute2D() {
-        throw new NotImplementedException();
-    }
-
 
 }

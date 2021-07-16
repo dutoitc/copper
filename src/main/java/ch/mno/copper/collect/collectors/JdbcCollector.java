@@ -1,4 +1,4 @@
-package ch.mno.copper.collect;
+package ch.mno.copper.collect.collectors;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.collect.connectors.JdbcConnector;

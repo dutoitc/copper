@@ -1,4 +1,4 @@
-package ch.mno.copper.collect;
+package ch.mno.copper.collect.collectors;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.collect.connectors.JmxConnector;
@@ -65,6 +65,14 @@ public class JmxCollector {
         public JmxQuery(String objectName, String value) {
             this.objectName = objectName;
             this.value = value;
+        }
+
+        public String getObjectName() {
+            return objectName;
+        }
+
+        public String getValue() {
+            return value;
         }
     }
 

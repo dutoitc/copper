@@ -1,4 +1,4 @@
-import ch.mno.copper.collect.WebCollector;
+import ch.mno.copper.collect.collectors.WebCollector;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import org.apache.commons.lang3.tuple.Pair;
 

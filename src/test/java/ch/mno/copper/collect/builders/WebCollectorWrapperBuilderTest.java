@@ -1,14 +1,19 @@
-package ch.mno.copper.collect;
+package ch.mno.copper.collect.builders;
 
 import ch.mno.copper.AbstractWebPortSpringTest;
+import ch.mno.copper.collect.wrappers.WebCollectorWrapper;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.core.env.PropertyResolver;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,13 +21,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by xsicdt on 29/02/16.
  */
-class WebCollectorWrapperTest extends AbstractWebPortSpringTest {
+class WebCollectorWrapperBuilderTest extends AbstractWebPortSpringTest {
 
     private StoryGrammar storyGrammar;
+    private WebCollectorWrapperBuilder builder;
 
     @BeforeEach
     void init() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
+        PropertyResolver propertyResolver = Mockito.mock(PropertyResolver.class);
+        Mockito.when(propertyResolver.getProperty("user")).thenReturn("username");
+        Mockito.when(propertyResolver.getProperty("pass")).thenReturn("password");
+        builder = new WebCollectorWrapperBuilder(storyGrammar, propertyResolver);
     }
 
     @Test
@@ -32,12 +42,13 @@ class WebCollectorWrapperTest extends AbstractWebPortSpringTest {
                 "    KEEP lastReload AS WEB_LAST_RELOAD\n" +
                 "WHEN CRON */5 7-18 * * 1-5\n" +
                 "THEN STORE VALUES\n";
-        WebCollectorWrapper wrapper = WebCollectorWrapper.buildCollector(storyGrammar, jmx);
-        assertEquals(2, wrapper.valuesKept.size());
-        assertEquals("status", wrapper.valuesKept.get(0).getKey());
-        assertEquals("WEB_STATUS", wrapper.valuesKept.get(0).getValue());
-        assertEquals("lastReload", wrapper.valuesKept.get(1).getKey());
-        assertEquals("WEB_LAST_RELOAD", wrapper.valuesKept.get(1).getValue());
+        WebCollectorWrapper wrapper = builder.buildCollector(jmx);
+        List<Pair<String, String>> valuesKept = wrapper.getValuesKept();
+        assertEquals(2, valuesKept.size());
+        assertEquals("status", valuesKept.get(0).getKey());
+        assertEquals("WEB_STATUS", valuesKept.get(0).getValue());
+        assertEquals("lastReload", valuesKept.get(1).getKey());
+        assertEquals("WEB_LAST_RELOAD", valuesKept.get(1).getValue());
         assertEquals("[status, lastReload]", StringUtils.join(wrapper.getAs()));
 
         /*
@@ -55,14 +66,18 @@ class WebCollectorWrapperTest extends AbstractWebPortSpringTest {
 
     @Test
     void test2() {
-        String jmx = "GIVEN COLLECTOR WEB WITH url=http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list\n" +
+        String jmx = "GIVEN COLLECTOR WEB WITH url=http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list,user=myuser,password=mypass\n" +
                 "    KEEP $.value[?(/value.WS_Services$/.test(@.Name))].Version AS value_VERSION\n" +
                 "THEN STORE VALUES";
-        WebCollectorWrapper wrapper = WebCollectorWrapper.buildCollector(storyGrammar, jmx);
+        WebCollectorWrapper wrapper = builder.buildCollector(jmx);
 
         // Local wrapper test
-        assertEquals("$.value[?(/value.WS_Services$/.test(@.Name))].Version", wrapper.valuesKept.get(0).getKey());
-        assertEquals("value_VERSION", wrapper.valuesKept.get(0).getValue());
+        List<Pair<String, String>> valuesKept = wrapper.getValuesKept();
+        assertEquals("$.value[?(/value.WS_Services$/.test(@.Name))].Version", valuesKept.get(0).getKey());
+        assertEquals("value_VERSION", valuesKept.get(0).getValue());
+        assertEquals("myuser", wrapper.getUsername());
+        assertEquals("mypass", wrapper.getPassword());
+        assertEquals("http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list", wrapper.getUrl());
     }
 
 
@@ -73,8 +88,7 @@ class WebCollectorWrapperTest extends AbstractWebPortSpringTest {
                 "    KEEP body AS BODY\n" +
                 "WHEN CRON */5 7-18 * * 1-5\n" +
                 "THEN STORE VALUES\n";
-        WebCollectorWrapper wrapper = WebCollectorWrapper.buildCollector(storyGrammar, jmx);
-
+        WebCollectorWrapper wrapper = builder.buildCollector(jmx);
 
         // Local wrapper test
         Map<String, String> res = wrapper.execute();

@@ -1,13 +1,16 @@
 package ch.mno.copper.stories;
 
-import ch.mno.copper.collect.AbstractCollectorWrapper;
 import ch.mno.copper.collect.StoryTask;
 import ch.mno.copper.collect.StoryTaskImpl;
+import ch.mno.copper.collect.wrappers.AbstractCollectorWrapper;
+import ch.mno.copper.collect.wrappers.CollectorWrapperFactory;
 import ch.mno.copper.report.AbstractReporterWrapper;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
+import ch.mno.copper.stories.data.StoryGrammar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,19 +20,22 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Component
 public class StoryTaskBuilder {
 
     public static final int TIMEOUT_SEC = 10;
     private static final Logger LOG = LoggerFactory.getLogger(StoryTaskBuilder.class);
+    private CollectorWrapperFactory collectorWrapperFactory;
+    private StoryGrammar grammar;
 
-    private StoryTaskBuilder() {
-
+    public StoryTaskBuilder(CollectorWrapperFactory collectorWrapperFactory, StoryGrammar grammar) {
+        this.collectorWrapperFactory = collectorWrapperFactory;
+        this.grammar = grammar;
     }
 
-    public static StoryTask build(Story story, ValuesStore valuesStore) {
+    public StoryTask build(Story story, ValuesStore valuesStore) {
         return new StoryTaskImpl(story, () -> {
             // This code execute at every trigger (cron, ...) for the given story
-
 
             // Collect
             Map<String, String> values = collect(story, valuesStore);
@@ -56,8 +62,9 @@ public class StoryTaskBuilder {
         }, story.getCron());
     }
 
-    private static Map<String, String> collect(Story story, ValuesStore valuesStore) {
-        AbstractCollectorWrapper collectorWrapper = story.getCollectorWrapper();
+    // Execution of the COLLECT-phase of the story
+    private Map<String, String> collect(Story story, ValuesStore valuesStore) {
+        AbstractCollectorWrapper collectorWrapper = collectorWrapperFactory.build(story.getGiven());
         if (collectorWrapper == null) { // Null means to readInstant value store
             Map<String, String> values = new HashMap<>(valuesStore.getValuesMapString());
             return values;
@@ -69,7 +76,7 @@ public class StoryTaskBuilder {
             try {
                 return collectorWrapper.execute();
             } catch (Exception e) {
-                return buildValuesMapAsError( collectorWrapper);
+                return buildValuesMapAsError(collectorWrapper);
             }
         });
         try {
@@ -87,8 +94,8 @@ public class StoryTaskBuilder {
         }
     }
 
-    private static Map<String, String> buildValuesMapAsError(AbstractCollectorWrapper collectorWrapper) {
-        return collectorWrapper.getAs().stream().collect(Collectors.toMap(as->as, as->"ERR"));
+    private Map<String, String> buildValuesMapAsError(AbstractCollectorWrapper collectorWrapper) {
+        return collectorWrapper.getAs().stream().collect(Collectors.toMap(as -> as, as -> "ERR"));
     }
 
 }
