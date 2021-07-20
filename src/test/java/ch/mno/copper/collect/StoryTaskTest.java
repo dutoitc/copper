@@ -16,8 +16,7 @@ import org.springframework.core.env.PropertyResolver;
 import java.io.IOException;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by dutoitc on 16.02.2016.
@@ -111,39 +110,50 @@ class StoryTaskTest {
         assertEquals("[KEY1=ERR][KEY2=ERR]", str);
     }
 
-//
-//    @Test
-//    @SuppressWarnings("java:S2925")
-//    void testBuildAndRunForTimeoutShouldStoreEntriesAsError() throws IOException {
-//        Story story = new Story(grammar, "StoryName", "RUN ON CRON 0 8,13 * * *\nGIVEN STORED VALUES\nTHEN\nSTORE VALUES");
-//
-//        ValuesStore vs = new MapValuesStore();
-//        CollectorWrapperFactory collectorWrapperFactory = new CollectorWrapperFactory(Mockito.mock(PropertyResolver.class), grammar) {
-////            @Override
-////            public Map<String, String> execute() throws ConnectorException {
-////                try {
-////                    Thread.sleep(1000 * StoryTaskBuilder.TIMEOUT_SEC + 1000);
-////                } catch (InterruptedException e) {
-////                    e.printStackTrace();
-////                }
-////                throw new ConnectorException("The End", null);
-////            }
-////
-////            @Override
-////            public List<List<String>> execute2D()  {
-////                return null;
-////            }
-//
-//            public List<String> getAs() {
-//                return Arrays.asList("KEY1", "KEY2");
-//            }
-//        };
-//        StoryTaskBuilder builder = new StoryTaskBuilder(collectorWrapperFactory, grammar);
-//        StoryTask storyTask = builder.build(story, vs);
-//        storyTask.getRunnable().run();
-//        String str = ((MapValuesStore) vs).getValuesAsString();
-//        assertEquals("[KEY1=ERR][KEY2=ERR]", str);
-//    }
+    @Test
+    void testAttributes() throws IOException {
+        String storyText = "RUN ON CRON */3 * * * *\n" +
+                "GIVEN COLLECTOR WEB WITH url=http://localhost:50400\n" +
+                "    KEEP responseCode AS COPPER2_WEB_RETURN_CODE\n" +
+                "THEN STORE VALUES";
+        Story story = new Story(grammar, "storyName.txt", storyText);
+        var task = new StoryTaskImpl(story, ()->{}, "* * * * *");
+        assertEquals("storyName.txt", task.storyName());
+        assertEquals("storyName", task.getTitle());
+        var task2 = new StoryTaskImpl(story, ()->{}, "* * * * *");
+        assertTrue(task2.getTaskId()>task.getTaskId());
+    }
+
+    @Test
+    void lifecycle() throws IOException {
+        String storyText = "RUN ON CRON */3 * * * *\n" +
+                "GIVEN COLLECTOR WEB WITH url=http://localhost:50400\n" +
+                "    KEEP responseCode AS COPPER2_WEB_RETURN_CODE\n" +
+                "THEN STORE VALUES";
+        Story story = new Story(grammar, "storyName.txt", storyText);
+        var task = new StoryTaskImpl(story, ()->{}, "* * * * *");
+        long v = System.currentTimeMillis() - 1;
+        task.cronData.setNextRun4Test(v); // Don't wait a minute
+        assertEquals(v, task.getNextRun());
+        assertTrue(task.shouldRun());
+        task.markAsRunning();
+        assertFalse(task.shouldRun());
+        task.markAsRun();
+    }
+
+    @Test
+    void testNextRun() throws IOException {
+        String storyText = "RUN ON CRON */3 * * * *\n" +
+                "GIVEN COLLECTOR WEB WITH url=http://localhost:50400\n" +
+                "    KEEP responseCode AS COPPER2_WEB_RETURN_CODE\n" +
+                "THEN STORE VALUES";
+        Story story = new Story(grammar, "storyName.txt", storyText);
+        var task = new StoryTaskImpl(story, ()->{}, "* * 31 12 *");
+        assertTrue(task.getNextRun()>System.currentTimeMillis());
+        assertFalse(task.shouldRun());
+        task = new StoryTaskImpl(story, ()->{}, null);
+        assertEquals(0, task.getNextRun());
+    }
 
 
 }

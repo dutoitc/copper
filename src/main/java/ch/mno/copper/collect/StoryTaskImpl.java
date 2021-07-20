@@ -12,45 +12,17 @@ import org.slf4j.LoggerFactory;
  */
 public class StoryTaskImpl implements StoryTask {
     private static final Logger LOG = LoggerFactory.getLogger(StoryTaskImpl.class);
-
+    private static long nextId = 1;
+    CronData cronData;
     private Runnable runnable;
-    private static long nextId=1;
     private long taskId = nextId++;
     private Story story;
     private boolean running = false;
-    CronData cronData;
-
-    public void setCronData4Test(CronData o) {
-        cronData = o;
-    }
-
-    private class CronData {
-        private long nextRun;
-        private String cronExpression;
-
-        public CronData(String cronExpression) {
-            this.cronExpression = cronExpression;
-            computeNextRun();
-        }
-
-        private void computeNextRun() {
-            if (cronExpression==null) {
-                LOG.error("Null Cron Expression for story {}", story.getName());
-                return;
-            }
-            Predictor p = new Predictor(cronExpression);
-            nextRun = p.nextMatchingTime();
-            LOG.info("Task {}{}: scheduled next run in {}", taskId, (story==null?"":("[" + story.getName() + "]")), computeTime(nextRun-System.currentTimeMillis()));
-        }
-
-        public boolean shouldRun() {
-            return System.currentTimeMillis()>=nextRun;
-        }
-    }
 
     /**
      * pattern minutes(0-59) hours(0-23) day_of_month(1-31), month(1-12 or jan,feb...), days of week(0-6=sunday-saturday or sun mon tue...) e.g. 0 3 * jan-jun,sep-dec mon-fri
      * {http://www.sauronsoftware.it/projects/cron4j/manual.php}
+     *
      * @param runnable
      * @param cronExpression
      */
@@ -70,8 +42,6 @@ public class StoryTaskImpl implements StoryTask {
         return story.getName().replace(".txt", "");
     }
 
-
-
     @Override
     public long getTaskId() {
         return taskId;
@@ -84,21 +54,16 @@ public class StoryTaskImpl implements StoryTask {
 
     @Override
     public boolean shouldRun() {
-        if (running) return false;    // Running flag avoid double execution for tasks scheduled every minute, if task run take more than one minute.
-
-        if (cronData!=null) {
-            return cronData.shouldRun();
+        if (running) {
+            return false;    // Running flag avoid double execution for tasks scheduled every minute, if task run take more than one minute.
         }
 
-        return false;
+        return cronData.shouldRun();
     }
 
     @Override
     public long getNextRun() {
-        if (cronData!=null) {
-            return cronData.nextRun;
-        }
-        return -1;
+        return cronData.nextRun;
     }
 
     @Override
@@ -108,37 +73,68 @@ public class StoryTaskImpl implements StoryTask {
 
     @Override
     public void markAsRun() {
-        if (cronData!=null) cronData.computeNextRun();
+        cronData.computeNextRun();
         running = false;
     }
 
-    private String computeTime(long millis) {
-        if (millis<=0) return "(now)";
+    class CronData {
+        private long nextRun;
+        private String cronExpression;
 
-        StringBuilder sb = new StringBuilder();
-        if (millis >= 1000*3600*24) {
-            int days = (int)(millis/1000/3600/24);
-            sb.append(days).append(" days");
-            millis-=days*1000*3600*24;
+        public CronData(String cronExpression) {
+            this.cronExpression = cronExpression;
+            computeNextRun();
         }
-        if (millis>=1000*3600) {
-            int hours = (int)(millis/1000/3600);
-            if (sb.length()>0) sb.append(", ");
-            sb.append(hours).append(" hours");
-            millis-=hours*1000*3600;
+
+        void setNextRun4Test(long v) {
+            nextRun = v;
         }
-        if (millis>=1000*60) {
-            int min = (int)(millis/1000/60);
-            if (sb.length()>0) sb.append(", ");
-            sb.append(min).append(" minutes");
-            millis-=min*1000*3600;
+
+        private void computeNextRun() {
+            if (cronExpression == null) {
+                LOG.error("Null Cron Expression for story {}", story.getName());
+                return;
+            }
+            var p = new Predictor(cronExpression);
+            nextRun = p.nextMatchingTime();
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Task {}{}: scheduled next run in {}", taskId, (story == null ? "" : ("[" + story.getName() + "]")), computeTime(nextRun - System.currentTimeMillis()));
+            }
         }
-        if (millis>=1000) {
-            int sec = (int)(millis/1000);
-            if (sb.length()>0) sb.append(", ");
-            sb.append(sec).append(" seconds");
+
+        public boolean shouldRun() {
+            return System.currentTimeMillis() >= nextRun;
         }
-        return sb.toString();
+
+        private String computeTime(long millis) {
+            if (millis <= 0) return "(now)";
+
+            var sb = new StringBuilder();
+            if (millis >= 1000 * 3600 * 24) {
+                int days = (int) (millis / 1000 / 3600 / 24);
+                sb.append(days).append(" days");
+                millis -= days * 1000 * 3600 * 24;
+            }
+            if (millis >= 1000 * 3600) {
+                int hours = (int) (millis / 1000 / 3600);
+                if (sb.length() > 0) sb.append(", ");
+                sb.append(hours).append(" hours");
+                millis -= hours * 1000 * 3600;
+            }
+            if (millis >= 1000 * 60) {
+                int min = (int) (millis / 1000 / 60);
+                if (sb.length() > 0) sb.append(", ");
+                sb.append(min).append(" minutes");
+                millis -= min * 1000 * 3600;
+            }
+            if (millis >= 1000) {
+                int sec = (int) (millis / 1000);
+                if (sb.length() > 0) sb.append(", ");
+                sb.append(sec).append(" seconds");
+            }
+            return sb.toString();
+        }
     }
+
 
 }
