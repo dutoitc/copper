@@ -66,7 +66,7 @@ public class JdbcCollectorWrapper extends AbstractCollectorWrapper {
 
     @Override
     public Map<String, String> execute() throws ConnectorException {
-        List<List<String>> table = new JdbcCollector().query(url, username, password, query);
+        List<List<String>> table = queryValues();
         if (table.size()==1) {
             return new HashMap<>();// no value
         } else if (table.size()>2) {
@@ -82,9 +82,13 @@ public class JdbcCollectorWrapper extends AbstractCollectorWrapper {
         return map;
     }
 
+    List<List<String>> queryValues() throws ConnectorException {
+        return new JdbcCollector().query(url, username, password, query);
+    }
+
     @Override
     public List<List<String>> execute2D() throws ConnectorException {
-        return new JdbcCollector().query(url, username, password, query);
+        return queryValues();
     }
 
     public String getPassword() {

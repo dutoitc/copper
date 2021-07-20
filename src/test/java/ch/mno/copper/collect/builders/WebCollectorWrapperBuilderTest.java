@@ -66,10 +66,10 @@ class WebCollectorWrapperBuilderTest extends AbstractWebPortSpringTest {
 
     @Test
     void test2() {
-        String jmx = "GIVEN COLLECTOR WEB WITH url=http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list,user=myuser,password=mypass\n" +
+        String story = "GIVEN COLLECTOR WEB WITH url=http://hostname:8040/jolokia/exec/org.apache.karaf:type=bundles,name=trun/list,user=myuser,password=mypass\n" +
                 "    KEEP $.value[?(/value.WS_Services$/.test(@.Name))].Version AS value_VERSION\n" +
                 "THEN STORE VALUES";
-        WebCollectorWrapper wrapper = builder.buildCollector(jmx);
+        WebCollectorWrapper wrapper = builder.buildCollector(story);
 
         // Local wrapper test
         List<Pair<String, String>> valuesKept = wrapper.getValuesKept();
@@ -83,12 +83,12 @@ class WebCollectorWrapperBuilderTest extends AbstractWebPortSpringTest {
 
     @Test
     void testLocal() {
-        String jmx = "GIVEN COLLECTOR WEB WITH url=http://localhost:" + port + "/ping1\n" +
+        String story = "GIVEN COLLECTOR WEB WITH url=http://localhost:" + port + "/ping1\n" +
                 "    KEEP responseCode AS WEB_STATUS\n" +
                 "    KEEP body AS BODY\n" +
                 "WHEN CRON */5 7-18 * * 1-5\n" +
                 "THEN STORE VALUES\n";
-        WebCollectorWrapper wrapper = builder.buildCollector(jmx);
+        WebCollectorWrapper wrapper = builder.buildCollector(story);
 
         // Local wrapper test
         Map<String, String> res = wrapper.execute();

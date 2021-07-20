@@ -4,7 +4,7 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.collect.wrappers.BinaryCollectorWrapper;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.core.env.PropertyResolver;
@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BinaryCollectorWrapperBuilderTest {
 
-    private StoryGrammar storyGrammar;
+    private static StoryGrammar storyGrammar;
 
-    @BeforeEach
-    void setup() {
+    @BeforeAll
+    static void setup() {
         storyGrammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
     }
 
