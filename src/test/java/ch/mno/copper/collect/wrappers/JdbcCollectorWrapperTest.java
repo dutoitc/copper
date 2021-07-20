@@ -14,7 +14,7 @@ public class JdbcCollectorWrapperTest {
 
     @Test
     void testAll() throws ConnectorException {
-        String sql = "select 1,2 from dual";
+        String sql = "select 1 as as1, 2 as as2 from dual";
         JdbcCollectorWrapper wrapper = new JdbcCollectorWrapper("url", "user", "pass", sql) {
             List<List<String>> queryValues() {
                 var lst = new ArrayList<List<String>>();
@@ -26,6 +26,7 @@ public class JdbcCollectorWrapperTest {
         assertEquals("url", wrapper.getUrl());
         assertEquals("user", wrapper.getUsername());
         assertEquals("pass", wrapper.getPassword());
+        assertEquals("[as1, as2]", wrapper.getAs().toString());
         assertEquals(sql, wrapper.getQuery());
 
         // Run
@@ -33,6 +34,22 @@ public class JdbcCollectorWrapperTest {
         assertEquals(2, ret.keySet().size());
         assertEquals("value1", ret.get("head1"));
         assertEquals("value2", ret.get("head2"));
+    }
+
+    @Test
+    void testNoValues() throws ConnectorException {
+        String sql = "select 1,2 from dual";
+        JdbcCollectorWrapper wrapper = new JdbcCollectorWrapper("url", "user", "pass", sql) {
+            List<List<String>> queryValues() {
+                var lst = new ArrayList<List<String>>();
+                lst.add(Arrays.asList("head1", "head2"));
+                return lst;
+            }
+        };
+
+        // Run
+        var ret = wrapper.execute();
+        assertEquals(0, ret.keySet().size());
     }
 
     @Test

@@ -55,7 +55,7 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
 
     @Override
     public Map<String, String> execute() {
-        List<String> values = WebCollector.query(url, username, password, valuesKept);
+        List<String> values = queryValues();
         Map<String, String> map = new HashMap<>();
         if (values.size() != valuesKept.size()) {
             throw new RuntimeException("Wrong values number, expected " + valuesKept.size() + ", got " + values.size());
@@ -64,6 +64,10 @@ public class WebCollectorWrapper extends AbstractCollectorWrapper {
             map.put(valuesKept.get(i).getValue(), values.get(i));
         }
         return map;
+    }
+
+    List<String> queryValues() {
+        return WebCollector.query(url, username, password, valuesKept);
     }
 
     @Override
