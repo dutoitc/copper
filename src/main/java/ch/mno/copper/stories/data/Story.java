@@ -27,7 +27,7 @@ public class Story {
     private String error;
     private String cron;
     private boolean valid;
-    private String given;
+    private final String given;
     private transient AbstractReporterWrapper reporterWrapper;
 
 
@@ -51,7 +51,7 @@ public class Story {
             valid = true;
         } catch (SyntaxException e) {
             error = e.getMessage();
-            LOG.trace("Story syntax error: " + error);
+            LOG.trace("Story syntax error: {}", error);
             valid = false;
         }
 
@@ -79,15 +79,15 @@ public class Story {
         // Extract repporter using THEN pattern
         Matcher matchREPORTER = Pattern.compile(grammar.getPatternFull("REPORTER"), Pattern.DOTALL).matcher(storyText);
         if (!matchREPORTER.find()) throw new RuntimeException("Cannot find a valid REPORTER expression");
-        String storyReporter = matchREPORTER.group();
+//        String storyReporter = matchREPORTER.group();
         // FIXME: complete test and mock mailServer ?
         //this.reporterWrapper = ReporterWrapperFactory.buildReporterWrapper(grammar, storyReporter);
     }
 
     static boolean matchWhen(String storedValue, String operator, String expectedValue) {
         if (expectedValue.contains(".")) {
-            Float a = Float.parseFloat(storedValue);
-            Float b = Float.parseFloat(expectedValue);
+            float a = Float.parseFloat(storedValue);
+            float b = Float.parseFloat(expectedValue);
             switch (operator) {
                 case "<":
                     return a < b;

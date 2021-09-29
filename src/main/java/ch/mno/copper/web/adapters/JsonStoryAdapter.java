@@ -8,7 +8,7 @@ import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 
-public class JsonStoryAdapter<T extends StoryWEBDTO> extends TypeAdapter<StoryWEBDTO> {
+public class JsonStoryAdapter extends TypeAdapter<StoryWEBDTO> {
         public StoryWEBDTO read(JsonReader reader) {
             return null;
         }

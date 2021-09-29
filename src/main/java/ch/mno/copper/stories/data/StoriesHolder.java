@@ -43,14 +43,14 @@ public class StoriesHolder {
     public void removeIfError(String filename) {
         if (storiesInError.contains(filename)) {
             storiesInError.remove(filename);
-            LOG.info("No longer in error: " + filename);
+            LOG.info("No longer in error: {}", filename);
         }
     }
 
     public void markAsError(String filename) {
         if (!storiesInError.contains(filename)) {
             storiesInError.add(filename);
-            LOG.warn("Wrong syntax for " + filename+", ignoring until error fixed on disk."); // FIXME: put story as dirty
+            LOG.warn("Wrong syntax for {}, ignoring until error fixed on disk.", filename); // FIXME: put story as dirty
         }
     }
 

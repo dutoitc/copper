@@ -83,9 +83,9 @@ public class CopperUserServices {
     public ResponseEntity<String>  getScreenJson(@PathVariable("filename") String filename)  {
         try {
             String data = diskHelper.findScreenData(filename);
-            return new ResponseEntity(data, HttpStatus.OK);
+            return new ResponseEntity<>(data, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -96,9 +96,9 @@ public class CopperUserServices {
     public ResponseEntity<String> getScreenCss(@PathVariable("filename") String filename)  {
         try {
             String data = diskHelper.findScreenData(filename);
-            return new ResponseEntity(data, HttpStatus.OK);
+            return new ResponseEntity<>(data, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -126,12 +126,12 @@ public class CopperUserServices {
     @GetMapping(value = "values/query")
     @ApiOperation(value = "Retrieve values between date",
             notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
-    public ResponseEntity getValues(@QueryParam("from") String dateFrom,
+    public ResponseEntity<String> getValues(@QueryParam("from") String dateFrom,
                                     @QueryParam("to") String dateTo,
                                     @QueryParam("columns") String columns,
                                     @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues) {
         if (columns == null) {
-            return new ResponseEntity("Missing 'columns'", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>("Missing 'columns'", HttpStatus.NOT_ACCEPTABLE);
         }
         Instant from = InstantHelper.findInstant(dateFrom, InstantHelper.INSTANT_2000, true);
         Instant to = InstantHelper.findInstant(dateTo, Instant.now(), false);
@@ -149,7 +149,7 @@ public class CopperUserServices {
     @GetMapping(value = "instants/query")
     @ApiOperation(value = "Retrieve values between date",
             notes = "")
-    public ResponseEntity getValues(@QueryParam("from") String dateFrom,
+    public ResponseEntity<String> getValues(@QueryParam("from") String dateFrom,
                                     @QueryParam("to") String dateTo,
                                     @QueryParam("columns") String columns,
                                     @QueryParam("intervalSeconds") long intervalSeconds,
@@ -194,7 +194,7 @@ public class CopperUserServices {
     @GetMapping(value = "values/query/png", produces = MediaType.APPLICATION_OCTET_STREAM)
     @ApiOperation(value = "Retrieve values between date",
             notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
-    public HttpEntity getValuesAsPNG(@QueryParam("from") String dateFrom,
+    public HttpEntity<String> getValuesAsPNG(@QueryParam("from") String dateFrom,
                                      @QueryParam("to") String dateTo,
                                      @QueryParam("columns") String columns,
                                      @QueryParam("ytitle") String yTitle,
@@ -223,7 +223,7 @@ public class CopperUserServices {
 
             response.setContentType(org.springframework.http.MediaType.IMAGE_PNG_VALUE);
             StreamUtils.copy(png, response.getOutputStream());
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (RuntimeException | IOException e) {
             LOG.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

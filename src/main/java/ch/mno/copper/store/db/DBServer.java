@@ -1,5 +1,6 @@
 package ch.mno.copper.store.db;
 
+import ch.mno.copper.store.StoreException;
 import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.data.InstantValues;
 import org.slf4j.Logger;
@@ -56,7 +57,7 @@ public class DBServer implements AutoCloseable {
 
         try (var con2 = cp.getConnection()) {
             try (var rs = con2.prepareCall(sqlNextSequence).executeQuery()) {
-                if (!rs.next()) throw new RuntimeException("Sequence error");
+                if (!rs.next()) throw new StoreException("Sequence error");
                 return rs.getLong(1);
             }
         }
@@ -83,19 +84,19 @@ public class DBServer implements AutoCloseable {
             stmt.setTimestamp(5, Timestamp.from(INSTANT_MAX));
             int rowInserted = stmt.executeUpdate();
             if (rowInserted != 1) {
-                throw new RuntimeException("DB error: inserted " + rowInserted + " values.");
+                throw new StoreException("DB error: inserted " + rowInserted + " values.");
             }
 
             // Stop previous
             if (previousValue != null) {
                 if (previousValue.getTimestampFrom().isAfter(instant)) {
-                    throw new RuntimeException("Cannot insert value in the past for key " + key + ", old.start=" + previousValue.getTimestampFrom() + ", new.start=" + instant);
+                    throw new StoreException("Cannot insert value in the past for key " + key + ", old.start=" + previousValue.getTimestampFrom() + ", new.start=" + instant);
                 }
 
                 update(instant, con, previousValue);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
     }
 
@@ -121,7 +122,7 @@ public class DBServer implements AutoCloseable {
             stmt2.setLong(2, previousValue.getId());
             stmt2.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot update previous value: " + e.getMessage(), e);
+            throw new StoreException("Cannot update previous value: " + e.getMessage(), e);
         }
     }
 
@@ -150,11 +151,11 @@ public class DBServer implements AutoCloseable {
                 return values.get(0);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
 
 
-        throw new RuntimeException("Too much value for key=" + key + ", instant=" + timestamp.getEpochSecond());
+        throw new StoreException("Too much value for key=" + key + ", instant=" + timestamp.getEpochSecond());
     }
 
 
@@ -206,7 +207,7 @@ public class DBServer implements AutoCloseable {
             }
             return values;
         } catch (SQLException e) {
-            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
         }
     }
 
@@ -242,7 +243,7 @@ public class DBServer implements AutoCloseable {
             }
             return values;
         } catch (SQLException e) {
-            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
     }
 
@@ -259,7 +260,7 @@ public class DBServer implements AutoCloseable {
                 return StoreValueMapper.map(rs, false);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
     }
 
@@ -280,7 +281,7 @@ public class DBServer implements AutoCloseable {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
         return values;
     }
@@ -306,7 +307,7 @@ public class DBServer implements AutoCloseable {
                 return sb.toString();
             }
         } catch (SQLException e) {
-            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
     }
 
@@ -325,7 +326,7 @@ public class DBServer implements AutoCloseable {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
         }
         return values;
     }
@@ -340,19 +341,19 @@ public class DBServer implements AutoCloseable {
              PreparedStatement stmt = con.prepareStatement("DELETE from valuestore where dateto<DATEADD('DAY',-" + nbDays + ", CURRENT_DATE)")) {
             return stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
         }
     }
 
     public int deleteValuesOfKey(String key) {
         if (key.contains(";")) {
-            throw new RuntimeException("SQL Injection error"); // Really simple protection
+            throw new StoreException("SQL Injection error"); // Really simple protection
         }
         try (var con = cp.getConnection();
              var stmt = con.prepareStatement("DELETE from valuestore where key='" + key + "'")) {
             return stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
         }
     }
 }

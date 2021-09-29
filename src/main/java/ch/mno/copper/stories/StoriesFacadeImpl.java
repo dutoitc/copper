@@ -57,7 +57,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
     }
 
     @Override
-    public String saveNewStory(String storyName, String storyText) throws IOException, ConnectorException {
+    public String saveNewStory(String storyName, String storyText) throws IOException {
         Story story = new Story(grammar, storyName, storyText);
         diskHelper.saveNewStory(storyName, story.getStoryText());
         storiesHolder.add(story); // TODO: update listeneres
@@ -65,7 +65,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
     }
 
     @Override
-    public String updateStory(String originalStoryName, String storyName, String storyText) throws IOException, ConnectorException {
+    public String updateStory(String originalStoryName, String storyName, String storyText) throws IOException {
         if (!diskHelper.storyExists(originalStoryName)) {
             return "Error: the file " + originalStoryName + " does not exist.";
         }

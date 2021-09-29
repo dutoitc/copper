@@ -111,7 +111,7 @@ public class CopperAdminServices {
     @GetMapping("stories")
     @ApiOperation(value = "Retrieve all stories", notes = "")
     public String getStories() {
-        Gson gson = new GsonBuilder().registerTypeAdapter(StoryWEBDTO.class, new JsonStoryAdapter<>()).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(StoryWEBDTO.class, new JsonStoryAdapter()).create();
 
         List<StoryWEBDTO> stories = storiesFacade.getStories(true).stream()
                 .map(StoryWEBDTO::new)
@@ -157,8 +157,8 @@ public class CopperAdminServices {
     private OverviewDTO buildOverview() {
         OverviewDTO overview = new OverviewDTO();
         List<Story> stories = storiesFacade.getStories(true);
-        overview.overviewStories = new ArrayList<>(stories.size());
-        stories.forEach(s -> overview.overviewStories.add(new OverviewStoryDTO(s)));
+        overview.setOverviewStories(new ArrayList<>(stories.size()));
+        stories.forEach(s -> overview.add(new OverviewStoryDTO(s)));
         return overview;
     }
 

@@ -7,6 +7,10 @@ public class AuthStorage {
 
     private static Map<String, Date> expirationDates = new HashMap<>();
 
+    AuthStorage() {
+        // Needed by Sonar
+    }
+
     public static void addToken(String token, Date expirationDate) {
         synchronized (expirationDates) {
             expirationDates.put(token, expirationDate);

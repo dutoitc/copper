@@ -68,7 +68,7 @@ class StoryTaskTest {
                 };
             }
         };
-        StoryTaskBuilder builder = new StoryTaskBuilder(collectorWrapperFactory, grammar);
+        StoryTaskBuilder builder = new StoryTaskBuilder(collectorWrapperFactory);
 
         ValuesStore vs = new MapValuesStore();
         StoryTask storyTask = builder.build(story, vs);
@@ -103,7 +103,7 @@ class StoryTaskTest {
             }
         };
 
-        StoryTaskBuilder builder = new StoryTaskBuilder(collectorWrapperFactory, grammar);
+        StoryTaskBuilder builder = new StoryTaskBuilder(collectorWrapperFactory);
         StoryTask storyTask = builder.build(story, vs);
         storyTask.getRunnable().run();
         String str = ((MapValuesStore) vs).getValuesAsString();

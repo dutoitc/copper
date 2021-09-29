@@ -1,5 +1,6 @@
 package ch.mno.copper.store.db;
 
+import ch.mno.copper.store.StoreException;
 import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.store.data.InstantValues;
@@ -65,7 +66,7 @@ public class DBValuesStore implements ValuesStore {
             try {
                 values.addAll(server.read(key, from, to, maxValues));
             } catch (SQLException e) {
-                throw new RuntimeException(e.getMessage(), e);
+                throw new StoreException(e.getMessage(), e);
             }
         }
         return values;

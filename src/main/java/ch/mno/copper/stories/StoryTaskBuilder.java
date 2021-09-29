@@ -7,7 +7,6 @@ import ch.mno.copper.collect.wrappers.CollectorWrapperFactory;
 import ch.mno.copper.report.AbstractReporterWrapper;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
-import ch.mno.copper.stories.data.StoryGrammar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -26,11 +25,9 @@ public class StoryTaskBuilder {
     public static final int TIMEOUT_SEC = 10;
     private static final Logger LOG = LoggerFactory.getLogger(StoryTaskBuilder.class);
     private CollectorWrapperFactory collectorWrapperFactory;
-    private StoryGrammar grammar;
 
-    public StoryTaskBuilder(CollectorWrapperFactory collectorWrapperFactory, StoryGrammar grammar) {
+    public StoryTaskBuilder(CollectorWrapperFactory collectorWrapperFactory) {
         this.collectorWrapperFactory = collectorWrapperFactory;
-        this.grammar = grammar;
     }
 
     public StoryTask build(Story story, ValuesStore valuesStore) {
