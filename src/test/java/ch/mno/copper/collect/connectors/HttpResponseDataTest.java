@@ -13,10 +13,10 @@ public class HttpResponseDataTest {
         response.setContentType("text/plain");
         response.setData("dummy payload");
         response.setResponseCode(200);
-        assertEquals("HTTP/1.1 200\n" +
-                "Content-Type: text/plain\n" +
-                "Content-Length: 13\n" +
-                "\n" +
+        assertEquals("HTTP/1.1 200\r\n" +
+                "Content-Type: text/plain\r\n" +
+                "Content-Length: 13\r\n" +
+                "\r\n" +
                 "dummy payload",response.toHTTP());
     }
 

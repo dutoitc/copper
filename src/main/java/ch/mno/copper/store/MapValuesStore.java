@@ -93,7 +93,7 @@ public class MapValuesStore implements ValuesStore {
         var sb = new StringBuilder();
         map.values().stream()
                 .sorted(Comparator.comparing(StoreValue::getKey))
-                .forEach(e->String.format("[%s=%s]", e.getKey(), e.getValue()));
+                .forEach(e->sb.append(String.format("[%s=%s]", e.getKey(), e.getValue())));
         return sb.toString();
     }
 }
