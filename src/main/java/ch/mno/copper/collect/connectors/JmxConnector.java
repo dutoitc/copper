@@ -18,21 +18,13 @@ public class JmxConnector extends AbstractConnector {
     private MBeanServerConnection mbsc;
 
 
+    public JmxConnector(String url) throws IOException {
+        this(url, null, null);
+    }
+
     public JmxConnector(String url, String username, String password) throws IOException {
         var jmxServiceURL = new JMXServiceURL(url);
-        Map<String, String[]> env = new HashMap<>();
-        String[] creds = {username, password};
-        env.put(JMXConnector.CREDENTIALS, creds);
-        try {
-            jmxc = connectWithTimeout(jmxServiceURL, env, 1000*5l);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IOException("JMX connection interrupted");
-        } catch (ExecutionException e) {
-            throw new IOException("JMX connection error: " + e.getMessage());
-        } catch (TimeoutException e) {
-            throw new IOException("JMX connection error: timeout");
-        }
+        buildJmxc(username, password, jmxServiceURL);
         mbsc = jmxc.getMBeanServerConnection();
     }
 
@@ -42,11 +34,24 @@ public class JmxConnector extends AbstractConnector {
         return future.get(timeoutMSec, TimeUnit.MILLISECONDS);
     }
 
-
-    public JmxConnector(String url) throws IOException {
-        var jmxServiceURL = new JMXServiceURL(url);
-        jmxc = JMXConnectorFactory.connect(jmxServiceURL, null);
-        mbsc = jmxc.getMBeanServerConnection();
+    private void buildJmxc(String username, String password, JMXServiceURL jmxServiceURL) throws IOException {
+        if (username == null) {
+            jmxc = JMXConnectorFactory.connect(jmxServiceURL, null);
+        } else {
+            Map<String, String[]> env = new HashMap<>();
+            String[] creds = {username, password};
+            env.put(JMXConnector.CREDENTIALS, creds);
+            try {
+                jmxc = connectWithTimeout(jmxServiceURL, env, 1000 * 5l);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IOException("JMX connection interrupted");
+            } catch (ExecutionException e) {
+                throw new IOException("JMX connection error: " + e.getMessage());
+            } catch (TimeoutException e) {
+                throw new IOException("JMX connection error: timeout");
+            }
+        }
     }
 
     public String getObject(String objectName, String attribute) throws MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException, IOException {
@@ -59,7 +64,7 @@ public class JmxConnector extends AbstractConnector {
     @Override
     public void close() {
         try {
-            if (jmxc!=null) {
+            if (jmxc != null) {
                 jmxc.close();
             }
         } catch (IOException e) {

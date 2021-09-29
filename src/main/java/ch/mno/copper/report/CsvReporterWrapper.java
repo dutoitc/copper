@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 /**
  * Created by dutoitc on 07.02.2016.
  */
-public class CsvReporterWrapper extends AbstractReporterWrapper {
+public class CsvReporterWrapper implements AbstractReporterWrapper {
 
     private String filename;
     private String headers;

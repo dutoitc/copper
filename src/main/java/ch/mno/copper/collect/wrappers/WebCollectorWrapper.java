@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by dutoitc on 07.02.2016.
  */
-public class WebCollectorWrapper extends AbstractCollectorWrapper {
+public class WebCollectorWrapper implements AbstractCollectorWrapper {
 
     protected List<Pair<String, String>> valuesKept;
     private String url;

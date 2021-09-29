@@ -9,6 +9,10 @@ import java.util.Map;
  */
 public class ReportHelper {
 
+    private ReportHelper() {
+        // private
+    }
+
     public static String expandMessage(Map<String, String> values, String message, ValuesStore instance) {
         if (values==null) {
             throw new RuntimeException("Null Values detected");

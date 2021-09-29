@@ -16,7 +16,7 @@ public abstract class AbstractProcessor {
 
     private Set<String> valuesTrigger;
 
-    public AbstractProcessor(List<String> valuesTrigger) {
+    protected AbstractProcessor(List<String> valuesTrigger) {
         this.valuesTrigger = new HashSet<>(valuesTrigger);
     }
 

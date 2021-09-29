@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Created by dutoitc on 07.02.2016.
  */
-public class BinaryCollectorWrapper extends AbstractCollectorWrapper {
+public class BinaryCollectorWrapper implements AbstractCollectorWrapper {
 
     private final List<CheckElement> checkElements;
     private Map<String, String> results;

@@ -37,7 +37,7 @@ public class SyntaxHelper {
         sb.append("Pattern \n   >>>" + pattern + "\n does not match\n   >>>" + value + "\n");
         if (sbM.length() > 0) {
             sb.append("But it matches the following patterns parts: [");
-            sb.append(sbM.toString().substring(0, sbM.length() - 1));
+            sb.append(sbM.toString(), 0, sbM.length() - 1);
             sb.append("]\n\n");
         }
 
@@ -59,8 +59,6 @@ public class SyntaxHelper {
                 // Just ignore
             }
         }
-
-
         throw new SyntaxException(sb.toString());
     }
 

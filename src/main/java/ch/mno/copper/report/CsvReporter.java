@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class CsvReporter implements AbstractReporter  {
 
-    public enum PARAMETERS {FILENAME, HEADERS, LINE};
+    public enum PARAMETERS {FILENAME, HEADERS, LINE}
 
 
     @Override
@@ -19,7 +19,7 @@ public class CsvReporter implements AbstractReporter  {
         String header = values.get(CsvReporter.PARAMETERS.HEADERS.toString());
         String line = values.get(CsvReporter.PARAMETERS.LINE.toString());
 
-        // TODO: add file lock while writing + wait ?
+        // Note: could add file lock while writing + wait ?
         File file = new File(filename);
         if (file.exists()) {
             try (FileWriter fw = new FileWriter(file, true)) {

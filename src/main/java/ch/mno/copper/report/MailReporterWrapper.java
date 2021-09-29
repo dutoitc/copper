@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 /**
  * Created by dutoitc on 07.02.2016.
  */
-public class MailReporterWrapper extends AbstractReporterWrapper {
+public class MailReporterWrapper implements AbstractReporterWrapper {
 
     private String dest;
     private String title;

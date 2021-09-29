@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * Created by dutoitc on 07.02.2016.
  */
-public class PushoverReporterWrapper extends AbstractReporterWrapper {
+public class PushoverReporterWrapper implements AbstractReporterWrapper {
 
     private String applicationToken;
     private String dest;

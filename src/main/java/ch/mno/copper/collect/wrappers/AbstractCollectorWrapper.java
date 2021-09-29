@@ -10,7 +10,7 @@ import java.util.Map;
  * A Wrapper should host connector pool instance and queries for later execution.
  * Created by dutoitc on 07.02.2016.
  */
-public abstract class AbstractCollectorWrapper {
+public interface AbstractCollectorWrapper {
     public abstract Map<String, String> execute() throws ConnectorException;
 
     /**
@@ -22,7 +22,7 @@ public abstract class AbstractCollectorWrapper {
 
 
     /** Return AS values, keys */
-    public List<String> getAs() {
+    public default List<String> getAs() {
         return new ArrayList<>();
     }
 

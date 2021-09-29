@@ -32,13 +32,11 @@ public class SocketConnector extends AbstractConnector {
 
     public CONNECTION_CHECK checkConnection() {
         // create a socket
-        Socket socket = null;
         InetAddress inteAddress = null;
-        try {
+        try (Socket socket = new Socket())
+        {
             inteAddress = InetAddress.getByName(host);
             SocketAddress socketAddress = new InetSocketAddress(inteAddress, port);
-
-            socket = new Socket();
 
             // this method will block no more than timeout ms.
             socket.connect(socketAddress, timeoutMSec);
@@ -53,14 +51,6 @@ public class SocketConnector extends AbstractConnector {
             lastException = e;
             LOG.error("IOException connecting to {}: {}, resolved to {}", host, port, (inteAddress==null?"null":inteAddress.getHostName()));
             return CONNECTION_CHECK.IO_EXCEPTION;
-        } finally {
-            if (socket!=null) {
-                try {
-                    socket.close();
-                } catch (Exception e) {
-                    // Pass
-                }
-            }
         }
     }
 

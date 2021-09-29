@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by dutoitc on 07.02.2016.
  */
-public class JmxCollectorWrapper extends AbstractCollectorWrapper {
+public class JmxCollectorWrapper implements AbstractCollectorWrapper {
 
     private String url;
     private String username;

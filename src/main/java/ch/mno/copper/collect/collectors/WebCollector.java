@@ -25,6 +25,7 @@ public class WebCollector {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebCollector.class);
 
+    @SuppressWarnings("java:S2589")
     public static List<String> query(String url, String username, String password, List<Pair<String, String>> valuesKept) {
         String host;
         int port;
@@ -92,6 +93,7 @@ public class WebCollector {
         return results;
     }
 
+    @SuppressWarnings("java:S2589")
     private static void addOtherToResult(HttpResponseData<String> data, List<String> results, String key) {
         try {
             Object o = JsonPath.read(data.getData(), key);

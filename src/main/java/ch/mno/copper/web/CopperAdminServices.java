@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 //@PreAuthorize("hasRole('ADMIN')")
 public class CopperAdminServices {
 
+    public static final String STORY = "Story ";
     private final ValuesStore valuesStore;
     private final StoriesFacade storiesFacade;
     private final CopperDaemon daemon;
@@ -63,7 +64,7 @@ public class CopperAdminServices {
         // Update
         Story story = sf.getStoryByName(storyName);
         if (story == null) {
-            throw new RuntimeException("Story " + storyName + " was not found");
+            throw new WebException(STORY + storyName + " was not found");
         } else {
             try {
                 String msg = sf.updateStory(post.getOriginalStoryName(), post.getStoryName(), post.getStoryText());
@@ -79,7 +80,7 @@ public class CopperAdminServices {
             notes = "Story is run before 3''")
     public String getStoryRun(@PathVariable("storyName") String storyName) {
         daemon.runStory(storyName);
-        return "Story " + storyName + " marked for execution";
+        return STORY + storyName + " marked for execution";
     }
 
     @GetMapping(value = "story/{storyName}/delete", produces = MediaType.TEXT_PLAIN)
@@ -87,7 +88,7 @@ public class CopperAdminServices {
             notes = "")
     public String getStoryDelete(@PathVariable("storyName") String storyName) {
         storiesFacade.deleteStory(storyName);
-        return "Story " + storyName + " deleted.";
+        return STORY + storyName + " deleted.";
     }
 
     @DeleteMapping(value = "values/olderThanOneMonth", produces = MediaType.TEXT_PLAIN)

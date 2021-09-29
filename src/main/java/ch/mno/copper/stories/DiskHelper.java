@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 public class DiskHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(DiskHelper.class);
+    public static final String ERROR_THE_FILE = "Error: the file ";
 
     public final CopperStoriesProperties copperStoriesProperties;
     public final String storiesFolder;
@@ -39,10 +40,10 @@ public class DiskHelper {
     public void saveNewStory(String storyName, String storyText) throws IOException {
         File file = new File(storiesFolder + '/' + storyName);
         if (file.exists()) {
-            throw new FileAlreadyExistsException("Error: the file " + file.getName() + " already exists.");
+            throw new FileAlreadyExistsException(ERROR_THE_FILE + file.getName() + " already exists.");
         }
         if (file.canWrite()) {
-            throw new AccessDeniedException("Error: the file " + file.getName() + " cannot be written.");
+            throw new AccessDeniedException(ERROR_THE_FILE + file.getName() + " cannot be written.");
         }
         try (FileWriter fw = new FileWriter(file)) {
             fw.write(storyText);
@@ -55,7 +56,7 @@ public class DiskHelper {
     public void updateStory(String storyName, String storyText) throws IOException {
         File file = new File(storiesFolder + '/' + storyName);
         if (!file.exists()) {
-            throw new NoSuchFileException("Error: the file " + file.getName() + " must already exists.");
+            throw new NoSuchFileException(ERROR_THE_FILE + file.getName() + " must already exists.");
         }
         try (FileWriter fw = new FileWriter(file)) {
             fw.write(storyText);

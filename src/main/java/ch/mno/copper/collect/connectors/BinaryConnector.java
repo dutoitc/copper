@@ -14,6 +14,11 @@ import java.util.function.Consumer;
 public class BinaryConnector {
 
     private static final Logger LOG = LoggerFactory.getLogger(BinaryConnector.class);
+    public static final String EXCEPTION = "Exception: ";
+
+    private BinaryConnector() {
+        // private
+    }
 
     public static String executeCommand(String cmd){
         ensureNotHavingCommandInjection(cmd);
@@ -31,14 +36,14 @@ public class BinaryConnector {
             int exitCode = process.waitFor();
             Thread.sleep(100);
             executorService.shutdown();
-            return sb.toString() + sbErr.toString() + (exitCode == 0 ? "" : "EXIT_" + exitCode);
+            return sb + sbErr.toString() + (exitCode == 0 ? "" : "EXIT_" + exitCode);
         } catch (InterruptedException e) {
-            LOG.trace("Exception: " + e.getMessage(), e);
+            LOG.trace(EXCEPTION + e.getMessage(), e);
             Thread.currentThread().interrupt();
-            return "Exception: " + e.getMessage();
+            return EXCEPTION + e.getMessage();
         } catch (IOException e) {
-            LOG.trace("Exception: " + e.getMessage(), e);
-            return "Exception: " + e.getMessage();
+            LOG.trace(EXCEPTION + e.getMessage(), e);
+            return EXCEPTION + e.getMessage();
         }
     }
 

@@ -9,7 +9,7 @@ import java.util.*;
  * Created by dutoitc on 07.02.2016.
  */
 // TODO: parse query and store "AS xxx " values in 'as'
-public class SocketCollectorWrapper extends AbstractCollectorWrapper {
+public class SocketCollectorWrapper implements AbstractCollectorWrapper {
 
     private final String host;
     private final int port;

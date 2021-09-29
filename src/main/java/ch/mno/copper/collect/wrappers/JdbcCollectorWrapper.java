@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * Created by dutoitc on 07.02.2016.
  */
 // TODO: parse query and store "AS xxx " values in 'as'
-public class JdbcCollectorWrapper extends AbstractCollectorWrapper {
+public class JdbcCollectorWrapper implements AbstractCollectorWrapper {
 
     private String url;
     private String username;
