@@ -7,8 +7,9 @@
             <tr>
                 <th style="text-align:right;padding: 5px"><a ng-click="triggerSort('k')">Key</a></th>
                 <th style="text-align:left; padding-left: 10px"><a ng-click="triggerSort('v.value')">Value</a></th>
-                <th style="text-align:center"><a ng-click="triggerSort('v.timestampFrom')">Date from</a></th>
-                <th style="text-align:center"><a ng-click="triggerSort('v.timestampTo')">Date to</a></th>
+                <th style="text-align:center"><a ng-click="triggerSort('v.timestampFrom')">From</a></th>
+                <th style="text-align:center"><a ng-click="triggerSort('v.timestampTo')">To</a></th>
+                <th style="text-align:center"><a ng-click="triggerSort('v.timestampLast')">Last check</a></th>
                 <th style="text-align:center"><a ng-click="triggerSort('v.nbValues')">Nb stored values</a></th>
                 <th style="text-align:center">Actions</th>
             </tr>
@@ -18,7 +19,8 @@
                 <td style="text-align:right;padding: 5px;font-weight:bold">{{row.key}}</td>
                 <td style="text-align:left; padding-left: 10px">{{row.value}}</td>
                 <td style="text-align:center;width: 150px">{{row.timestampFrom | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
-                <td style="text-align:center;width: 150px">{{row.timestampTo | date : 'yyyy-MM-dd HH:mm:ss'}}
+                <td style="text-align:center;width: 150px">{{row.timestampTo | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td style="text-align:center;width: 150px">{{row.timestampLast | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
                 <td style="text-align:center">{{row.nbValues}}</td>
                 <td>
                     <a href="../ws/values/query/png?columns={{row.key}}" target="_blank">Graph (small)</a>

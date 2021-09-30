@@ -14,8 +14,6 @@ class Widget {
         this.body="Some body\nand a new line...";
         this.classes="";
     }
-
-
 }
 
 /* Widget mappable to DOM */
@@ -44,7 +42,6 @@ class UIWidgetRunnable extends UIWidget {
     buildDOM(copperValues) {
         super.buildDOM(copperValues);
         var bodyHTML = this.widget.body;
-
 
         // #CSS_CLASS#
         var cssClasses="";
@@ -117,7 +114,6 @@ class UIWidgetEditable extends UIWidget {
         super(widget);
         this.widgetClassesId = this.widgetId+"class";
     }
-
 
     buildDOM(copperValues) {
         super.buildDOM(copperValues);
