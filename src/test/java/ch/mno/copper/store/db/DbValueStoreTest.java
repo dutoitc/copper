@@ -6,6 +6,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Arrays;
@@ -33,7 +36,8 @@ class DbValueStoreTest {
     private DBServer server;
 
     @BeforeEach
-    void init() throws SQLException {
+    void init() throws SQLException, IOException {
+        Files.deleteIfExists(Path.of("copperdbtst.mv.db"));
         DBServerManual.DBURL = "jdbc:h2:./copperdbtst";
         server = new DBServerManual(false, 0);
         store = new DBValuesStore(server);

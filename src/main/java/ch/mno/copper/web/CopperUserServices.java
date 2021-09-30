@@ -171,7 +171,7 @@ public class CopperUserServices {
     }
 
 
-    @GetMapping(value = "value/{valueName}", produces = MediaType.APPLICATION_JSON)
+    @GetMapping(value = "value/{valueName}", produces = MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Retrieve a single value",
             notes = "")
     public ResponseEntity<String> getValue(@PathVariable("valueName") String valueName) {
@@ -180,7 +180,7 @@ public class CopperUserServices {
         if (storeValue == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Value " + valueName + " not found");
         }
-        return new ResponseEntity<String>(storeValue.getValue(), HttpStatus.OK);
+        return new ResponseEntity<>(storeValue.getValue(), HttpStatus.OK);
     }
 
 
