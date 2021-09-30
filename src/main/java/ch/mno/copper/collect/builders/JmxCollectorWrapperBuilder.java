@@ -1,5 +1,6 @@
 package ch.mno.copper.collect.builders;
 
+import ch.mno.copper.collect.CollectorException;
 import ch.mno.copper.collect.collectors.JmxCollector;
 import ch.mno.copper.collect.wrappers.JmxCollectorWrapper;
 import ch.mno.copper.helpers.SyntaxHelper;
@@ -26,7 +27,7 @@ public class JmxCollectorWrapperBuilder extends AbstractCollectorWrapperBuilder 
             if (p > 0) {
                 SyntaxHelper.checkSyntax(grammar, storyGiven, patternJMX);
             }
-            throw new RuntimeException("Cannot find \n   >>>" + patternJMX + "\nin\n   >>>" + storyGiven);
+            throw new CollectorException("Cannot find \n   >>>" + patternJMX + "\nin\n   >>>" + storyGiven);
         }
         //
         String collectorJmxData = matcher.group(0);
@@ -52,7 +53,7 @@ public class JmxCollectorWrapperBuilder extends AbstractCollectorWrapperBuilder 
             }
             return buildInstance(url, username, password, jmxQueries, names);
         } else {
-            throw new RuntimeException("Cannot readInstant COLLECTOR_JMX body in <" + collectorJmxData + ">");
+            throw new CollectorException("Cannot readInstant COLLECTOR_JMX body in <" + collectorJmxData + ">");
         }
     }
 

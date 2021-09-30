@@ -1,6 +1,5 @@
 package ch.mno.copper.web.adapter;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.web.adapters.JsonStoryAdapter;
@@ -25,7 +24,7 @@ class JsonStoryAdapterTest {
     }
 
     @Test
-    void testAll() throws IOException, ConnectorException {
+    void testAll() throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         JsonStoryAdapter adapter = new JsonStoryAdapter();
         JsonWriter writer = new JsonWriter(new OutputStreamWriter(os));

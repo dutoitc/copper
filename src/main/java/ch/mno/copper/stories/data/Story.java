@@ -4,6 +4,7 @@ import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.report.AbstractReporterWrapper;
 import ch.mno.copper.store.ValuesStore;
+import ch.mno.copper.stories.StoryException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -59,26 +59,26 @@ public class Story {
         if (Pattern.compile(grammar.getPatternFull("RUN_ON"), Pattern.DOTALL).matcher(storyText).find()) {
             this.cron = buildRunOn(grammar);
         } else {
-            throw new RuntimeException("cannot find a RUN_ON expression");
+            throw new StoryException("cannot find a RUN_ON expression");
         }
 
 
         // Extract collector using GIVEN pattern
-        Matcher matchGiven = Pattern.compile(grammar.getPatternFull("GIVEN"), Pattern.DOTALL).matcher(storyText);
-        if (!matchGiven.find()) throw new RuntimeException("Cannot find a valid GIVEN expression");
+        var matchGiven = Pattern.compile(grammar.getPatternFull("GIVEN"), Pattern.DOTALL).matcher(storyText);
+        if (!matchGiven.find()) throw new StoryException("Cannot find a valid GIVEN expression");
         given = matchGiven.group();
 
         // Extract WHEN
         //WHEN::=WHEN [a-zA-Z0-9_]+[<>=]\d(\.\d)
-        Matcher matchWhen = Pattern.compile(grammar.getPatternFull("WHEN"), Pattern.DOTALL).matcher(storyText);
+        var matchWhen = Pattern.compile(grammar.getPatternFull("WHEN"), Pattern.DOTALL).matcher(storyText);
         if (matchWhen.find()) {
             this.when = new When(matchWhen.group());
         }
 
 
         // Extract repporter using THEN pattern
-        Matcher matchREPORTER = Pattern.compile(grammar.getPatternFull("REPORTER"), Pattern.DOTALL).matcher(storyText);
-        if (!matchREPORTER.find()) throw new RuntimeException("Cannot find a valid REPORTER expression");
+        var matchREPORTER = Pattern.compile(grammar.getPatternFull("REPORTER"), Pattern.DOTALL).matcher(storyText);
+        if (!matchREPORTER.find()) throw new StoryException("Cannot find a valid REPORTER expression");
 //        String storyReporter = matchREPORTER.group();
         // FIXME: complete test and mock mailServer ?
         //this.reporterWrapper = ReporterWrapperFactory.buildReporterWrapper(grammar, storyReporter);
@@ -96,12 +96,12 @@ public class Story {
                 case "=":
                     return Math.abs(a - b) < Math.abs(a / 25);
                 default:
-                    throw new RuntimeException("Unsuppported operator " + operator);
+                    throw new StoryException("Unsuppported operator " + operator);
             }
         }
 
-        int a = Integer.parseInt(storedValue);
-        int b = Integer.parseInt(expectedValue);
+        var a = Integer.parseInt(storedValue);
+        var b = Integer.parseInt(expectedValue);
         switch (operator) {
             case "<":
                 return a < b;
@@ -110,28 +110,28 @@ public class Story {
             case "=":
                 return a == b;
             default:
-                throw new RuntimeException("Unsuppported operator " + operator);
+                throw new StoryException("Unsuppported operator " + operator);
         }
     }
 
     private String buildRunOn(StoryGrammar grammar) {
         String patSpaceEol = grammar.getPatternFull("SPACE_EOL");
         String patEol = grammar.getPatternFull("EOL");
-        String patternRunOn = grammar.getPatternFull("RUN_ON");
-        Matcher matcher3 = Pattern.compile(patternRunOn, Pattern.DOTALL).matcher(storyText);
-        if (!matcher3.find()) throw new RuntimeException("Only supporting RUN_ON expressions yet.");
+        var patternRunOn = grammar.getPatternFull("RUN_ON");
+        var matcher3 = Pattern.compile(patternRunOn, Pattern.DOTALL).matcher(storyText);
+        if (!matcher3.find()) throw new StoryException("Only supporting RUN_ON expressions yet.");
         String cronTxt = matcher3.group(0);
         matcher3 = Pattern.compile("DAILY at (\\d{4})").matcher(cronTxt);
         if (matcher3.find()) {
-            String date = matcher3.group(0).substring(9);
-            int hour = Integer.parseInt(date.substring(0, 2), 10);
-            int min = Integer.parseInt(date.substring(2, 4), 10);
+            var date = matcher3.group(0).substring(9);
+            var hour = Integer.parseInt(date.substring(0, 2), 10);
+            var min = Integer.parseInt(date.substring(2, 4), 10);
             return min + " " + hour + " * * *";
         }
 
         String patCronStd = grammar.getPatternFull("CRON_STD");
         matcher3 = Pattern.compile("CRON" + patSpaceEol + "+(" + patCronStd + ")" + patEol, Pattern.DOTALL).matcher(cronTxt);
-        if (!matcher3.find()) throw new RuntimeException("Not found cron in " + cronTxt);
+        if (!matcher3.find()) throw new StoryException("Not found cron in " + cronTxt);
         return matcher3.group(1);
     }
 
@@ -174,6 +174,10 @@ public class Story {
         return error;
     }
 
+    public When getWhen() {
+        return when;
+    }
+
     public void setCronData4Test(String cronData) {
         this.cron = cronData;
     }
@@ -189,8 +193,8 @@ public class Story {
 
         public When(String expression) {
             //WHEN::=WHEN [a-zA-Z0-9_]+[<>=]\d(\.\d)
-            Matcher matcher = Pattern.compile("WHEN ([a-zA-Z0-9_]+)([<>=])(\\d(\\.\\d)?)").matcher(expression);
-            if (!matcher.find()) throw new RuntimeException("Wrong pattern WHEN: '" + expression + "'");
+            var matcher = Pattern.compile("WHEN ([a-zA-Z0-9_]+)([<>=])(\\d(\\.\\d)?)").matcher(expression);
+            if (!matcher.find()) throw new StoryException("Wrong pattern WHEN: '" + expression + "'");
             this.variable = matcher.group(1);
             this.operator = matcher.group(2);
             this.value = matcher.group(3);
