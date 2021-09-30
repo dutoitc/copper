@@ -12,8 +12,6 @@ public class InstantValues {
     protected Instant timestamp;
     protected Map<String, InstantValue> values = new HashMap<>();
 
-
-
     public void put(String key, InstantValue value) {
         values.put(key, value);
     }
@@ -31,4 +29,11 @@ public class InstantValues {
         return values;
     }
 
+    @Override
+    public String toString() {
+        return "InstantValues{" +
+                "timestamp=" + timestamp +
+                ", values=" + values +
+                '}';
+    }
 }

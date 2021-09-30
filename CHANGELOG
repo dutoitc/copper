@@ -1,3 +1,9 @@
+Version v1.3.0
+==============
+New:
+- Added DB datelastcheck which represent the latest instant where a value has been confirmed.
+  before, a value had start and stop time, but a failed test was not seen.
+
 Version v1.2.0
 ==============
 New:

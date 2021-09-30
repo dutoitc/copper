@@ -266,6 +266,24 @@ public class DBServer implements AutoCloseable {
             throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
     }
+    /**
+     * Read all values of a key)
+     */
+    public List<StoreValue> readAll(String key) {
+        List<StoreValue> values = new ArrayList<>();
+        try (var con = cp.getConnection();
+             PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto, datelastcheck FROM valuestore where key=? order by datefrom")) {
+            stmt.setString(1, key);
+            try (var rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    values.add(StoreValueMapper.map(rs, false));
+                }
+            }
+        } catch (SQLException e) {
+            throw new StoreException("An error occured while reading values", e);
+        }
+        return values;
+    }
 
     /**
      * Read all latest values

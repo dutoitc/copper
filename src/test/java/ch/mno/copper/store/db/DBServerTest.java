@@ -181,7 +181,7 @@ class DBServerTest {
 
     @Test
     @Disabled("to be reworked: timestamp not supported in recursive query")
-    void testReadInstant() throws InterruptedException {
+    void testReadInstant() {
         Instant instant = Instant.parse("2020-10-21T00:00:00.00Z");
         for (int i = 0; i < 60; i++) {
             server.insert("key187", "" + i, instant.plus(i, ChronoUnit.MINUTES));
@@ -216,6 +216,22 @@ class DBServerTest {
 
         long dt = System.currentTimeMillis() - tstart;
         Assertions.assertTrue(dt < 20 * 1000, "Too long: " + dt / 1000 + "s");
+    }
+
+    @Test
+    void testDateLastCheck() {
+        server.clearAllData();
+        Instant i1 = Instant.parse("2021-09-30T16:42:00.00Z");
+        Instant i2 = Instant.parse("2021-09-30T16:42:03.00Z");
+        Instant i3 = Instant.parse("2021-09-30T16:42:06.00Z");
+        server.insert("k1", "1", i1);
+        assertEquals("[StoreValue{key='k1', value='1', timestampFrom=2021-09-30T16:42:00Z, timestampTo=3000-12-31T00:00:00Z, timestampLast=2021-09-30T16:42:00Z, nbValues=-1}]", server.readAll("k1").toString());
+        server.insert("k1", "1", i2);
+        assertEquals("[StoreValue{key='k1', value='1', timestampFrom=2021-09-30T16:42:00Z, timestampTo=3000-12-31T00:00:00Z, timestampLast=2021-09-30T16:42:03Z, nbValues=-1}]", server.readAll("k1").toString());
+        server.insert("k1", "2", i3);
+        assertEquals("[StoreValue{key='k1', value='1', timestampFrom=2021-09-30T16:42:00Z, timestampTo=2021-09-30T16:42:06Z, timestampLast=2021-09-30T16:42:03Z, nbValues=-1}, " +
+                "StoreValue{key='k1', value='2', timestampFrom=2021-09-30T16:42:06Z, timestampTo=3000-12-31T00:00:00Z, timestampLast=2021-09-30T16:42:06Z, nbValues=-1}]", server.readAll("k1").toString());
+        assertEquals("[InstantValues{timestamp=null, values={k1=StoreValue{key='k1', value='', timestamp=null}}}]", server.readInstant(Arrays.asList("k1"), i1, i3, 1, 10).toString());
     }
 
 
