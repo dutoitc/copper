@@ -81,7 +81,7 @@ public class DBServerManual extends DBServer implements AutoCloseable {
         Thread.sleep(100);
     }
 
-    private void createDatabaseIfNeeded() throws SQLException {
+    private void createDatabaseIfNeeded() {
         LOG.info("Checking Database...");
         try (Connection con = cp.getConnection();
              Statement stmt = con.createStatement()) {
@@ -97,6 +97,7 @@ public class DBServerManual extends DBServer implements AutoCloseable {
                             "  value text NOT NULL," +
                             "  datefrom timestamp NOT NULL," +
                             "  dateto timestamp NOT NULL," +
+                            "  datelastcheck timestamp NOT NULL," +
                             "  primary key (idvaluestore))");
                     LOG.info("Creating sequence SEQ_VALUESTORE_ID");
                     con.commit();
@@ -117,7 +118,7 @@ public class DBServerManual extends DBServer implements AutoCloseable {
         LOG.info("Database checked");
     }
 
-    private void fixSnapshots() throws SQLException {
+    private void fixSnapshots() {
         LOG.info("Checking Database...");
         try (Connection con = cp.getConnection();
              Statement stmt = con.createStatement()) {

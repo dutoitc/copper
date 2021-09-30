@@ -17,12 +17,13 @@ public class StoreValueMapper {
         String dbKey = rs.getString("key");
         String value = rs.getString("value");
         Instant from = rs.getTimestamp("datefrom").toInstant();
+        Instant datelastcheck = rs.getTimestamp("datelastcheck").toInstant();
         Instant to = rs.getTimestamp("dateto").toInstant();
         long nbValues = -1;
         if (wantNbValues) {
             nbValues = rs.getLong("nbValues");
         }
-        return new StoreValue(idValueStore, dbKey, value, from, to, nbValues);
+        return new StoreValue(idValueStore, dbKey, value, from, to, datelastcheck, nbValues);
     }
 
 }

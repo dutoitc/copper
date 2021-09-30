@@ -1,6 +1,5 @@
 package ch.mno.copper.collect.builders;
 
-import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.collect.wrappers.BinaryCollectorWrapper;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
@@ -40,7 +39,7 @@ class BinaryCollectorWrapperBuilderTest {
     }
 
     @Test
-    void testCheckByPathOnExistant() throws ConnectorException, IOException {
+    void testCheckByPathOnExistant() throws IOException {
         File f = File.createTempFile("dummy", "tmp");
         f.deleteOnExit();
         BinaryCollectorWrapperBuilder wrapperBuilder = buildBinaryCollectorWrapperBuilder();

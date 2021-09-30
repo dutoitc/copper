@@ -51,6 +51,7 @@ class JdbcCollectorWrapperBuilderTest {
                 "WHEN CRON */5 7-18 * * 1-5\n" +
                 "THEN STORE VALUES\n";
         PropertyResolver propertyResolver = Mockito.mock(PropertyResolver.class);
-        assertThrows(SyntaxException.class, ()->new JmxCollectorWrapperBuilder(storyGrammar, propertyResolver).buildCollector(jmx));
+        JmxCollectorWrapperBuilder builder = new JmxCollectorWrapperBuilder(storyGrammar, propertyResolver);
+        assertThrows(SyntaxException.class, ()-> builder.buildCollector(jmx));
     }
 }

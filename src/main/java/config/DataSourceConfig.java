@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -22,6 +23,7 @@ public class DataSourceConfig {
             @Value("${spring.datasource.username}") String datasourceUsername,
             @Value("${spring.datasource.password}") String datasourcePassword
             ) {
+        LOG.info("Using DB at {}, path is {}", datasourceURL, new File(".").getAbsolutePath());
         DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.h2.Driver");
         dataSourceBuilder.url(datasourceURL);

@@ -2,7 +2,6 @@ package ch.mno.copper.web.filters;
 
 import java.util.*;
 
-// TODO: list sorted by date to ease cleanup
 public class AuthStorage {
 
     private static Map<String, Date> expirationDates = new HashMap<>();

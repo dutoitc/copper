@@ -174,18 +174,18 @@ public class CopperUserServices {
     @GetMapping(value = "value/{valueName}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Retrieve a single value",
             notes = "")
-    public ResponseEntity<StoreValue> getValue(@PathVariable("valueName") String valueName) {
+    public ResponseEntity<String> getValue(@PathVariable("valueName") String valueName) {
         StoreValue storeValue = valuesStore.getValues().get(valueName);
 
         if (storeValue == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Value " + valueName + " not found");
         }
-        return new ResponseEntity(storeValue.getValue(), HttpStatus.OK);
+        return new ResponseEntity<String>(storeValue.getValue(), HttpStatus.OK);
     }
 
 
     @PostMapping(value = "value/{valueName}", produces = MediaType.APPLICATION_JSON)
-    public ResponseEntity<StoreValue> postValue(@PathVariable("valueName") String valueName, @RequestBody String message) {
+    public ResponseEntity<String> postValue(@PathVariable("valueName") String valueName, @RequestBody String message) {
         valuesStore.put(valueName, message);
         return getValue(valueName);
     }

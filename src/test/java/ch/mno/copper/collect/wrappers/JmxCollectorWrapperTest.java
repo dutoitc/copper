@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class JmxCollectorWrapperTest {
+class JmxCollectorWrapperTest {
 
     @Test
     void testAll() throws ConnectorException {

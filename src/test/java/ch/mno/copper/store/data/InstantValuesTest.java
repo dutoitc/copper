@@ -8,7 +8,7 @@ import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class InstantValuesTest {
+class InstantValuesTest {
 
     @Test
     void testAll() {

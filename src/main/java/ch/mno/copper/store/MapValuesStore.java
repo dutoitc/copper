@@ -17,7 +17,8 @@ public class MapValuesStore implements ValuesStore {
 
     @Override
     public void put(String key, String value) {
-            map.put(key, new StoreValue(nextId++, key, value, Instant.now(), INSTANT_MAX, 1));
+        Instant now = Instant.now();
+        map.put(key, new StoreValue(nextId++, key, value, now, INSTANT_MAX, now,1));
     }
 
     @Override

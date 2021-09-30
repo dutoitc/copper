@@ -42,8 +42,8 @@ public class CollectorWrapperFactory {
         throw new RuntimeException("Cannot find a valid GIVEN expression builder");
     }
 
-    private boolean matchesPattern(String PATTERN_KEY, String storyGiven) {
-        return Pattern.compile(grammar.getPatternFull(PATTERN_KEY), Pattern.DOTALL).matcher(storyGiven).find();
+    private boolean matchesPattern(String patternKey, String storyGiven) {
+        return Pattern.compile(grammar.getPatternFull(patternKey), Pattern.DOTALL).matcher(storyGiven).find();
     }
 
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class JdbcCollectorWrapperTest {
+class JdbcCollectorWrapperTest {
 
     @Test
     void testAll() throws ConnectorException {

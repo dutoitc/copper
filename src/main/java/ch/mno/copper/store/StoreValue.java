@@ -14,14 +14,16 @@ public class StoreValue {
     protected String value;
     protected Instant timestampFrom;
     protected Instant timestampTo;
+    protected Instant timestampLast;  // Last check with given value
     protected Long nbValues;
 
-    public StoreValue(long id, String key, String value, Instant timestampFrom, Instant timestampTo, long nbValues) {
+    public StoreValue(long id, String key, String value, Instant timestampFrom, Instant timestampTo, Instant timestampLast, long nbValues) {
         this.id = id;
         this.key = key;
         this.value = value;
         this.timestampFrom = timestampFrom;
         this.timestampTo = timestampTo;
+        this.timestampLast = timestampLast;
         this.nbValues = nbValues;
     }
 
@@ -45,6 +47,10 @@ public class StoreValue {
         return timestampTo;
     }
 
+    public Instant getTimestampLast() {
+        return timestampLast;
+    }
+
     public Long getNbValues() {
         return nbValues;
     }
@@ -60,6 +66,7 @@ public class StoreValue {
                 ", value='" + value + '\'' +
                 ", timestampFrom=" + timestampFrom +
                 ", timestampTo=" + timestampTo +
+                ", timestampLast=" + timestampLast +
                 ", nbValues=" + nbValues +
                 '}';
     }

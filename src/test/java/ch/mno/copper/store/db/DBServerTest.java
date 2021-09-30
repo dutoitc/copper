@@ -52,27 +52,27 @@ class DBServerTest {
     }
 
     @Test
-    void testReadLatestForOneValue() throws SQLException {
+    void testReadLatestForOneValue() {
         StoreValue readSV = server.readLatest("key1");
         assertEquals("value10", readSV.getValue());
     }
 
 
     @Test
-    void testReadLatestForTwoValues() throws SQLException {
+    void testReadLatestForTwoValues()  {
         StoreValue readSV = server.readLatest("key3");
         assertEquals("value31", readSV.getValue());
     }
 
     @Test
-    void testReadLatestForThreeValues() throws SQLException {
+    void testReadLatestForThreeValues()  {
         StoreValue readSV = server.readLatest("key4");
         assertEquals("value42", readSV.getValue());
     }
 
 
     @Test
-    void testReadAtTimestampForOneValue() throws SQLException {
+    void testReadAtTimestampForOneValue()  {
         assertNull(server.read("key1", i3));
         assertNull(server.read("key1", i4));
         assertEquals("value10", server.read("key1", i5).getValue());
@@ -83,7 +83,7 @@ class DBServerTest {
     }
 
     @Test
-    void testReadAtTimestampForTwoValues() throws SQLException {
+    void testReadAtTimestampForTwoValues()  {
         assertNull(server.read("key3", i3));
         assertEquals("value30", server.read("key3", i4).getValue());
         assertEquals("value30", server.read("key3", i5).getValue());
@@ -94,7 +94,7 @@ class DBServerTest {
     }
 
     @Test
-    void testReadAtTimestampForThreeValues() throws SQLException {
+    void testReadAtTimestampForThreeValues()  {
         assertNull(server.read("key4", i3));
         assertEquals("value40", server.read("key4", i4).getValue());
         assertEquals("value41", server.read("key4", i5).getValue());
@@ -128,14 +128,14 @@ class DBServerTest {
     }
 
     //@Test
-    /*void testReadInstantValues() throws SQLException {
+    /*void testReadInstantValues()  {
         List<InstantValues> iv = server.readInstant(Arrays.asList("key4"), i3, i8, 2);
         assertEquals(4, iv.size());
         // TODO: continue
     }*/
 
     @Test
-    void testReadUpdatedKeys() throws SQLException {
+    void testReadUpdatedKeys()  {
         assertEquals("", StringUtils.join(server.readUpdatedKeys(i3, i4), ','));
         assertEquals("key3,key4", StringUtils.join(server.readUpdatedKeys(i4, i5), ','));
         assertEquals("key1,key2,key4", StringUtils.join(server.readUpdatedKeys(i5, i6), ','));
@@ -146,14 +146,14 @@ class DBServerTest {
     }
 
     @Test
-    void testReadLatest() throws SQLException {
+    void testReadLatest()  {
         StringBuilder sb = new StringBuilder();
         server.readLatest().forEach(v -> sb.append(v.getKey()).append(':').append(v.getValue()).append(';'));
         assertEquals("key1:value10;key2:value20;key3:value31;key4:value42;", sb.toString());
     }
 
     @Test
-    void testDeleteValuesOfKey() throws SQLException {
+    void testDeleteValuesOfKey()  {
         assertEquals("value31", server.readLatest("key3").getValue());
         assertEquals("value42", server.readLatest("key4").getValue());
         assertEquals(2, server.deleteValuesOfKey("key3"));
@@ -163,7 +163,7 @@ class DBServerTest {
 
     @Test
         // Note: need some improvments; do not delete when dateTo is specified (=last values)
-    void deleteValuesOlderThanXDays() throws SQLException {
+    void deleteValuesOlderThanXDays()  {
         assertEquals("value31", server.readLatest("key3").getValue());
         assertEquals("value42", server.readLatest("key4").getValue());
         assertEquals(3, server.deleteValuesOlderThanXDays(1));
@@ -197,7 +197,7 @@ class DBServerTest {
     // 10000->428s/60ms/58ms
     @Test
     @Disabled("to be reworked")
-    void testPerformance() throws SQLException {
+    void testPerformance()  {
         long tstart = System.currentTimeMillis();
         server.clearAllData();
         long t0 = System.currentTimeMillis();
@@ -236,7 +236,7 @@ class DBServerTest {
 
 /*
     @Test
-    void testAll() throws SQLException {
+    void testAll()  {
         DbHelper.clearAllData();
 
         // Create

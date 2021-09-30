@@ -27,6 +27,7 @@ public class JmxCollectorWrapper implements AbstractCollectorWrapper {
         this.as = as;
     }
 
+    @Override
     public List<String> getAs() {
         return as;
     }
@@ -60,7 +61,7 @@ public class JmxCollectorWrapper implements AbstractCollectorWrapper {
         return map;
     }
 
-    List<String> queryValues() throws ConnectorException {
+    List<String> queryValues() {
         return JmxCollector.jmxQueryWithCreds(url, username, password, jmxQueries);
     }
 

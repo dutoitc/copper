@@ -9,7 +9,7 @@ import org.springframework.core.env.PropertyResolver;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CollectorWrapperFactoryTest {
+class CollectorWrapperFactoryTest {
 
     private static StoryGrammar storyGrammar;
 
@@ -25,7 +25,7 @@ public class CollectorWrapperFactoryTest {
                 "   CHECK_BY_PATH /usr/bin/ls AS LS_AVAILABLE\n";
 
         PropertyResolver propertyResolver = Mockito.mock(PropertyResolver.class);
-        var ret = new CollectorWrapperFactory( propertyResolver, storyGrammar).build(story);
+        var ret = new CollectorWrapperFactory(propertyResolver, storyGrammar).build(story);
         assertEquals(BinaryCollectorWrapper.class, ret.getClass());
     }
 
@@ -39,7 +39,7 @@ public class CollectorWrapperFactoryTest {
                 "THEN STORE VALUES\n";
 
         PropertyResolver propertyResolver = Mockito.mock(PropertyResolver.class);
-        var ret = new CollectorWrapperFactory( propertyResolver, storyGrammar).build(story);
+        var ret = new CollectorWrapperFactory(propertyResolver, storyGrammar).build(story);
         assertEquals(JdbcCollectorWrapper.class, ret.getClass());
     }
 
@@ -52,19 +52,19 @@ public class CollectorWrapperFactoryTest {
                 "THEN STORE VALUES\n";
 
         PropertyResolver propertyResolver = Mockito.mock(PropertyResolver.class);
-        var ret = new CollectorWrapperFactory( propertyResolver, storyGrammar).build(story);
+        var ret = new CollectorWrapperFactory(propertyResolver, storyGrammar).build(story);
         assertEquals(JmxCollectorWrapper.class, ret.getClass());
     }
 
     @Test
     void testSocket() {
-        String story="GIVEN SOCKET WITH host=localhost,port=666,timeout_ms=1000\n" +
-                "    KEEP status AS myStatus\n"  +
+        String story = "GIVEN SOCKET WITH host=localhost,port=666,timeout_ms=1000\n" +
+                "    KEEP status AS myStatus\n" +
                 "WHEN CRON 0 6 * * 1-5\n" +
                 "THEN STORE VALUES\n";
 
         PropertyResolver propertyResolver = Mockito.mock(PropertyResolver.class);
-        var ret = new CollectorWrapperFactory( propertyResolver, storyGrammar).build(story);
+        var ret = new CollectorWrapperFactory(propertyResolver, storyGrammar).build(story);
         assertEquals(SocketCollectorWrapper.class, ret.getClass());
     }
 
@@ -75,7 +75,7 @@ public class CollectorWrapperFactoryTest {
                 "THEN STORE VALUES";
 
         PropertyResolver propertyResolver = Mockito.mock(PropertyResolver.class);
-        var ret = new CollectorWrapperFactory( propertyResolver, storyGrammar).build(story);
+        var ret = new CollectorWrapperFactory(propertyResolver, storyGrammar).build(story);
         assertEquals(WebCollectorWrapper.class, ret.getClass());
     }
 
@@ -88,7 +88,7 @@ public class CollectorWrapperFactoryTest {
                 "     WITH line=\"v1\"\n";
 
         PropertyResolver propertyResolver = Mockito.mock(PropertyResolver.class);
-        var ret = new CollectorWrapperFactory( propertyResolver, storyGrammar).build(story);
+        var ret = new CollectorWrapperFactory(propertyResolver, storyGrammar).build(story);
         assertNull(ret);
     }
 
@@ -97,6 +97,7 @@ public class CollectorWrapperFactoryTest {
         String story = "RUN ON CRON 0 * * * *\n";
 
         PropertyResolver propertyResolver = Mockito.mock(PropertyResolver.class);
-        assertThrows(RuntimeException.class, ()->new CollectorWrapperFactory( propertyResolver, storyGrammar).build(story));
+        CollectorWrapperFactory factory = new CollectorWrapperFactory(propertyResolver, storyGrammar);
+        assertThrows(RuntimeException.class, () -> factory.build(story));
     }
 }
