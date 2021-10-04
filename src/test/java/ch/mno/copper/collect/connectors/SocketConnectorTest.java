@@ -1,7 +1,7 @@
 package ch.mno.copper.collect.connectors;
 
 import ch.mno.copper.AbstractJmxServerTestStarter;
-import ch.mno.copper.test.WebServer4Tests;
+import ch.mno.copper.test.WebServer4Tezts;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,12 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class SocketConnectorTest extends AbstractJmxServerTestStarter {
 
     static int httpPort = 35742;
-    private static WebServer4Tests ws;
+    private static WebServer4Tezts ws;
 
     @BeforeAll
     public static void setup() throws IOException, InterruptedException {
         // HTTP Server
-        ws = new WebServer4Tests(httpPort);
+        ws = new WebServer4Tezts(httpPort);
         ws.start();
         httpPort = ws.getPort();
         int nbTries = 30;

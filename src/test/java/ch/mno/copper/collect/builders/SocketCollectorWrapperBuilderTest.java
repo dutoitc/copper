@@ -5,7 +5,7 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.collect.wrappers.SocketCollectorWrapper;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
-import ch.mno.copper.test.WebServer4Tests;
+import ch.mno.copper.test.WebServer4Tezts;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,14 +21,14 @@ class SocketCollectorWrapperBuilderTest extends AbstractJmxServerTestStarter {
 
     static int httpPort = 0;
 
-    private static WebServer4Tests ws;
+    private static WebServer4Tezts ws;
     private static StoryGrammar grammar;
 
     @BeforeAll
     public static void setup() {
         grammar = new StoryGrammar(Story.class.getResourceAsStream("/StoryGrammar.txt"));
         // HTTP Server
-        ws = new WebServer4Tests(httpPort);
+        ws = new WebServer4Tezts(httpPort);
         ws.start();
         httpPort = ws.getPort();
     }

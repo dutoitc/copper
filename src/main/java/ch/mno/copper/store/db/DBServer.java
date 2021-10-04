@@ -280,7 +280,7 @@ public class DBServer implements AutoCloseable {
                 }
             }
         } catch (SQLException e) {
-            throw new StoreException("An error occured while reading values", e);
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
         return values;
     }

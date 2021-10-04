@@ -16,7 +16,7 @@ import java.util.UUID;
  * err404 -> return error 404
  */
 // Miniserver from http://www.java2s.com/Code/Java/Network-Protocol/ASimpleWebServer.htm
-public class WebServer4Tests implements Runnable, AutoCloseable {
+public class WebServer4Tezts implements Runnable, AutoCloseable {
     ServerSocket s;
     Thread thread;
     boolean stopAsked = false;
@@ -27,7 +27,7 @@ public class WebServer4Tests implements Runnable, AutoCloseable {
     /**
      * Port 0 means dynamic port. use getPort()
      */
-    public WebServer4Tests(int port) {
+    public WebServer4Tezts(int port) {
         this.port = port;
     }
 

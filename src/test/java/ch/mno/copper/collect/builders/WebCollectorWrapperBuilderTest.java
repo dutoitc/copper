@@ -4,11 +4,9 @@ import ch.mno.copper.AbstractWebPortSpringTest;
 import ch.mno.copper.collect.wrappers.WebCollectorWrapper;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
-import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.core.env.PropertyResolver;
@@ -100,41 +98,41 @@ class WebCollectorWrapperBuilderTest extends AbstractWebPortSpringTest {
     }
 
 
-    @Test
-    @Disabled("to be reworked")
-    void testTemp() {
-//        String jsonPath = "$.value[?(/app.WS_Services$/.test(@.Name))].Version";
-//        String jsonPath = "$['value'][?(@['Name']=='app.WS_Services')].Version";
-        String jsonPath = "$.value.*.[?(@['Name']=='app.WS_Services')].Version";
-
-//        "$['jobs'][?(@['name']=='ATEV-compile')]
-        String json = "{" +
-                "  \"timestamp\": 1503928437,\n" +
-                "  \"status\": 200,\n" +
-                "  \"request\": {\n" +
-                "    \"operation\": \"list\",\n" +
-                "    \"mbean\": \"org.apache.karaf:name=trun,type=bundles\",\n" +
-                "    \"type\": \"exec\"\n" +
-                "  },\n" +
-                "  \"value\": {\n" +
-                "    \"0\": {\n" +
-                "      \"Name\": \"app.WS_Services\",\n" +
-                "      \"Blueprint\": \"\",\n" +
-                "      \"State\": \"ACTIVE\",\n" +
-                "      \"Start Level\": 0,\n" +
-                "      \"ID\": 0,\n" +
-                "      \"Version\": \"3.8.0.v20120529-1548\"\n" +
-                "    },\n" +
-                "    \"1\": {\n" +
-                "      \"Name\": \"org.ops4j.pax.url.mvn\",\n" +
-                "      \"Blueprint\": \"\",\n" +
-                "      \"State\": \"ACTIVE\",\n" +
-                "      \"Start Level\": 5,\n" +
-                "      \"ID\": 1,\n" +
-                "      \"Version\": \"1.3.7\"\n" +
-                "    }}}";
-        net.minidev.json.JSONArray res = JsonPath.read(json, jsonPath);
-        System.out.println(res.toJSONString());
-    }
+//    @Test
+//    @Disabled("to be reworked")
+//    void testTemp() {
+////        String jsonPath = "$.value[?(/app.WS_Services$/.test(@.Name))].Version";
+////        String jsonPath = "$['value'][?(@['Name']=='app.WS_Services')].Version";
+//        String jsonPath = "$.value.*.[?(@['Name']=='app.WS_Services')].Version";
+//
+////        "$['jobs'][?(@['name']=='ATEV-compile')]
+//        String json = "{" +
+//                "  \"timestamp\": 1503928437,\n" +
+//                "  \"status\": 200,\n" +
+//                "  \"request\": {\n" +
+//                "    \"operation\": \"list\",\n" +
+//                "    \"mbean\": \"org.apache.karaf:name=trun,type=bundles\",\n" +
+//                "    \"type\": \"exec\"\n" +
+//                "  },\n" +
+//                "  \"value\": {\n" +
+//                "    \"0\": {\n" +
+//                "      \"Name\": \"app.WS_Services\",\n" +
+//                "      \"Blueprint\": \"\",\n" +
+//                "      \"State\": \"ACTIVE\",\n" +
+//                "      \"Start Level\": 0,\n" +
+//                "      \"ID\": 0,\n" +
+//                "      \"Version\": \"3.8.0.v20120529-1548\"\n" +
+//                "    },\n" +
+//                "    \"1\": {\n" +
+//                "      \"Name\": \"org.ops4j.pax.url.mvn\",\n" +
+//                "      \"Blueprint\": \"\",\n" +
+//                "      \"State\": \"ACTIVE\",\n" +
+//                "      \"Start Level\": 5,\n" +
+//                "      \"ID\": 1,\n" +
+//                "      \"Version\": \"1.3.7\"\n" +
+//                "    }}}";
+//        net.minidev.json.JSONArray res = JsonPath.read(json, jsonPath);
+//        System.out.println(res.toJSONString());
+//    }
 
 }
