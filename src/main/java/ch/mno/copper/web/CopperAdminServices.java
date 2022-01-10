@@ -104,7 +104,7 @@ public class CopperAdminServices {
     }
 
     @DeleteMapping(value = "values/bykey/{key}", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
+    @ApiOperation(value = "Delete values by key", notes = "Use this to clean data after some time")
     public String deleteValuesOfKey(@PathVariable String key) {
         return valuesStore.deleteValuesOfKey(key);
     }
