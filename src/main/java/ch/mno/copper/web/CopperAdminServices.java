@@ -14,7 +14,7 @@ import ch.mno.copper.web.dto.StoryPostDTO;
 import ch.mno.copper.web.dto.StoryWEBDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +46,7 @@ public class CopperAdminServices {
 
 
     @PostMapping(value = "story/{storyName}", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Method to create a new story",
-            notes = "Use this to store a story. If originalStoryName='new', a new story is saved and 'Ok' is returned. otherwise the story will be updated by storyName (originalStoryName)")
+    @Operation(summary = "Method to create a new story. Use this to store a story. If originalStoryName='new', a new story is saved and 'Ok' is returned. otherwise the story will be updated by storyName (originalStoryName)")
     public ResponseEntity<String> postStory(@PathVariable("storyName") String storyName, @RequestBody StoryPostDTO post) throws IOException, ConnectorException {
         StoriesFacade sf = storiesFacade;
 
@@ -76,41 +75,39 @@ public class CopperAdminServices {
     }
 
     @GetMapping(value = "story/{storyName}/run", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Ask to run a story",
-            notes = "Story is run before 3''")
+    @Operation(summary = "Ask to run a story. Story is run before 3''")
     public String getStoryRun(@PathVariable("storyName") String storyName) {
         daemon.runStory(storyName);
         return STORY + storyName + " marked for execution";
     }
 
     @GetMapping(value = "story/{storyName}/delete", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Delete story by name",
-            notes = "")
+    @Operation(summary = "Delete story by name")
     public String getStoryDelete(@PathVariable("storyName") String storyName) {
         storiesFacade.deleteStory(storyName);
         return STORY + storyName + " deleted.";
     }
 
     @DeleteMapping(value = "values/olderThanOneMonth", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
+    @Operation(summary = "Delete values older than one month")
     public String deleteValuesOlderThanOneMonth() {
         return valuesStore.deleteValuesOlderThanXDays(30);
     }
 
     @DeleteMapping(value = "values/olderThanThreeMonth", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Delete values older than one month", notes = "Use this to clean data after some time")
+    @Operation(summary = "Delete values older than one month")
     public String deleteValuesOlderThanThreeMonth() {
         return valuesStore.deleteValuesOlderThanXDays(90);
     }
 
     @DeleteMapping(value = "values/bykey/{key}", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Delete values by key", notes = "Use this to clean data after some time")
+    @Operation(summary = "Delete values by key")
     public String deleteValuesOfKey(@PathVariable String key) {
         return valuesStore.deleteValuesOfKey(key);
     }
 
     @GetMapping("stories")
-    @ApiOperation(value = "Retrieve all stories", notes = "")
+    @Operation(summary = "Retrieve all stories")
     public String getStories() {
         Gson gson = new GsonBuilder().registerTypeAdapter(StoryWEBDTO.class, new JsonStoryAdapter()).create();
 
@@ -121,8 +118,7 @@ public class CopperAdminServices {
     }
 
     @GetMapping(value = "story/{storyName}")
-    @ApiOperation(value = "Retrieve story by name",
-            notes = "")
+    @Operation(summary = "Retrieve story by name")
     public String getStory(@PathVariable("storyName") String storyName) {
         Story story = storiesFacade.getStoryByName(storyName);
         if (story == null) {
@@ -134,23 +130,20 @@ public class CopperAdminServices {
     }
 
     @GetMapping("overview")
-    @ApiOperation(value = "View stories name and next run",
-            notes = "")
+    @Operation(summary = "View stories name and next run")
     public String getOverview() {
         return buildGson().toJson(buildOverview());
     }
 
     @PostMapping(value = "value/{valueName}", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Method to set or update a value",
-            notes = "")
+    @Operation(summary = "Method to set or update a value")
     public String postValue(@PathVariable("valueName") String valueName, @RequestBody String value) {
         valuesStore.put(valueName, value);
         return "OK";
     }
 
     @PostMapping("validation/story")
-    @ApiOperation(value = "Validation of a posted story",
-            notes = "Post a story to this service, and validate it without saving it")
+    @Operation(summary = "Validation of a posted story. Post a story to this service, and validate it without saving it")
     public StoryValidationResult validateStory(@RequestBody String story) {
         return storiesFacade.validate(story);
     }

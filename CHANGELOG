@@ -1,6 +1,12 @@
+Version v1.4.0
+==============
+- Dependencies upgrades
+- Swagger upgrade and listening on /ws/
+- H2 upgrade to 2.1, need database suppression or manual upgrade (see http://www.h2database.com/html/migration-to-v2.html)
+  Renamed key, value to vkey, vvalue (reserved words)
+
 Version v1.3.0
 ==============
-New:
 - Added DB datelastcheck which represent the latest instant where a value has been confirmed.
   before, a value had start and stop time, but a failed test was not seen.
 

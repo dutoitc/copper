@@ -9,7 +9,7 @@ import ch.mno.copper.web.adapters.JsonInstantAdapter;
 import ch.mno.copper.web.helpers.InstantHelper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.jfree.chart.JFreeChart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class CopperUserServices {
     @GetMapping(value = "/")
     public String root() {
         // See https://stackoverflow.com/questions/32184175/how-to-use-spring-redirect-if-controller-method-returns-responseentity
-        return "redirect:swagger.json";
+        return "redirect:swagger-ui.html";
     }
 
 
@@ -62,25 +62,22 @@ public class CopperUserServices {
         return sb.toString();
     }
 
+    @Operation(summary = "Ping method answering 'pong', use this to monitor that Copper is up")
     @GetMapping(value = "/ping", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Ping method answering 'pong'",
-            notes = "Use this to monitor that Copper is up")
     public String test() {
         return "pong";
     }
 
+    @Operation(summary = "Get embedded screens")
     @GetMapping(value = "/screens", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get embedded screens",
-            notes = "A way to get the embedded screens")
     public Map<String, String> getScreens() {
         return diskHelper.findScreens();
     }
 
     // Note: two methods to differ by return media type
     @GetMapping(value = "/screens/js/{filename}", produces = "application/javascript")
-    @ApiOperation(value = "Get data from screens folder",
-            notes = "A way to get the embedded screens data")
-    public ResponseEntity<String>  getScreenJson(@PathVariable("filename") String filename)  {
+    @Operation(summary = "Get data from screens folder")
+    public ResponseEntity<String> getScreenJson(@PathVariable("filename") String filename) {
         try {
             String data = diskHelper.findScreenData(filename);
             return new ResponseEntity<>(data, HttpStatus.OK);
@@ -91,9 +88,8 @@ public class CopperUserServices {
 
     // Note: two methods to differ by return media type
     @GetMapping(value = "/screens/css/{filename}", produces = "text/css")
-    @ApiOperation(value = "Get data from screens folder",
-            notes = "A way to get the embedded screens data")
-    public ResponseEntity<String> getScreenCss(@PathVariable("filename") String filename)  {
+    @Operation(summary = "Get css from screens folder")
+    public ResponseEntity<String> getScreenCss(@PathVariable("filename") String filename) {
         try {
             String data = diskHelper.findScreenData(filename);
             return new ResponseEntity<>(data, HttpStatus.OK);
@@ -104,8 +100,7 @@ public class CopperUserServices {
 
 
     @GetMapping(value = "values", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Convenience way to retrieve all valid values from Copper",
-            notes = "Use this to extract many values, example for remote webservice, angular service, ...")
+    @Operation(summary = "Convenience way to retrieve all valid values from Copper")
     public String getValues() {
         try {
             Map<String, StoreValue> values = valuesStore.getValues();
@@ -117,19 +112,18 @@ public class CopperUserServices {
     }
 
     @GetMapping(value = "values/alerts", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Find alerts on values volumetry", notes = "Use this to find values with too much store")
+    @Operation(summary = "Find alerts on values volumetry")
     public String getValuesAlerts() {
         return valuesStore.getValuesAlerts();
     }
 
 
     @GetMapping(value = "values/query")
-    @ApiOperation(value = "Retrieve values between date",
-            notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
+    @Operation(summary = "Retrieve values between date (from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
     public ResponseEntity<String> getValues(@QueryParam("from") String dateFrom,
-                                    @QueryParam("to") String dateTo,
-                                    @QueryParam("columns") String columns,
-                                    @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues) {
+                                            @QueryParam("to") String dateTo,
+                                            @QueryParam("columns") String columns,
+                                            @DefaultValue("100") @QueryParam("maxvalues") Integer maxValues) {
         if (columns == null) {
             return new ResponseEntity<>("Missing 'columns'", HttpStatus.NOT_ACCEPTABLE);
         }
@@ -147,13 +141,12 @@ public class CopperUserServices {
     }
 
     @GetMapping(value = "instants/query")
-    @ApiOperation(value = "Retrieve values between date",
-            notes = "")
+    @Operation(summary = "Retrieve values between date")
     public ResponseEntity<String> getValues(@QueryParam("from") String dateFrom,
-                                    @QueryParam("to") String dateTo,
-                                    @QueryParam("columns") String columns,
-                                    @QueryParam("intervalSeconds") long intervalSeconds,
-                                    @QueryParam("maxvalues") Integer maxValues) {
+                                            @QueryParam("to") String dateTo,
+                                            @QueryParam("columns") String columns,
+                                            @QueryParam("intervalSeconds") long intervalSeconds,
+                                            @QueryParam("maxvalues") Integer maxValues) {
 
         maxValues = maxValues == null ? 100 : maxValues;
 
@@ -172,8 +165,7 @@ public class CopperUserServices {
 
 
     @GetMapping(value = "value/{valueName}", produces = MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Retrieve a single value",
-            notes = "")
+    @Operation(summary = "Retrieve a single value")
     public ResponseEntity<String> getValue(@PathVariable("valueName") String valueName) {
         StoreValue storeValue = valuesStore.getValues().get(valueName);
 
@@ -192,16 +184,15 @@ public class CopperUserServices {
 
 
     @GetMapping(value = "values/query/png", produces = MediaType.APPLICATION_OCTET_STREAM)
-    @ApiOperation(value = "Retrieve values between date",
-            notes = "(from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
+    @Operation(summary = "Retrieve values between date (from null means from 2000, to null means now). Warning, retrieving many dates could be time-consuming and generate high volume of store")
     public HttpEntity<String> getValuesAsPNG(@QueryParam("from") String dateFrom,
-                                     @QueryParam("to") String dateTo,
-                                     @QueryParam("columns") String columns,
-                                     @QueryParam("ytitle") String yTitle,
-                                     @QueryParam("maxvalues") Integer maxValues,
-                                     @QueryParam("width") Integer width,
-                                     @QueryParam("height") Integer height,
-                                     HttpServletResponse response) {
+                                             @QueryParam("to") String dateTo,
+                                             @QueryParam("columns") String columns,
+                                             @QueryParam("ytitle") String yTitle,
+                                             @QueryParam("maxvalues") Integer maxValues,
+                                             @QueryParam("width") Integer width,
+                                             @QueryParam("height") Integer height,
+                                             HttpServletResponse response) {
         if (columns == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Missing 'columns'");
         }

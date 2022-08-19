@@ -231,7 +231,15 @@ class DBServerTest {
         server.insert("k1", "2", i3);
         assertEquals("[StoreValue{key='k1', value='1', timestampFrom=2021-09-30T16:42:00Z, timestampTo=2021-09-30T16:42:06Z, timestampLast=2021-09-30T16:42:03Z, nbValues=-1}, " +
                 "StoreValue{key='k1', value='2', timestampFrom=2021-09-30T16:42:06Z, timestampTo=3000-12-31T00:00:00Z, timestampLast=2021-09-30T16:42:06Z, nbValues=-1}]", server.readAll("k1").toString());
-        assertEquals("[InstantValues{timestamp=null, values={k1=StoreValue{key='k1', value='', timestamp=null}}}]", server.readInstant(Arrays.asList("k1"), i1, i3, 1, 10).toString());
+        assertEquals("[" +
+                        "InstantValues{timestamp=2021-09-30T16:42:00Z, values={k1=StoreValue{key='k1', value='1', timestamp=2021-09-30T16:42:00Z}}}, " +
+                        "InstantValues{timestamp=2021-09-30T16:42:01Z, values={k1=StoreValue{key='k1', value='1', timestamp=2021-09-30T16:42:01Z}}}, " +
+                        "InstantValues{timestamp=2021-09-30T16:42:02Z, values={k1=StoreValue{key='k1', value='1', timestamp=2021-09-30T16:42:02Z}}}, " +
+                        "InstantValues{timestamp=2021-09-30T16:42:03Z, values={k1=StoreValue{key='k1', value='1', timestamp=2021-09-30T16:42:03Z}}}, " +
+                        "InstantValues{timestamp=2021-09-30T16:42:04Z, values={k1=StoreValue{key='k1', value='1', timestamp=2021-09-30T16:42:04Z}}}, " +
+                        "InstantValues{timestamp=2021-09-30T16:42:05Z, values={k1=StoreValue{key='k1', value='1', timestamp=2021-09-30T16:42:05Z}}}, " +
+                        "InstantValues{timestamp=2021-09-30T16:42:06Z, values={k1=StoreValue{key='k1', value='2', timestamp=2021-09-30T16:42:06Z}}}]",
+                server.readInstant(List.of("k1"), i1, i3, 1, 10).toString());
     }
 
 

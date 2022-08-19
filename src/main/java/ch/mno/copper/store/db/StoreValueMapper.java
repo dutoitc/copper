@@ -14,8 +14,8 @@ public class StoreValueMapper {
 
     static StoreValue map(ResultSet rs, boolean wantNbValues) throws SQLException {
         long idValueStore = rs.getLong("idValueStore");
-        String dbKey = rs.getString("key");
-        String value = rs.getString("value");
+        String dbKey = rs.getString("vkey");
+        String value = rs.getString("vvalue");
         Instant from = rs.getTimestamp("datefrom").toInstant();
         Instant datelastcheck = rs.getTimestamp("datelastcheck").toInstant();
         Instant to = rs.getTimestamp("dateto").toInstant();

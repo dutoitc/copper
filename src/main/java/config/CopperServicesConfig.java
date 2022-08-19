@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 @Configuration
 public class CopperServicesConfig {
 
+
     @Bean
     public StoryGrammar storyGrammar() {
         return new StoryGrammar(StoriesFacadeImpl.class.getResourceAsStream("/StoryGrammar.txt"));

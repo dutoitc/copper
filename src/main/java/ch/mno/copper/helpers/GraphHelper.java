@@ -2,7 +2,7 @@ package ch.mno.copper.helpers;
 
 import ch.mno.copper.store.StoreValue;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.Second;
@@ -29,7 +29,6 @@ public class GraphHelper {
 
     public static JFreeChart createChart(List<StoreValue> values, String title, String yLabel) {
         XYDataset dataset = createDataset(values);
-
 
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart(title,
@@ -72,6 +71,6 @@ public class GraphHelper {
         Rectangle r = new Rectangle(0, 0, width, height);
         chart.draw(g2, r);
         BufferedImage chartImage = chart.createBufferedImage(width, height, null);
-        return ChartUtilities.encodeAsPNG(chartImage);
+        return ChartUtils.encodeAsPNG(chartImage);
     }
 }

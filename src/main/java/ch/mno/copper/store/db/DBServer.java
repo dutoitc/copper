@@ -68,7 +68,7 @@ public class DBServer implements AutoCloseable {
      * If the value is the same, datelastcheck is updated
      */
     public void insert(String key, String value, Instant instant) {
-        var sqlInsert = "INSERT INTO valuestore ( idvaluestore, key, value, datefrom, dateto, datelastcheck) VALUES (?,?,?,?,?,?)";
+        var sqlInsert = "INSERT INTO valuestore ( idvaluestore, vkey, vvalue, datefrom, dateto, datelastcheck) VALUES (?,?,?,?,?,?)";
 
         try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sqlInsert)) {
@@ -133,7 +133,7 @@ public class DBServer implements AutoCloseable {
      * Read the 'key' value at given instant
      */
     public StoreValue read(String key, Instant timestamp) {
-        var sql = "SELECT idvaluestore, key, value, datefrom, dateto, datelastcheck FROM valuestore where key=? and datefrom<=? and dateto>? order by datefrom";
+        var sql = "SELECT idvaluestore, vkey, vvalue, datefrom, dateto, datelastcheck FROM valuestore where vkey=? and datefrom<=? and dateto>? order by datefrom";
         try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, key);
@@ -163,11 +163,9 @@ public class DBServer implements AutoCloseable {
 
 
     /** Query some values at some interval of time, to plot graph */
-    // recursive not working with date, only char...
-    // TODO: virer recursive, générer les valeurs récursive ?
     public List<InstantValues> readInstant(List<String> keys, Instant timestampFrom, Instant timestampTo, long intervalSeconds, int maxValues) {
         String sql = "select * from (" +
-                "select ts,c1, value, idValueStore, key from ( " +
+                "select ts,c1, vvalue, idValueStore, vkey from ( " +
                 "select ts, c1 from ( " +
                 "WITH RECURSIVE T(ts) AS ( " +
                 "    SELECT ? " +
@@ -175,17 +173,13 @@ public class DBServer implements AutoCloseable {
                 "    SELECT dateadd('second', ?, ts) FROM T WHERE ts<? " +
                 ") " +
                 "SELECT * FROM T) t,  (values (XXX)) " +
-                ") left outer join valuestore vs on ts>=vs.datefrom and ts<vs.dateto and key =c1 " +
-                "order by ts desc, key desc" +
+                ") left outer join valuestore vs on ts>=vs.datefrom and ts<vs.dateto and vkey =c1 " +
+                "order by ts desc, vkey desc" +
                 " FETCH FIRST " + maxValues + " ROWS ONLY " +
-                ") order by ts, key";
+                ") order by ts, vkey";
 
-        var s = new StringBuilder();
-        s.append('?');
-        for (var i = 1; i < keys.size(); i++) {
-            s.append("),(?");
-        }
-        sql = sql.replace("XXX", s.toString());
+        String s = '?' + "),(?".repeat(Math.max(0, keys.size() - 1));
+        sql = sql.replace("XXX", s);
         try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setTimestamp(1, Timestamp.from(timestampFrom));
@@ -223,8 +217,8 @@ public class DBServer implements AutoCloseable {
             timestampTo = Instant.now();
         }
         String sql = "select * from (" +
-                "SELECT idvaluestore, key, value, datefrom, dateto, datelastcheck FROM valuestore " +
-                "where key=? and ((datefrom<? and dateto>?) or (datefrom>=? and datefrom<?) or (dateto>? and dateto<=?)) " +
+                "SELECT idvaluestore, vkey, vvalue, datefrom, dateto, datelastcheck FROM valuestore " +
+                "where vkey=? and ((datefrom<? and dateto>?) or (datefrom>=? and datefrom<?) or (dateto>? and dateto<=?)) " +
                 "order by datefrom desc " +
                 " FETCH FIRST " + maxValues + " ROWS ONLY " +
                 ") order by datefrom";
@@ -255,7 +249,7 @@ public class DBServer implements AutoCloseable {
      */
     public StoreValue readLatest(String key) {
         try (var con = cp.getConnection();
-             PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto, datelastcheck FROM valuestore where key=? and dateto=?")) {
+             PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, vkey, vvalue, datefrom, dateto, datelastcheck FROM valuestore where vkey=? and dateto=?")) {
             stmt.setString(1, key);
             stmt.setTimestamp(2, Timestamp.from(INSTANT_MAX));
             try (var rs = stmt.executeQuery()) {
@@ -272,7 +266,7 @@ public class DBServer implements AutoCloseable {
     public List<StoreValue> readAll(String key) {
         List<StoreValue> values = new ArrayList<>();
         try (var con = cp.getConnection();
-             PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto, datelastcheck FROM valuestore where key=? order by datefrom")) {
+             PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, vkey, vvalue, datefrom, dateto, datelastcheck FROM valuestore where vkey=? order by datefrom")) {
             stmt.setString(1, key);
             try (var rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -291,8 +285,8 @@ public class DBServer implements AutoCloseable {
     public List<StoreValue> readLatest() {
         List<StoreValue> values = new ArrayList<>();
         try (var con = cp.getConnection();
-             PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, key, value, datefrom, dateto,datelastcheck,\n" +
-                     "(select count(*) from valuestore vs2 where vs2.key = vs.key) as nbValues\n" +
+             PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, vkey, vvalue, datefrom, dateto,datelastcheck,\n" +
+                     "(select count(*) from valuestore vs2 where vs2.vkey = vs.vkey) as nbValues\n" +
                      "FROM valuestore vs\n" +
                      "where dateto=?")) {
             stmt.setTimestamp(1, Timestamp.from(INSTANT_MAX));
@@ -309,9 +303,9 @@ public class DBServer implements AutoCloseable {
 
     public String findAlerts() {
         String sql = "\n" +
-                "        select key, count(*) as nb\n" +
+                "        select vkey, count(*) as nb\n" +
                 "        from valuestore\n" +
-                "        group by key\n" +
+                "        group by vkey\n" +
                 "        having count(*)>100\n" +
                 "        order by count(*) desc";
 
@@ -320,7 +314,7 @@ public class DBServer implements AutoCloseable {
              PreparedStatement stmt = con.prepareStatement(sql)) {
             try (var rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    sb.append(rs.getString("key"));
+                    sb.append(rs.getString("vkey"));
                     sb.append(':');
                     sb.append(rs.getLong("nb"));
                     sb.append('\n');
@@ -338,12 +332,12 @@ public class DBServer implements AutoCloseable {
     public Collection<String> readUpdatedKeys(Instant from, Instant to) {
         List<String> values = new ArrayList<>();
         try (var con = cp.getConnection();
-             PreparedStatement stmt = con.prepareStatement("SELECT distinct key FROM valuestore where datefrom>=? and datefrom<?")) {
+             PreparedStatement stmt = con.prepareStatement("SELECT distinct vkey FROM valuestore where datefrom>=? and datefrom<?")) {
             stmt.setTimestamp(1, Timestamp.from(from));
             stmt.setTimestamp(2, Timestamp.from(to));
             try (var rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    values.add(rs.getString("key"));
+                    values.add(rs.getString("vkey"));
                 }
             }
         } catch (SQLException e) {
@@ -371,7 +365,7 @@ public class DBServer implements AutoCloseable {
             throw new StoreException("SQL Injection error"); // Really simple protection
         }
         try (var con = cp.getConnection();
-             var stmt = con.prepareStatement("DELETE from valuestore where key='" + key + "'")) {
+             var stmt = con.prepareStatement("DELETE from valuestore where vkey='" + key + "'")) {
             return stmt.executeUpdate();
         } catch (SQLException e) {
             throw new StoreException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);

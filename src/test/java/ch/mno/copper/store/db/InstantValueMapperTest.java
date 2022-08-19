@@ -18,9 +18,9 @@ class InstantValueMapperTest {
     void testAll() throws SQLException {
         Instant instant = Instant.parse("2021-07-13T11:42:00Z");
         ResultSet rs = Mockito.mock(ResultSet.class);
-        Mockito.when(rs.getLong("idValueStore")).thenReturn(42l);
+        Mockito.when(rs.getLong("idValueStore")).thenReturn(42L);
         Mockito.when(rs.getString("c1")).thenReturn("key1");
-        Mockito.when(rs.getString("value")).thenReturn("value1");
+        Mockito.when(rs.getString("vvalue")).thenReturn("value1");
         Mockito.when(rs.getTimestamp("ts")).thenReturn(Timestamp.from(instant));
 
         // Run
@@ -38,7 +38,7 @@ class InstantValueMapperTest {
         Instant instant = Instant.parse("2021-07-13T11:42:00Z");
         ResultSet rs = Mockito.mock(ResultSet.class);
         Mockito.when(rs.getString("c1")).thenReturn("key1");
-        Mockito.when(rs.getString("value")).thenReturn("value1");
+        Mockito.when(rs.getString("vvalue")).thenReturn("value1");
 
         // Run
         InstantValue iv = InstantValueMapper.map(rs);

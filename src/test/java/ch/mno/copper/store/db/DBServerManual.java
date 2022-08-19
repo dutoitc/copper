@@ -92,9 +92,9 @@ public class DBServerManual extends DBServer implements AutoCloseable {
                 if (rs.getInt("nb") == 0) {
                     LOG.info("Database not found. Creating table VALUESTORE...");
                     stmt.execute("CREATE TABLE valuestore (" +
-                            "  idvaluestore int(11) NOT NULL," +
-                            "  key varchar(50) NOT NULL," +
-                            "  value text NOT NULL," +
+                            "  idvaluestore int NOT NULL," +
+                            "  vkey varchar(50) NOT NULL," +
+                            "  vvalue varchar(100000) NOT NULL," +
                             "  datefrom timestamp NOT NULL," +
                             "  dateto timestamp NOT NULL," +
                             "  datelastcheck timestamp NOT NULL," +
@@ -106,7 +106,7 @@ public class DBServerManual extends DBServer implements AutoCloseable {
                 }
 
                 // Indexes
-                stmt.execute("create index if not exists IDX_VS_KEY on valuestore(key)");
+                stmt.execute("create index if not exists IDX_VS_KEY on valuestore(vkey)");
                 stmt.execute("create index if not exists IDX_VS_FROM on valuestore(datefrom)");
                 stmt.execute("create index if not exists IDX_VS_TO on valuestore(dateto)");
             }
@@ -125,8 +125,8 @@ public class DBServerManual extends DBServer implements AutoCloseable {
 
             // Snapshot fixes
             List<String> keys = new ArrayList<>();
-            try (ResultSet rs = stmt.executeQuery("select key, count(*) from valuestore where dateto='3000-12-31 01:00:00.0'\n" +
-                    "group by key having count(*)>1")) {
+            try (ResultSet rs = stmt.executeQuery("select vkey, count(*) from valuestore where dateto='3000-12-31 01:00:00.0'\n" +
+                    "group by vkey having count(*)>1")) {
                 while (rs.next()) {
                     keys.add(rs.getString(1));
                 }
@@ -135,12 +135,12 @@ public class DBServerManual extends DBServer implements AutoCloseable {
             for (String key : keys) {
                 LOG.info("Fixing DB snapshots for " + key);
 
-                try (ResultSet rs = stmt.executeQuery("select idvaluestore, datefrom, dateto from valuestore where key='" + key + "' order by IDVALUESTORE desc")) {
+                try (ResultSet rs = stmt.executeQuery("select idvaluestore, datefrom, dateto from valuestore where vkey='" + key + "' order by IDVALUESTORE desc")) {
                     String lastDateFrom = null;
                     while (rs.next()) {
                         String dateFrom = rs.getString("datefrom");
                         String dateTo = rs.getString("dateto");
-                        if (lastDateFrom != null && dateTo.compareTo(lastDateFrom) == 1) {
+                        if (lastDateFrom != null && dateTo.compareTo(lastDateFrom) > 0) {
                             try (Statement stmt2 = con.createStatement()) {
                                 String sql = "update valuestore set dateto='" + lastDateFrom + "' where idvaluestore=" + rs.getInt(1);
                                 stmt2.execute(sql);
