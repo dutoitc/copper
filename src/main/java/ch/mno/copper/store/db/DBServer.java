@@ -365,7 +365,8 @@ public class DBServer implements AutoCloseable {
             throw new StoreException("SQL Injection error"); // Really simple protection
         }
         try (var con = cp.getConnection();
-             var stmt = con.prepareStatement("DELETE from valuestore where vkey='" + key + "'")) {
+             var stmt = con.prepareStatement("DELETE from valuestore where vkey='?'")) {
+            stmt.setString(1, key);
             return stmt.executeUpdate();
         } catch (SQLException e) {
             throw new StoreException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
