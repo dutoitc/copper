@@ -72,7 +72,7 @@ public class DiskHelper {
     /**
      * Ensure that storyName has no dot and slash
      */
-    private String securePath(String storyName) {
+    String securePath(String storyName) {
         if (storyName.contains("/")) {
             throw new CopperException("Storyname must not contains slash");
         }
@@ -95,13 +95,13 @@ public class DiskHelper {
         File stories = new File(storiesFolder);
 
         File[] files = stories.listFiles(f -> f.isFile() && !endsWith(f, "swp"));
-        assert files!=null;
+        assert files != null;
         return Stream.of(files)
                 .map(File::getName)
                 .collect(Collectors.toList());
     }
 
-    private boolean endsWith(File f, String ext) {
+    boolean endsWith(File f, String ext) {
         assert f != null;
         return f.getName().toLowerCase().endsWith(ext.toLowerCase());
     }
@@ -109,11 +109,13 @@ public class DiskHelper {
     public void ensureStoriesFolderExists() {
         File fstoriesFolder = new File(storiesFolder);
         if (fstoriesFolder.isFile()) throw new RuntimeException("stories should be a folder, not a file");
-        if (!fstoriesFolder.exists()) fstoriesFolder.mkdir();
+        if (!fstoriesFolder.exists() && !fstoriesFolder.mkdir()) {
+            throw new RuntimeException("Cannot make folder " + storiesFolder);
+        }
     }
 
     public FileInputStream getStoryAsStream(String storyName) throws FileNotFoundException {
-        return new FileInputStream(storiesFolder + "/" + storyName);
+        return new FileInputStream(storiesFolder + '/' + storyName);
     }
 
     public Map<String, String> findScreens() {

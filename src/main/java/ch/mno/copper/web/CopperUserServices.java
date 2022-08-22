@@ -44,6 +44,10 @@ public class CopperUserServices {
         this.valuesStore = valuesStore;
     }
 
+    void setDiskHelper(DiskHelper diskHelper) {
+        this.diskHelper = diskHelper;
+    }
+
     @GetMapping(value = "/")
     public String root() {
         // See https://stackoverflow.com/questions/32184175/how-to-use-spring-redirect-if-controller-method-returns-responseentity
