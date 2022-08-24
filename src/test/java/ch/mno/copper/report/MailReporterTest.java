@@ -1,7 +1,6 @@
 package ch.mno.copper.report;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
-import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +8,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +30,7 @@ class MailReporterTest {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         TestableHtmlEmail.data.writeTo(os);
-        String mail = new String(os.toByteArray(), "UTF-8");
+        String mail = os.toString(StandardCharsets.UTF_8);
         System.out.println(mail);
         assertTrue(mail.contains("From: from@dummy.xxx"));
         assertTrue(mail.contains("Reply-To: to@dummy.xxx"));
@@ -43,18 +43,13 @@ class MailReporterTest {
 
         private static MimeMessage data;
 
-        public String sendMimeMessage() throws EmailException {
-            this.data = this.getMimeMessage();
+        public String sendMimeMessage() {
+            data = this.getMimeMessage();
             return null;
         }
     }
 
     private static class TestableMailReporter extends MailReporter {
-/*
-        HtmlEmail mock = Mockito.mock(HtmlEmail.class);
-        {
-
-        }*/
 
         public TestableMailReporter(String server, String serverUsername, String serverPassword, int serverPort, String from, String replyTo) {
             super(server, serverUsername, serverPassword, serverPort, from, replyTo);

@@ -33,7 +33,11 @@ public class MailReporterWrapper implements AbstractReporterWrapper {
         dest = matcher.group(1);
         title = matcher.group(2);
         messageTemplate = matcher.group(3);
-        reporter = new MailReporter(server, serverUsername, serverPassword, serverPort, from, replyTo);
+        reporter = buildReporter(server, serverUsername, serverPassword, serverPort, from, replyTo);
+    }
+
+    MailReporter buildReporter(String server, String serverUsername, String serverPassword, int serverPort, String from, String replyTo) {
+        return new MailReporter(server, serverUsername, serverPassword, serverPort, from, replyTo);
     }
 
     public static AbstractReporterWrapper buildReporter(StoryGrammar grammar, String storyGiven, String server, String serverUsername, String serverPassword, int serverPort, String from, String replyTo) {
