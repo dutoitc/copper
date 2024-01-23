@@ -3,6 +3,7 @@ package ch.mno.copper.collect.collectors;
 import ch.mno.copper.collect.connectors.HttpConnector;
 import ch.mno.copper.collect.connectors.HttpResponseData;
 import ch.mno.copper.collect.connectors.JmxConnector;
+import com.google.gson.JsonArray;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import net.minidev.json.JSONArray;
@@ -98,8 +99,8 @@ public class WebCollector {
         try {
             Object o = JsonPath.read(data.getData(), key);
             if (o instanceof JSONArray) {
-                JSONArray res = (JSONArray) o;
-                if (res == null || res.isEmpty()) {
+                var res = (JSONArray) o;
+                if (res.isEmpty()) {
                     LOG.info("Warning: jsonpath {} not found in {}", key, data);
                     results.add("ERR_NOT_FOUND");
                 } else if (res.size() > 1) {
