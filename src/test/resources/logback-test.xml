@@ -6,7 +6,9 @@
     <logger name="org.apache" level="WARN" />
     <logger name="org.hibernate" level="WARN" />
 
-    <root level="INFO">
+    <logger name="javax.management.remote" level="TRACE"/>
+
+    <root level="TRACE">
         <appender-ref ref="CONSOLE" />
     </root>
 

@@ -16,7 +16,7 @@ class SocketConnectorTest extends AbstractJmxServerTestStarter {
     private static WebServer4Tezts ws;
 
     @BeforeAll
-    public static void setup() throws IOException, InterruptedException {
+    public static void setup() throws InterruptedException {
         // HTTP Server
         ws = new WebServer4Tezts(httpPort);
         ws.start();
@@ -37,30 +37,28 @@ class SocketConnectorTest extends AbstractJmxServerTestStarter {
 
     @Test
     void testCheckConnectionOnDummyServer() {
-        SocketConnector.CONNECTION_CHECK status = new SocketConnector("localhost", 1, 1000).checkConnection();
-        assertEquals(SocketConnector.CONNECTION_CHECK.IO_EXCEPTION, status);
+        try (SocketConnector conn = new SocketConnector("localhost", 1, 1000);) {
+            SocketConnector.CONNECTION_CHECK status = conn.checkConnection();
+            assertEquals(SocketConnector.CONNECTION_CHECK.IO_EXCEPTION, status);
+        }
     }
 
     @Test
     void testCheckConnectionOnRealServerJMX() {
-        SocketConnector.CONNECTION_CHECK status = new SocketConnector("localhost", JMX_PORT, 1000).checkConnection();
-        assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
+        try (
+                var conn = new SocketConnector("localhost", getJmxPort(), 1000);
+        ) {
+            SocketConnector.CONNECTION_CHECK status = conn.checkConnection();
+            assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
+        }
     }
 
     @Test
     void testCheckConnectionOnRealServerHTTP() {
-        SocketConnector connector = new SocketConnector("localhost", httpPort, 10000);
-        SocketConnector.CONNECTION_CHECK status = connector.checkConnection();
-        try {
+        try (SocketConnector connector = new SocketConnector("localhost", httpPort, 10000)) {
+            SocketConnector.CONNECTION_CHECK status = connector.checkConnection();
             assertEquals(SocketConnector.CONNECTION_CHECK.OK, status);
-        } catch (AssertionError e) {
-            Exception exception = connector.getLastException();
-            System.err.println("Dernière exception: " + exception == null ? "null" : exception.getMessage());
-            exception.printStackTrace();
-            throw e;
         }
-
     }
-
 
 }

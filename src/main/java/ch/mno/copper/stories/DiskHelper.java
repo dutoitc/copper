@@ -98,6 +98,7 @@ public class DiskHelper {
         assert files != null;
         return Stream.of(files)
                 .map(File::getName)
+                .sorted()
                 .collect(Collectors.toList());
     }
 

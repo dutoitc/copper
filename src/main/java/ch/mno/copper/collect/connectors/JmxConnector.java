@@ -1,5 +1,7 @@
 package ch.mno.copper.collect.connectors;
 
+import lombok.extern.log4j.Log4j2;
+
 import javax.management.*;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -12,6 +14,7 @@ import java.util.concurrent.*;
 /**
  * Created by dutoitc on 29.01.2016.
  */
+@Log4j2
 public class JmxConnector extends AbstractConnector {
 
     private JMXConnector jmxc;
@@ -36,6 +39,7 @@ public class JmxConnector extends AbstractConnector {
 
     private void buildJmxc(String username, String password, JMXServiceURL jmxServiceURL) throws IOException {
         if (username == null) {
+            log.info("Connecting on " + jmxServiceURL);
             jmxc = JMXConnectorFactory.connect(jmxServiceURL, null);
         } else {
             Map<String, String[]> env = new HashMap<>();

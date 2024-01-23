@@ -6,13 +6,20 @@ import org.springframework.util.ReflectionUtils;
 import java.io.IOException;
 
 public abstract class AbstractJmxServerTestStarter {
-    public static final int JMX_PORT = 12345;
     private static JmxServerStarter jmxConnector;
+
+    protected int getJmxPort() {
+        return jmxConnector.getJmxPort();
+    }
+
+    protected String getJmxURL() {
+        return jmxConnector.getJmxURL();
+    }
 
     public AbstractJmxServerTestStarter() {
         if (jmxConnector == null) {
             try {
-                jmxConnector = new JmxServerStarter(JMX_PORT);
+                jmxConnector = new JmxServerStarter();
                 jmxConnector.startJMX();
             } catch (IOException e) {
                 ReflectionUtils.rethrowRuntimeException(e);

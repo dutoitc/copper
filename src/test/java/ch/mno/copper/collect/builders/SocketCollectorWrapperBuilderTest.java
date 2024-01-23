@@ -61,7 +61,7 @@ class SocketCollectorWrapperBuilderTest extends AbstractJmxServerTestStarter {
 
     @Test
     void testCheckConnectionOnRealServerJMX() throws ConnectorException {
-        String story="GIVEN SOCKET WITH host=localhost,port="+JMX_PORT+",timeout_ms=1000\n" +
+        String story="GIVEN SOCKET WITH host=localhost,port="+getJmxPort()+",timeout_ms=1000\n" +
                 "    KEEP status AS myStatus\n"  +
                 "WHEN CRON 0 6 * * 1-5\n" +
                 "THEN STORE VALUES\n";
@@ -72,7 +72,7 @@ class SocketCollectorWrapperBuilderTest extends AbstractJmxServerTestStarter {
 
     @Test
     void testCheckConnectionOnRealServerHTTP() throws ConnectorException {
-        String story="GIVEN SOCKET WITH host=127.0.0.1,port="+JMX_PORT+",timeout_ms=5000\n" +
+        String story="GIVEN SOCKET WITH host=127.0.0.1,port="+getJmxPort()+",timeout_ms=5000\n" +
                 "    KEEP status AS myStatus\n"  +
                 "WHEN CRON 0 6 * * 1-5\n" +
                 "THEN STORE VALUES\n";

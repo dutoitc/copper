@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,7 +54,7 @@ class DiskHelperTest {
 
         //
         if (fileStory.exists()) {
-            fileStory.delete();
+            assertTrue(fileStory.delete());
         }
         dh.saveNewStory(storyName, "Lorem Ipsum");
         assertTrue(fileStory.exists());
@@ -100,7 +101,7 @@ class DiskHelperTest {
 
     @Test
     void findStoryNames() {
-        String storiesFolder = getClass().getResource("/DiskHelperTestsScreens").getFile();
+        String storiesFolder = Objects.requireNonNull(getClass().getResource("/DiskHelperTestsScreens")).getFile();
         CopperStoriesProperties storiesProperties = new CopperStoriesProperties();
         storiesProperties.setFolder(storiesFolder);
         CopperScreensProperties screensProperties = new CopperScreensProperties();
@@ -108,12 +109,12 @@ class DiskHelperTest {
         DiskHelper dh = new DiskHelper(storiesProperties, screensProperties);
 
         var names = dh.findStoryNames();
-        assertEquals("[myScreen3.txt, myScreen1.json, myScreen2.json]", names.toString());
+        assertEquals("[myScreen1.json, myScreen2.json, myScreen3.txt]", names.toString());
     }
 
     @Test
     void testGetStoryAsStream() throws IOException {
-        String storiesFolder = getClass().getResource("/DiskHelperTestsScreens").getFile() + "/..";
+        String storiesFolder = Objects.requireNonNull(getClass().getResource("/DiskHelperTestsScreens")).getFile() + "/..";
         CopperStoriesProperties storiesProperties = new CopperStoriesProperties();
         storiesProperties.setFolder(storiesFolder);
         CopperScreensProperties screensProperties = new CopperScreensProperties();

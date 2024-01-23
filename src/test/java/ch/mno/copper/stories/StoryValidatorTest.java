@@ -43,7 +43,7 @@ class StoryValidatorTest {
 
     private String comparable(Set<MatchedPattern> partialMatches) {
         return partialMatches.stream()
-                .map(a -> a.getPatternName())
+                .map(MatchedPattern::getPatternName)
                 .sorted()
                 .collect(Collectors.joining(","));
     }

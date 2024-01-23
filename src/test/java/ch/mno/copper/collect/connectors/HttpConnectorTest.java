@@ -25,7 +25,7 @@ class HttpConnectorTest extends AbstractWebPortSpringTest {
             String res = conn.get("/something");
             fail("Should raise an exception, but got " + res);
         } catch (ConnectorException e) {
-            assertTrue(e.getMessage().contains("Connection refused"), e.getMessage());
+            assertTrue(e.getMessage().contains("Connexion refusée") || e.getMessage().contains("Connection refused"), e.getMessage());
         }
     }
 

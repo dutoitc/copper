@@ -16,8 +16,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -56,14 +58,6 @@ class StoryGrammarTest {
         assertFalse(pattern1.matcher(" ").matches());
         assertFalse(pattern1.matcher("\t").matches());
     }
-
-//    @Test
-//    void testDEFINE() {
-//        String pattern = storyGrammar.getPatternFull("DEFINE");
-//        Pattern pattern1 = Pattern.compile(pattern);
-//        assertTrue(pattern1.matcher("DEFINE key1 value1\n").matches());
-//        assertFalse(pattern1.matcher("DEFINE key1").matches());
-//    }
 
     @Test
     void testJDBC_URL() {
@@ -146,23 +140,18 @@ class StoryGrammarTest {
     @Test
     void testCOLLECTOR1() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
-        //pattern="COLLECTOR[\\s+\\r\\n]+(ORACLE[\\s+\\r\\n]+WITH[\\s+\\r\\n]+//url=jdbc[:\\w@/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=.*?[\\s+\\r\\n]QUERY ((\\\".*?\\\")|.*)\\r?\\n|JMX[\\s+\\r\\n]+WITH[\\s+\\r\\n]+url=service[:\\w/\\d]+\\w,[\\s+\\r\\n]*user=.*?,[\\s+\\r\\n]*password=\\S+?[\\s+\\r\\n]\\s*(QUERY .*? FOR .*?\\s+AS .*?[\\s+\\r\\n])+)";
-        Pattern pattern1 = Pattern.compile(pattern);
-        //assertTrue(pattern1.matcher("COLLECTOR ORACLE WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass\n").matches());
         testPattern(pattern, "COLLECTOR JDBC WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,user=aUser,password=aPass QUERY select 1 from dual\n");
     }
 
     @Test
     void testCOLLECTOR2() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
-        Pattern pattern1 = Pattern.compile(pattern);
         testPattern(pattern, "COLLECTOR JMX WITH url=service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi,user=aUser,password=aPass QUERY oname FOR att AS att1\n");
     }
 
     @Test
     void testCOLLECTOR3() {
         String pattern = storyGrammar.getPatternFull("COLLECTOR");
-        Pattern pattern1 = Pattern.compile(pattern);
         testPattern(pattern, "COLLECTOR JDBC\n" +
                 "        WITH url=jdbc:oracle:thin:@//myhost:1521/orcl,\n" +
                 "             user=aUser,\n" +
@@ -236,37 +225,11 @@ class StoryGrammarTest {
         SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("REPORTER"), txt);
     }
 
-//    @Test
-//    void testCSV2() {
-////        String txt="RUN ON CRON 0 * * * *\n" +
-////                "GIVEN STORED VALUES\n" +
-////                "THEN REPORT BY CSV to \"store.csv\"\n" +
-////                "     WITH headers=\"h1\"\n" +
-////                "     WITH line=\"v1\"\n";
-//
-//        String txt = "RUN ON CRON 0 * * * *\n" +
-//                "GIVEN STORED VALUES\n" +
-//                "THEN REPORT BY CSV to \"RCFACE-store.csv\"\n" +
-//                "     WITH header=\"DATETIME;RCFACE_PR_DB_CH_AK;RCFACE_PR_DB_UID_NOT_FOUND;RCFACE_PR_DB_NOINFO;RCFACE_PR_DB_DOC;RCFACE_PR_DB_IDERR019;RCFACE_PR_DB_ERRORS;RCFACE_IN_STG_NOUVEAU;RCFACE_IN_STG_EN_COURS;RCFACE_IN_MST_EN_ERREUR;RCFACE_IN_MST_TRAITEE;RCFACE_IN_PUBLISHED_1;RCFACE_IN_PUBLISHED_2;RCFACE_VA_STG_NOUVEAU;RCFACE_VA_STG_EN_COURS;RCFACE_VA_MST_EN_ERREUR;RCFACE_VA_MST_TRAITEE;RCFACE_VA_PUBLISHED_1;RCFACE_VA_PUBLISHED_2;RCFACE_PP_STG_NOUVEAU;RCFACE_PP_STG_EN_COURS;RCFACE_PP_MST_EN_ERREUR;RCFACE_PP_MST_TRAITEE;RCFACE_PP_PUBLISHED_1;RCFACE_PP_PUBLISHED_2;RCFACE_PR_STG_NOUVEAU;RCFACE_PR_STG_EN_COURS;RCFACE_PR_MST_EN_ERREUR;RCFACE_PR_MST_TRAITEE;RCFACE_PR_PUBLISHED_1;RCFACE_PR_PUBLISHED_2\"\n" +
-////                "     WITH line=\"{{NOW_dd.MM.yyyy_HH:mm}},{{RCFACE_PR_DB_CH_AK}};{{RCFACE_PR_DB_UID_NOT_FOUND}};{{RCFACE_PR_DB_NOINFO}};{{RCFACE_PR_DB_DOC}};{{RCFACE_PR_DB_IDERR019}};{{RCFACE_PR_DB_ERRORS}};{{RCFACE_IN_STG_NOUVEAU}};{{RCFACE_IN_STG_EN_COURS}};{{RCFACE_IN_MST_EN_ERREUR}};{{RCFACE_IN_MST_TRAITEE}};{{RCFACE_IN_PUBLISHED_1}};{{RCFACE_IN_PUBLISHED_2}};{{RCFACE_VA_STG_NOUVEAU}};{{RCFACE_VA_STG_EN_COURS}};{{RCFACE_VA_MST_EN_ERREUR}};{{RCFACE_VA_MST_TRAITEE}};{{RCFACE_VA_PUBLISHED_1}};{{RCFACE_VA_PUBLISHED_2}};{{RCFACE_PP_STG_NOUVEAU}};{{RCFACE_PP_STG_EN_COURS}};{{RCFACE_PP_MST_EN_ERREUR}};{{RCFACE_PP_MST_TRAITEE}};{{RCFACE_PP_PUBLISHED_1}};{{RCFACE_PP_PUBLISHED_2}};{{RCFACE_PR_STG_NOUVEAU}};{{RCFACE_PR_STG_EN_COURS}};{{RCFACE_PR_MST_EN_ERREUR}};{{RCFACE_PR_MST_TRAITEE}};{{RCFACE_PR_PUBLISHED_1}};{{RCFACE_PR_PUBLISHED_2}}\"\n";
-////                        "     WITH headers=\"h1\"\n" +
-//                "     WITH line=\"v1\"\n";
-//
-//        //SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"),txt);
-//        String pattern1 = storyGrammar.getPatternFull("CSV");
-//        System.out.println(pattern1);
-//        System.out.println(Pattern.compile(pattern1, Pattern.DOTALL).matcher(txt).find());
-//    }
-
 
     @Test
     void testJdbcStory() throws IOException, ConnectorException, URISyntaxException {
-        String pattern = storyGrammar.getPatternFull("MAIN");
-//        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
         URL resource = getClass().getResource("/OracleStory1.txt");
-        String storyText = IOUtils.toString(resource);
-//        assertTrue(pattern1.matcher(story).matches());
-//        testPattern(pattern, story);
+        String storyText = IOUtils.toString(Objects.requireNonNull(resource), StandardCharsets.UTF_8);
         SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"), storyText);
 
 
@@ -284,12 +247,8 @@ class StoryGrammarTest {
 
     @Test
     void testJdbcStory2() throws IOException, ConnectorException, URISyntaxException {
-        String pattern = storyGrammar.getPatternFull("MAIN");
-//        Pattern pattern1 = Pattern.compile(pattern, Pattern.DOTALL);
         URL resource = getClass().getResource("/OracleStory2.txt");
-        String storyText = IOUtils.toString(resource);
-//        assertTrue(pattern1.matcher(story).matches());
-//        testPattern(pattern, story);
+        String storyText = IOUtils.toString(Objects.requireNonNull(resource), StandardCharsets.UTF_8);
         SyntaxHelper.checkSyntax(storyGrammar, storyGrammar.getPatternFull("MAIN"), storyText);
 
 
@@ -304,21 +263,21 @@ class StoryGrammarTest {
     @Test
     void testJmxStory1() throws IOException {
         String pattern = storyGrammar.getPatternFull("MAIN");
-        String story = IOUtils.toString(getClass().getResource("/JmxStory1.txt"));
+        String story = IOUtils.toString(Objects.requireNonNull(getClass().getResource("/JmxStory1.txt")), StandardCharsets.UTF_8);
         testPattern(pattern, story);
     }
 
     @Test
     void testJmxStory2() throws IOException {
         String pattern = storyGrammar.getPatternFull("MAIN");
-        String story = IOUtils.toString(getClass().getResource("/JmxStory2.txt"));
+        String story = IOUtils.toString(Objects.requireNonNull(getClass().getResource("/JmxStory2.txt")), StandardCharsets.UTF_8);
         testPattern(pattern, story);
     }
 
     @Test
     void testMailStory() throws IOException {
         String pattern = storyGrammar.getPatternFull("MAIL");
-        String story = IOUtils.toString(getClass().getResource("/MailStory.txt"));
+        String story = IOUtils.toString(Objects.requireNonNull(getClass().getResource("/MailStory.txt")), StandardCharsets.UTF_8);
         testPattern(pattern, story);
     }
 
