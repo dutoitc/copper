@@ -420,7 +420,7 @@
         <commons-io.version>2.11.0</commons-io.version>
         <commons-lang3.version>3.14.0</commons-lang3.version>
         <cron4j.version>2.2.5</cron4j.version>
-        <derby.version>10.16.1.1</derby.version> <!-- 10.16 need Java 17 -->
+        <derby.version>10.17.1.0</derby.version> <!-- 10.16 need Java 17 -->
         <groovy-all.version>3.0.12</groovy-all.version>
         <gson.version>2.10.1</gson.version>
         <javax.activation.version>1.2.0</javax.activation.version>
