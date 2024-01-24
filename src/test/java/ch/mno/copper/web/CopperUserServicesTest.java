@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CopperUserServicesTest {
@@ -20,8 +22,8 @@ class CopperUserServicesTest {
         vs = new MapValuesStore();
         service = new CopperUserServices(vs);
 
-        String storiesFolder = getClass().getResource("/DiskHelperTestsScreens").getFile() + "/..";
-        String screensFolder = getClass().getResource("/DiskHelperTestsScreens").getFile();
+        String storiesFolder = Objects.requireNonNull(getClass().getResource("/DiskHelperTestsScreens")).getFile() ;
+        String screensFolder = Objects.requireNonNull(getClass().getResource("/DiskHelperTestsScreens")).getFile();
         CopperStoriesProperties storiesProperties = new CopperStoriesProperties();
         storiesProperties.setFolder(storiesFolder);
         CopperScreensProperties screensProperties = new CopperScreensProperties();
