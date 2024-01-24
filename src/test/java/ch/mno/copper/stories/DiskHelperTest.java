@@ -46,11 +46,10 @@ class DiskHelperTest {
         String storyName = "story-diskhelpertest-1";
         File fileStory = new File(storiesFolder + '/' + storyName);
         //
-        CopperStoriesProperties storiesProperties = new CopperStoriesProperties();
-        storiesProperties.setFolder(storiesFolder);
-        CopperScreensProperties screensProperties = new CopperScreensProperties();
-        screensProperties.setFolder(storiesFolder);
-        DiskHelper dh = new DiskHelper(storiesProperties, screensProperties);
+        var dh = DiskHelper.builder()
+                .withScreensFolder(storiesFolder)
+                .withStoriesFolder(storiesFolder)
+                .build();
 
         //
         if (fileStory.exists()) {
@@ -83,17 +82,14 @@ class DiskHelperTest {
         try {
             dh.updateStory(storyName, "deladec");
             fail();
-        } catch (NoSuchFileException e) {
+        } catch (IllegalArgumentException e) {
             assertEquals("Error: the file story-diskhelpertest-1 must already exists.", e.getMessage());
         }
     }
 
     @Test
     void endsWith() {
-        CopperStoriesProperties storiesProperties = new CopperStoriesProperties();
-        CopperScreensProperties screensProperties = new CopperScreensProperties();
-        DiskHelper dh = new DiskHelper(storiesProperties, screensProperties);
-
+        var dh = DiskHelper.builder().build();
         assertTrue(dh.endsWith(new File("truc.txt"), "txt"));
         assertTrue(dh.endsWith(new File("truc.TxT"), "txt"));
         assertFalse(dh.endsWith(new File("truc.xml"), "txt"));
@@ -115,11 +111,11 @@ class DiskHelperTest {
     @Test
     void testGetStoryAsStream() throws IOException {
         String storiesFolder = Objects.requireNonNull(getClass().getResource("/DiskHelperTestsScreens")).getFile() + "/..";
-        CopperStoriesProperties storiesProperties = new CopperStoriesProperties();
-        storiesProperties.setFolder(storiesFolder);
-        CopperScreensProperties screensProperties = new CopperScreensProperties();
-        screensProperties.setFolder(storiesFolder);
-        DiskHelper dh = new DiskHelper(storiesProperties, screensProperties);
+        var dh = DiskHelper.builder()
+                .withScreensFolder(storiesFolder)
+                .withStoriesFolder(storiesFolder)
+                .build();
+
         var is = dh.getStoryAsStream("JmxStory1.txt");
         var story = IOUtils.toString(is, StandardCharsets.UTF_8);
         assertEquals("GIVEN\n" +
@@ -138,10 +134,16 @@ class DiskHelperTest {
 
     @Test
     void testSecurePath() {
-        CopperStoriesProperties storiesProperties = new CopperStoriesProperties();
-        CopperScreensProperties screensProperties = new CopperScreensProperties();
-        DiskHelper dh = new DiskHelper(storiesProperties, screensProperties);
+        DiskHelper dh = DiskHelper.builder().build();
         assertEquals("storyName", dh.securePath("storyName"));
-        assertThrows(CopperException.class, ()->dh.securePath("/etc/passwd"));
+        assertThrows(IllegalArgumentException.class, ()->dh.securePath("/etc/passwd"));
     }
+
+    @Test
+    void testX() {
+        DiskHelper dh = DiskHelper.builder().build();
+        assertThrows(StoryException.class, ()->dh.getSecureFile("../tmp"));
+    }
+
+
 }
