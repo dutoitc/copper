@@ -1,6 +1,5 @@
 package ch.mno.copper.stories;
 
-import ch.mno.copper.CopperException;
 import config.CopperScreensProperties;
 import config.CopperStoriesProperties;
 import org.apache.commons.io.FileUtils;
@@ -11,7 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,13 +40,14 @@ public class DiskHelper {
     }
 
     public static class DiskHelperBuilder {
-        private CopperStoriesProperties storiesProperties = new CopperStoriesProperties();
-        private CopperScreensProperties screensProperties = new CopperScreensProperties();
+        private final CopperStoriesProperties storiesProperties = new CopperStoriesProperties();
+        private final CopperScreensProperties screensProperties = new CopperScreensProperties();
 
         public DiskHelperBuilder withStoriesFolder(String x) {
             storiesProperties.setFolder(x);
             return this;
         }
+
         public DiskHelperBuilder withScreensFolder(String x) {
             screensProperties.setFolder(x);
             return this;
@@ -62,7 +65,7 @@ public class DiskHelper {
      * @throws IOException                on any IO exception
      */
     public void saveNewStory(String storyName, String storyText) throws IOException {
-        File file = getSecureFile(securePath(storyName));
+        File file = getSecureFile(storiesFolder, securePath(storyName));
         if (file.exists()) {
             throw new FileAlreadyExistsException(ERROR_THE_FILE + file.getName() + " already exists.");
         }
@@ -73,7 +76,7 @@ public class DiskHelper {
     }
 
     public void updateStory(String storyName, String storyText) throws IOException {
-        File file = getSecureFile(securePath(storyName));
+        File file = getSecureFile(storiesFolder, securePath(storyName));
         Validate.isTrue(file.exists(), ERROR_THE_FILE + file.getName() + " must already exists.");
         Files.writeString(file.toPath(), storyText);
     }
@@ -87,13 +90,13 @@ public class DiskHelper {
     }
 
     public boolean storyExists(String storyName) {
-        File file = getSecureFile(securePath(storyName));
+        File file = getSecureFile(storiesFolder, securePath(storyName));
         return file.exists();
     }
 
     public void deleteStory(String storyName) {
         try {
-            var file = getSecureFile(storyName);
+            var file = getSecureFile(storiesFolder, storyName);
             Files.delete(file.toPath());
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
@@ -103,7 +106,7 @@ public class DiskHelper {
     public List<String> findStoryNames() {
         File stories = new File(storiesFolder);
         File[] files = stories.listFiles(f -> f.isFile() && !endsWith(f, "swp"));
-        Validate.isTrue(files!=null);
+        Validate.isTrue(files != null);
         return Stream.of(files)
                 .map(File::getName)
                 .sorted()
@@ -111,13 +114,13 @@ public class DiskHelper {
     }
 
     boolean endsWith(File f, String ext) {
-        Validate.isTrue(f!=null);
+        Validate.isTrue(f != null);
         return f.getName().toLowerCase().endsWith(ext.toLowerCase());
     }
 
     public void ensureStoriesFolderExists() {
         File fstoriesFolder = new File(storiesFolder);
-        Validate.isTrue(!fstoriesFolder.isFile(),"stories should be a folder, not a file");
+        Validate.isTrue(!fstoriesFolder.isFile(), "stories should be a folder, not a file");
         if (!fstoriesFolder.exists() && !fstoriesFolder.mkdir()) {
             throw new StoryException("Cannot make folder " + storiesFolder);
         }
@@ -151,18 +154,18 @@ public class DiskHelper {
     }
 
     public String findScreenData(String storyName) throws IOException {
-        var file = getSecureFile(storyName);
+        var file = getSecureFile(screensFolder, storyName);
         return IOUtils.toString(new FileReader(file));
     }
 
 
-    File getSecureFile(String path) {
-        File file = new File(storiesFolder + File.separatorChar + path);
+    File getSecureFile(String folder, String path) {
+        File file = new File(folder + File.separatorChar + path);
         String canonicalDestinationPath;
         try {
             canonicalDestinationPath = file.getCanonicalPath();
 
-            if (!canonicalDestinationPath.startsWith(new File(storiesFolder).getCanonicalPath())) {
+            if (!canonicalDestinationPath.startsWith(new File(folder).getCanonicalPath())) {
                 throw new StoryException("Entry is outside of the target directory");
             }
         } catch (IOException e) {

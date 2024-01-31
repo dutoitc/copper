@@ -142,7 +142,7 @@ class DiskHelperTest {
     @Test
     void testX() {
         DiskHelper dh = DiskHelper.builder().build();
-        assertThrows(StoryException.class, ()->dh.getSecureFile("../tmp"));
+        assertThrows(StoryException.class, ()->dh.getSecureFile(".", "../tmp"));
     }
 
 
