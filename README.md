@@ -8,7 +8,7 @@ Copper also provides an embedded WEB server to interact with stories, data or se
 
 
 # Quick start
-* (Use OpenJDK11 set as JAVA_HOME)
+* (Use OpenJDK17 set as JAVA_HOME)
 * mvn clean package
 * cd sample
 * ./sample.sh  or ./sample.bat
