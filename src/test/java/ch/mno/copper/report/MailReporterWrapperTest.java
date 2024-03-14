@@ -27,7 +27,6 @@ class MailReporterWrapperTest {
         var story = "blah\n" +
                 "REPORT BY TELEPATHY EVERYTHING";
         assertThrows(RuntimeException.class, () -> new MailReporterWrapper(storyGrammar, story, "server", "user", "pass", 42, "from", "replyTo"));
-
     }
 
     @Test

@@ -19,6 +19,8 @@ public class ReporterWrapperFactory {
     public <T extends AbstractReporterWrapper> T buildReporterWrapper(StoryGrammar grammar, String storyGiven) {
         if (Pattern.compile(grammar.getPatternFull("PUSHOVER"), Pattern.DOTALL).matcher(storyGiven).find()) {
             return (T) PushoverReporterWrapper.buildReporter(grammar, storyGiven + '\n');
+        } else if (Pattern.compile(grammar.getPatternFull("WEBEX"), Pattern.DOTALL).matcher(storyGiven).find()) {
+            return (T) WebexDeltaReporterWrapper.buildReporter(grammar, storyGiven + '\n');
         } else if (Pattern.compile(grammar.getPatternFull("MAIL"), Pattern.DOTALL).matcher(storyGiven).find()) {
             return (T) MailReporterWrapper.buildReporter(grammar, storyGiven + '\n',
                     copperMailProperties.getServer(),

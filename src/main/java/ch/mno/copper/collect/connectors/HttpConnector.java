@@ -12,6 +12,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -84,9 +85,17 @@ public class HttpConnector extends AbstractConnector {
         for (Map.Entry<String, String> entry : values.entrySet()) {
             nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }
-
         post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
+        return sendPost(post);
+    }
 
+    public String post(String uri, String body) throws ConnectorException {
+        var post = new HttpPost(uri);
+        post.setEntity(new StringEntity(body, Charset.defaultCharset()));
+        return sendPost(post);
+    }
+
+    public String sendPost(HttpPost post) throws ConnectorException {
         try (CloseableHttpResponse response = httpclient.execute(target, post)) {
             if (response.getStatusLine().getStatusCode() != 200) {
                 return ERROR + response.getStatusLine().getStatusCode() + ":" + response.getStatusLine().getReasonPhrase();

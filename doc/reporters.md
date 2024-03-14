@@ -42,3 +42,15 @@ THEN REPORT BY CSV to "prodExtract.csv"
      WITH line="{{NOW_dd.MM.yyyy_HH:mm:ss}};{{APP_PR_NB_DATA}};{{APP_PR_NB_ERRORS}}"
 ````
 
+## Webex delta reporter
+````
+RUN ON CRON */5 * * * *
+GIVEN STORED VALUES
+THEN REPORT BY WEBEX
+WITH delta=5 
+WITH token="..."
+WITH room_id="..."
+WITH key_filter=".*status"  (regex on keys)
+WITH message="<h3>Copper detected status changes:</h3><br/>{{STATUS}}"
+````
+Every 5 minutes, detect status change, then send a message to Webex, only if changes are detected.

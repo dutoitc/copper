@@ -39,7 +39,8 @@ COLLECTOR::=COLLECTOR¦SPACE_EOL¦+((¦COLLECTOR_JDBC¦)|(¦COLLECTOR_JMX¦)|(¦
 PUSHOVER::=REPORT BY PUSHOVER to \".*?\"¦SPACE_EOL¦+WITH token=\".*?\"¦SPACE_EOL¦+WITH title=\".*?\"¦SPACE_EOL¦+WITH message=\".*?\"
 MAIL::=REPORT BY MAIL to \".*?\"¦SPACE_EOL¦+WITH title=\".*?\"¦SPACE_EOL¦+WITH message=\".*?\"
 CSV::=REPORT BY CSV to \".*?\"¦SPACE_EOL¦+WITH headers=\".*?\"¦SPACE_EOL¦+WITH line=\".*?\"
-REPORTER::=(STORE VALUES)|(¦PUSHOVER¦)|(¦MAIL¦)|(¦CSV¦)
+WEBEX::=REPORT BY WEBEX¦SPACE_EOL¦+WITH delta=\d+¦SPACE_EOL¦+WITH token=\".*?\"¦SPACE_EOL¦+WITH room_id=\".*?\"¦SPACE_EOL¦+WITH key_filter=\".*?\"¦SPACE_EOL¦+WITH message=\".*?\"
+REPORTER::=(STORE VALUES)|(¦PUSHOVER¦)|(¦MAIL¦)|(¦CSV¦)|(¦WEBEX¦)
 
 # WHEN
 WHEN::=WHEN [a-zA-Z0-9_]+[<>=]\d+(\.\d+)?
