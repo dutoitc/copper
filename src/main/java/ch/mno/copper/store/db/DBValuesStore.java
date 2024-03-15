@@ -91,6 +91,7 @@ public class DBValuesStore implements ValuesStore {
     @Override
     public Map<String, String> getValuesMapString() {
         return server.readLatest().stream()
+                .distinct()
                 .collect(Collectors.toMap(StoreValue::getKey, StoreValue::getValue));
 
     }
