@@ -20,6 +20,7 @@ class JdbcCollectorTest {
 
     @Test
     void test1() throws Exception {
+        Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
         String url = "jdbc:derby:memory:sampleDB;create=true";
         Connection conn = DriverManager.getConnection(url);
         Statement stmnt = conn.createStatement();
@@ -40,7 +41,8 @@ class JdbcCollectorTest {
     }
 
     @Test
-    void testErr() {
+    void testErr() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
         assertThrows(ConnectorException.class, () -> {
             JdbcCollector coll = new JdbcCollector();
             coll.query("jdbc:dummy", null, null, "select * from test_table");
