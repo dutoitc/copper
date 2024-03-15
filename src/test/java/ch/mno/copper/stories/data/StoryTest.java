@@ -225,6 +225,11 @@ class StoryTest {
             public String deleteValuesOfKey(String key) {
                 return null;
             }
+
+            @Override
+            public String deleteDuplicates() {
+                return null;
+            }
         };
         return store;
     }

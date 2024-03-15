@@ -47,4 +47,6 @@ public interface ValuesStore {
     String deleteValuesOlderThanXDays(int nbDays);
 
     String deleteValuesOfKey(String key);
+
+    String deleteDuplicates();
 }

@@ -93,7 +93,6 @@ public class DBValuesStore implements ValuesStore {
         return server.readLatest().stream()
                 .distinct()
                 .collect(Collectors.toMap(StoreValue::getKey, StoreValue::getValue));
-
     }
 
     @Override
@@ -110,6 +109,12 @@ public class DBValuesStore implements ValuesStore {
     @Override
     public String deleteValuesOfKey(String key) {
         int nb = server.deleteValuesOfKey(key);
+        return "OK, " + nb + " deleted";
+    }
+
+    @Override
+    public String deleteDuplicates() {
+        int nb = server.deleteDuplicates();
         return "OK, " + nb + " deleted";
     }
 

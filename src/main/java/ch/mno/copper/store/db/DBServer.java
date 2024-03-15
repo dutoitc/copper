@@ -78,7 +78,7 @@ public class DBServer implements AutoCloseable {
             StoreValue previousValue = readLatest(key);
             if (value == null) value = "";
 
-            if (previousValue==null) {
+            if (previousValue == null) {
                 insertNew(key, value, instant, stmt);
             } else if (!previousValue.getValue().equals(value)) {
                 if (previousValue.getTimestampFrom().isAfter(instant)) {
@@ -105,6 +105,27 @@ public class DBServer implements AutoCloseable {
         int rowInserted = stmt.executeUpdate();
         if (rowInserted != 1) {
             throw new StoreException("DB error: inserted " + rowInserted + " values.");
+        }
+    }
+
+    void insertForTests(String key, String value, Instant dateFrom, Instant dateTo, Instant dateLastCheck){
+        var sqlInsert = "INSERT INTO valuestore ( idvaluestore, vkey, vvalue, datefrom, dateto, datelastcheck) VALUES (?,?,?,?,?,?)";
+
+        try (var con = cp.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sqlInsert)) {
+            long id = nextSequence();
+            stmt.setLong(1, id);
+            stmt.setString(2, key);
+            stmt.setString(3, value);
+            stmt.setTimestamp(4, Timestamp.from(dateFrom));
+            stmt.setTimestamp(5, Timestamp.from(dateTo));
+            stmt.setTimestamp(6, Timestamp.from(dateLastCheck));
+            int rowInserted = stmt.executeUpdate();
+            if (rowInserted != 1) {
+                throw new StoreException("DB error: inserted " + rowInserted + " values.");
+            }
+        } catch (SQLException e) {
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
     }
 
@@ -164,7 +185,9 @@ public class DBServer implements AutoCloseable {
     }
 
 
-    /** Query some values at some interval of time, to plot graph */
+    /**
+     * Query some values at some interval of time, to plot graph
+     */
     public List<InstantValues> readInstant(List<String> keys, Instant timestampFrom, Instant timestampTo, long intervalSeconds, int maxValues) {
         String sql = "select * from (" +
                 "select ts,c1, vvalue, idValueStore, vkey from ( " +
@@ -262,6 +285,7 @@ public class DBServer implements AutoCloseable {
             throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
     }
+
     /**
      * Read all values of a key)
      */
@@ -314,6 +338,7 @@ public class DBServer implements AutoCloseable {
         var sb = new StringBuilder();
         try (var con = cp.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
+
             try (var rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     sb.append(rs.getString("vkey"));
@@ -369,6 +394,25 @@ public class DBServer implements AutoCloseable {
         try (var con = cp.getConnection();
              var stmt = con.prepareStatement("DELETE from valuestore where vkey=?")) {
             stmt.setString(1, key);
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new StoreException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);
+        }
+    }
+
+    public int deleteDuplicates() {
+        try (var con = cp.getConnection();
+             var stmt = con.prepareStatement("DELETE FROM valuestore\n" +
+                     "    WHERE idvaluestore NOT IN (\n" +
+                     "    SELECT idvaluesstore\n" +
+                     "    FROM (\n" +
+                     "        SELECT MAX(idvaluestore) AS idvaluesstore\n" +
+                     "        FROM valuestore\n" +
+                     "        WHERE dateto = '3000-12-31 01:00:00.000000'\n" +
+                     "        GROUP BY vkey\n" +
+                     "    ) AS subquery\n" +
+                     ") AND dateto = ?")) {
+            stmt.setTimestamp(1, Timestamp.from(INSTANT_MAX));
             return stmt.executeUpdate();
         } catch (SQLException e) {
             throw new StoreException(AN_ERROR_OCCURED_WHILE_READING_VALUES, e);

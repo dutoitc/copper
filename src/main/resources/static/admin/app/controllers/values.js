@@ -83,6 +83,16 @@ angular.module('copperApp.values', ['ngRoute'])
         }
     }
 
+    $scope.deleteDuplicates = function(key) {
+        if ( window.confirm("Delete duplicates ?") ) {
+            $http.delete('../ws/admin/values/duplicates')
+                .then(function(response) {
+                    alert(response.data);
+                    $scope.refresh();
+                });
+        }
+    }
+
 
 
     $scope.filterOLD = function(object, field, filter) {

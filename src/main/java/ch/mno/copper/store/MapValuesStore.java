@@ -89,6 +89,11 @@ public class MapValuesStore implements ValuesStore {
         return "";
     }
 
+    @Override
+    public String deleteDuplicates() {
+        return "0"; // No historization-> no duplicates
+    }
+
     /** Values as string for tests */
     public String getValuesAsString() {
         var sb = new StringBuilder();

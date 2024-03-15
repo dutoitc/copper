@@ -242,6 +242,22 @@ class DBServerTest {
                 server.readInstant(List.of("k1"), i1, i3, 1, 10).toString());
     }
 
+    @Test
+    void testDelete() {
+        server.clearAllData();
+        Instant i1 = Instant.parse("2021-09-30T16:42:00.00Z");
+        Instant i2 = Instant.parse("2021-09-30T16:42:03.00Z");
+        server.insertForTests("K1", "V1", i1, DBServer.INSTANT_MAX, i1);
+        server.insertForTests("K2", "V2", i1, DBServer.INSTANT_MAX, i1);
+        server.insertForTests("K2", "V3", i1, DBServer.INSTANT_MAX, i2);
+        assertEquals(1, server.readAll("K1").size());
+        assertEquals(2, server.readAll("K2").size());
+
+        server.deleteDuplicates();
+        assertEquals(1, server.readAll("K1").size());
+        assertEquals(1, server.readAll("K2").size());
+    }
+
 
     private void assertOneValue(List<StoreValue> values, String value) {
         assertNotNull(values);

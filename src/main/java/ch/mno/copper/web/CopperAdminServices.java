@@ -163,5 +163,11 @@ public class CopperAdminServices {
         return builder.create();
     }
 
+    @DeleteMapping(value = "values/duplicates", produces = MediaType.TEXT_PLAIN)
+    @Operation(summary = "Delete duplicates, keep latest")
+    public String deleteDeuplicates() {
+        return valuesStore.deleteDuplicates();
+    }
+
 
 }
