@@ -187,7 +187,6 @@ class WebCollectorTest extends AbstractWebPortSpringTest {
         assertEquals("18.11.5", res.get(0));
         // assertEquals("18.11.5", res.get(1));
         assertEquals("?", res.get(1));
-
     }
 
 
