@@ -7,6 +7,7 @@ import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.web.dto.StoryPostDTO;
+import config.CopperMailProperties;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -65,7 +66,7 @@ class CopperAdminServicesTest {
 
         StoriesFacade storiesFacade = Mockito.mock(StoriesFacade.class);
         Mockito.when(storiesFacade.updateStory("oldStory", "newStory", newStoryText)).thenReturn("OK");
-        Story story = new Story(grammar, "oldStory", oldStoryText);
+        Story story = new Story(grammar, "oldStory", oldStoryText, new CopperMailProperties());
         Mockito.when(storiesFacade.getStoryByName("oldStory")).thenReturn(story);
         CopperAdminServices service = new CopperAdminServices(null, storiesFacade, null);
         //
@@ -85,7 +86,7 @@ class CopperAdminServicesTest {
 
         StoriesFacade storiesFacade = Mockito.mock(StoriesFacade.class);
         Mockito.when(storiesFacade.updateStory("oldStory", "newStory", newStoryText)).thenThrow(new IOException("Exception for test"));
-        Story story = new Story(grammar, "oldStory", oldStoryText);
+        Story story = new Story(grammar, "oldStory", oldStoryText, new CopperMailProperties());
         Mockito.when(storiesFacade.getStoryByName("oldStory")).thenReturn(story);
         CopperAdminServices service = new CopperAdminServices(null, storiesFacade, null);
         //
@@ -147,8 +148,8 @@ class CopperAdminServicesTest {
                 "GIVEN COLLECTOR WEB WITH url=http://localhost:50400\n" +
                 "    KEEP responseCode AS COPPER2_WEB_RETURN_CODE\n" +
                 "THEN STORE VALUES";
-        Story story1 = new Story(grammar, "story1", storyText1);
-        Story story2 = new Story(grammar, "story2", storyText2);
+        Story story1 = new Story(grammar, "story1", storyText1, new CopperMailProperties());
+        Story story2 = new Story(grammar, "story2", storyText2, new CopperMailProperties());
         //
         StoriesFacade storiesFacade = Mockito.mock(StoriesFacade.class);
         Mockito.when(storiesFacade.getStories(true)).thenReturn(Arrays.asList(story1, story2));
@@ -165,7 +166,7 @@ class CopperAdminServicesTest {
                 "GIVEN COLLECTOR WEB WITH url=http://localhost:30400\n" +
                 "    KEEP responseCode AS COPPER_WEB_RETURN_CODE\n" +
                 "THEN STORE VALUES";
-        Story story1 = new Story(grammar, "story1", storyText1);
+        Story story1 = new Story(grammar, "story1", storyText1, new CopperMailProperties());
         StoriesFacade storiesFacade = Mockito.mock(StoriesFacade.class);
         Mockito.when(storiesFacade.getStoryByName("story1")).thenReturn(story1);
         CopperAdminServices service = new CopperAdminServices(null, storiesFacade, null);
@@ -198,8 +199,8 @@ class CopperAdminServicesTest {
                 "GIVEN COLLECTOR WEB WITH url=http://localhost:50400\n" +
                 "    KEEP responseCode AS COPPER2_WEB_RETURN_CODE\n" +
                 "THEN STORE VALUES";
-        Story story1 = new Story(grammar, "story1", storyText1);
-        Story story2 = new Story(grammar, "story2", storyText2);
+        Story story1 = new Story(grammar, "story1", storyText1, new CopperMailProperties());
+        Story story2 = new Story(grammar, "story2", storyText2, new CopperMailProperties());
         //
         StoriesFacade storiesFacade = Mockito.mock(StoriesFacade.class);
         Mockito.when(storiesFacade.getStories(true)).thenReturn(Arrays.asList(story1, story2));

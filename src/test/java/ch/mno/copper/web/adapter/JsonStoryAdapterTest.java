@@ -5,6 +5,7 @@ import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.web.adapters.JsonStoryAdapter;
 import ch.mno.copper.web.dto.StoryWEBDTO;
 import com.google.gson.stream.JsonWriter;
+import config.CopperMailProperties;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,7 @@ class JsonStoryAdapterTest {
         Story story = new Story(grammar, "storyName", "RUN ON CRON */5 * * * *\n" +
                 "GIVEN COLLECTOR WEB WITH url=http://localhost:30400\n" +
                 "    KEEP responseCode AS COPPER_WEB_RETURN_CODE\n" +
-                "THEN STORE VALUES");
+                "THEN STORE VALUES", new CopperMailProperties());
         story.setCronData4Test("1 2 3 4 5");
         StoryWEBDTO dto = new StoryWEBDTO(story);
 

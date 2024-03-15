@@ -38,7 +38,7 @@ class WebexReporterTest {
             };
             reporter.report("aMessage with {{STATUS}}", values);
 
-            assertEquals("[Bearer: 1token, Content-Type: application/json]", Arrays.toString(post.getValue().getAllHeaders()));
+            assertEquals("[Authorization: Bearer 1token, Content-Type: application/json]", Arrays.toString(post.getValue().getAllHeaders()));
             assertEquals("{\"roomId\": \"2room\", \"text\":\"aMessage with {{STATUS}}\"}", IOUtils.toString(post.getValue().getEntity().getContent(), StandardCharsets.UTF_8));
         } catch (IOException e) {
             Assert.fail(e.getMessage());

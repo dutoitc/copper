@@ -61,7 +61,8 @@ class WebexDeltaReporterWrapperTest {
         valuesStore.put("TwoStatus", "status2");
         wrapper.execute(new HashMap<>(), valuesStore);
 
-        assertEquals("<h3>Ref-Mon detected status changes:</h3><br/>OneStatus: status1<br/>TwoStatus: status2;{ROOM_ID=someroom, TOKEN=sometoken}", ret.toString());
+        assertEquals("<h3>Ref-Mon detected status changes:</h3><br/>- OneStatus: status1\n" +
+                "- TwoStatus: status2;{ROOM_ID=someroom, TOKEN=sometoken}", ret.toString());
     }
 
 }

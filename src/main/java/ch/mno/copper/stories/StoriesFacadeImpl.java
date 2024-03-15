@@ -8,8 +8,10 @@ import ch.mno.copper.stories.data.StoriesHolder;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.stories.data.StoryValidationResult;
+import config.CopperMailProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
@@ -29,10 +31,13 @@ public class StoriesFacadeImpl implements StoriesFacade {
     private final DiskHelper diskHelper;
     private final StoryTaskBuilder storyTaskBuilder;
 
-    public StoriesFacadeImpl(DiskHelper diskHelper, StoryTaskBuilder storyTaskBuilder, StoryGrammar grammar) {
+    private final CopperMailProperties copperMailProperties;
+
+    public StoriesFacadeImpl(DiskHelper diskHelper, StoryTaskBuilder storyTaskBuilder, StoryGrammar grammar, CopperMailProperties copperMailProperties) {
         this.diskHelper = diskHelper;
         this.storyTaskBuilder = storyTaskBuilder;
         this.grammar = grammar;
+        this.copperMailProperties = copperMailProperties;
     }
 
     @Override
@@ -48,7 +53,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
 
     @Override
     public Story buildStory(FileInputStream fileInputStream, String storyName) throws IOException, ConnectorException {
-        return new Story(grammar, fileInputStream, storyName);
+        return new Story(grammar, fileInputStream, storyName, copperMailProperties);
     }
 
     @Override
@@ -58,7 +63,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
 
     @Override
     public String saveNewStory(String storyName, String storyText) throws IOException {
-        Story story = new Story(grammar, storyName, storyText);
+        Story story = new Story(grammar, storyName, storyText, copperMailProperties);
         diskHelper.saveNewStory(storyName, story.getStoryText());
         storiesHolder.add(story); // TODO: update listeneres
         return "Ok";
@@ -71,7 +76,7 @@ public class StoriesFacadeImpl implements StoriesFacade {
         }
 
         Story originalStory = getStoryByName(originalStoryName);
-        Story story = new Story(grammar, storyName, storyText);
+        Story story = new Story(grammar, storyName, storyText, copperMailProperties);
 
         // Update
         diskHelper.updateStory(story.getName(), story.getStoryText());

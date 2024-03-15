@@ -6,6 +6,7 @@ import ch.mno.copper.collect.wrappers.JdbcCollectorWrapper;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
+import config.CopperMailProperties;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -234,7 +235,7 @@ class StoryGrammarTest {
 
 
         Path path = Paths.get(resource.toURI());
-        Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), "OracleStory1.txt");
+        Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), "OracleStory1.txt", new CopperMailProperties());
         CollectorWrapperFactory collectorWrapperFactory = new CollectorWrapperFactory(Mockito.mock(PropertyResolver.class), storyGrammar);
         JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) collectorWrapperFactory.build(story.getGiven());
         assertEquals("jdbc:oracle:thin:@//myhost:1521/orcl", wrapper.getUrl());
@@ -253,7 +254,7 @@ class StoryGrammarTest {
 
 
         Path path = Paths.get(resource.toURI());
-        Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), "OracleStory2.txt");
+        Story story = new Story(storyGrammar, new FileInputStream(path.toFile()), "OracleStory2.txt", new CopperMailProperties());
         CollectorWrapperFactory collectorWrapperFactory = new CollectorWrapperFactory(Mockito.mock(PropertyResolver.class), storyGrammar);
         JdbcCollectorWrapper wrapper = (JdbcCollectorWrapper) collectorWrapperFactory.build(story.getGiven());
         assertEquals("jdbc:oracle:thin:@host:port/instance", wrapper.getUrl());

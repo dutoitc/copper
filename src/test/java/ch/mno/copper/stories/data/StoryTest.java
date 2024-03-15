@@ -4,6 +4,7 @@ import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.store.data.InstantValues;
 import ch.mno.copper.stories.StoryException;
+import config.CopperMailProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class StoryTest {
     StoryGrammar grammar;
+    CopperMailProperties copperMailProperties = new CopperMailProperties();
 
 
     @BeforeEach
@@ -60,7 +62,7 @@ class StoryTest {
                 "THEN REPORT BY MAIL to \"test@dummy\"\n" +
                 "     WITH title=\"some title\"\n" +
                 "     WITH message=\"Yo !\"\n";
-        Story story = new Story(grammar, "testStory", storyText);
+        Story story = new Story(grammar, "testStory", storyText,copperMailProperties);
         ValuesStore store = buildValuesStore();
 
         // Test values
@@ -101,7 +103,7 @@ class StoryTest {
                 "WHEN AAA>0\n" +
                 "THEN REPORT BY MAIL to \"test@dummy\"\n" +
                 "     WITH title=\"some title\"\n" +
-                "     WITH message=\"Yo !\"\n");
+                "     WITH message=\"Yo !\"\n", copperMailProperties);
         assertTrue(story.isValid());
         assertFalse(story.hasError());
         assertTrue(story.getWhen()!=null);
@@ -114,7 +116,7 @@ class StoryTest {
                 "WHEN AAA>0\n" +
                 "THEN REPORT BY MAIL to \"test@dummy\"\n" +
                 "     WITH title=\"some title\"\n" +
-                "     WITH message=\"Yo !\"\n");
+                "     WITH message=\"Yo !\"\n", copperMailProperties);
         assertEquals("34 12 * * *", story.getCron());
     }
 
@@ -125,7 +127,7 @@ class StoryTest {
                 "WHEN AAA>0\n" +
                 "THEN REPORT BY MAIL to \"test@dummy\"\n" +
                 "     WITH title=\"some title\"\n" +
-                "     WITH message=\"Yo !\"\n"));
+                "     WITH message=\"Yo !\"\n", copperMailProperties));
     }
 
     @Test()
@@ -135,7 +137,7 @@ class StoryTest {
                 "WHEN AAA>0\n" +
                 "THEN REPORT BY MAIL to \"test@dummy\"\n" +
                 "     WITH title=\"some title\"\n" +
-                "     WITH message=\"Yo !\"\n"));
+                "     WITH message=\"Yo !\"\n", copperMailProperties));
     }
 
     @Test()
@@ -143,7 +145,7 @@ class StoryTest {
         assertThrows(StoryException.class, () -> new Story(grammar, "testStory", "RUN ON CRON 5 * * * *\n" +
                 "GIVEN STORED VALUES\n" +
                 "WHEN AAA>0\n" +
-                "THEN WRONG_SYNTAX_IN_STORY"));
+                "THEN WRONG_SYNTAX_IN_STORY", copperMailProperties));
     }
 
 
@@ -155,7 +157,7 @@ class StoryTest {
                 "AND WRONG_SYNTAX_IN_QUERY\n" +
                 "THEN REPORT BY MAIL to \"test@dummy\"\n" +
                 "     WITH title=\"some title\"\n" +
-                "     WITH message=\"Yo !\"\n");
+                "     WITH message=\"Yo !\"\n", copperMailProperties);
         assertFalse(story.isValid());
         assertTrue(story.hasError());
         assertTrue(story.getError().contains("does not match"));

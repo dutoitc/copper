@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 public class Story {
 
     private static final Logger LOG = LoggerFactory.getLogger(Story.class);
+    private final CopperMailProperties copperMailProperties;
     private When when = null;
     private String storyName;
     private String storyText;
@@ -31,15 +32,14 @@ public class Story {
     private boolean valid;
     private final String given;
     private transient AbstractReporterWrapper reporterWrapper;
-    private CopperMailProperties copperMailProperties;
 
-
-    public Story(StoryGrammar grammar, String storyName, String storyText) throws IOException {
-        this(grammar, new ByteArrayInputStream(storyText.getBytes()), storyName);
+    public Story(StoryGrammar grammar, String storyName, String storyText, CopperMailProperties copperMailProperties) throws IOException {
+        this(grammar, new ByteArrayInputStream(storyText.getBytes()), storyName, copperMailProperties);
     }
 
 
-    public Story(StoryGrammar grammar, InputStream is, String storyName) throws IOException {
+    public Story(StoryGrammar grammar, InputStream is, String storyName, CopperMailProperties copperMailProperties) throws IOException {
+        this.copperMailProperties = copperMailProperties;
         this.storyName = storyName;
         storyText = IOUtils.toString(is);
         storyText = Pattern.compile("#.*?\n", Pattern.DOTALL).matcher(storyText).replaceAll(""); // Remove comments lines
@@ -84,10 +84,6 @@ public class Story {
         if (!matchREPORTER.find()) throw new StoryException("Cannot find a valid REPORTER expression");
         String storyReporter = matchREPORTER.group();
         this.reporterWrapper = new ReporterWrapperFactory(copperMailProperties).buildReporterWrapper(grammar, storyReporter);
-    }
-
-    public void setCopperMailProperties(CopperMailProperties copperMailProperties) {
-        this.copperMailProperties = copperMailProperties;
     }
 
     static boolean matchWhen(String storedValue, String operator, String expectedValue) {

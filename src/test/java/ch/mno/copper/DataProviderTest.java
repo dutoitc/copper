@@ -8,6 +8,7 @@ import ch.mno.copper.stories.StoriesFacade;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import ch.mno.copper.stories.data.StoryValidationResult;
+import config.CopperMailProperties;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
@@ -36,7 +37,7 @@ class DataProviderTest {
         storiesFacade.stories.put("story1", new Story(storyGrammar, "MyStory1Name", "RUN ON CRON */5 * * * *\n" +
                 "GIVEN COLLECTOR WEB WITH url=https://localhost/temp1\n" +
                 "    KEEP body AS ELDORA_MENU_VALUES\n" +
-                "THEN STORE VALUES"));
+                "THEN STORE VALUES", new CopperMailProperties()));
         assertEquals(1, dataprovider.getStories().size());
 
         // Get story
@@ -46,7 +47,7 @@ class DataProviderTest {
         storiesFacade.stories.put("story1", new Story(storyGrammar, "MyStory1Name", "RUN ON CRON */5 * * * *\n" +
                 "GIVEN COLLECTOR WEB WITH url=https://localhost/temp2\n" +
                 "    KEEP body AS ELDORA_MENU_VALUES\n" +
-                "THEN STORE VALUES"));
+                "THEN STORE VALUES", new CopperMailProperties()));
 
         // Get story new
         assertTrue(dataprovider.getStories().get(0).getStoryText().contains("temp2"));

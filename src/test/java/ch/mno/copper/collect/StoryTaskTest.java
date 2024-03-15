@@ -8,6 +8,7 @@ import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.StoryTaskBuilder;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
+import config.CopperMailProperties;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -48,7 +49,7 @@ class StoryTaskTest {
 
     @Test
     void testBuildAndRunOk() throws IOException {
-        Story story = new Story(grammar, "StoryName", "RUN ON CRON 0 8,13 * * *\nGIVEN STORED VALUES\nTHEN\nSTORE VALUES");
+        Story story = new Story(grammar, "StoryName", "RUN ON CRON 0 8,13 * * *\nGIVEN STORED VALUES\nTHEN\nSTORE VALUES", new CopperMailProperties());
 
         CollectorWrapperFactory collectorWrapperFactory = new CollectorWrapperFactory(Mockito.mock(PropertyResolver.class), grammar) {
             public AbstractCollectorWrapper build(String storyGiven) {
@@ -80,7 +81,7 @@ class StoryTaskTest {
 
     @Test
     void testBuildAndRunForErrorShouldStoreEntriesAsError() throws IOException, ConnectorException {
-        Story story = new Story(grammar, "StoryName", "RUN ON CRON 0 8,13 * * *\nGIVEN STORED VALUES\nTHEN\nSTORE VALUES");
+        Story story = new Story(grammar, "StoryName", "RUN ON CRON 0 8,13 * * *\nGIVEN STORED VALUES\nTHEN\nSTORE VALUES", new CopperMailProperties());
 
         ValuesStore vs = new MapValuesStore();
         CollectorWrapperFactory collectorWrapperFactory = new CollectorWrapperFactory(Mockito.mock(PropertyResolver.class), grammar) {
@@ -116,7 +117,7 @@ class StoryTaskTest {
                 "GIVEN COLLECTOR WEB WITH url=http://localhost:50400\n" +
                 "    KEEP responseCode AS COPPER2_WEB_RETURN_CODE\n" +
                 "THEN STORE VALUES";
-        Story story = new Story(grammar, "storyName.txt", storyText);
+        Story story = new Story(grammar, "storyName.txt", storyText, new CopperMailProperties());
         var task = new StoryTaskImpl(story, ()->{}, "* * * * *");
         assertEquals("storyName.txt", task.storyName());
         assertEquals("storyName", task.getTitle());
@@ -130,7 +131,7 @@ class StoryTaskTest {
                 "GIVEN COLLECTOR WEB WITH url=http://localhost:50400\n" +
                 "    KEEP responseCode AS COPPER2_WEB_RETURN_CODE\n" +
                 "THEN STORE VALUES";
-        Story story = new Story(grammar, "storyName.txt", storyText);
+        Story story = new Story(grammar, "storyName.txt", storyText, new CopperMailProperties());
         var task = new StoryTaskImpl(story, ()->{}, "* * * * *");
         long v = System.currentTimeMillis() - 1;
         task.cronData.setNextRun4Test(v); // Don't wait a minute
@@ -147,7 +148,7 @@ class StoryTaskTest {
                 "GIVEN COLLECTOR WEB WITH url=http://localhost:50400\n" +
                 "    KEEP responseCode AS COPPER2_WEB_RETURN_CODE\n" +
                 "THEN STORE VALUES";
-        Story story = new Story(grammar, "storyName.txt", storyText);
+        Story story = new Story(grammar, "storyName.txt", storyText, new CopperMailProperties());
         var task = new StoryTaskImpl(story, ()->{}, "* * 31 12 *");
         assertTrue(task.getNextRun()>System.currentTimeMillis());
         assertFalse(task.shouldRun());
