@@ -64,8 +64,8 @@ public class WebexDeltaReporterWrapper implements AbstractReporterWrapper {
                 .sorted()
                 .distinct()
                 .filter(key -> pat.matcher(key).matches())
-                .map(key -> key + ": " + valuesStore.getValue(key))
-                .collect(Collectors.joining("<br/>"));
+                .map(key -> "- " + key + ": " + valuesStore.getValue(key))
+                .collect(Collectors.joining("\n"));
 
         // Report
         if (!deltaStr.isBlank()) {

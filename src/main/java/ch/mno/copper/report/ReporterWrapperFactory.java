@@ -1,5 +1,6 @@
 package ch.mno.copper.report;
 
+import ch.mno.copper.CopperException;
 import ch.mno.copper.stories.data.StoryGrammar;
 import config.CopperMailProperties;
 
@@ -22,6 +23,9 @@ public class ReporterWrapperFactory {
         } else if (Pattern.compile(grammar.getPatternFull("WEBEX"), Pattern.DOTALL).matcher(storyGiven).find()) {
             return (T) WebexDeltaReporterWrapper.buildReporter(grammar, storyGiven + '\n');
         } else if (Pattern.compile(grammar.getPatternFull("MAIL"), Pattern.DOTALL).matcher(storyGiven).find()) {
+            if (copperMailProperties==null) {
+                throw new CopperException("Please specify mail parameters");
+            }
             return (T) MailReporterWrapper.buildReporter(grammar, storyGiven + '\n',
                     copperMailProperties.getServer(),
                     copperMailProperties.getUsername(),

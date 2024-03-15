@@ -3,8 +3,10 @@ package ch.mno.copper.stories.data;
 import ch.mno.copper.helpers.SyntaxException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.report.AbstractReporterWrapper;
+import ch.mno.copper.report.ReporterWrapperFactory;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.StoryException;
+import config.CopperMailProperties;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,7 @@ public class Story {
     private boolean valid;
     private final String given;
     private transient AbstractReporterWrapper reporterWrapper;
+    private CopperMailProperties copperMailProperties;
 
 
     public Story(StoryGrammar grammar, String storyName, String storyText) throws IOException {
@@ -79,9 +82,12 @@ public class Story {
         // Extract repporter using THEN pattern
         var matchREPORTER = Pattern.compile(grammar.getPatternFull("REPORTER"), Pattern.DOTALL).matcher(storyText);
         if (!matchREPORTER.find()) throw new StoryException("Cannot find a valid REPORTER expression");
-//        String storyReporter = matchREPORTER.group();
-        // FIXME: complete test and mock mailServer ?
-        //this.reporterWrapper = ReporterWrapperFactory.buildReporterWrapper(grammar, storyReporter);
+        String storyReporter = matchREPORTER.group();
+        this.reporterWrapper = new ReporterWrapperFactory(copperMailProperties).buildReporterWrapper(grammar, storyReporter);
+    }
+
+    public void setCopperMailProperties(CopperMailProperties copperMailProperties) {
+        this.copperMailProperties = copperMailProperties;
     }
 
     static boolean matchWhen(String storedValue, String operator, String expectedValue) {

@@ -29,7 +29,7 @@ public class WebexReporter implements AbstractReporter {
 
         var post = new HttpPost(URL);
         post.setEntity(new StringEntity(body, Charset.defaultCharset()));
-        post.addHeader("Bearer", token);
+        post.addHeader("Authorization", "Bearer " + token);
         post.addHeader("Content-Type", "application/json");
         var ret = conn.sendPost(post);
 
@@ -37,7 +37,7 @@ public class WebexReporter implements AbstractReporter {
     }
 
     HttpConnector buildConnector() {
-        return new HttpConnector("webexapis.com", 443, "https", "localhost", 3128, "http", null, null);
+        return new HttpConnector("webexapis.com", 443, "https", null, 3128, "http", null, null);
     }
 
 
