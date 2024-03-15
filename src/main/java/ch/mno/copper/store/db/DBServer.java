@@ -3,6 +3,7 @@ package ch.mno.copper.store.db;
 import ch.mno.copper.store.StoreException;
 import ch.mno.copper.store.StoreValue;
 import ch.mno.copper.store.data.InstantValues;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,7 @@ import java.util.List;
  * <p>
  * Created by dutoitc on 25.05.2016.
  */
+@Slf4j
 public class DBServer implements AutoCloseable {
 
     public static final Instant INSTANT_MAX = Instant.parse("3000-12-31T00:00:00.00Z");
@@ -45,7 +47,7 @@ public class DBServer implements AutoCloseable {
                 LOG.info("Deleted {} lines", nbRows);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.debug("Exception: " + e.getMessage(), e);
         }
     }
 

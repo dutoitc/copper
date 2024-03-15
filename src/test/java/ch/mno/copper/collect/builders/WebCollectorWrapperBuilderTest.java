@@ -48,17 +48,6 @@ class WebCollectorWrapperBuilderTest extends AbstractWebPortSpringTest {
         assertEquals("lastReload", valuesKept.get(1).getKey());
         assertEquals("WEB_LAST_RELOAD", valuesKept.get(1).getValue());
         assertEquals("[status, lastReload]", StringUtils.join(wrapper.getAs()));
-
-        /*
-        // Local wrapper test
-        try {
-            Map<String, String> res = wrapper.execute();
-            String status = res.get("WEB_STATUS");
-            String lastReload = res.get("WEB_LAST_RELOAD");
-            System.out.println("Values: " + status + "," + lastReload);
-        } catch (ConnectorException e) {
-            e.printStackTrace();
-        }*/
     }
 
 

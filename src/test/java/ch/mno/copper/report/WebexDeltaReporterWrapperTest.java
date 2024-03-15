@@ -1,19 +1,18 @@
 package ch.mno.copper.report;
 
+import ch.mno.copper.CopperException;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.store.MapValuesStore;
-import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.Story;
 import ch.mno.copper.stories.data.StoryGrammar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class WebexDeltaReporterWrapperTest {
 
@@ -28,11 +27,11 @@ class WebexDeltaReporterWrapperTest {
     void testMissingPattern() {
         var story = "blah\n" +
                 "REPORT BY TELEPATHY EVERYTHING";
-        assertThrows(RuntimeException.class, () -> new WebexDeltaReporterWrapper(storyGrammar, story));
+        assertThrows(CopperException.class, () -> new WebexDeltaReporterWrapper(storyGrammar, story));
     }
 
     @Test
-    void testAll() {
+    void testAll() throws ConnectorException {
         var story = "RUN ON CRON */5 * * * *\n" +
                 "GIVEN STORED VALUES\n" +
                 "THEN REPORT BY WEBEX\n" +
@@ -42,8 +41,14 @@ class WebexDeltaReporterWrapperTest {
                 "WITH key_filter=\".*Status\"\n" +
                 "WITH message=\"<h3>Ref-Mon detected status changes:</h3><br/>{{STATUS}}\"";
 
+        final StringBuilder ret = new StringBuilder();
+        var reporter = new WebexReporter() {
+            @Override
+            public void report(String message, Map<String, String> values) {
+                ret.append(message).append(';').append(values.toString());
+            }
+        };
 
-        WebexReporter reporter = Mockito.mock(WebexReporter.class);
         //
         var wrapper = new WebexDeltaReporterWrapper(storyGrammar, story);
         wrapper.setReporter4Tests(reporter);
@@ -55,6 +60,8 @@ class WebexDeltaReporterWrapperTest {
         valuesStore.put("key2", "value2");
         valuesStore.put("TwoStatus", "status2");
         wrapper.execute(new HashMap<>(), valuesStore);
+
+        assertEquals("<h3>Ref-Mon detected status changes:</h3><br/>OneStatus: status1<br/>TwoStatus: status2;{ROOM_ID=someroom, TOKEN=sometoken}", ret.toString());
     }
 
 }

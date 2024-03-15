@@ -1,5 +1,7 @@
 package ch.mno.copper.stories.data;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +16,7 @@ import java.util.regex.PatternSyntaxException;
 /**
  * Created by dutoitc on 07.02.2016.
  */
+@Slf4j
 public class StoryGrammar {
 
     public static final String SEPARATOR = "¦";
@@ -39,7 +42,7 @@ public class StoryGrammar {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug("Exception: " + e.getMessage(), e);
         }
     }
 

@@ -3,6 +3,7 @@ package ch.mno.copper.report;
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.StoryGrammar;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.regex.Pattern;
 /**
  * Created by dutoitc on 07.02.2016.
  */
+@Slf4j
 public class PushoverReporterWrapper implements AbstractReporterWrapper {
 
     private String applicationToken;
@@ -53,7 +55,7 @@ public class PushoverReporterWrapper implements AbstractReporterWrapper {
         try {
             reporter.report(message, reporterValues);
         } catch (ConnectorException e) {
-            e.printStackTrace();
+            log.debug("Exception: " + e.getMessage(), e);
         }
     }
 

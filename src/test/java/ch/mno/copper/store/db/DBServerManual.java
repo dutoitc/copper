@@ -1,5 +1,6 @@
 package ch.mno.copper.store.db;
 
+import lombok.extern.slf4j.Slf4j;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.h2.tools.Server;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class DBServerManual extends DBServer implements AutoCloseable {
     static String DBURL = "jdbc:h2:./copperdb"; // static for tests
     private static Logger LOG = LoggerFactory.getLogger(DBServerManual.class);
@@ -53,13 +55,13 @@ public class DBServerManual extends DBServer implements AutoCloseable {
                             System.out.println(e.getMessage());
                         }
                     } catch (SQLException e) {
-                        e.printStackTrace();
+                        log.debug("Exception: " + e.getMessage(), e);
                     } finally {
                         if (conn != null) {
                             try {
                                 conn.close();
                             } catch (SQLException e) {
-                                e.printStackTrace();
+                                log.debug("Exception: " + e.getMessage(), e);
                             }
                         }
                     }
@@ -112,7 +114,7 @@ public class DBServerManual extends DBServer implements AutoCloseable {
             }
             con.commit();
         } catch (SQLException e2) {
-            e2.printStackTrace();
+            log.debug("Exception: " + e2.getMessage(), e2);
             throw new RuntimeException("An error occured while initializing DB: " + e2.getMessage(), e2);
         }
         LOG.info("Database checked");
@@ -151,7 +153,7 @@ public class DBServerManual extends DBServer implements AutoCloseable {
                 }
             }
         } catch (SQLException e2) {
-            e2.printStackTrace();
+            log.debug("Exception: " + e2.getMessage(), e2);
             throw new RuntimeException("An error occured while initializing DB: " + e2.getMessage(), e2);
         }
         LOG.info("Database checked");

@@ -6,6 +6,7 @@ import ch.mno.copper.collect.connectors.JmxConnector;
 import com.google.gson.JsonArray;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -22,9 +23,8 @@ import java.util.regex.Pattern;
 /**
  * Created by dutoitc on 29.01.2016.
  */
+@Slf4j
 public class WebCollector {
-
-    private static final Logger LOG = LoggerFactory.getLogger(WebCollector.class);
 
     @SuppressWarnings("java:S2589")
     public static List<String> query(String url, String username, String password, List<Pair<String, String>> valuesKept) {
@@ -47,9 +47,9 @@ public class WebCollector {
 
             results = extractValues(data, valuesKept);
         } catch (Exception e) {
-            LOG.error("Connector exception (server {}): {}", url, e.getMessage());
-            if (LOG.isTraceEnabled()) {
-                e.printStackTrace();
+            log.error("Connector exception (server {}): {}", url, e.getMessage());
+            if (log.isTraceEnabled()) {
+                log.trace("Connector error: " + e.getMessage(), e);
             }
             if (results == null) {
                 results = new ArrayList<>(valuesKept.size());
@@ -101,7 +101,7 @@ public class WebCollector {
             if (o instanceof JSONArray) {
                 var res = (JSONArray) o;
                 if (res.isEmpty()) {
-                    LOG.info("Warning: jsonpath {} not found in {}", key, data);
+                    log.info("Warning: jsonpath {} not found in {}", key, data);
                     results.add("ERR_NOT_FOUND");
                 } else if (res.size() > 1) {
                     results.add("TOO_MUCH_VALUES_FOUND");
@@ -116,7 +116,7 @@ public class WebCollector {
                 results.add(o.toString());
             }
         } catch (PathNotFoundException e) {
-            LOG.error("JsonPath not found: {}", key);
+            log.error("JsonPath not found: {}", key);
             results.add("?");
         }
     }

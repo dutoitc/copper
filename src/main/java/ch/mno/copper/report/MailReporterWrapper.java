@@ -4,6 +4,7 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.helpers.SyntaxHelper;
 import ch.mno.copper.store.ValuesStore;
 import ch.mno.copper.stories.data.StoryGrammar;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
 /**
  * Created by dutoitc on 07.02.2016.
  */
+@Slf4j
 public class MailReporterWrapper implements AbstractReporterWrapper {
 
     private String dest;
@@ -59,7 +61,7 @@ public class MailReporterWrapper implements AbstractReporterWrapper {
         try {
             reporter.report(message2, reporterValues);
         } catch (ConnectorException e) {
-            e.printStackTrace();
+            log.debug("Exception: " + e.getMessage(), e);
         }
     }
 

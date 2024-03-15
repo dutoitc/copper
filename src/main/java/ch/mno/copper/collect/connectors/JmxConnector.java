@@ -72,7 +72,7 @@ public class JmxConnector extends AbstractConnector {
                 jmxc.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug("Close error: " + e.getMessage(), e);
         }
     }
 

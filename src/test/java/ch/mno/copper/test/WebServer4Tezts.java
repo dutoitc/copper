@@ -1,6 +1,8 @@
 package ch.mno.copper.test;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,6 +17,7 @@ import java.util.UUID;
  * repeat -> repeat header
  * err404 -> return error 404
  */
+@Slf4j
 // Miniserver from http://www.java2s.com/Code/Java/Network-Protocol/ASimpleWebServer.htm
 public class WebServer4Tezts implements Runnable, AutoCloseable {
     ServerSocket s;
@@ -38,7 +41,7 @@ public class WebServer4Tezts implements Runnable, AutoCloseable {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.debug("Exception: " + e.getMessage(), e);
             }
         }
         if (port==0) {
@@ -65,7 +68,7 @@ public class WebServer4Tezts implements Runnable, AutoCloseable {
                     try {
                         Thread.sleep(3000);
                     } catch (InterruptedException ex) {
-                        ex.printStackTrace();
+                        log.debug("Exception: " + ex.getMessage(), ex);
                     }
                 } else {
                     System.err.println("[WebServer4Tests " + uuid + "]: Error: " + e + ", retrying");
@@ -78,7 +81,6 @@ public class WebServer4Tezts implements Runnable, AutoCloseable {
         }
         System.out.println("[WebServer4Tests " + uuid + "]: Successfully bound to " + port);
 
-//            System.out.println("Waiting for connection");
         running = true;
         while (!stopAsked) {
             try {
@@ -132,7 +134,7 @@ public class WebServer4Tezts implements Runnable, AutoCloseable {
         try {
             s.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug("Exception: " + e.getMessage(), e);
         }
         System.out.println("[WebServer4Tests" + uuid + "]: Stopped");
     }

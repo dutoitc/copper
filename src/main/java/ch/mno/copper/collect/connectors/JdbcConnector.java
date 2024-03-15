@@ -1,6 +1,7 @@
 package ch.mno.copper.collect.connectors;
 
 
+import lombok.extern.slf4j.Slf4j;
 import oracle.jdbc.OracleDriver;
 
 import java.sql.*;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * Created by dutoitc on 31.01.2016.
  */
+@Slf4j
 public class JdbcConnector implements AutoCloseable {
 
     private Connection connection;
@@ -71,17 +73,7 @@ public class JdbcConnector implements AutoCloseable {
         try {
             connection.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) throws ConnectorException {
-        try (
-                JdbcConnector conn = new JdbcConnector("jdbc:oracle:thin:@my-defcon:1521:myinstance", "auser", "apass")
-        ) {
-            conn.query("select 1 from dual");
-        } catch (Exception e) {
-            e.printStackTrace();
+            log.debug("Close error: " + e.getMessage(), e);
         }
     }
 
