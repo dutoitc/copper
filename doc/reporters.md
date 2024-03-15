@@ -54,3 +54,4 @@ WITH key_filter=".*status"  (regex on keys)
 WITH message="<h3>Copper detected status changes:</h3><br/>{{STATUS}}"
 ````
 Every 5 minutes, detect status change, then send a message to Webex, only if changes are detected.
+(See [Webex API](https://developer.webex.com/docs/basics#formatting-messages) website)

@@ -86,5 +86,4 @@ public class WebexDeltaReporterWrapper implements AbstractReporterWrapper {
         }
     }
 
-
 }

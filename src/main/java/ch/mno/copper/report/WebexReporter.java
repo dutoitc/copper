@@ -2,6 +2,7 @@ package ch.mno.copper.report;
 
 import ch.mno.copper.collect.connectors.ConnectorException;
 import ch.mno.copper.collect.connectors.HttpConnector;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import java.util.Map;
 /**
  *
  */
+@Slf4j
 public class WebexReporter implements AbstractReporter {
     private static final Logger LOG = LoggerFactory.getLogger(WebexReporter.class);
 
@@ -37,7 +39,16 @@ public class WebexReporter implements AbstractReporter {
     }
 
     HttpConnector buildConnector() {
-        return new HttpConnector("webexapis.com", 443, "https", null, 3128, "http", null, null);
+        String proxyhostname=System.getProperty("http.proxyHost");
+        int proxyPort=-1;
+        if (System.getProperty("http.proxyPort")!=null) {
+            try {
+                proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
+            } catch (NumberFormatException e) {
+                log.info("Cannot parse http.proxyPort");
+            }
+        }
+        return new HttpConnector("webexapis.com", 443, "https", proxyhostname, proxyPort, "http", null, null);
     }
 
 
