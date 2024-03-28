@@ -10,11 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
+import static ch.mno.copper.store.db.DBServer.INSTANT_MAX;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -49,6 +51,16 @@ class DBServerTest {
         server.insert("key4", "value40", i4);
         server.insert("key4", "value41", i5);
         server.insert("key4", "value42", i6);
+    }
+
+    @Test
+    void testDuplicates() {
+        server.clearAllData();
+        server.insertForTests("key1", "value10", i5, INSTANT_MAX, i5 );
+        server.insertForTests("key1", "value10", i5, INSTANT_MAX, i5 );
+        assertEquals(2, server.readLatest().size());
+        server.deleteDuplicates();
+        assertEquals(1, server.readLatest().size());
     }
 
     @Test
@@ -247,9 +259,9 @@ class DBServerTest {
         server.clearAllData();
         Instant i1 = Instant.parse("2021-09-30T16:42:00.00Z");
         Instant i2 = Instant.parse("2021-09-30T16:42:03.00Z");
-        server.insertForTests("K1", "V1", i1, DBServer.INSTANT_MAX, i1);
-        server.insertForTests("K2", "V2", i1, DBServer.INSTANT_MAX, i1);
-        server.insertForTests("K2", "V3", i1, DBServer.INSTANT_MAX, i2);
+        server.insertForTests("K1", "V1", i1, INSTANT_MAX, i1);
+        server.insertForTests("K2", "V2", i1, INSTANT_MAX, i1);
+        server.insertForTests("K2", "V3", i1, INSTANT_MAX, i2);
         assertEquals(1, server.readAll("K1").size());
         assertEquals(2, server.readAll("K2").size());
 

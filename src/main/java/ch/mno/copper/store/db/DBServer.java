@@ -72,25 +72,27 @@ public class DBServer implements AutoCloseable {
     public void insert(String key, String value, Instant instant) {
         var sqlInsert = "INSERT INTO valuestore ( idvaluestore, vkey, vvalue, datefrom, dateto, datelastcheck) VALUES (?,?,?,?,?,?)";
 
-        try (var con = cp.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sqlInsert)) {
-            // no store is inserted if current value is the same value
-            StoreValue previousValue = readLatest(key);
-            if (value == null) value = "";
+        synchronized (this) { // Avoid time between readLatest and insert
+            try (var con = cp.getConnection();
+                 PreparedStatement stmt = con.prepareStatement(sqlInsert)) {
+                // no store is inserted if current value is the same value
+                StoreValue previousValue = readLatest(key);
+                if (value == null) value = "";
 
-            if (previousValue == null) {
-                insertNew(key, value, instant, stmt);
-            } else if (!previousValue.getValue().equals(value)) {
-                if (previousValue.getTimestampFrom().isAfter(instant)) {
-                    throw new StoreException("Cannot insert value in the past for key " + key + ", old.start=" + previousValue.getTimestampFrom() + ", new.start=" + instant);
+                if (previousValue == null) {
+                    insertNew(key, value, instant, stmt);
+                } else if (!previousValue.getValue().equals(value)) {
+                    if (previousValue.getTimestampFrom().isAfter(instant)) {
+                        throw new StoreException("Cannot insert value in the past for key " + key + ", old.start=" + previousValue.getTimestampFrom() + ", new.start=" + instant);
+                    }
+                    insertNew(key, value, instant, stmt);
+                    terminatePrevious(instant, con, previousValue);
+                } else {
+                    updateDateLastCheck(instant, con, previousValue);
                 }
-                insertNew(key, value, instant, stmt);
-                terminatePrevious(instant, con, previousValue);
-            } else {
-                updateDateLastCheck(instant, con, previousValue);
+            } catch (SQLException e) {
+                throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
             }
-        } catch (SQLException e) {
-            throw new StoreException(AN_ERROR_OCCURED_WHILE_SAVING_VALUES, e);
         }
     }
 
@@ -314,7 +316,8 @@ public class DBServer implements AutoCloseable {
              PreparedStatement stmt = con.prepareStatement("SELECT idvaluestore, vkey, vvalue, datefrom, dateto,datelastcheck,\n" +
                      "(select count(*) from valuestore vs2 where vs2.vkey = vs.vkey) as nbValues\n" +
                      "FROM valuestore vs\n" +
-                     "where dateto=?")) {
+                     "where dateto=?"))
+        {
             stmt.setTimestamp(1, Timestamp.from(INSTANT_MAX));
             try (var rs = stmt.executeQuery()) {
                 while (rs.next()) {
