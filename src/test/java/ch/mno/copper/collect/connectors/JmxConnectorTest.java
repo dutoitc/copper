@@ -4,7 +4,7 @@ import ch.mno.copper.AbstractJmxServerTestStarter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import javax.management.*;
+import jakarta.management.*;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

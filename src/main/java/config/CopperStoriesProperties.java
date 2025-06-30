@@ -2,7 +2,7 @@ package config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @ConfigurationProperties(prefix = "stories")
 public class CopperStoriesProperties {

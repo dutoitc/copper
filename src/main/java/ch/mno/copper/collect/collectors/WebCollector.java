@@ -12,7 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.*;
+import jakarta.management.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
