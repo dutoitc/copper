@@ -4,8 +4,8 @@ import ch.mno.copper.collect.connectors.ConnectorException;
 import org.apache.commons.mail.HtmlEmail;
 import org.junit.jupiter.api.Test;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

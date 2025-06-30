@@ -4,7 +4,7 @@ import ch.mno.copper.collect.connectors.JmxConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.*;
+import jakarta.management.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

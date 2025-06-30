@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Disabled;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.management.StandardMBean;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
+import jakarta.management.MBeanServer;
+import jakarta.management.ObjectName;
+import jakarta.management.StandardMBean;
+import jakarta.management.remote.JMXConnectorServer;
+import jakarta.management.remote.JMXConnectorServerFactory;
+import jakarta.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;

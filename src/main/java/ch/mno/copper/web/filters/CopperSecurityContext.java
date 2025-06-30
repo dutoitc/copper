@@ -1,6 +1,6 @@
 package ch.mno.copper.web.filters;
 
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
 public class CopperSecurityContext implements SecurityContext {

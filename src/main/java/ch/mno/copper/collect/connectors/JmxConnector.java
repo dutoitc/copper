@@ -2,10 +2,10 @@ package ch.mno.copper.collect.connectors;
 
 import lombok.extern.log4j.Log4j2;
 
-import javax.management.*;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
+import jakarta.management.*;
+import jakarta.management.remote.JMXConnector;
+import jakarta.management.remote.JMXConnectorFactory;
+import jakarta.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

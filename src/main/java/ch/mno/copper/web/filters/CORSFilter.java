@@ -2,7 +2,7 @@ package ch.mno.copper.web.filters;
 
 import org.springframework.stereotype.Service;
 
-import javax.servlet.*;
+import jakarta.servlet.*;
 import java.io.IOException;
 
 @Service
